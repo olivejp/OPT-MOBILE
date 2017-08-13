@@ -1,0 +1,1716 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1012,
+        "TEXTE": "Agence de KONE",
+        "TYPE": "Agence",
+        "NOM": "KONE",
+        "ADRESSE": "23 AVENUE DE KONIAMBO - ",
+        "CODE_POSTAL": "98859",
+        "VILLE": "KONE",
+        "TEL": "47 21 11",
+        "FAX": "47 25 55",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 15H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 1,
+        "GLOBALID": "16899592-68b8-4954-8245-147c988f8a69",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          164.862644469515,
+          -21.059809686686826
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1013,
+        "TEXTE": "Agence de LIFOU WE",
+        "TYPE": "Agence",
+        "NOM": "LIFOU WE",
+        "ADRESSE": "QANONO - VILLAGE DE WE",
+        "CODE_POSTAL": "98820",
+        "VILLE": "LIFOU",
+        "TEL": "45 11 00",
+        "FAX": "43 13 00",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 15H00",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 1,
+        "GLOBALID": "e39b9dd2-2c3c-4423-a1f6-15482b647697",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          167.26448536896265,
+          -20.91758478574066
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1014,
+        "TEXTE": "Agence de LIFOU MOU",
+        "TYPE": "Annexe",
+        "NOM": "LIFOU MOU",
+        "ADRESSE": "VILLAGE DE MOU",
+        "CODE_POSTAL": "98820",
+        "VILLE": "LIFOU",
+        "TEL": "45 05 23",
+        "FAX": "45 05 24",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 15H00 sauf le mercredi de 08H30 à 11H30",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "1a8b77f4-009e-42db-80b7-972ea3ad2ae8",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          167.4035611054279,
+          -21.095170693441702
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1015,
+        "TEXTE": "Agence de LIFOU CHEPENEHE",
+        "TYPE": "Annexe",
+        "NOM": "LIFOU CHEPENEHE",
+        "ADRESSE": "VILLAGE DE CHEPENEHE",
+        "CODE_POSTAL": "98820",
+        "VILLE": "LIFOU",
+        "TEL": "45 12 00",
+        "FAX": "45 18 74",
+        "HORAIRE": "Du lundi au vendredi de 08H15 à 11H30 et de 12H15 à 15H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "040f6aa9-38e2-4589-9ac4-bae90d21b564",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          167.14892120270667,
+          -20.781994188225532
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1016,
+        "TEXTE": "Agence de TONTOUTA AEROPORT",
+        "TYPE": "Annexe",
+        "NOM": "TONTOUTA AEROPORT",
+        "ADRESSE": "TONTOUTA AEROPORT",
+        "CODE_POSTAL": "98889",
+        "VILLE": "PAITA",
+        "TEL": "35 16 55",
+        "FAX": null,
+        "HORAIRE": "En fonction des mouvements d'avions",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "89114904-b3bf-4f5b-9269-f8f9dd85c56c",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.21943199939142,
+          -22.014893117293056
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1017,
+        "TEXTE": "Agence de MARE TADINE",
+        "TYPE": "Agence",
+        "NOM": "MARE TADINE",
+        "ADRESSE": "VILLAGE DE TADINE",
+        "CODE_POSTAL": "98828",
+        "VILLE": "MARE",
+        "TEL": "45 41 00",
+        "FAX": "45 41 41",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 11H15 et de 12H15 à 15H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "32d16397-5d6a-48ff-8786-1f4ad0174157",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          167.8839679997774,
+          -21.54339331004826
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1018,
+        "TEXTE": "Agence de POUM",
+        "TYPE": "Agence",
+        "NOM": "POUM",
+        "ADRESSE": "11 LOT MUNICIPAL - VILLAGE DE POUM",
+        "CODE_POSTAL": "98826",
+        "VILLE": "POUM",
+        "TEL": "47 64 60",
+        "FAX": "47 66 65",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 11H15 et de 12H15 à 15H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "bee75b3a-179c-4915-855c-77dcaa8fe288",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          164.02587899909517,
+          -20.229231177862776
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1019,
+        "TEXTE": "Agence de POUEMBOUT",
+        "TYPE": "Agence",
+        "NOM": "POUEMBOUT",
+        "ADRESSE": "ROUTE TERRITORIALE 1 - VILLAGE DE POUEMBOUT",
+        "CODE_POSTAL": "98825",
+        "VILLE": "POUEMBOUT",
+        "TEL": "47 21 02",
+        "FAX": "47 25 00",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 11H15 et de 12H15 à 15H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "d7cbd35a-d772-4087-a9ca-59d76e6cac5a",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          164.88555899971172,
+          -21.143984883810077
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1020,
+        "TEXTE": "Agence de POINDIMIE",
+        "TYPE": "Agence",
+        "NOM": "POINDIMIE",
+        "ADRESSE": "22 VOIE URBAINE 13 - VILLAGE DE POINDIMIE",
+        "CODE_POSTAL": "98822",
+        "VILLE": "PONDIMIE",
+        "TEL": "42 71 00",
+        "FAX": "42 73 73",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 15H00",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 1,
+        "GLOBALID": "37cc6fc8-31c4-4052-b46e-202e25ff6b51",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          165.3315729994728,
+          -20.938197498026916
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1021,
+        "TEXTE": "Agence de OUEGOA",
+        "TYPE": "Agence",
+        "NOM": "OUEGOA",
+        "ADRESSE": "VILLAGE DE OUEGOA",
+        "CODE_POSTAL": "98821",
+        "VILLE": "OUEGOA",
+        "TEL": "47 64 00",
+        "FAX": "47 64 14",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 11H15 et de 12H15 à 16H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "a7672d93-4a07-46e5-898a-267bc5dc9e6c",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          164.44124600032276,
+          -20.347054746877493
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1022,
+        "TEXTE": "Agence de LA FOA",
+        "TYPE": "Agence",
+        "NOM": "LA FOA",
+        "ADRESSE": "57 ROUTE TERRITORIALE 1 - VILLAGE DE LA FOA",
+        "CODE_POSTAL": "98880",
+        "VILLE": "LA FOA",
+        "TEL": "44 31 00",
+        "FAX": "44 31 11",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 15H00",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "6a1f1850-601b-4a7d-987e-2112a4cec467",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          165.82763699920102,
+          -21.714141878737525
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1023,
+        "TEXTE": "Agence de KAALA-GOMEN OUACO",
+        "TYPE": "Annexe",
+        "NOM": "KAALA-GOMEN OUACO",
+        "ADRESSE": "VILLAGE DE OUACO",
+        "CODE_POSTAL": "98817",
+        "VILLE": "KAALA-GOMEN",
+        "TEL": "47 64 21",
+        "FAX": null,
+        "HORAIRE": "Les mardis et vendredis de 08H30 à 11H30",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "4a33bb24-4298-4777-afec-8f548708b2f7",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          164.47769199986746,
+          -20.825990096273987
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1024,
+        "TEXTE": "Agence de CANALA",
+        "TYPE": "Agence",
+        "NOM": "CANALA",
+        "ADRESSE": "66 RUE HENRI MAYET",
+        "CODE_POSTAL": "98813",
+        "VILLE": "CANALA",
+        "TEL": "42 31 00",
+        "FAX": "42 32 42",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 11H15 et de 12H15 à 15H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "4452af86-bdf4-401a-a308-abacde55ed3a",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          165.9484860005462,
+          -21.525188927889744
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1025,
+        "TEXTE": "Agence de YATE",
+        "TYPE": "Agence",
+        "NOM": "YATE",
+        "ADRESSE": "42 LOT MUNICIPAL - WAHO",
+        "CODE_POSTAL": "98834",
+        "VILLE": "YATE",
+        "TEL": "46 41 00",
+        "FAX": "46 42 00",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 11H15 et de 12H15 à 15H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "2bf32740-8483-40f6-a977-6bd53c4fc369",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.94171900001848,
+          -22.170176312217425
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1026,
+        "TEXTE": "Agence de L'ILE DES PINS VAO",
+        "TYPE": "Agence",
+        "NOM": "L'ILE DES PINS VAO",
+        "ADRESSE": "VILLAGE DE VAO",
+        "CODE_POSTAL": "98832",
+        "VILLE": "ILE DES PINS",
+        "TEL": "46 11 00",
+        "FAX": "46 12 12",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 11H15 et de 12H15 à 15H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "50411500-f98d-4171-b09c-5478733b4565",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          167.4954990004833,
+          -22.662760338822007
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1027,
+        "TEXTE": "Agence de TOUHO",
+        "TYPE": "Agence",
+        "NOM": "TOUHO",
+        "ADRESSE": "ROUTE PROVINCIALE NORD 10 - VILLAGE DE TOUHO",
+        "CODE_POSTAL": "98831",
+        "VILLE": "TOUHO",
+        "TEL": "42 88 00",
+        "FAX": "42 87 00",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 11H15 et de 12H15 à 15H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "bc152e24-1339-43f0-9376-c1f5bade6bc5",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          165.24209999974394,
+          -20.791007345592906
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1028,
+        "TEXTE": "Agence de THIO",
+        "TYPE": "Agence",
+        "NOM": "THIO",
+        "ADRESSE": "RUE DU GOUVERNEUR FEUILLET - VILLAGE DE THIO",
+        "CODE_POSTAL": "98829",
+        "VILLE": "THIO",
+        "TEL": "44 51 50",
+        "FAX": "44 53 00",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 11H15 et de 12H15 à 15H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "523a19bd-756a-4bf6-b0a1-e8f40408cc81",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.21215800047537,
+          -21.612035747548372
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1029,
+        "TEXTE": "Agence de MARE LA ROCHE",
+        "TYPE": "Annexe",
+        "NOM": "MARE LA ROCHE",
+        "ADRESSE": "VILLAGE DE LA ROCHE",
+        "CODE_POSTAL": "98828",
+        "VILLE": "MARE",
+        "TEL": "45 41 25",
+        "FAX": "45 41 75",
+        "HORAIRE": "Du lundi au vendredi de 10H00 à 13H00",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "81299185-bc1a-4115-a72d-71bbe65eeffd",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          168.03657500051017,
+          -21.483024043052126
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1030,
+        "TEXTE": "Agence de POYA NEPOUI",
+        "TYPE": "Annexe",
+        "NOM": "POYA NEPOUI",
+        "ADRESSE": "VILLAGE DE NEPOUI",
+        "CODE_POSTAL": "98827",
+        "VILLE": "POYA",
+        "TEL": "47 11 01",
+        "FAX": "47 13 00",
+        "HORAIRE": "Du lundi au vendredi de 08H00 à 11H00 et de 12H15 à 14H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "e9bc6923-de60-4b3d-be56-e4528c22c8ee",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          164.99404899929877,
+          -21.325115717977248
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1031,
+        "TEXTE": "Agence de POUEBO",
+        "TYPE": "Agence",
+        "NOM": "POUEBO",
+        "ADRESSE": "VILLAGE DE POUEBO",
+        "CODE_POSTAL": "98824",
+        "VILLE": "POUEBO",
+        "TEL": "47 64 30",
+        "FAX": "47 66 77",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 11H15 et de 12H15 à 15H00",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 1,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "bd201d6e-1094-4fe8-b919-42b8a9e47ee4",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          164.56970200059862,
+          -20.397143836904498
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1032,
+        "TEXTE": "Agence de PONERIHOUEN",
+        "TYPE": "Agence",
+        "NOM": "PONERIHOUEN",
+        "ADRESSE": "VILLAGE DE PONERIHOUEN",
+        "CODE_POSTAL": "98823",
+        "VILLE": "PONERIHOUEN",
+        "TEL": "42 85 00",
+        "FAX": "42 85 10",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 11H15 et de 12H15 à 15H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "f3bb2da0-7551-49e0-a0f4-ce73863a1d46",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          165.4038160007539,
+          -21.073970394489603
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1033,
+        "TEXTE": "Agence de MOINDOU",
+        "TYPE": "Annexe",
+        "NOM": "MOINDOU",
+        "ADRESSE": "VILLAGE DE MOINDOU",
+        "CODE_POSTAL": "98819",
+        "VILLE": "MOINDOU",
+        "TEL": "44 31 90",
+        "FAX": "44 35 15",
+        "HORAIRE": "Du lundi au vendredi de 08H00 à 12H00",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "b8e4afbe-1e37-4252-8628-80ce35b328ee",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          165.678634999725,
+          -21.695321486650254
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1034,
+        "TEXTE": "Agence de VOH",
+        "TYPE": "Agence",
+        "NOM": "VOH",
+        "ADRESSE": "75 ROUTE PROVINCIALE NORD - VILLAGE DE VOH",
+        "CODE_POSTAL": "98833",
+        "VILLE": "VOH",
+        "TEL": "47 27 19",
+        "FAX": "47 28 00",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 11H15 et de 12H15 à 15H00",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "7d2c4fcc-52dd-4bba-95d3-2826e31db8d8",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          164.68711900008128,
+          -20.95990596268977
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1035,
+        "TEXTE": "Agence de KOUMAC",
+        "TYPE": "Agence",
+        "NOM": "KOUMAC",
+        "ADRESSE": "AVENUE EMILE FROUIN RT 1 - VILLAGE DE KOUMAC",
+        "CODE_POSTAL": "98850",
+        "VILLE": "KOUMAC",
+        "TEL": "47 62 30",
+        "FAX": "47 65 65",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 15H00",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "88768dd8-7eec-4dbc-8b66-9c6a9c98878a",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          164.2799749999536,
+          -20.559277351086607
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1036,
+        "TEXTE": "Agence de KOUAOUA",
+        "TYPE": "Agence",
+        "NOM": "KOUAOUA",
+        "ADRESSE": "VILLAGE DE KOUAOUA",
+        "CODE_POSTAL": "98818",
+        "VILLE": "KOUAOUA",
+        "TEL": "42 45 00",
+        "FAX": "42 44 00",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 11H15 et de 12H15 à 15H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "576d4441-2497-4b2f-8211-e1f450778b44",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          165.8221440002029,
+          -21.40249334990356
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1037,
+        "TEXTE": "Agence de KAALA-GOMEN",
+        "TYPE": "Agence",
+        "NOM": "KAALA-GOMEN",
+        "ADRESSE": "LOT 38 - VILLAGE DE KAALA-GOMEN",
+        "CODE_POSTAL": "98817",
+        "VILLE": "KAALA-GOMEN",
+        "TEL": "47 67 01",
+        "FAX": "47 67 97",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 11H15 et de 12H15 à 15H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "d535f009-d467-4ce7-b1ec-c547e526da59",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          164.3997139996462,
+          -20.670835759892405
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1038,
+        "TEXTE": "Agence de HOUAILOU PORO",
+        "TYPE": "Annexe",
+        "NOM": "HOUAILOU PORO",
+        "ADRESSE": "VILLAGE DE PORO",
+        "CODE_POSTAL": "98816",
+        "VILLE": "HOUAILOU",
+        "TEL": "42 57 00",
+        "FAX": null,
+        "HORAIRE": "Du lundi au vendredi de 08H30 à 10H00",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "ba6f3c0d-ebda-4edc-8a01-1347f76cf245",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          165.6338740001324,
+          -21.287651926600102
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1039,
+        "TEXTE": "Agence de HOUAILOU",
+        "TYPE": "Agence",
+        "NOM": "HOUAILOU",
+        "ADRESSE": "LOT 41 - VILLAGE DE HOUAILOU",
+        "CODE_POSTAL": "98816",
+        "VILLE": "HOUAILOU",
+        "TEL": "42 51 00",
+        "FAX": "42 52 77",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 15H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "bd5aaeaa-d1eb-4e3f-8b8b-7b874a0699e3",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          165.62789300001293,
+          -21.278944742894137
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1040,
+        "TEXTE": "Agence de HIENGHENE",
+        "TYPE": "Agence",
+        "NOM": "HIENGHENE",
+        "ADRESSE": "40 LOT MUNICIPAL - VILLAGE DE HIENGHENE",
+        "CODE_POSTAL": "98815",
+        "VILLE": "HIENGHENE",
+        "TEL": "42 81 00",
+        "FAX": "42 81 81",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 11H15 et de 12H15 à 15H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "5307a0b0-e19e-4d40-b7e4-b6061bd4d689",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          164.94358100001412,
+          -20.68858214235462
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1041,
+        "TEXTE": "Agence de OUVEA FAYAOUE",
+        "TYPE": "Agence",
+        "NOM": "OUVEA FAYAOUE",
+        "ADRESSE": "VILLAGE DE FAYAOUE",
+        "CODE_POSTAL": "98814",
+        "VILLE": "OUVEA",
+        "TEL": "45 71 00",
+        "FAX": "45 72 72",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 11H15 et de 12H15 à 15H00",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "150cd8a2-4897-4f26-882c-e8a7382553d7",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.53968799998754,
+          -20.655817435761055
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1042,
+        "TEXTE": "Agence de BOURAIL",
+        "TYPE": "Agence",
+        "NOM": "BOURAIL",
+        "ADRESSE": "83 RUE VICTOR TANT",
+        "CODE_POSTAL": "98870",
+        "VILLE": "BOURAIL",
+        "TEL": "44 70 55",
+        "FAX": "44 11 00",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 15H00",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 1,
+        "GLOBALID": "3c0aac83-25c1-4de5-a50e-500b27f06ff6",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          165.49770399944012,
+          -21.56889884517105
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1043,
+        "TEXTE": "Agence de BOULOUPARIS",
+        "TYPE": "Agence",
+        "NOM": "BOULOUPARIS",
+        "ADRESSE": "24  ROUTE TERRITORIALE 1 - VILLAGE DE BOULOUPARIS",
+        "CODE_POSTAL": "98812",
+        "VILLE": "BOULOUPARIS",
+        "TEL": "35 17 00",
+        "FAX": "35 18 00",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 11H15 et de 12H15 à 15H00",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "4d18c368-2e2b-46f0-b733-3edb0d6d774f",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.05654700046873,
+          -21.863979995346888
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1044,
+        "TEXTE": "Agence de BELEP",
+        "TYPE": "Agence",
+        "NOM": "BELEP",
+        "ADRESSE": "VILLAGE de WALLA",
+        "CODE_POSTAL": "98811",
+        "VILLE": "BELEP",
+        "TEL": "47 64 82",
+        "FAX": "47 69 20",
+        "HORAIRE": "Du lundi au vendredis de 07H45 à 15H00",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "52ce93cb-a92f-44b5-9a0f-3c8ca62ab8a8",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          163.6688230007959,
+          -19.749132616003543
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1045,
+        "TEXTE": "Agence de DUMBEA PANDA",
+        "TYPE": "Annexe",
+        "NOM": "DUMBEA PANDA",
+        "ADRESSE": "43 RUE DES ARPENTEURS - PLAINE ADAM",
+        "CODE_POSTAL": "98835",
+        "VILLE": "DUMBEA",
+        "TEL": "20 61 00",
+        "FAX": "41 06 20",
+        "HORAIRE": "Du lundi au vendredi de 7h45 à 15h00",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "a7726642-8aca-4840-8b47-4762644a03ea",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.4388720000869,
+          -22.187858999704286
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1046,
+        "TEXTE": "Agence du MONT-DORE LA COULEE",
+        "TYPE": "Annexe",
+        "NOM": "MONT-DORE LA COULEE",
+        "ADRESSE": "15 ROUTE DU VALLON DORE - LA COULEE",
+        "CODE_POSTAL": "98809",
+        "VILLE": "MONT-DORE",
+        "TEL": "35 27 52",
+        "FAX": "35 28 78",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 11H15 et de 12H15 à 15H00",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "29fb4e10-b30f-48e2-adca-cc0038cf697f",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.57764438473993,
+          -22.23996499795422
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1047,
+        "TEXTE": "Agence de SARRAMEA",
+        "TYPE": "Annexe",
+        "NOM": "SARRAMEA",
+        "ADRESSE": "VILLAGE DE SARRAMEA",
+        "CODE_POSTAL": "98882",
+        "VILLE": "SARRAMEA",
+        "TEL": "44 36 30",
+        "FAX": null,
+        "HORAIRE": "Les lundis, mardis, jeudis et vendredis de 13h30 à 14h30",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "ad954ceb-95c8-44f1-a697-1c02b635c32c",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          165.85371738318085,
+          -21.64200799991124
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1049,
+        "TEXTE": "Agence de TONTOUTA",
+        "TYPE": "Agence",
+        "NOM": "TONTOUTA",
+        "ADRESSE": "TONTOUTA",
+        "CODE_POSTAL": "98889",
+        "VILLE": "PAITA",
+        "TEL": "35 11 00",
+        "FAX": null,
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 11H15 et de 12H15 à 15H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "d8529295-2e49-4050-94b4-76e82084a2f7",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.22257812840053,
+          -22.013429999235044
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1050,
+        "TEXTE": "Agence de POYA",
+        "TYPE": "Agence",
+        "NOM": "POYA",
+        "ADRESSE": "ROUTE TERRITORIALE 1 - VILLAGE DE POYA",
+        "CODE_POSTAL": "98827",
+        "VILLE": "POYA",
+        "TEL": "47 17 15",
+        "FAX": "47 17 66",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 11H15 et de 12H15 à 15H00",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "71144a9a-d6cc-4ae0-935e-794caa026f9e",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          165.1574709995683,
+          -21.346223163266075
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1051,
+        "TEXTE": "Agence de DUMBEA MAIRIE",
+        "TYPE": "Annexe",
+        "NOM": "DUMBEA MAIRIE",
+        "ADRESSE": "777 ROUTE TERRITORIALE 1 - PLAINE DE KOE",
+        "CODE_POSTAL": "98835",
+        "VILLE": "DUMBEA",
+        "TEL": "41 82 00",
+        "FAX": "41 75 95",
+        "HORAIRE": "Du lundi au vendredi de 09H00 à 12H30 et de 12H30 à 14H30",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "935544aa-0ce8-4608-b37d-62bc3b318c6c",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.45768206639593,
+          -22.167841206404354
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1052,
+        "TEXTE": "Agence du MONT-DORE PONT DES Français",
+        "TYPE": "Annexe",
+        "NOM": "MONT-DORE PONT DES Français",
+        "ADRESSE": "107 AVENUE DES DEUX-BAIES - PONT DES Français",
+        "CODE_POSTAL": "98809",
+        "VILLE": "MONT-DORE",
+        "TEL": "43 61 01",
+        "FAX": "43 22 00",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 15H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "2fa7353e-9c7d-485e-8e83-e27cad2beb3f",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.48606384954735,
+          -22.221461022940673
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1053,
+        "TEXTE": "Agence du MONT-DORE BOULARI",
+        "TYPE": "Agence",
+        "NOM": "MONT-DORE BOULARI",
+        "ADRESSE": "23 RUE ANTOINE GRISCELLI - BOULARI",
+        "CODE_POSTAL": "98809",
+        "VILLE": "MONT-DORE",
+        "TEL": "41 33 33",
+        "FAX": "43 62 62",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 15H00",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 1,
+        "CONSEILLER_TELECOM": 1,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "e7085c88-30d6-46c5-a9b3-9c291e532643",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.51935049536746,
+          -22.226706714472037
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1054,
+        "TEXTE": "Agence du MONT-DORE PLUM",
+        "TYPE": "Annexe",
+        "NOM": "MONT-DORE PLUM",
+        "ADRESSE": "ANNEXE DE LA MAIRIE - 9048 ROUTE DE LA CORNICHE DU MONT-DORE - PLUM",
+        "CODE_POSTAL": "98809",
+        "VILLE": "MONT-DORE",
+        "TEL": "35 47 03",
+        "FAX": "35 47 03",
+        "HORAIRE": "Du lundi au vendredi de 09H00 à 11H00 et de 12H00 à 13H30",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "d6d4839d-30f7-4c90-bfa1-b394009b8136",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.62325186353607,
+          -22.273265695278425
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1055,
+        "TEXTE": "Agence de DUMBEA KOUTIO",
+        "TYPE": "Agence",
+        "NOM": "DUMBEA KOUTIO",
+        "ADRESSE": "5 IMPASSE PIERRE VOYER",
+        "CODE_POSTAL": "98835",
+        "VILLE": "DUMBEA",
+        "TEL": "41 15 15",
+        "FAX": "41 60 98",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 15H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 1,
+        "CONSEILLER_TELECOM": 1,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "bc5bb38e-668b-4eec-8449-5923d02b7e57",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.4733550759115,
+          -22.209175044757682
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1056,
+        "TEXTE": "Agence de PAITA",
+        "TYPE": "Agence",
+        "NOM": "PAITA",
+        "ADRESSE": "VILLAGE DE PAITA",
+        "CODE_POSTAL": "98889",
+        "VILLE": "PAITA",
+        "TEL": "35 31 00",
+        "FAX": "35 37 00",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 15H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 1,
+        "GLOBALID": "7c284290-5174-4bbc-8b62-3cb0b80028d8",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.36864513705063,
+          -22.130235870672085
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1057,
+        "TEXTE": "Agence de NOUMEA SUD",
+        "TYPE": "Agence",
+        "NOM": "NOUMEA SUD",
+        "ADRESSE": "19 RUE MARCELIN LACABANNE - RECEIVING",
+        "CODE_POSTAL": "98800",
+        "VILLE": "NOUMEA",
+        "TEL": "26 86 50",
+        "FAX": "26 27 60",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 15H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 1,
+        "CONSEILLER_TELECOM": 1,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "51d517f9-e12e-47e4-83cd-402eb47d4906",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.44612883753206,
+          -22.29336349836095
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1058,
+        "TEXTE": "Agence de NOUMEA VALLEE DES COLONS",
+        "TYPE": "Annexe",
+        "NOM": "NOUMEA VALLEE DES COLONS",
+        "ADRESSE": "54 RUE AUGUSTE BENEBIG - VALLEE DES COLONS",
+        "CODE_POSTAL": "98800",
+        "VILLE": "NOUMEA",
+        "TEL": "27 37 64",
+        "FAX": "28 18 78",
+        "HORAIRE": "Du lundi au vendredi de 08H15 à 14H30",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "8c2eb245-cf76-4a47-96b4-11ca65b8ee01",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.4536182270261,
+          -22.27043043587335
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1059,
+        "TEXTE": "Agence de NOUMEA MONTRAVEL",
+        "TYPE": "Annexe",
+        "NOM": "NOUMEA MONTRAVEL",
+        "ADRESSE": "5 RUE DU DOCTEUR COLLARD - MONTRAVEL",
+        "CODE_POSTAL": "98800",
+        "VILLE": "NOUMEA",
+        "TEL": "28 50 52",
+        "FAX": "28 50 54",
+        "HORAIRE": "Les lundis, mercredis et vendredis de 08h00 à 11h00",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "f735a02f-2787-4a70-8fb6-61c03fe2e5f2",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.45485844621516,
+          -22.251614004548586
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1060,
+        "TEXTE": "Agence de NOUMEA VALLEE DU TIR",
+        "TYPE": "Agence",
+        "NOM": "NOUMEA VALLEE DU TIR",
+        "ADRESSE": "3 RUE BERTHELOT - VALLEE DU TIR",
+        "CODE_POSTAL": "98800",
+        "VILLE": "NOUMEA",
+        "TEL": "27 44 15",
+        "FAX": "27 76 98",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 15H00",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 1,
+        "CONSEILLER_TELECOM": 1,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "bad010c6-d104-4748-8c94-0b4f583da719",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.44558979553034,
+          -22.260344928511937
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1061,
+        "TEXTE": "Agence de NOUMEA DUCOS CENTRE LOGICOOP",
+        "TYPE": "Annexe",
+        "NOM": "NOUMEA DUCOS CENTRE LOGICOOP",
+        "ADRESSE": "139 ROUTE DE LA BAIE DES DAMES - LOGICOOP",
+        "CODE_POSTAL": "98800",
+        "VILLE": "NOUMEA",
+        "TEL": "28 48 90",
+        "FAX": "27 21 54",
+        "HORAIRE": "Du lundi au vendredi de 08H00 à 11H15 et de 12H15 à 14H30",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 1,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "8472b76f-7dac-464b-bd26-8ed3e128ea0e",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.4311096559693,
+          -22.233068783814797
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1062,
+        "TEXTE": "Agence de NOUMEA DUCOS CENTRE",
+        "TYPE": "Agence",
+        "NOM": "NOUMEA DUCOS CENTRE",
+        "ADRESSE": "30 ROUTE DE LA BAIE DES DAMES - DUCOS",
+        "CODE_POSTAL": "98800",
+        "VILLE": "NOUMEA",
+        "TEL": "23 13 00",
+        "FAX": "23 10 10",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 15H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 1,
+        "CONSEILLER_TELECOM": 1,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "4ccb12d4-952b-4bba-bb14-343575c44546",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.44805331163604,
+          -22.236366130347562
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1063,
+        "TEXTE": "Agence de NOUMEA RIVIERE SALEE",
+        "TYPE": "Agence",
+        "NOM": "NOUMEA RIVIERE SALEE",
+        "ADRESSE": "53 AVENUE BONAPARTE - RIVIERE SALEE",
+        "CODE_POSTAL": "98800",
+        "VILLE": "NOUMEA",
+        "TEL": "41 95 96",
+        "FAX": "41 60 99",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 11H15 et de 12H15 à 15H00",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 1,
+        "GLOBALID": "3349bcf9-ee10-4020-95f3-a75285e7af94",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.46460624174208,
+          -22.233670903951158
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1064,
+        "TEXTE": "Agence de NOUMEA BELLE VIE",
+        "TYPE": "Agence",
+        "NOM": "NOUMEA BELLE VIE",
+        "ADRESSE": "CENTRE COMMERCIAL LA BELLE VIE - 224 RUE JACQUES IEKAWE - PK5",
+        "CODE_POSTAL": "98800",
+        "VILLE": "NOUMEA",
+        "TEL": "41 36 36",
+        "FAX": "41 36 39",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 15H30 - Samedi de 07H45 à 11H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 1,
+        "GLOBALID": "26c29c8b-732b-4116-b8b7-be274a1b562c",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.46947615090178,
+          -22.24532147485367
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1065,
+        "TEXTE": "Agence de NOUMEA MAGENTA",
+        "TYPE": "Agence",
+        "NOM": "NOUMEA MAGENTA",
+        "ADRESSE": "35 RUE DU 18 JUIN - MAGENTA",
+        "CODE_POSTAL": "98800",
+        "VILLE": "NOUMEA",
+        "TEL": "26 86 86",
+        "FAX": "28 71 00",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 15H00 - Samedi de 07H45 à 11H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 1,
+        "CONSEILLER_TELECOM": 1,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "ff710863-8582-4bd9-bfde-0289cce624d9",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.4637871159797,
+          -22.268991642003467
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1066,
+        "TEXTE": "Agence de NOUMEA SUD N'GEA",
+        "TYPE": "Annexe",
+        "NOM": "NOUMEA SUD N'GEA",
+        "ADRESSE": "28 RUE HENRI GASPARD - N'GEA",
+        "CODE_POSTAL": "98800",
+        "VILLE": "NOUMEA",
+        "TEL": "26 86 65",
+        "FAX": "28 63 94",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 15H00",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 1,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "d45f4742-1919-40cc-b158-78995ec040f3",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.45370747289752,
+          -22.286459318703148
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1068,
+        "TEXTE": "Agence de NOUMEA PRINCIPALE",
+        "TYPE": "Agence",
+        "NOM": "NOUMEA PRINCIPALE",
+        "ADRESSE": "7 RUE EUGENE PORCHERON - QUARTIER LATIN",
+        "CODE_POSTAL": "98800",
+        "VILLE": "NOUMEA",
+        "TEL": "26 84 00",
+        "FAX": "27 82 30",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 15H30 - Samedi de 07H45 à 11H00",
+        "DAB_INTERNE": 1,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": 1,
+        "CONSEILLER_TELECOM": 1,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "64138c77-cb3b-441f-a3af-27d6f60c970d",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.44313529450727,
+          -22.27534179071395
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1069,
+        "TEXTE": "Agence Entreprise",
+        "TYPE": "Agence",
+        "NOM": "ENTREPRISE",
+        "ADRESSE": "9 RUE DU GENERAL GALLIENI - CENTRE VILLE",
+        "CODE_POSTAL": "98800",
+        "VILLE": "NOUMEA",
+        "TEL": "1016",
+        "FAX": "26 77 94",
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 15H30",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "b56fa5c7-03ae-4855-ac79-bc64baa4eba4",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.43899228278255,
+          -22.270321570802682
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1070,
+        "TEXTE": "Centre de Distribution du Courrier",
+        "TYPE": "Agence",
+        "NOM": "CDC",
+        "ADRESSE": "7 RUE EUGENE PORCHERON",
+        "CODE_POSTAL": "98841",
+        "VILLE": "NOUMEA CEDEX",
+        "TEL": "1000",
+        "FAX": null,
+        "HORAIRE": "Du lundi au vendredi 07H45 à 15H30 - Samedi 08H à 11H. Accès aux BP : 5H à 23H",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "acc4d8ca-0bc4-49a5-9c6d-2680ae08402e",
+        "CONSEILLER_POSTAL": null
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.44348643113798,
+          -22.27531935887135
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1071,
+        "TEXTE": "Centre de Traitement du Courrier",
+        "TYPE": "Agence",
+        "NOM": "CTC",
+        "ADRESSE": "17 RUE DE L'ALMA - ANDRE BALLANDE",
+        "CODE_POSTAL": "98808",
+        "VILLE": "NOUMEA CEDEX",
+        "TEL": "1000",
+        "FAX": null,
+        "HORAIRE": "Du lundi au vendredi de 07H45 à 15H30",
+        "DAB_INTERNE": null,
+        "DAB_EXTERNE": 1,
+        "CONSEILLER_FINANCIER": null,
+        "CONSEILLER_TELECOM": null,
+        "CONSEILLER_POLYVALENT": null,
+        "GLOBALID": "a18aa4c1-97ce-44aa-99ba-6a542304c338",
+        "CONSEILLER_POSTAL": null
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.43912117017257,
+          -22.269733433404976
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1072,
+        "TEXTE": "Agence philatélique CALEDOSCOPE",
+        "TYPE": "Agence",
+        "NOM": "CALEDOSCOPE",
+        "ADRESSE": "LE LYS ROUGE - 5 RUE ANATOLE FRANCE - CENTRE VILLE",
+        "CODE_POSTAL": "98800",
+        "VILLE": "NOUMEA",
+        "TEL": "29 19 90",
+        "FAX": "29 19 98",
+        "HORAIRE": "Du lundi au vendredi de 08H00 à 16H00",
+        "DAB_INTERNE": 0,
+        "DAB_EXTERNE": 0,
+        "CONSEILLER_FINANCIER": 0,
+        "CONSEILLER_TELECOM": 0,
+        "CONSEILLER_POLYVALENT": 0,
+        "GLOBALID": "992de7df-34df-4c40-8f8a-e867d10684d5",
+        "CONSEILLER_POSTAL": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          166.4388301755484,
+          -22.271644404604174
+        ]
+      }
+    }
+  ]
+}
