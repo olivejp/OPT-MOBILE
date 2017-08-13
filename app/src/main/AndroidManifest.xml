@@ -40,9 +40,9 @@
         </activity>
 
         <provider
-            android:authorities="nc.opt.mobile.AgencyProvider"
             android:name=".provider.generated.AgencyProvider"
-            android:exported="false"/>
+            android:authorities="nc.opt.mobile.AgencyProvider"
+            android:exported="false" />
     </application>
 
 </manifest>
