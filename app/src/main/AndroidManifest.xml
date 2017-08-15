@@ -30,8 +30,9 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".activity.MapsActivity"
-            android:label="@string/title_activity_maps">
+            android:name=".activity.MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,10 +40,16 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".activity.MapsActivity"
+            android:label="@string/title_activity_maps"></activity>
+
         <provider
             android:name=".provider.generated.AgencyProvider"
             android:authorities="nc.opt.mobile.AgencyProvider"
             android:exported="false" />
+
+
     </application>
 
 </manifest>
