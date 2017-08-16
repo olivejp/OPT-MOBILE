@@ -1,9 +1,12 @@
 package nc.opt.mobile.opt_mobile.domain;
 
+import org.parceler.Parcel;
+
 /**
  * Created by orlanth23 on 10/08/2017.
  */
 
+@Parcel
 public class Feature {
     private String type;
     private Agency properties;

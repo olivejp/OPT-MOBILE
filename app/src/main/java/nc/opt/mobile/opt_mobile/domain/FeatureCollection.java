@@ -1,11 +1,14 @@
 package nc.opt.mobile.opt_mobile.domain;
 
+import org.parceler.Parcel;
+
 import java.util.ArrayList;
 
 /**
  * Created by orlanth23 on 10/08/2017.
  */
 
+@Parcel
 public class FeatureCollection {
     private String type;
     private ArrayList<Feature> features;
