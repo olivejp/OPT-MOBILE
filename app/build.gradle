@@ -34,10 +34,8 @@ dependencies {
     compile 'net.simonvt.schematic:schematic:0.7.0'
     compile 'com.android.support:design:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    dependencies {
-        compile 'org.parceler:parceler-api:1.1.6'
-        annotationProcessor 'org.parceler:parceler:1.1.6'
-    }
+    compile 'org.parceler:parceler-api:1.1.9'
+    annotationProcessor 'org.parceler:parceler:1.1.9'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'net.simonvt.schematic:schematic-compiler:0.7.0'
 }
