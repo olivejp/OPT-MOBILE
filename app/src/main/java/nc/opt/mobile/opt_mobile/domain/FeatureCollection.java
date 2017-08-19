@@ -1,6 +1,7 @@
 package nc.opt.mobile.opt_mobile.domain;
 
 import org.parceler.Parcel;
+import org.parceler.ParcelConstructor;
 
 import java.util.ArrayList;
 
@@ -13,6 +14,7 @@ public class FeatureCollection {
     private String type;
     private ArrayList<Feature> features;
 
+    @ParcelConstructor
     public FeatureCollection(String type, ArrayList<Feature> features) {
         this.type = type;
         this.features = features;

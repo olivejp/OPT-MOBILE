@@ -1,6 +1,7 @@
 package nc.opt.mobile.opt_mobile.domain;
 
 import org.parceler.Parcel;
+import org.parceler.ParcelConstructor;
 
 /**
  * Created by orlanth23 on 08/08/2017.
@@ -18,17 +19,18 @@ public class Agency {
     private String TEL;
     private String FAX;
     private String HORAIRE;
-    private short DAB_INTERNE;
-    private short DAB_EXTERNE;
-    private short CONSEILLER_FINANCIER;
-    private short CONSEILLER_TELECOM;
-    private short CONSEILLER_POLYVALENT;
-    private short CONSEILLER_POSTAL;
+    private int DAB_INTERNE;
+    private int DAB_EXTERNE;
+    private int CONSEILLER_FINANCIER;
+    private int CONSEILLER_TELECOM;
+    private int CONSEILLER_POLYVALENT;
+    private int CONSEILLER_POSTAL;
     private String GLOBALID;
     private float LATITUDE;
     private float LONGITUDE;
 
-    public Agency(int OBJECTID, String TEXTE, String TYPE, String NOM, String ADRESSE, String CODE_POSTAL, String VILLE, String TEL, String FAX, String HORAIRE, short DAB_INTERNE, short DAB_EXTERNE, short CONSEILLER_FINANCIER, short CONSEILLER_TELECOM, short CONSEILLER_POLYVALENT, short CONSEILLER_POSTAL, String GLOBALID, float LATITUDE, float LONGITUDE) {
+    @ParcelConstructor
+    public Agency(int OBJECTID, String TEXTE, String TYPE, String NOM, String ADRESSE, String CODE_POSTAL, String VILLE, String TEL, String FAX, String HORAIRE, int DAB_INTERNE, int DAB_EXTERNE, int CONSEILLER_FINANCIER, int CONSEILLER_TELECOM, int CONSEILLER_POLYVALENT, int CONSEILLER_POSTAL, String GLOBALID, float LATITUDE, float LONGITUDE) {
         this.OBJECTID = OBJECTID;
         this.TEXTE = TEXTE;
         this.TYPE = TYPE;
@@ -130,51 +132,51 @@ public class Agency {
         this.HORAIRE = HORAIRE;
     }
 
-    public short getDAB_INTERNE() {
+    public int getDAB_INTERNE() {
         return DAB_INTERNE;
     }
 
-    public void setDAB_INTERNE(short DAB_INTERNE) {
+    public void setDAB_INTERNE(int DAB_INTERNE) {
         this.DAB_INTERNE = DAB_INTERNE;
     }
 
-    public short getDAB_EXTERNE() {
+    public int getDAB_EXTERNE() {
         return DAB_EXTERNE;
     }
 
-    public void setDAB_EXTERNE(short DAB_EXTERNE) {
+    public void setDAB_EXTERNE(int DAB_EXTERNE) {
         this.DAB_EXTERNE = DAB_EXTERNE;
     }
 
-    public short getCONSEILLER_FINANCIER() {
+    public int getCONSEILLER_FINANCIER() {
         return CONSEILLER_FINANCIER;
     }
 
-    public void setCONSEILLER_FINANCIER(short CONSEILLER_FINANCIER) {
+    public void setCONSEILLER_FINANCIER(int CONSEILLER_FINANCIER) {
         this.CONSEILLER_FINANCIER = CONSEILLER_FINANCIER;
     }
 
-    public short getCONSEILLER_TELECOM() {
+    public int getCONSEILLER_TELECOM() {
         return CONSEILLER_TELECOM;
     }
 
-    public void setCONSEILLER_TELECOM(short CONSEILLER_TELECOM) {
+    public void setCONSEILLER_TELECOM(int CONSEILLER_TELECOM) {
         this.CONSEILLER_TELECOM = CONSEILLER_TELECOM;
     }
 
-    public short getCONSEILLER_POLYVALENT() {
+    public int getCONSEILLER_POLYVALENT() {
         return CONSEILLER_POLYVALENT;
     }
 
-    public void setCONSEILLER_POLYVALENT(short CONSEILLER_POLYVALENT) {
+    public void setCONSEILLER_POLYVALENT(int CONSEILLER_POLYVALENT) {
         this.CONSEILLER_POLYVALENT = CONSEILLER_POLYVALENT;
     }
 
-    public short getCONSEILLER_POSTAL() {
+    public int getCONSEILLER_POSTAL() {
         return CONSEILLER_POSTAL;
     }
 
-    public void setCONSEILLER_POSTAL(short CONSEILLER_POSTAL) {
+    public void setCONSEILLER_POSTAL(int CONSEILLER_POSTAL) {
         this.CONSEILLER_POSTAL = CONSEILLER_POSTAL;
     }
 

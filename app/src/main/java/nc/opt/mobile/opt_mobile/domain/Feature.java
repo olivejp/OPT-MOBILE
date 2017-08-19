@@ -1,6 +1,7 @@
 package nc.opt.mobile.opt_mobile.domain;
 
 import org.parceler.Parcel;
+import org.parceler.ParcelConstructor;
 
 /**
  * Created by orlanth23 on 10/08/2017.
@@ -12,6 +13,7 @@ public class Feature {
     private Agency properties;
     private Geometry geometry;
 
+    @ParcelConstructor
     public Feature(String type, Agency properties, Geometry geometry) {
         this.type = type;
         this.properties = properties;
