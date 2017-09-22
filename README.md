@@ -12,6 +12,9 @@ The purpose is to bring informations about all the OPT's structures and new serv
 # Contributing
 Project is open for all android developers who want to share.
 
+# Contact
+orlanth23@hotmail.com
+
 # License
 MIT License
 
