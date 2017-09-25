@@ -8,11 +8,13 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,6 +26,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private ArrayList<Agency> mListAgency;
+
+    private HashMap<Marker, Agency> mMapMarkerAgency;
 
     @BindView(R.id.txt_agence_nom)
     TextView txt_agence_nom;
@@ -64,9 +68,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions().position(nc).title("Marker in New Caledonia"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(nc));
 
+        mMapMarkerAgency = new HashMap<>();
+
         for (Agency agency : mListAgency) {
             LatLng latLng = new LatLng(agency.getLATITUDE(), agency.getLONGITUDE());
-            mMap.addMarker(new MarkerOptions().position(latLng).title(agency.getNOM()).snippet(agency.getHORAIRE()));
+            mMap.addMarker(new MarkerOptions()
+                    .position(latLng)
+                    .title(agency.getNOM())
+                    .snippet(agency.getHORAIRE())
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
         }
     }
 
