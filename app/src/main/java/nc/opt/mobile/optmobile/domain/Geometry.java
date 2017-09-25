@@ -1,4 +1,4 @@
-package nc.opt.mobile.opt_mobile.domain;
+package nc.opt.mobile.optmobile.domain;
 
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;

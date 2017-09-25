@@ -1,4 +1,4 @@
-package nc.opt.mobile.opt_mobile.activity;
+package nc.opt.mobile.optmobile.activity;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -10,16 +10,25 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import nc.opt.mobile.opt_mobile.R;
+import java.util.ArrayList;
+
+import nc.opt.mobile.optmobile.R;
+import nc.opt.mobile.optmobile.domain.Agency;
+import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private ArrayList<Agency> mListAgency;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        // Récupération de la liste des agences
+        mListAgency = ProviderUtilities.getListAgencyFromContentProvider(this);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -42,8 +51,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        LatLng nc = new LatLng(-20.904305, 165.618042);
+        mMap.addMarker(new MarkerOptions().position(nc).title("Marker in New Caledonia"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(nc));
+
+        for (Agency agency : mListAgency) {
+            LatLng latLng = new LatLng(agency.getLATITUDE(), agency.getLONGITUDE());
+            mMap.addMarker(new MarkerOptions().position(latLng).title(agency.getNOM()));
+        }
     }
 }

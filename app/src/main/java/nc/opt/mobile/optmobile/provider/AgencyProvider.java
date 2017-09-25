@@ -1,4 +1,4 @@
-package nc.opt.mobile.opt_mobile.provider;
+package nc.opt.mobile.optmobile.provider;
 
 import android.net.Uri;
 
@@ -36,4 +36,6 @@ public class AgencyProvider {
         }
 
     }
+
+
 }

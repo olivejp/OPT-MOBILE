@@ -1,4 +1,4 @@
-package nc.opt.mobile.opt_mobile;
+package nc.opt.mobile.optmobile;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -11,8 +11,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import nc.opt.mobile.opt_mobile.domain.FeatureCollection;
-import nc.opt.mobile.opt_mobile.domain.Utilities;
+import nc.opt.mobile.optmobile.domain.FeatureCollection;
 
 /**
  * Instrumentation test, which will execute on an Android device.

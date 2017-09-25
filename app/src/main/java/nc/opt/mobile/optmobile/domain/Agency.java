@@ -1,7 +1,10 @@
-package nc.opt.mobile.opt_mobile.domain;
+package nc.opt.mobile.optmobile.domain;
 
+import org.chalup.microorm.annotations.Column;
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
+
+import nc.opt.mobile.optmobile.provider.AgencyInterface;
 
 /**
  * Created by orlanth23 on 08/08/2017.
@@ -9,28 +12,68 @@ import org.parceler.ParcelConstructor;
 
 @Parcel
 public class Agency {
+    @Column(AgencyInterface.OBJECTID)
     private int OBJECTID;
+
+    @Column(AgencyInterface.TEXTE)
     private String TEXTE;
+
+    @Column(AgencyInterface.TYPE)
     private String TYPE;
+
+    @Column(AgencyInterface.NOM)
     private String NOM;
+
+    @Column(AgencyInterface.ADRESSE)
     private String ADRESSE;
+
+    @Column(AgencyInterface.CODE_POSTAL)
     private String CODE_POSTAL;
+
+    @Column(AgencyInterface.VILLE)
     private String VILLE;
+
+    @Column(AgencyInterface.TEL)
     private String TEL;
+
+    @Column(AgencyInterface.FAX)
     private String FAX;
+
+    @Column(AgencyInterface.HORAIRE)
     private String HORAIRE;
+
+    @Column(AgencyInterface.DAB_INTERNE)
     private int DAB_INTERNE;
+
+    @Column(AgencyInterface.DAB_EXTERNE)
     private int DAB_EXTERNE;
+
+    @Column(AgencyInterface.CONSEILLER_FINANCIER)
     private int CONSEILLER_FINANCIER;
+
+    @Column(AgencyInterface.CONSEILLER_TELECOM)
     private int CONSEILLER_TELECOM;
+
+    @Column(AgencyInterface.CONSEILLER_POLYVALENT)
     private int CONSEILLER_POLYVALENT;
+
+    @Column(AgencyInterface.CONSEILLER_POSTAL)
     private int CONSEILLER_POSTAL;
+
+    @Column(AgencyInterface.GLOBALID)
     private String GLOBALID;
-    private float LATITUDE;
-    private float LONGITUDE;
+
+    @Column(AgencyInterface.LATITUDE)
+    private double LATITUDE;
+
+    @Column(AgencyInterface.LONGITUDE)
+    private double LONGITUDE;
+
+    @Column(AgencyInterface.TYPE_GEOMETRY)
+    private String TYPE_GEOMETRY;
 
     @ParcelConstructor
-    public Agency(int OBJECTID, String TEXTE, String TYPE, String NOM, String ADRESSE, String CODE_POSTAL, String VILLE, String TEL, String FAX, String HORAIRE, int DAB_INTERNE, int DAB_EXTERNE, int CONSEILLER_FINANCIER, int CONSEILLER_TELECOM, int CONSEILLER_POLYVALENT, int CONSEILLER_POSTAL, String GLOBALID, float LATITUDE, float LONGITUDE) {
+    public Agency(int OBJECTID, String TEXTE, String TYPE, String NOM, String ADRESSE, String CODE_POSTAL, String VILLE, String TEL, String FAX, String HORAIRE, int DAB_INTERNE, int DAB_EXTERNE, int CONSEILLER_FINANCIER, int CONSEILLER_TELECOM, int CONSEILLER_POLYVALENT, int CONSEILLER_POSTAL, String GLOBALID, double LATITUDE, double LONGITUDE, String TYPE_GEOMETRY) {
         this.OBJECTID = OBJECTID;
         this.TEXTE = TEXTE;
         this.TYPE = TYPE;
@@ -50,6 +93,7 @@ public class Agency {
         this.GLOBALID = GLOBALID;
         this.LATITUDE = LATITUDE;
         this.LONGITUDE = LONGITUDE;
+        this.TYPE_GEOMETRY = TYPE_GEOMETRY;
     }
 
     public int getOBJECTID() {
@@ -188,19 +232,27 @@ public class Agency {
         this.GLOBALID = GLOBALID;
     }
 
-    public float getLATITUDE() {
+    public double getLATITUDE() {
         return LATITUDE;
     }
 
-    public void setLATITUDE(float LATITUDE) {
+    public void setLATITUDE(double LATITUDE) {
         this.LATITUDE = LATITUDE;
     }
 
-    public float getLONGITUDE() {
+    public double getLONGITUDE() {
         return LONGITUDE;
     }
 
-    public void setLONGITUDE(float LONGITUDE) {
+    public void setLONGITUDE(double LONGITUDE) {
         this.LONGITUDE = LONGITUDE;
+    }
+
+    public String getTYPE_GEOMETRY() {
+        return TYPE_GEOMETRY;
+    }
+
+    public void setTYPE_GEOMETRY(String TYPE_GEOMETRY) {
+        this.TYPE_GEOMETRY = TYPE_GEOMETRY;
     }
 }

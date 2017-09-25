@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="nc.opt.mobile.opt_mobile">
+    package="nc.opt.mobile.optmobile">
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -8,6 +8,7 @@
          location permissions for the 'MyLocation' functionality. 
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -29,8 +30,13 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+        <!--
+         This metadata provide access to facebook API
+        -->
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+
         <activity
-            android:name=".activity.MainActivity"
+            android:name="nc.opt.mobile.optmobile.activity.MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -41,11 +47,11 @@
         </activity>
 
         <activity
-            android:name=".activity.MapsActivity"
+            android:name="nc.opt.mobile.optmobile.activity.MapsActivity"
             android:label="@string/title_activity_maps"></activity>
 
         <provider
-            android:name=".provider.generated.AgencyProvider"
+            android:name="nc.opt.mobile.optmobile.provider.generated.AgencyProvider"
             android:authorities="nc.opt.mobile.AgencyProvider"
             android:exported="false" />
 

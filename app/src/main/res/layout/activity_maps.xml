@@ -4,4 +4,4 @@
     android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="nc.opt.mobile.opt_mobile.activity.MapsActivity" />
+    tools:context="nc.opt.mobile.optmobile.activity.MapsActivity" />

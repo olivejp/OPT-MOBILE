@@ -1,4 +1,4 @@
-package nc.opt.mobile.opt_mobile.domain;
+package nc.opt.mobile.optmobile;
 
 import android.content.Context;
 
@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Created by orlanth23 on 10/08/2017.
+ * Created by orlanth23 on 13/08/2017.
  */
 
 public class Utilities {

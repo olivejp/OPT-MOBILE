@@ -1,4 +1,4 @@
-package nc.opt.mobile.opt_mobile;
+package nc.opt.mobile.optmobile;
 
 import org.junit.Test;
 
