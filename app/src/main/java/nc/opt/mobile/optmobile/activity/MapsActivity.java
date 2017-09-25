@@ -2,29 +2,38 @@ package nc.opt.mobile.optmobile.activity;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.domain.Agency;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener{
 
     private GoogleMap mMap;
     private ArrayList<Agency> mListAgency;
+
+    @BindView(R.id.txt_agence_nom)
+    TextView txt_agence_nom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        ButterKnife.bind(this);
 
         // Récupération de la liste des agences
         mListAgency = ProviderUtilities.getListAgencyFromContentProvider(this);
@@ -57,7 +66,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         for (Agency agency : mListAgency) {
             LatLng latLng = new LatLng(agency.getLATITUDE(), agency.getLONGITUDE());
-            mMap.addMarker(new MarkerOptions().position(latLng).title(agency.getNOM()));
+            mMap.addMarker(new MarkerOptions().position(latLng).title(agency.getNOM()).snippet(agency.getHORAIRE()));
         }
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        return false;
     }
 }
