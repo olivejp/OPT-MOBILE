@@ -11,8 +11,8 @@ import java.util.ArrayList;
 
 @Parcel
 public class FeatureCollection {
-    private String type;
-    private ArrayList<Feature> features;
+    String type;
+    ArrayList<Feature> features;
 
     @ParcelConstructor
     public FeatureCollection(String type, ArrayList<Feature> features) {

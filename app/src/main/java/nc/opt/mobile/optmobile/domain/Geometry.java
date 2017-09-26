@@ -9,8 +9,8 @@ import org.parceler.ParcelConstructor;
 
 @Parcel
 public class Geometry {
-    private String type;
-    private double[] coordinates;
+    String type;
+    double[] coordinates;
 
     @ParcelConstructor
     public Geometry(String type, double[] coordinates) {

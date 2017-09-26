@@ -7,6 +7,9 @@ buildscript {
         maven {
             url "https://maven.google.com"
         }
+        maven {
+            url "https://clojars.org/repo/"
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.3'
@@ -22,6 +25,9 @@ allprojects {
         mavenCentral()
         maven {
             url "https://maven.google.com"
+        }
+        maven {
+            url "https://clojars.org/repo/"
         }
     }
 }

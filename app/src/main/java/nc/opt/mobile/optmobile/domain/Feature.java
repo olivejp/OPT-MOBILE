@@ -9,9 +9,9 @@ import org.parceler.ParcelConstructor;
 
 @Parcel
 public class Feature {
-    private String type;
-    private Agency properties;
-    private Geometry geometry;
+    String type;
+    Agency properties;
+    Geometry geometry;
 
     @ParcelConstructor
     public Feature(String type, Agency properties, Geometry geometry) {

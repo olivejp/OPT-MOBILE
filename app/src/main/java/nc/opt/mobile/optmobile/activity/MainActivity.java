@@ -26,8 +26,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import icepick.Icepick;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
+
+import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -50,6 +54,9 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // Get information back from the savedInstanceState
+        Icepick.restoreInstanceState(this, savedInstanceState);
 
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -104,29 +111,6 @@ public class MainActivity extends AppCompatActivity
 
     private void onSignedInInitialize(FirebaseUser user) {
         firebaseUser = firebaseAuth.getCurrentUser();
-        Toast.makeText(this, "Bienvenue ".concat(user.getDisplayName()), Toast.LENGTH_LONG).show();
-
-        // On définit une tache pour recuperer la photo de la personne connectee
-        AsyncTask<Void, Void, Drawable> myTask = new AsyncTask<Void, Void, Drawable>() {
-            @Override
-            protected Drawable doInBackground(Void... voids) {
-                try {
-                    return Glide.with(MainActivity.this).asDrawable().load(firebaseUser.getPhotoUrl()).submit().get();
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Drawable drawable) {
-                mDrawablePhoto = drawable;
-                invalidateOptionsMenu();
-            }
-        };
-
-        // On appelle la tache pour aller recuperer la photo
-        myTask.execute();
     }
 
     private void onSignedOutCleanup() {
@@ -226,11 +210,47 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(this, "Bienvenue", Toast.LENGTH_LONG).show();
+
+                // On définit une tache pour recuperer la photo de la personne connectee
+                AsyncTask<Void, Void, Drawable> myTask = new AsyncTask<Void, Void, Drawable>() {
+                    @Override
+                    protected Drawable doInBackground(Void... voids) {
+                        try {
+                            return Glide.with(MainActivity.this)
+                                    .asDrawable()
+                                    .load(firebaseUser.getPhotoUrl())
+                                    .apply(bitmapTransform(new RoundedCornersTransformation(3,3, RoundedCornersTransformation.CornerType.ALL)))
+                                    .submit(200,200)
+                                    .get();
+                        } catch (InterruptedException | ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Drawable drawable) {
+                        mDrawablePhoto = drawable;
+                        invalidateOptionsMenu();
+                    }
+                };
+
+                // On appelle la tache pour aller recuperer la photo
+                myTask.execute();
+            }
             if (resultCode == RESULT_CANCELED) {
                 // Sign in was canceled by the user, finish the activity
                 Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
                 finish();
             }
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Icepick.saveInstanceState(this, outState);
     }
 }
