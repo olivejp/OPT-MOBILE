@@ -6,12 +6,12 @@ ext {
 }
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 26
     buildToolsVersion "26.0.1"
     defaultConfig {
         applicationId "nc.opt.mobile.optmobile"
-        minSdkVersion 15
-        targetSdkVersion 25
+        minSdkVersion 16
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -35,12 +35,16 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
 
     compile 'com.google.code.gson:gson:2.8.1'
-    compile 'com.google.android.gms:play-services-maps:11.4.0'
 
     // All the Firebase libraries
-    compile 'com.google.firebase:firebase-auth:11.4.0'
-    compile 'com.google.firebase:firebase-database:11.4.0'
-    compile 'com.google.firebase:firebase-messaging:11.4.0'
+    compile 'com.google.firebase:firebase-auth:11.0.4'
+    compile 'com.google.firebase:firebase-database:11.0.4'
+    compile 'com.google.firebase:firebase-messaging:11.0.4'
+
+    // FirebaseUI
+    compile 'com.firebaseui:firebase-ui-auth:2.3.0'
+
+    compile 'com.google.android.gms:play-services-maps:11.0.4'
 
     // Facebook SDK to authenticate users with their Facebook account.
     compile 'com.facebook.android:facebook-android-sdk:4.26.0'
@@ -51,7 +55,7 @@ dependencies {
     compile 'org.parceler:parceler-api:1.1.9'
     // Allow cursor to object serialisation
     compile 'org.chalup.microorm:microorm:0.8.0'
-    compile 'com.jakewharton:butterknife:8.6.0'
+    compile 'com.jakewharton:butterknife:8.8.1'
 
     testCompile 'junit:junit:4.12'
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -60,6 +64,7 @@ dependencies {
 
     annotationProcessor 'org.parceler:parceler:1.1.9'
     annotationProcessor 'net.simonvt.schematic:schematic-compiler:0.7.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

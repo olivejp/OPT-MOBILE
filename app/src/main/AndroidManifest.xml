@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="nc.opt.mobile.optmobile">
 
     <!--
@@ -33,7 +34,10 @@
         <!--
          This metadata provide access to facebook API
         -->
-        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+        <meta-data
+            tools:replace="android:value"
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id"/>
 
         <activity
             android:name="nc.opt.mobile.optmobile.activity.MainActivity"
@@ -51,7 +55,7 @@
             android:label="@string/title_activity_maps"></activity>
 
         <provider
-            android:name="nc.opt.mobile.optmobile.provider.generated.AgencyProvider"
+            android:name="nc.opt.mobile.optmobile.AgencyProvider"
             android:authorities="nc.opt.mobile.AgencyProvider"
             android:exported="false" />
 

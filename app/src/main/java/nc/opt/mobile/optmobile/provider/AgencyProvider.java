@@ -11,7 +11,7 @@ import net.simonvt.schematic.annotation.TableEndpoint;
  * Created by orlanth23 on 10/08/2017.
  */
 
-@ContentProvider(authority = AgencyProvider.AUTHORITY, database = AgencyDatabase.class)
+@ContentProvider(authority = AgencyProvider.AUTHORITY, database = AgencyDatabase.class, packageName = "nc.opt.mobile.optmobile")
 public class AgencyProvider {
     static final String AUTHORITY = "nc.opt.mobile.AgencyProvider";
 
