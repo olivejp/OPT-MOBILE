@@ -1,6 +1,8 @@
 package nc.opt.mobile.optmobile.activity;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -15,12 +17,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
@@ -28,11 +32,12 @@ import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private String mUsername;
     private FirebaseAuth firebaseAuth;
+    private FirebaseUser firebaseUser;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private static final int RC_SIGN_IN = 100;
-    private static final String ANONYMOUS = "Anonymous";
+    private Drawable mDrawablePhoto;
+    private MenuItem mMenuItemProfil;
 
     private void callMapsActivity() {
         Intent intent = new Intent(MainActivity.this, MapsActivity.class);
@@ -66,14 +71,14 @@ public class MainActivity extends AppCompatActivity
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
-                    onSignedInInitialize(user.getDisplayName());
+                    onSignedInInitialize(user);
                 } else {
                     // User is signed out
                     onSignedOutCleanup();
 
                     List<AuthUI.IdpConfig> listProviders = new ArrayList<>();
                     listProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build());
-                    listProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build());
+                    listProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build());
                     listProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.PHONE_VERIFICATION_PROVIDER).build());
 
                     startActivityForResult(
@@ -97,12 +102,37 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    private void onSignedInInitialize(String username) {
-        mUsername = username;
+    private void onSignedInInitialize(FirebaseUser user) {
+        firebaseUser = firebaseAuth.getCurrentUser();
+        Toast.makeText(this, "Bienvenue ".concat(user.getDisplayName()), Toast.LENGTH_LONG).show();
+
+        // On définit une tache pour recuperer la photo de la personne connectee
+        AsyncTask<Void, Void, Drawable> myTask = new AsyncTask<Void, Void, Drawable>() {
+            @Override
+            protected Drawable doInBackground(Void... voids) {
+                try {
+                    return Glide.with(MainActivity.this).asDrawable().load(firebaseUser.getPhotoUrl()).submit().get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Drawable drawable) {
+                mDrawablePhoto = drawable;
+                invalidateOptionsMenu();
+            }
+        };
+
+        // On appelle la tache pour aller recuperer la photo
+        myTask.execute();
     }
 
     private void onSignedOutCleanup() {
-        mUsername = ANONYMOUS;
+        firebaseUser = null;
+        mDrawablePhoto = null;
+        invalidateOptionsMenu();
     }
 
 
@@ -124,6 +154,21 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        if (firebaseUser != null) {
+            if (mMenuItemProfil == null) {
+                mMenuItemProfil = menu.add(firebaseUser.getDisplayName())
+                        .setIcon(mDrawablePhoto)
+                        .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            }
+        } else {
+            mMenuItemProfil = null;
+        }
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -133,6 +178,10 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }
+
+        if (id == R.id.action_sign_out) {
+            firebaseAuth.signOut();
         }
 
         return super.onOptionsItemSelected(item);
@@ -177,10 +226,7 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
-            if (resultCode == RESULT_OK) {
-                // Sign-in succeeded, set up the UI
-                Toast.makeText(this, "Signed in!", Toast.LENGTH_SHORT).show();
-            } else if (resultCode == RESULT_CANCELED) {
+            if (resultCode == RESULT_CANCELED) {
                 // Sign in was canceled by the user, finish the activity
                 Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
                 finish();

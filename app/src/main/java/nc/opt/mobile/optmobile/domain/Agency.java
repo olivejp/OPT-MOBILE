@@ -13,64 +13,64 @@ import nc.opt.mobile.optmobile.provider.AgencyInterface;
 @Parcel
 public class Agency {
     @Column(AgencyInterface.OBJECTID)
-    private int OBJECTID;
+    int OBJECTID;
 
     @Column(AgencyInterface.TEXTE)
-    private String TEXTE;
+    String TEXTE;
 
     @Column(AgencyInterface.TYPE)
-    private String TYPE;
+    String TYPE;
 
     @Column(AgencyInterface.NOM)
-    private String NOM;
+    String NOM;
 
     @Column(AgencyInterface.ADRESSE)
-    private String ADRESSE;
+    String ADRESSE;
 
     @Column(AgencyInterface.CODE_POSTAL)
-    private String CODE_POSTAL;
+    String CODE_POSTAL;
 
     @Column(AgencyInterface.VILLE)
-    private String VILLE;
+    String VILLE;
 
     @Column(AgencyInterface.TEL)
-    private String TEL;
+    String TEL;
 
     @Column(AgencyInterface.FAX)
-    private String FAX;
+    String FAX;
 
     @Column(AgencyInterface.HORAIRE)
-    private String HORAIRE;
+    String HORAIRE;
 
     @Column(AgencyInterface.DAB_INTERNE)
-    private int DAB_INTERNE;
+    int DAB_INTERNE;
 
     @Column(AgencyInterface.DAB_EXTERNE)
-    private int DAB_EXTERNE;
+    int DAB_EXTERNE;
 
     @Column(AgencyInterface.CONSEILLER_FINANCIER)
-    private int CONSEILLER_FINANCIER;
+    int CONSEILLER_FINANCIER;
 
     @Column(AgencyInterface.CONSEILLER_TELECOM)
-    private int CONSEILLER_TELECOM;
+    int CONSEILLER_TELECOM;
 
     @Column(AgencyInterface.CONSEILLER_POLYVALENT)
-    private int CONSEILLER_POLYVALENT;
+    int CONSEILLER_POLYVALENT;
 
     @Column(AgencyInterface.CONSEILLER_POSTAL)
-    private int CONSEILLER_POSTAL;
+    int CONSEILLER_POSTAL;
 
     @Column(AgencyInterface.GLOBALID)
-    private String GLOBALID;
+    String GLOBALID;
 
     @Column(AgencyInterface.LATITUDE)
-    private double LATITUDE;
+    double LATITUDE;
 
     @Column(AgencyInterface.LONGITUDE)
-    private double LONGITUDE;
+    double LONGITUDE;
 
     @Column(AgencyInterface.TYPE_GEOMETRY)
-    private String TYPE_GEOMETRY;
+    String TYPE_GEOMETRY;
 
     @ParcelConstructor
     public Agency(int OBJECTID, String TEXTE, String TYPE, String NOM, String ADRESSE, String CODE_POSTAL, String VILLE, String TEL, String FAX, String HORAIRE, int DAB_INTERNE, int DAB_EXTERNE, int CONSEILLER_FINANCIER, int CONSEILLER_TELECOM, int CONSEILLER_POLYVALENT, int CONSEILLER_POSTAL, String GLOBALID, double LATITUDE, double LONGITUDE, String TYPE_GEOMETRY) {

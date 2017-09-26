@@ -16,6 +16,8 @@ public class AgencyProvider {
     static final String AUTHORITY = "nc.opt.mobile.AgencyProvider";
 
     private static final String AGENCY = "agency";
+    private static final String PLAQUE = "plaque";
+    private static final String COORDINATE = "coordinate";
 
     @TableEndpoint(table = AgencyDatabase.LIST_AGENCY)
     public static class ListAgency {
@@ -37,5 +39,44 @@ public class AgencyProvider {
 
     }
 
+    @TableEndpoint(table = AgencyDatabase.LIST_PLAQUE)
+    public static class ListPlaque {
+        @ContentUri(
+                path = "plaque",
+                type = "vnd.android.cursor.dir/list",
+                defaultSort = PlaqueInterface.OBJECTID + " ASC")
+        public static final Uri LIST_PLAQUE = Uri.parse("content://" + AUTHORITY + "/" + PLAQUE);
+
+        @InexactContentUri(
+                path = "plaque/#",
+                name = "PLAQUE_ID",
+                type = "vnd.android.cursor.item/list",
+                whereColumn = PlaqueInterface.OBJECTID,
+                pathSegment = 1)
+        public static Uri withId(long id) {
+            return Uri.parse("content://" + AUTHORITY + "/" + PLAQUE + "/" + id);
+        }
+
+    }
+
+    @TableEndpoint(table = AgencyDatabase.LIST_COORDINATE)
+    public static class ListCoordinate {
+        @ContentUri(
+                path = "coordinate",
+                type = "vnd.android.cursor.dir/list",
+                defaultSort = CoordinateInterface.COORDINATEID + " ASC")
+        public static final Uri LIST_COORDINATE = Uri.parse("content://" + AUTHORITY + "/" + COORDINATE);
+
+        @InexactContentUri(
+                path = "coordinate/#",
+                name = "COORDINATE_ID",
+                type = "vnd.android.cursor.item/list",
+                whereColumn = CoordinateInterface.COORDINATEID,
+                pathSegment = 1)
+        public static Uri withId(long id) {
+            return Uri.parse("content://" + AUTHORITY + "/" + COORDINATE + "/" + id);
+        }
+
+    }
 
 }

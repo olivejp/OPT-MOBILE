@@ -17,7 +17,7 @@ public interface AgencyInterface {
     @DataType(INTEGER)
     @PrimaryKey
     @NotNull
-    String OBJECTID = "objectid";
+    String OBJECTID = "object_id";
 
     @DataType(TEXT)
     String TEXTE = "texte";
@@ -66,7 +66,7 @@ public interface AgencyInterface {
     String CONSEILLER_POSTAL = "conseiller_postal";
 
     @DataType(TEXT)
-    String GLOBALID = "globalid";
+    String GLOBALID = "global_id";
 
     @DataType(REAL)
     String LATITUDE = "latitude";
