@@ -14,22 +14,9 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="opt_logo"
-        app:srcCompat="@drawable/ic_opt" />
-
-    <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Office des postes et télécommunications NC"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Le monde à portée de main" />
+        android:layout_height="match_parent"
+        android:contentDescription="opt_logo"
+        app:srcCompat="@raw/opt_logo" />
 
 </LinearLayout>
