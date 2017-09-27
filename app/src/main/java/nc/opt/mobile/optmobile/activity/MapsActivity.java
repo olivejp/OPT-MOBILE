@@ -1,7 +1,9 @@
 package nc.opt.mobile.optmobile.activity;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.AsyncTaskLoader;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -32,6 +34,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private BitmapDescriptor mIconAgence;
     private BitmapDescriptor mIconAnnexe;
     private HashMap<Marker, Agency> mMapMarkerAgency;
+    private AsyncTask<Void, Void, ArrayList<Agency>> taskGetRecipeList;
 
     @BindView(R.id.txt_agence_nom)
     TextView txt_agence_nom;
@@ -52,9 +55,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         ButterKnife.bind(this);
 
-        // Récupération de la liste des agences
-        mListAgency = ProviderUtilities.getListAgencyFromContentProvider(this);
         mMapMarkerAgency = new HashMap<>();
+
+        // Récupération de la liste des agences
+        taskGetRecipeList = new AsyncTask<Void, Void, ArrayList<Agency>>() {
+            @Override
+            protected ArrayList<Agency> doInBackground(Void... voids) {
+                return ProviderUtilities.getListAgencyFromContentProvider(MapsActivity.this);
+            }
+            @Override
+            protected void onPostExecute(ArrayList<Agency> agencies) {
+                mListAgency = agencies;
+
+                LatLng nc = new LatLng(-20.904305, 165.618042);
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(nc));
+
+                for (Agency agency : mListAgency) {
+                    LatLng latLng = new LatLng(agency.getLATITUDE(), agency.getLONGITUDE());
+
+                    Marker marker = mMap.addMarker(new MarkerOptions()
+                            .position(latLng)
+                            .title(agency.getNOM())
+                            .snippet(agency.getHORAIRE())
+                            .icon(agency.getTYPE().equals("Agence") ? mIconAgence : mIconAnnexe));
+
+                    mMapMarkerAgency.put(marker, agency);
+                }
+
+                mMap.setOnMarkerClickListener(MapsActivity.this);
+            }
+        };
 
         mIconAgence = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
         mIconAnnexe = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
@@ -64,7 +94,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
-
 
     /**
      * Manipulates the map once available.
@@ -78,22 +107,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setOnMarkerClickListener(this);
 
-        LatLng nc = new LatLng(-20.904305, 165.618042);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(nc));
-
-        for (Agency agency : mListAgency) {
-            LatLng latLng = new LatLng(agency.getLATITUDE(), agency.getLONGITUDE());
-
-            Marker marker = mMap.addMarker(new MarkerOptions()
-                    .position(latLng)
-                    .title(agency.getNOM())
-                    .snippet(agency.getHORAIRE())
-                    .icon(agency.getTYPE().equals("Agence") ? mIconAgence : mIconAnnexe));
-
-            mMapMarkerAgency.put(marker, agency);
-        }
+        // Now the map is ready, we retreive the datas from the content provider
+        taskGetRecipeList.execute();
     }
 
     private void setAgencyToLayout(Agency agency){

@@ -1,12 +1,15 @@
 package nc.opt.mobile.optmobile.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.SharedPreferencesCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -14,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.widget.Toast;
 
@@ -40,8 +44,10 @@ public class MainActivity extends AppCompatActivity
     private FirebaseUser firebaseUser;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private static final int RC_SIGN_IN = 100;
+    private static final String PREF_POPULATED = "POPULATE_CP";
     private Drawable mDrawablePhoto;
     private MenuItem mMenuItemProfil;
+    private AsyncTask<Void, Void, Drawable> mTaskGetPhotoFromUrl;
 
     private void callMapsActivity() {
         Intent intent = new Intent(MainActivity.this, MapsActivity.class);
@@ -60,8 +66,14 @@ public class MainActivity extends AppCompatActivity
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        // Populate the contentProvider with assets
-        ProviderUtilities.populateContentProviderFromAsset(this);
+        // Populate the contentProvider with assets, only the first time
+        SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
+        if (!sharedPreferences.getBoolean(PREF_POPULATED, false)) {
+            ProviderUtilities.populateContentProviderFromAsset(this);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean(PREF_POPULATED, true);
+            editor.apply();
+        }
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -75,10 +87,10 @@ public class MainActivity extends AppCompatActivity
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    // User is signed in
-                    onSignedInInitialize(user);
+                firebaseUser = firebaseAuth.getCurrentUser();
+
+                if (firebaseUser != null) {
+                    mTaskGetPhotoFromUrl.execute();
                 } else {
                     // User is signed out
                     onSignedOutCleanup();
@@ -86,7 +98,6 @@ public class MainActivity extends AppCompatActivity
                     List<AuthUI.IdpConfig> listProviders = new ArrayList<>();
                     listProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build());
                     listProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build());
-                    listProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.PHONE_VERIFICATION_PROVIDER).build());
 
                     startActivityForResult(
                             AuthUI.getInstance()
@@ -107,10 +118,32 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-    }
 
-    private void onSignedInInitialize(FirebaseUser user) {
-        firebaseUser = firebaseAuth.getCurrentUser();
+        // On définit une tache pour recuperer la photo de la personne connectee
+        mTaskGetPhotoFromUrl = new AsyncTask<Void, Void, Drawable>() {
+            @Override
+            protected Drawable doInBackground(Void... voids) {
+                try {
+                    return Glide.with(MainActivity.this)
+                            .asDrawable()
+                            .load(firebaseUser.getPhotoUrl())
+                            .apply(bitmapTransform(new RoundedCornersTransformation(3, 3, RoundedCornersTransformation.CornerType.ALL)))
+                            .submit(200, 200)
+                            .get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Drawable drawable) {
+                if (drawable != null) {
+                    mDrawablePhoto = drawable;
+                    invalidateOptionsMenu();
+                }
+            }
+        };
     }
 
     private void onSignedOutCleanup() {
@@ -141,11 +174,12 @@ public class MainActivity extends AppCompatActivity
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         if (firebaseUser != null) {
-            if (mMenuItemProfil == null) {
-                mMenuItemProfil = menu.add(firebaseUser.getDisplayName())
-                        .setIcon(mDrawablePhoto)
-                        .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            if (mMenuItemProfil != null) {
+                menu.removeItem(mMenuItemProfil.getItemId());
             }
+            mMenuItemProfil = menu.add(firebaseUser.getDisplayName())
+                    .setIcon(mDrawablePhoto)
+                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         } else {
             mMenuItemProfil = null;
         }
@@ -211,34 +245,13 @@ public class MainActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == RESULT_OK) {
+
+                firebaseUser = firebaseAuth.getCurrentUser();
+
                 Toast.makeText(this, "Bienvenue", Toast.LENGTH_LONG).show();
 
-                // On définit une tache pour recuperer la photo de la personne connectee
-                AsyncTask<Void, Void, Drawable> myTask = new AsyncTask<Void, Void, Drawable>() {
-                    @Override
-                    protected Drawable doInBackground(Void... voids) {
-                        try {
-                            return Glide.with(MainActivity.this)
-                                    .asDrawable()
-                                    .load(firebaseUser.getPhotoUrl())
-                                    .apply(bitmapTransform(new RoundedCornersTransformation(3,3, RoundedCornersTransformation.CornerType.ALL)))
-                                    .submit(200,200)
-                                    .get();
-                        } catch (InterruptedException | ExecutionException e) {
-                            e.printStackTrace();
-                        }
-                        return null;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Drawable drawable) {
-                        mDrawablePhoto = drawable;
-                        invalidateOptionsMenu();
-                    }
-                };
-
                 // On appelle la tache pour aller recuperer la photo
-                myTask.execute();
+                mTaskGetPhotoFromUrl.execute();
             }
             if (resultCode == RESULT_CANCELED) {
                 // Sign in was canceled by the user, finish the activity
