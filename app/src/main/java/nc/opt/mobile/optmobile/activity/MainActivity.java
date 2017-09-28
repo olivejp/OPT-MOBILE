@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.content.SharedPreferencesCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -17,7 +16,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.widget.Toast;
 
@@ -54,6 +52,63 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    private void defineAuthListener() {
+        // On veut que l'utilisateur soit identifié pour continuer
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                firebaseUser = firebaseAuth.getCurrentUser();
+
+                if (firebaseUser != null) {
+                    mTaskGetPhotoFromUrl.execute();
+                } else {
+                    // User is signed out
+                    onSignedOutCleanup();
+
+                    List<AuthUI.IdpConfig> listProviders = new ArrayList<>();
+                    listProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build());
+                    listProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build());
+
+                    startActivityForResult(
+                            AuthUI.getInstance()
+                                    .createSignInIntentBuilder()
+                                    .setIsSmartLockEnabled(false)
+                                    .setAvailableProviders(listProviders)
+                                    .build(),
+                            RC_SIGN_IN);
+                }
+            }
+        };
+    }
+
+    private void defineAsyncTaskGetPhoto() {
+        // On définit une tache pour recuperer la photo de la personne connectee
+        mTaskGetPhotoFromUrl = new AsyncTask<Void, Void, Drawable>() {
+            @Override
+            protected Drawable doInBackground(Void... voids) {
+                try {
+                    return Glide.with(MainActivity.this)
+                            .asDrawable()
+                            .load(firebaseUser.getPhotoUrl())
+                            .apply(bitmapTransform(new RoundedCornersTransformation(3, 3, RoundedCornersTransformation.CornerType.ALL)))
+                            .submit(200, 200)
+                            .get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Drawable drawable) {
+                if (drawable != null) {
+                    mDrawablePhoto = drawable;
+                    invalidateOptionsMenu();
+                }
+            }
+        };
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,32 +138,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        // On veut que l'utilisateur soit identifié pour continuer
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                firebaseUser = firebaseAuth.getCurrentUser();
-
-                if (firebaseUser != null) {
-                    mTaskGetPhotoFromUrl.execute();
-                } else {
-                    // User is signed out
-                    onSignedOutCleanup();
-
-                    List<AuthUI.IdpConfig> listProviders = new ArrayList<>();
-                    listProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build());
-                    listProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build());
-
-                    startActivityForResult(
-                            AuthUI.getInstance()
-                                    .createSignInIntentBuilder()
-                                    .setIsSmartLockEnabled(false)
-                                    .setAvailableProviders(listProviders)
-                                    .build(),
-                            RC_SIGN_IN);
-                }
-            }
-        };
+        defineAuthListener();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -119,31 +149,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // On définit une tache pour recuperer la photo de la personne connectee
-        mTaskGetPhotoFromUrl = new AsyncTask<Void, Void, Drawable>() {
-            @Override
-            protected Drawable doInBackground(Void... voids) {
-                try {
-                    return Glide.with(MainActivity.this)
-                            .asDrawable()
-                            .load(firebaseUser.getPhotoUrl())
-                            .apply(bitmapTransform(new RoundedCornersTransformation(3, 3, RoundedCornersTransformation.CornerType.ALL)))
-                            .submit(200, 200)
-                            .get();
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Drawable drawable) {
-                if (drawable != null) {
-                    mDrawablePhoto = drawable;
-                    invalidateOptionsMenu();
-                }
-            }
-        };
+        defineAsyncTaskGetPhoto();
     }
 
     private void onSignedOutCleanup() {
@@ -188,39 +194,35 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                return true;
+            case R.id.action_sign_out:
+                firebaseAuth.signOut();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        if (id == R.id.action_sign_out) {
-            firebaseAuth.signOut();
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_geo_agence) {
-            callMapsActivity();
-        } else if (id == R.id.nav_geo_fibre) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_geo_agence:
+                callMapsActivity();
+                break;
+            case R.id.nav_geo_fibre:
+                break;
+            case R.id.nav_share:
+                break;
+            case R.id.nav_send:
+                break;
+            default:
+                break;
         }
 
+        // Après avoir cliquer sur un menu, on ferme le menu latéral
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -245,17 +247,15 @@ public class MainActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == RESULT_OK) {
-
                 firebaseUser = firebaseAuth.getCurrentUser();
-
-                Toast.makeText(this, "Bienvenue", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.welcome, Toast.LENGTH_LONG).show();
 
                 // On appelle la tache pour aller recuperer la photo
                 mTaskGetPhotoFromUrl.execute();
             }
             if (resultCode == RESULT_CANCELED) {
                 // Sign in was canceled by the user, finish the activity
-                Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.sign_in_cancelled, Toast.LENGTH_SHORT).show();
                 finish();
             }
         }
