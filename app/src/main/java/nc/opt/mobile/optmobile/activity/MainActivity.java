@@ -38,14 +38,16 @@ import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private FirebaseAuth firebaseAuth;
-    private FirebaseUser firebaseUser;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
     private static final int RC_SIGN_IN = 100;
     private static final String PREF_POPULATED = "POPULATE_CP";
+
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
     private Drawable mDrawablePhoto;
     private MenuItem mMenuItemProfil;
     private AsyncTask<Void, Void, Drawable> mTaskGetPhotoFromUrl;
+    private boolean mTaskRunning;
 
     private void callMapsActivity() {
         Intent intent = new Intent(MainActivity.this, MapsActivity.class);
@@ -57,10 +59,12 @@ public class MainActivity extends AppCompatActivity
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                firebaseUser = firebaseAuth.getCurrentUser();
+                mFirebaseUser = firebaseAuth.getCurrentUser();
 
-                if (firebaseUser != null) {
-                    mTaskGetPhotoFromUrl.execute();
+                if (mFirebaseUser != null) {
+                    if (!mTaskRunning) {
+                        mTaskGetPhotoFromUrl.execute();
+                    }
                 } else {
                     // User is signed out
                     onSignedOutCleanup();
@@ -86,10 +90,11 @@ public class MainActivity extends AppCompatActivity
         mTaskGetPhotoFromUrl = new AsyncTask<Void, Void, Drawable>() {
             @Override
             protected Drawable doInBackground(Void... voids) {
+                mTaskRunning = true;
                 try {
                     return Glide.with(MainActivity.this)
                             .asDrawable()
-                            .load(firebaseUser.getPhotoUrl())
+                            .load(mFirebaseUser.getPhotoUrl())
                             .apply(bitmapTransform(new RoundedCornersTransformation(3, 3, RoundedCornersTransformation.CornerType.ALL)))
                             .submit(200, 200)
                             .get();
@@ -105,12 +110,13 @@ public class MainActivity extends AppCompatActivity
                     mDrawablePhoto = drawable;
                     invalidateOptionsMenu();
                 }
+                mTaskRunning = false;
             }
         };
     }
 
     private void onSignedOutCleanup() {
-        firebaseUser = null;
+        mFirebaseUser = null;
         mDrawablePhoto = null;
         invalidateOptionsMenu();
     }
@@ -125,7 +131,7 @@ public class MainActivity extends AppCompatActivity
         // Get information back from the savedInstanceState
         Icepick.restoreInstanceState(this, savedInstanceState);
 
-        firebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseAuth = FirebaseAuth.getInstance();
 
         // Populate the contentProvider with assets, only the first time
         SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
@@ -178,11 +184,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if (firebaseUser != null) {
+        if (mFirebaseUser != null) {
             if (mMenuItemProfil != null) {
                 menu.removeItem(mMenuItemProfil.getItemId());
             }
-            mMenuItemProfil = menu.add(firebaseUser.getDisplayName())
+            mMenuItemProfil = menu.add(mFirebaseUser.getDisplayName())
                     .setIcon(mDrawablePhoto)
                     .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         } else {
@@ -197,7 +203,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_settings:
                 return true;
             case R.id.action_sign_out:
-                firebaseAuth.signOut();
+                mFirebaseAuth.signOut();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -230,14 +236,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        firebaseAuth.addAuthStateListener(mAuthStateListener);
+        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         if (mAuthStateListener != null) {
-            firebaseAuth.removeAuthStateListener(mAuthStateListener);
+            mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
         }
     }
 
@@ -246,11 +252,13 @@ public class MainActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == RESULT_OK) {
-                firebaseUser = firebaseAuth.getCurrentUser();
+                mFirebaseUser = mFirebaseAuth.getCurrentUser();
                 Toast.makeText(this, R.string.welcome, Toast.LENGTH_LONG).show();
 
                 // On appelle la tache pour aller recuperer la photo
-                mTaskGetPhotoFromUrl.execute();
+                if (!mTaskRunning) {
+                    mTaskGetPhotoFromUrl.execute();
+                }
             }
             if (resultCode == RESULT_CANCELED) {
                 // Sign in was canceled by the user, finish the activity
