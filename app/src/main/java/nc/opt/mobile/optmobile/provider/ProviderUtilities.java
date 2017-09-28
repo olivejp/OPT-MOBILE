@@ -36,7 +36,7 @@ public class ProviderUtilities {
         ProviderUtilities.populateContentProviderFromFeatureCollection(context, featureCollection);
     }
 
-    public static void populateContentProviderFromFeatureCollection(Context context, FeatureCollection featureCollection) {
+    private static void populateContentProviderFromFeatureCollection(Context context, FeatureCollection featureCollection) {
 
         // Delete all the content
         context.getContentResolver().delete(AgencyProvider.ListAgency.LIST_AGENCY, null, null);

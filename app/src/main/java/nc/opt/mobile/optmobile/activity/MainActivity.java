@@ -109,6 +109,12 @@ public class MainActivity extends AppCompatActivity
         };
     }
 
+    private void onSignedOutCleanup() {
+        firebaseUser = null;
+        mDrawablePhoto = null;
+        invalidateOptionsMenu();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -151,13 +157,6 @@ public class MainActivity extends AppCompatActivity
 
         defineAsyncTaskGetPhoto();
     }
-
-    private void onSignedOutCleanup() {
-        firebaseUser = null;
-        mDrawablePhoto = null;
-        invalidateOptionsMenu();
-    }
-
 
     @Override
     public void onBackPressed() {
