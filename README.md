@@ -1,6 +1,8 @@
 # OPT-MOBILE
 Application mobile OPT
 
+[![Build Status](https://www.bitrise.io/app/ba4de9a3048d3ef2/status.svg?token=nxjp7iyDeBB_f2VgVw3h9Q)](https://www.bitrise.io/app/ba4de9a3048d3ef2)
+
 # Description
 This project is in progress for the moment.
 
