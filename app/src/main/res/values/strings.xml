@@ -11,6 +11,10 @@
 
     <string name="facebook_app_id">132298410733463</string>
     <string name="fb_login_protocol_scheme">fb132298410733463</string>
+
     <string name="welcome">Bienvenue</string>
     <string name="sign_in_cancelled">Authentification annulée</string>
+    <string name="title_activity_tab">TabActivity</string>
+    <string name="title_agencies">Agences</string>
+    <string name="title_fibre">Fibre</string>
 </resources>

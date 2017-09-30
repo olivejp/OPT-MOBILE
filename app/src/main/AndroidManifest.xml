@@ -31,13 +31,11 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <!--
-         This metadata provide access to facebook API
-        -->
+        <!--          This metadata provide access to facebook API -->
         <meta-data
-            tools:replace="android:value"
             android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id" />
+            android:value="@string/facebook_app_id"
+            tools:replace="android:value" />
 
         <activity
             android:name="com.facebook.FacebookActivity"
@@ -55,10 +53,8 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-
-
         <activity
-            android:name="nc.opt.mobile.optmobile.activity.MainActivity"
+            android:name=".activity.MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -68,15 +64,10 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name="nc.opt.mobile.optmobile.activity.MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
-
         <provider
-            android:name="nc.opt.mobile.optmobile.AgencyProvider"
+            android:name=".AgencyProvider"
             android:authorities="nc.opt.mobile.AgencyProvider"
             android:exported="false" />
-
 
     </application>
 

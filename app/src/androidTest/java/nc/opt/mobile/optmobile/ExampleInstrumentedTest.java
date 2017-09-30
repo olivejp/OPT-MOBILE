@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 
 import nc.opt.mobile.optmobile.domain.FeatureCollection;
 
+
 /**
  * Instrumentation test, which will execute on an Android device.
  *

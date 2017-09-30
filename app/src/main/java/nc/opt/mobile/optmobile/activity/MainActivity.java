@@ -14,6 +14,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,12 +32,15 @@ import java.util.concurrent.ExecutionException;
 import icepick.Icepick;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import nc.opt.mobile.optmobile.R;
+import nc.opt.mobile.optmobile.fragment.AgencyMapFragment;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final String TAG = MainActivity.class.getName();
 
     private static final int RC_SIGN_IN = 100;
     private static final String PREF_POPULATED = "POPULATE_CP";
@@ -49,9 +53,9 @@ public class MainActivity extends AppCompatActivity
     private AsyncTask<Void, Void, Drawable> mTaskGetPhotoFromUrl;
     private boolean mTaskRunning;
 
-    private void callMapsActivity() {
-        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-        startActivity(intent);
+    private void callAgencyMapFragment() {
+        AgencyMapFragment agencyMapFragment = AgencyMapFragment.newInstance();
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_main, agencyMapFragment).addToBackStack(null).commit();
     }
 
     private void defineAuthListener() {
@@ -99,7 +103,7 @@ public class MainActivity extends AppCompatActivity
                             .submit(200, 200)
                             .get();
                 } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, e.getMessage(), e);
                 }
                 return null;
             }
@@ -215,7 +219,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_geo_agence:
-                callMapsActivity();
+                callAgencyMapFragment();
                 break;
             case R.id.nav_geo_fibre:
                 break;
