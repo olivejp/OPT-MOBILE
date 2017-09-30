@@ -50,8 +50,6 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private Drawable mDrawablePhoto;
     private MenuItem mMenuItemProfil;
-    private AsyncTask<Void, Void, Drawable> mTaskGetPhotoFromUrl;
-    private boolean mTaskRunning;
 
     private void callAgencyMapFragment() {
         AgencyMapFragment agencyMapFragment = AgencyMapFragment.newInstance();
@@ -66,9 +64,7 @@ public class MainActivity extends AppCompatActivity
                 mFirebaseUser = firebaseAuth.getCurrentUser();
 
                 if (mFirebaseUser != null) {
-                    if (!mTaskRunning) {
-                        mTaskGetPhotoFromUrl.execute();
-                    }
+                    defineAsyncTaskGetPhoto().execute();
                 } else {
                     // User is signed out
                     onSignedOutCleanup();
@@ -89,12 +85,11 @@ public class MainActivity extends AppCompatActivity
         };
     }
 
-    private void defineAsyncTaskGetPhoto() {
+    private AsyncTask<Void, Void, Drawable> defineAsyncTaskGetPhoto() {
         // On définit une tache pour recuperer la photo de la personne connectee
-        mTaskGetPhotoFromUrl = new AsyncTask<Void, Void, Drawable>() {
+        return new AsyncTask<Void, Void, Drawable>() {
             @Override
             protected Drawable doInBackground(Void... voids) {
-                mTaskRunning = true;
                 try {
                     return Glide.with(MainActivity.this)
                             .asDrawable()
@@ -114,7 +109,6 @@ public class MainActivity extends AppCompatActivity
                     mDrawablePhoto = drawable;
                     invalidateOptionsMenu();
                 }
-                mTaskRunning = false;
             }
         };
     }
@@ -260,9 +254,8 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(this, R.string.welcome, Toast.LENGTH_LONG).show();
 
                 // On appelle la tache pour aller recuperer la photo
-                if (!mTaskRunning) {
-                    mTaskGetPhotoFromUrl.execute();
-                }
+                defineAsyncTaskGetPhoto().execute();
+
             }
             if (resultCode == RESULT_CANCELED) {
                 // Sign in was canceled by the user, finish the activity

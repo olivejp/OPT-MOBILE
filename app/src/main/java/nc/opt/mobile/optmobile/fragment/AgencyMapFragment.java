@@ -134,7 +134,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
+    
         // Now the map is ready, we retreive the datas from the content provider
         taskGetRecipeList.execute();
     }
