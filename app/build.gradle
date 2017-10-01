@@ -44,8 +44,8 @@ dependencies {
     compile "com.google.firebase:firebase-messaging:${firebaseLibrary}"
     compile 'com.firebaseui:firebase-ui-auth:2.3.0'
 
-    // FirebaseUI
     compile "com.google.android.gms:play-services-maps:${firebaseLibrary}"
+    compile "com.google.android.gms:play-services-location:${firebaseLibrary}"
 
     // Facebook SDK to authenticate users with their Facebook account.
     // Third libraries
