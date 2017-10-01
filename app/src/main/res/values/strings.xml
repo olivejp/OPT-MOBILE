@@ -17,4 +17,7 @@
     <string name="title_activity_tab">TabActivity</string>
     <string name="title_agencies">Agences</string>
     <string name="title_fibre">Fibre</string>
+    <string name="agences_opt">Agences OPT</string>
+    <string name="d_ploiement_fibre">Déploiement Fibre</string>
+    <string name="localisation">Localisation</string>
 </resources>

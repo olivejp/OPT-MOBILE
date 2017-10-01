@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="Localisation">
+    <item android:title="@string/localisation">
         <menu>
             <item
                 android:id="@+id/nav_geo_agence"
                 android:icon="@drawable/ic_menu_gallery"
-                android:title="Agences OPT" />
+                android:title="@string/agences_opt" />
             <item
                 android:id="@+id/nav_geo_fibre"
                 android:icon="@drawable/ic_menu_gallery"
-                android:title="Déploiement Fibre" />
+                android:title="@string/d_ploiement_fibre" />
         </menu>
     </item>
     <item android:title="Communicate">

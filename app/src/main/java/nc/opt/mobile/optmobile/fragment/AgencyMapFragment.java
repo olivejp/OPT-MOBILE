@@ -19,7 +19,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,13 +28,16 @@ import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 
 public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
+    private static final String ARG_AGENCY_SELECTED = "AGENCY_SELECTED";
+    private static final String ARG_LIST_AGENCIES = "ARG_LIST_AGENCIES";
+
     private GoogleMap mMap;
-    private ArrayList<Agency> mListAgency;
     private Marker mMarkerSelected;
     private BitmapDescriptor mIconAgence;
     private BitmapDescriptor mIconAnnexe;
-    private HashMap<Marker, Agency> mMapMarkerAgency;
-    private AsyncTask<Void, Void, ArrayList<Agency>> taskGetRecipeList;
+    private Agency mAgencySelected;
+    private ArrayList<Agency> mList;
+    private boolean launchTask;
 
     @BindView(R.id.txt_agence_nom)
     TextView txtAgenceNom;
@@ -49,7 +51,8 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     @BindView(R.id.txt_agence_nb_dab_ext)
     TextView txtAgenceNbDabExt;
 
-    public AgencyMapFragment() {}
+    public AgencyMapFragment() {
+    }
 
     public static AgencyMapFragment newInstance() {
         AgencyMapFragment fragment = new AgencyMapFragment();
@@ -59,7 +62,6 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     }
 
     /**
-     *
      * @param agency
      */
     private void setAgencyToLayout(Agency agency) {
@@ -70,37 +72,55 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         txtAgenceNbDabExt.setText(String.valueOf(agency.getDAB_EXTERNE()));
     }
 
+    private void populateMap(ArrayList<Agency> agencyList) {
+        for (Agency agency : agencyList) {
+            LatLng latLng = new LatLng(agency.getLATITUDE(), agency.getLONGITUDE());
+
+            BitmapDescriptor bitmapDescriptor;
+            if (agency.equals(mAgencySelected)) {
+                bitmapDescriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+            } else {
+                bitmapDescriptor = agency.getTYPE().equals("Agence") ? mIconAgence : mIconAnnexe;
+            }
+
+            Marker marker = mMap.addMarker(new MarkerOptions()
+                    .position(latLng)
+                    .title(agency.getNOM())
+                    .snippet(agency.getHORAIRE())
+                    .icon(bitmapDescriptor));
+
+            marker.setTag(agency);
+        }
+
+        if (mAgencySelected != null) {
+            setAgencyToLayout(mAgencySelected);
+        }
+    }
+
     /**
      * Create AsyncTask to retrieve Agencies informations
+     *
      * @return AsyncTask<Void, Void, ArrayList<Agency>>
      */
-    private AsyncTask<Void, Void, ArrayList<Agency>> createTask(){
+    private AsyncTask<Void, Void, ArrayList<Agency>> createTask() {
         return new AsyncTask<Void, Void, ArrayList<Agency>>() {
             @Override
             protected ArrayList<Agency> doInBackground(Void... voids) {
+                // Get the list of agencies from content provider
                 return ProviderUtilities.getListAgencyFromContentProvider(getActivity());
             }
 
             @Override
-            protected void onPostExecute(ArrayList<Agency> agencies) {
-                mListAgency = agencies;
+            protected void onPostExecute(ArrayList<Agency> list) {
+                super.onPostExecute(list);
 
+                // Set the map in New Caledonia
                 LatLng nc = new LatLng(-20.904305, 165.618042);
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(nc));
 
-                for (Agency agency : mListAgency) {
-                    LatLng latLng = new LatLng(agency.getLATITUDE(), agency.getLONGITUDE());
-
-                    Marker marker = mMap.addMarker(new MarkerOptions()
-                            .position(latLng)
-                            .title(agency.getNOM())
-                            .snippet(agency.getHORAIRE())
-                            .icon(agency.getTYPE().equals("Agence") ? mIconAgence : mIconAnnexe));
-
-                    mMapMarkerAgency.put(marker, agency);
-                }
-
-                mMap.setOnMarkerClickListener(AgencyMapFragment.this);
+                // Populate GoogleMap with the agencies list
+                mList = list;
+                populateMap(mList);
             }
         };
     }
@@ -108,8 +128,13 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        taskGetRecipeList = createTask();
-        mMapMarkerAgency = new HashMap<>();
+        if (savedInstanceState != null) {
+            mAgencySelected = savedInstanceState.getParcelable(ARG_AGENCY_SELECTED);
+            mList = savedInstanceState.getParcelableArrayList(ARG_LIST_AGENCIES);
+            launchTask = false;
+        } else {
+            launchTask = true;
+        }
     }
 
     @Override
@@ -132,27 +157,38 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(ARG_LIST_AGENCIES, mList);
+        outState.putParcelable(ARG_AGENCY_SELECTED, mAgencySelected);
+    }
+
+    @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-    
+
+        mMap.setOnMarkerClickListener(AgencyMapFragment.this);
+
         // Now the map is ready, we retreive the datas from the content provider
-        taskGetRecipeList.execute();
+        if (launchTask) {
+            createTask().execute();
+        } else {
+            populateMap(mList);
+        }
     }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        Agency agency;
         if (marker != null) {
             if (mMarkerSelected != null && !marker.equals(mMarkerSelected)) {
-                agency = mMapMarkerAgency.get(mMarkerSelected);
-                mMarkerSelected.setIcon(agency.getTYPE().equals("Agence") ? mIconAgence : mIconAnnexe);
+                mMarkerSelected.setIcon(mAgencySelected.getTYPE().equals("Agence") ? mIconAgence : mIconAnnexe);
             }
 
-            agency = mMapMarkerAgency.get(marker);
-            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
             mMarkerSelected = marker;
+            mAgencySelected = (Agency) mMarkerSelected.getTag();
+            mMarkerSelected.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
 
-            setAgencyToLayout(agency);
+            setAgencyToLayout(mAgencySelected);
 
             return true;
         } else {
