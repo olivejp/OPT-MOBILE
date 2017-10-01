@@ -8,6 +8,7 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RawRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -84,6 +85,25 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     TextView txtAgenceNbDabExt;
 
     private FusedLocationProviderClient mFusedLocationClient;
+
+    /**
+     * Customise the styling of the base map using a JSON object defined
+     * in a raw resource file.
+     */
+    private boolean changeMapStyle(GoogleMap map, @RawRes int idResource) {
+        boolean success = false;
+        try {
+            success = map.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                            getActivity(), idResource));
+            if (!success) {
+                Log.e(TAG, getString(R.string.error_map_style_parsing));
+            }
+        } catch (Resources.NotFoundException e) {
+            Log.e(TAG, getString(R.string.error_map_style_not_found), e);
+        }
+        return success;
+    }
 
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override
@@ -277,11 +297,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
                     int statusCode = ((ApiException) e).getStatusCode();
                     switch (statusCode) {
                         case CommonStatusCodes.RESOLUTION_REQUIRED:
-                            // Location settings are not satisfied, but this can be fixed
-                            // by showing the user a dialog.
                             try {
-                                // Show the dialog by calling startResolutionForResult(),
-                                // and check the result in onActivityResult().
                                 ResolvableApiException resolvable = (ResolvableApiException) e;
                                 resolvable.startResolutionForResult(getActivity(),
                                         REQUEST_CHECK_SETTINGS);
@@ -290,8 +306,6 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
                             }
                             break;
                         case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                            // Location settings are not satisfied. However, we have no way
-                            // to fix the settings so we won't show the dialog.
                             break;
                     }
                 }
@@ -303,18 +317,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Customise the styling of the base map using a JSON object defined
-        // in a raw resource file.
-        try {
-            boolean success = mMap.setMapStyle(
-                    MapStyleOptions.loadRawResourceStyle(
-                            getActivity(), R.raw.google_map_style));
-            if (!success) {
-                Log.e(TAG, "Style parsing failed.");
-            }
-        } catch (Resources.NotFoundException e) {
-            Log.e(TAG, "Can't find style. Error: ", e);
-        }
+        changeMapStyle(mMap, R.raw.google_map_style);
 
         mMap.setOnMarkerClickListener(AgencyMapFragment.this);
 
