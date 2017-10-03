@@ -43,6 +43,7 @@ dependencies {
     compile "com.google.firebase:firebase-database:${firebaseLibrary}"
     compile "com.google.firebase:firebase-messaging:${firebaseLibrary}"
 
+    // Google play services
     compile "com.google.android.gms:play-services-maps:${firebaseLibrary}"
     compile "com.google.android.gms:play-services-location:${firebaseLibrary}"
 
@@ -52,14 +53,8 @@ dependencies {
 
     // Allow cursor to object serialisation
     compile "frankiesardo:icepick:${icepickVersion}"
-    provided "frankiesardo:icepick-processor:${icepickVersion}"
 
-    // Add some transformation with Glide
-    androidTestCompile('com.android.support.test.espresso:espresso-core:3.0.1', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    annotationProcessor "com.github.bumptech.glide:compiler:${glideVersion}"
-    // App's dependencies, including test
+    // App's dependencies
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.firebaseui:firebase-ui-auth:2.3.0'
@@ -73,10 +68,19 @@ dependencies {
     compile 'jp.wasabeef:glide-transformations:3.0.1'
     compile 'com.android.support:support-annotations:25.3.1'
     compile 'org.jetbrains:annotations-java5:15.0'
+
+    // Test dependecies
     testCompile 'junit:junit:4.12'
+
+    // Processor dependencies
     annotationProcessor 'org.parceler:parceler:1.1.9'
     annotationProcessor 'net.simonvt.schematic:schematic-compiler:0.7.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    annotationProcessor "com.github.bumptech.glide:compiler:${glideVersion}"
+    androidTestCompile('com.android.support.test.espresso:espresso-core:3.0.1', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    provided "frankiesardo:icepick-processor:${icepickVersion}"
 }
 
 apply plugin: 'com.google.gms.google-services'
