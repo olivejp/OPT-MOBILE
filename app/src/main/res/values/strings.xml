@@ -22,4 +22,9 @@
     <string name="localisation">Localisation</string>
     <string name="error_map_style_parsing">Style parsing failed.</string>
     <string name="error_map_style_not_found">Can\'t find style. Error:</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="courrier">Courrier</string>
+    <string name="suivre_colis">Suivre colis</string>
 </resources>

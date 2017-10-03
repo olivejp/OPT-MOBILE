@@ -30,17 +30,25 @@ import java.util.concurrent.ExecutionException;
 
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.fragment.AgencyMapFragment;
+import nc.opt.mobile.optmobile.fragment.SearchParcelFragment;
+import nc.opt.mobile.optmobile.interfaces.AttachToPermissionActivity;
+import nc.opt.mobile.optmobile.interfaces.ListenerPermissionResult;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, AttachToPermissionActivity {
 
     private static final String TAG = MainActivity.class.getName();
     private static final String TAG_AGENCY_MAP_FRAGMENT = "AGENCY_MAP_FRAGMENT";
+    private static final String TAG_SEARCH_PARCEL_FRAGMENT = "TAG_SEARCH_PARCEL_FRAGMENT";
 
-    private static final int RC_SIGN_IN = 100;
+    public static final int RC_PERMISSION_LOCATION = 100;
+    public static final int RC_PERMISSION_CALL_PHONE = 200;
+    public static final int RC_SIGN_IN = 300;
+
     private static final String PREF_POPULATED = "POPULATE_CP";
     private static final String SAVED_AGENCY_FRAGMENT = "SAVED_AGENCY_FRAGMENT";
+    private static final String SAVED_SEARCH_PARCEL_FRAGMENT = "SAVED_SEARCH_PARCEL_FRAGMENT";
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
@@ -48,6 +56,8 @@ public class MainActivity extends AppCompatActivity
     private Drawable mDrawablePhoto;
     private MenuItem mMenuItemProfil;
     private AgencyMapFragment agencyMapFragment;
+    private SearchParcelFragment searchParcelFragment;
+    private static ArrayList<ListenerPermissionResult> mListenerPermissionResult = new ArrayList<>();
 
     private void callAgencyMapFragment() {
         agencyMapFragment = (AgencyMapFragment) getSupportFragmentManager().findFragmentByTag(TAG_AGENCY_MAP_FRAGMENT);
@@ -57,6 +67,18 @@ public class MainActivity extends AppCompatActivity
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.frame_main, agencyMapFragment, TAG_AGENCY_MAP_FRAGMENT)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void callSuiviColis() {
+        searchParcelFragment = (SearchParcelFragment) getSupportFragmentManager().findFragmentByTag(TAG_AGENCY_MAP_FRAGMENT);
+        if (searchParcelFragment == null) {
+            searchParcelFragment = searchParcelFragment.newInstance();
+        }
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.frame_main, searchParcelFragment, TAG_SEARCH_PARCEL_FRAGMENT)
                 .addToBackStack(null)
                 .commit();
     }
@@ -134,6 +156,7 @@ public class MainActivity extends AppCompatActivity
         // Get information back from the savedInstanceState
         if (savedInstanceState != null) {
             agencyMapFragment = (AgencyMapFragment) getSupportFragmentManager().getFragment(savedInstanceState, SAVED_AGENCY_FRAGMENT);
+            searchParcelFragment = (SearchParcelFragment) getSupportFragmentManager().getFragment(savedInstanceState, SAVED_SEARCH_PARCEL_FRAGMENT);
         }
 
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -214,9 +237,8 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_geo_fibre:
                 break;
-            case R.id.nav_share:
-                break;
-            case R.id.nav_send:
+            case R.id.nav_suivi_colis:
+                callSuiviColis();
                 break;
             default:
                 break;
@@ -269,5 +291,26 @@ public class MainActivity extends AppCompatActivity
         if (agencyMapFragment != null) {
             getSupportFragmentManager().putFragment(outState, SAVED_AGENCY_FRAGMENT, agencyMapFragment);
         }
+        if (searchParcelFragment != null) {
+            getSupportFragmentManager().putFragment(outState, SAVED_SEARCH_PARCEL_FRAGMENT, searchParcelFragment);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        for (ListenerPermissionResult listenerPermissionResult : mListenerPermissionResult) {
+            listenerPermissionResult.onPermissionRequestResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    @Override
+    public void onAttachPermissionActivity(ListenerPermissionResult listenerPermissionResult) {
+        mListenerPermissionResult.add(listenerPermissionResult);
+    }
+
+    @Override
+    public void onDetachToPermissionActivity(ListenerPermissionResult listenerPermissionResult) {
+        mListenerPermissionResult.remove(listenerPermissionResult);
     }
 }
