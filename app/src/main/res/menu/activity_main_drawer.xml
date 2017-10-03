@@ -13,16 +13,12 @@
                 android:title="@string/d_ploiement_fibre" />
         </menu>
     </item>
-    <item android:title="Communicate">
+    <item android:title="@string/courrier">
         <menu>
             <item
-                android:id="@+id/nav_share"
+                android:id="@+id/nav_suivi_colis"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:title="@string/suivre_colis" />
         </menu>
     </item>
 

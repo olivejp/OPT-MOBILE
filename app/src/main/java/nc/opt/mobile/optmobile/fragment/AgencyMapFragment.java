@@ -1,14 +1,18 @@
 package nc.opt.mobile.optmobile.fragment;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RawRes;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -29,10 +33,12 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -47,11 +53,17 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.domain.Agency;
+import nc.opt.mobile.optmobile.interfaces.AttachToPermissionActivity;
+import nc.opt.mobile.optmobile.interfaces.ListenerPermissionResult;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 
-public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+import static nc.opt.mobile.optmobile.activity.MainActivity.RC_PERMISSION_CALL_PHONE;
+import static nc.opt.mobile.optmobile.activity.MainActivity.RC_PERMISSION_LOCATION;
+
+public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, ListenerPermissionResult {
 
     private static final String TAG = AgencyMapFragment.class.getName();
 
@@ -59,8 +71,9 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     private static final String ARG_LIST_AGENCIES = "ARG_LIST_AGENCIES";
     private static final String REQUESTING_LOCATION_UPDATES_KEY = "REQUESTING_LOCATION_UPDATES_KEY";
 
-    private static final int RC_LOCATION_FINE = 100;
-    private static final int REQUEST_CHECK_SETTINGS = 200;
+    private static final int RC_SEND_AGENCY_CALL = 300;
+    private static final int REQUEST_CHECK_SETTINGS = 400;
+    private static final float S_ZOOM = 6.7f;
 
     private GoogleMap mMap;
     private Marker mMarkerSelected;
@@ -68,9 +81,11 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     private BitmapDescriptor mIconAnnexe;
     private Agency mAgencySelected;
     private ArrayList<Agency> mList;
-    private boolean launchTask;
     private LocationRequest mLocationRequest;
     private boolean mRequestingLocationUpdates;
+    private Location mCurrentLocation;
+    private AttachToPermissionActivity mPermissionActivity;
+    private FusedLocationProviderClient mFusedLocationClient;
 
     @BindView(R.id.txt_agence_nom)
     TextView txtAgenceNom;
@@ -84,7 +99,8 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     @BindView(R.id.txt_agence_nb_dab_ext)
     TextView txtAgenceNbDabExt;
 
-    private FusedLocationProviderClient mFusedLocationClient;
+    @BindView(R.id.fab_call_agency)
+    FloatingActionButton fab_call_agency;
 
     /**
      * Customise the styling of the base map using a JSON object defined
@@ -105,11 +121,21 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         return success;
     }
 
+    private void centerMap(double latitude, double longitude, float zoom) {
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude,
+                longitude)));
+
+        if (zoom != -1) {
+            CameraUpdate uptadeZoom = CameraUpdateFactory.zoomTo(zoom);
+            mMap.animateCamera(uptadeZoom);
+        }
+    }
+
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
             for (Location location : locationResult.getLocations()) {
-                mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())));
+                mCurrentLocation = location;
             }
         }
     };
@@ -178,8 +204,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
                 super.onPostExecute(list);
 
                 // Set the map in New Caledonia
-                LatLng nc = new LatLng(-20.904305, 165.618042);
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(nc));
+                centerMap(-20.904305, 165.618042, S_ZOOM);
 
                 // Populate GoogleMap with the agencies list
                 mList = list;
@@ -189,8 +214,8 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     }
 
     private void startLocationUpdates() {
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                     mLocationCallback,
                     null);
@@ -199,6 +224,88 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
 
     private void stopLocationUpdates() {
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+    }
+
+    private void enableLocation() {
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
+
+            // Add settings to the location request
+            mLocationRequest = new LocationRequest();
+            mLocationRequest.setInterval(10000);
+            mLocationRequest.setFastestInterval(5000);
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+            // Build the Location Setting request with the previous LocationRequest
+            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                    .addLocationRequest(mLocationRequest);
+
+            SettingsClient client = LocationServices.getSettingsClient(getActivity());
+            Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
+
+            // If the check of the location settings is success, then we start location updates
+            task.addOnSuccessListener(getActivity(), new OnSuccessListener<LocationSettingsResponse>() {
+                @Override
+                public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                    startLocationUpdates();
+                }
+            });
+
+            task.addOnFailureListener(getActivity(), new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    int statusCode = ((ApiException) e).getStatusCode();
+                    switch (statusCode) {
+                        case CommonStatusCodes.RESOLUTION_REQUIRED:
+                            try {
+                                ResolvableApiException resolvable = (ResolvableApiException) e;
+                                resolvable.startResolutionForResult(getActivity(),
+                                        REQUEST_CHECK_SETTINGS);
+                            } catch (IntentSender.SendIntentException sendEx) {
+                                // Ignore the error.
+                            }
+                            break;
+                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                            break;
+                    }
+                }
+            });
+        }
+    }
+
+    private void callSelectedAgency() {
+        Intent intent = new Intent(Intent.ACTION_CALL);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setData(Uri.parse("tel:" + mAgencySelected.getTEL().replaceAll("\\s+", "")));
+        startActivityForResult(intent, RC_SEND_AGENCY_CALL);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof AttachToPermissionActivity) {
+            mPermissionActivity = (AttachToPermissionActivity) context;
+            mPermissionActivity.onAttachPermissionActivity(this);
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mPermissionActivity.onDetachToPermissionActivity(this);
+    }
+
+    @OnClick(R.id.fab_call_agency)
+    public void clickCallAgency(View v) {
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE}, RC_PERMISSION_CALL_PHONE);
+        } else {
+            callSelectedAgency();
+        }
     }
 
     @Override
@@ -221,13 +328,10 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         if (savedInstanceState != null) {
             mAgencySelected = savedInstanceState.getParcelable(ARG_AGENCY_SELECTED);
             mList = savedInstanceState.getParcelableArrayList(ARG_LIST_AGENCIES);
-            launchTask = false;
             if (savedInstanceState.keySet().contains(REQUESTING_LOCATION_UPDATES_KEY)) {
                 mRequestingLocationUpdates = savedInstanceState.getBoolean(
                         REQUESTING_LOCATION_UPDATES_KEY);
             }
-        } else {
-            launchTask = true;
         }
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
     }
@@ -261,76 +365,29 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == RC_LOCATION_FINE) {
-            enableLocation();
-        }
-    }
-
-    private void enableLocation() {
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            mMap.setMyLocationEnabled(true);
-
-            mLocationRequest = new LocationRequest();
-            mLocationRequest.setInterval(10000);
-            mLocationRequest.setFastestInterval(5000);
-            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                    .addLocationRequest(mLocationRequest);
-
-            SettingsClient client = LocationServices.getSettingsClient(getActivity());
-            Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
-
-            task.addOnSuccessListener(getActivity(), new OnSuccessListener<LocationSettingsResponse>() {
-                @Override
-                public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                    startLocationUpdates();
-                }
-            });
-
-            task.addOnFailureListener(getActivity(), new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    int statusCode = ((ApiException) e).getStatusCode();
-                    switch (statusCode) {
-                        case CommonStatusCodes.RESOLUTION_REQUIRED:
-                            try {
-                                ResolvableApiException resolvable = (ResolvableApiException) e;
-                                resolvable.startResolutionForResult(getActivity(),
-                                        REQUEST_CHECK_SETTINGS);
-                            } catch (IntentSender.SendIntentException sendEx) {
-                                // Ignore the error.
-                            }
-                            break;
-                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                            break;
-                    }
-                }
-            });
-        }
-    }
-
-    @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        changeMapStyle(mMap, R.raw.google_map_style);
+        changeMapStyle(mMap, R.raw.google_map_style_retro);
+
+        // Activation des boutons de zoom
+        UiSettings uiSettings = mMap.getUiSettings();
+        uiSettings.setZoomControlsEnabled(true);
 
         mMap.setOnMarkerClickListener(AgencyMapFragment.this);
 
         // We ask permission to get local position of the mobile
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, RC_LOCATION_FINE);
+            // Call activity to request permissions
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, RC_PERMISSION_LOCATION);
         } else {
+            // We already get the permissions, we enable the location
             enableLocation();
         }
 
-        // Now the map is ready, we retreive the datas from the content provider
-        if (launchTask) {
+        // Now the map is ready, we retrieve the data from the content provider
+        if (mList == null) {
             createTask().execute();
         } else {
             populateMap(mList);
@@ -356,4 +413,12 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         }
     }
 
+    @Override
+    public void onPermissionRequestResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == RC_PERMISSION_LOCATION) {
+            enableLocation();
+        } else if (requestCode == RC_PERMISSION_CALL_PHONE) {
+            callSelectedAgency();
+        }
+    }
 }
