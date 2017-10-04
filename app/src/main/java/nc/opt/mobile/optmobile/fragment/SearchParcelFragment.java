@@ -18,13 +18,14 @@ import android.widget.RelativeLayout;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.constants;
 import nc.opt.mobile.optmobile.network.RetrofitCall;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -32,6 +33,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static nc.opt.mobile.optmobile.Constants.URL_SUIVI_COLIS;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -89,7 +92,7 @@ public class SearchParcelFragment extends Fragment implements Callback<ResponseB
                 .create();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(constants.URL_SUIVI_COLIS)
+                .baseUrl(URL_SUIVI_COLIS)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
@@ -105,20 +108,38 @@ public class SearchParcelFragment extends Fragment implements Callback<ResponseB
         if (response.isSuccessful()) {
             layoutSearch.setVisibility(View.GONE);
             layoutResult.setVisibility(View.VISIBLE);
+            webResultView.setVisibility(View.VISIBLE);
 
-            String mimeType = "text/html";
-            String encoding = "utf-8";
+            String mimeType = "text/html; charset=UTF-8";
 
-            String data = null;
+            InputStream data = response.body().byteStream();
+
+            // Get the result from RAW
+            ByteArrayOutputStream result = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int length;
             try {
-                data = response.body().string();
+                while ((length = data.read(buffer)) != -1) {
+                    result.write(buffer, 0, length);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (response.body() != null) {
-                webResultView.loadData(data, mimeType, encoding);
-            }
 
+            webResultView.getSettings().setJavaScriptEnabled(false);
+            webResultView.getSettings().setBuiltInZoomControls(true);
+            webResultView.setInitialScale(1);
+            webResultView.getSettings().setLoadWithOverviewMode(true);
+            webResultView.getSettings().setUseWideViewPort(true);
+            webResultView.loadData(result.toString(), mimeType, null);
+
+
+            // Solution 2
+//            webResultView.loadUrl(URL_SUIVI_COLIS
+//                    .concat(URL_SUIVI_SERVICE_OPT)
+//                    .concat("?itemId=")
+//                    .concat(editIdParcel.getText().toString())
+//                    .concat("&Submit=Envoyer"));
         }
     }
 
