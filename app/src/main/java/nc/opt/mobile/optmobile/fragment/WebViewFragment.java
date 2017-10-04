@@ -30,8 +30,8 @@ public class WebViewFragment extends Fragment implements Response.Listener<Strin
     private String mUrl;
     private RequestQueueSingleton mRequestQueueSingleton;
 
-    @BindView(R.id.web_result_view)
-    WebView webResultView;
+    @BindView(R.id.web_view)
+    WebView webView;
 
     public static WebViewFragment newInstance(String url) {
         WebViewFragment fragment = new WebViewFragment();
@@ -71,12 +71,12 @@ public class WebViewFragment extends Fragment implements Response.Listener<Strin
     @Override
     public void onResponse(String response) {
         String mimeType = "text/html; charset=UTF-8";
-        webResultView.getSettings().setJavaScriptEnabled(false);
-        webResultView.getSettings().setBuiltInZoomControls(true);
-        webResultView.setInitialScale(1);
-        webResultView.getSettings().setLoadWithOverviewMode(true);
-        webResultView.getSettings().setUseWideViewPort(true);
-        webResultView.loadData(response, mimeType, null);
+        webView.getSettings().setJavaScriptEnabled(false);
+        webView.getSettings().setBuiltInZoomControls(true);
+        webView.setInitialScale(1);
+        webView.getSettings().setLoadWithOverviewMode(true);
+        webView.getSettings().setUseWideViewPort(true);
+        webView.loadData(response, mimeType, null);
     }
 
     @Override

@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void callSuiviColis() {
-        searchParcelFragment = (SearchParcelFragment) getSupportFragmentManager().findFragmentByTag(TAG_AGENCY_MAP_FRAGMENT);
+        searchParcelFragment = (SearchParcelFragment) getSupportFragmentManager().findFragmentByTag(TAG_SEARCH_PARCEL_FRAGMENT);
         if (searchParcelFragment == null) {
             searchParcelFragment = searchParcelFragment.newInstance();
         }
