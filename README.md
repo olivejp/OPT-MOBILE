@@ -3,6 +3,8 @@ Application mobile OPT
 
 [![Build Status](https://www.bitrise.io/app/ba4de9a3048d3ef2/status.svg?token=nxjp7iyDeBB_f2VgVw3h9Q)](https://www.bitrise.io/app/ba4de9a3048d3ef2)
 
+[![Build Status](https://travis-ci.org/olivejp/OPT-MOBILE.svg?branch=master)](https://travis-ci.org/olivejp/OPT-MOBILE)
+
 # Description
 This project is in progress for the moment.
 
