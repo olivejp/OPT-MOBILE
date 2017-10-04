@@ -4,6 +4,7 @@ package nc.opt.mobile.optmobile.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,10 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,8 +32,6 @@ public class WebViewFragment extends Fragment implements Response.Listener<Strin
 
     private static final String TAG = WebViewFragment.class.getName();
     private static final String ARG_URL = "ARG_URL";
-    private String mUrl;
-    private RequestQueueSingleton mRequestQueueSingleton;
 
     @BindView(R.id.web_view)
     WebView webView;
@@ -48,9 +51,9 @@ public class WebViewFragment extends Fragment implements Response.Listener<Strin
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mUrl = getArguments().getString(ARG_URL);
+        String mUrl = getArguments().getString(ARG_URL);
 
-        mRequestQueueSingleton = RequestQueueSingleton.getInstance(getActivity().getApplicationContext());
+        RequestQueueSingleton mRequestQueueSingleton = RequestQueueSingleton.getInstance(getActivity().getApplicationContext());
 
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, mUrl, this, this);
@@ -70,13 +73,20 @@ public class WebViewFragment extends Fragment implements Response.Listener<Strin
 
     @Override
     public void onResponse(String response) {
-        String mimeType = "text/html; charset=UTF-8";
-        webView.getSettings().setJavaScriptEnabled(false);
-        webView.getSettings().setBuiltInZoomControls(true);
-        webView.setInitialScale(1);
-        webView.getSettings().setLoadWithOverviewMode(true);
-        webView.getSettings().setUseWideViewPort(true);
-        webView.loadData(response, mimeType, null);
+        try {
+            String newStr = URLDecoder.decode(URLEncoder.encode(response, "iso8859-1"),"UTF-8");
+            String mimeType = "text/html; charset=UTF-8";
+            webView.getSettings().setJavaScriptEnabled(false);
+            webView.getSettings().setBuiltInZoomControls(true);
+            webView.setInitialScale(1);
+            webView.getSettings().setLoadWithOverviewMode(true);
+            webView.getSettings().setUseWideViewPort(true);
+            webView.loadData(newStr, mimeType, null);
+        } catch (UnsupportedEncodingException e) {
+            Log.e(TAG, e.getMessage(), e);
+            Toast.makeText(getActivity(), "Récupération d'une erreur sérieuse.", Toast.LENGTH_LONG).show();
+        }
+
     }
 
     @Override
