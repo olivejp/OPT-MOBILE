@@ -30,6 +30,7 @@ import java.util.concurrent.ExecutionException;
 
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.fragment.AgencyMapFragment;
+import nc.opt.mobile.optmobile.fragment.HtmlTransformer;
 import nc.opt.mobile.optmobile.fragment.SearchParcelFragment;
 import nc.opt.mobile.optmobile.interfaces.AttachToPermissionActivity;
 import nc.opt.mobile.optmobile.interfaces.ListenerPermissionResult;
@@ -180,6 +181,8 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        HtmlTransformer.transform(HtmlTransformer.SAMPLE_HTML);
     }
 
     @Override
