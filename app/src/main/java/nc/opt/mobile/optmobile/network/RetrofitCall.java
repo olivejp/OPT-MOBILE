@@ -14,4 +14,7 @@ public interface RetrofitCall {
     @GET("IPSWeb_item_events.asp")
     Call<ResponseBody> searchParcel(@Query("itemId") String itemId,
                                     @Query("Submit") String submit);
+
+    @GET()
+    Call<ResponseBody> getUrl();
 }

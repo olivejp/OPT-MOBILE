@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:layout_marginTop="?attr/actionBarSize"
     tools:context="nc.opt.mobile.optmobile.fragment.SearchParcelFragment">
 
     <RelativeLayout
@@ -17,7 +18,8 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:inputType="text"
-            android:maxLength="13" />
+            android:maxLength="13"
+            android:text="EZ036524985US"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_search_parcel"
@@ -31,15 +33,4 @@
             android:windowSoftInputMode="adjustResize"
             app:backgroundTint="@color/colorPrimaryDark" />
     </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/layout_result"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <WebView
-            android:id="@+id/web_result_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
 </FrameLayout>
