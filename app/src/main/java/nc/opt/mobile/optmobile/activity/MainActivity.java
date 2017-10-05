@@ -7,19 +7,19 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,30 +28,59 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import icepick.Icepick;
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import nc.opt.mobile.optmobile.R;
+import nc.opt.mobile.optmobile.fragment.AgencyMapFragment;
+import nc.opt.mobile.optmobile.fragment.SearchParcelFragment;
+import nc.opt.mobile.optmobile.interfaces.AttachToPermissionActivity;
+import nc.opt.mobile.optmobile.interfaces.ListenerPermissionResult;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 
-import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
-
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, AttachToPermissionActivity {
 
-    private static final int RC_SIGN_IN = 100;
+    private static final String TAG = MainActivity.class.getName();
+    private static final String TAG_AGENCY_MAP_FRAGMENT = "AGENCY_MAP_FRAGMENT";
+    private static final String TAG_SEARCH_PARCEL_FRAGMENT = "TAG_SEARCH_PARCEL_FRAGMENT";
+
+    public static final int RC_PERMISSION_LOCATION = 100;
+    public static final int RC_PERMISSION_CALL_PHONE = 200;
+    public static final int RC_SIGN_IN = 300;
+
     private static final String PREF_POPULATED = "POPULATE_CP";
+    private static final String SAVED_AGENCY_FRAGMENT = "SAVED_AGENCY_FRAGMENT";
+    private static final String SAVED_SEARCH_PARCEL_FRAGMENT = "SAVED_SEARCH_PARCEL_FRAGMENT";
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private Drawable mDrawablePhoto;
     private MenuItem mMenuItemProfil;
-    private AsyncTask<Void, Void, Drawable> mTaskGetPhotoFromUrl;
-    private boolean mTaskRunning;
+    private AgencyMapFragment agencyMapFragment;
+    private SearchParcelFragment searchParcelFragment;
+    private static ArrayList<ListenerPermissionResult> mListenerPermissionResult = new ArrayList<>();
 
-    private void callMapsActivity() {
-        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-        startActivity(intent);
+    private void callAgencyMapFragment() {
+        agencyMapFragment = (AgencyMapFragment) getSupportFragmentManager().findFragmentByTag(TAG_AGENCY_MAP_FRAGMENT);
+        if (agencyMapFragment == null) {
+            agencyMapFragment = AgencyMapFragment.newInstance();
+        }
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.frame_main, agencyMapFragment, TAG_AGENCY_MAP_FRAGMENT)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void callSuiviColis() {
+        searchParcelFragment = (SearchParcelFragment) getSupportFragmentManager().findFragmentByTag(TAG_SEARCH_PARCEL_FRAGMENT);
+        if (searchParcelFragment == null) {
+            searchParcelFragment = searchParcelFragment.newInstance();
+        }
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.frame_main, searchParcelFragment, TAG_SEARCH_PARCEL_FRAGMENT)
+                .addToBackStack(null)
+                .commit();
     }
 
     private void defineAuthListener() {
@@ -62,9 +91,7 @@ public class MainActivity extends AppCompatActivity
                 mFirebaseUser = firebaseAuth.getCurrentUser();
 
                 if (mFirebaseUser != null) {
-                    if (!mTaskRunning) {
-                        mTaskGetPhotoFromUrl.execute();
-                    }
+                    createAsyncTaskGetPhoto().execute();
                 } else {
                     // User is signed out
                     onSignedOutCleanup();
@@ -85,21 +112,20 @@ public class MainActivity extends AppCompatActivity
         };
     }
 
-    private void defineAsyncTaskGetPhoto() {
+    private AsyncTask<Void, Void, Drawable> createAsyncTaskGetPhoto() {
         // On définit une tache pour recuperer la photo de la personne connectee
-        mTaskGetPhotoFromUrl = new AsyncTask<Void, Void, Drawable>() {
+        return new AsyncTask<Void, Void, Drawable>() {
             @Override
             protected Drawable doInBackground(Void... voids) {
-                mTaskRunning = true;
                 try {
                     return Glide.with(MainActivity.this)
                             .asDrawable()
                             .load(mFirebaseUser.getPhotoUrl())
-                            .apply(bitmapTransform(new RoundedCornersTransformation(3, 3, RoundedCornersTransformation.CornerType.ALL)))
-                            .submit(200, 200)
+                            .apply(RequestOptions.circleCropTransform())
+                            .submit()
                             .get();
                 } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, e.getMessage(), e);
                 }
                 return null;
             }
@@ -110,7 +136,6 @@ public class MainActivity extends AppCompatActivity
                     mDrawablePhoto = drawable;
                     invalidateOptionsMenu();
                 }
-                mTaskRunning = false;
             }
         };
     }
@@ -129,7 +154,10 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         // Get information back from the savedInstanceState
-        Icepick.restoreInstanceState(this, savedInstanceState);
+        if (savedInstanceState != null) {
+            agencyMapFragment = (AgencyMapFragment) getSupportFragmentManager().getFragment(savedInstanceState, SAVED_AGENCY_FRAGMENT);
+            searchParcelFragment = (SearchParcelFragment) getSupportFragmentManager().getFragment(savedInstanceState, SAVED_SEARCH_PARCEL_FRAGMENT);
+        }
 
         mFirebaseAuth = FirebaseAuth.getInstance();
 
@@ -142,14 +170,6 @@ public class MainActivity extends AppCompatActivity
             editor.apply();
         }
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-
         defineAuthListener();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -160,8 +180,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        defineAsyncTaskGetPhoto();
     }
 
     @Override
@@ -215,13 +233,12 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_geo_agence:
-                callMapsActivity();
+                callAgencyMapFragment();
                 break;
             case R.id.nav_geo_fibre:
                 break;
-            case R.id.nav_share:
-                break;
-            case R.id.nav_send:
+            case R.id.nav_suivi_colis:
+                callSuiviColis();
                 break;
             default:
                 break;
@@ -256,9 +273,8 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(this, R.string.welcome, Toast.LENGTH_LONG).show();
 
                 // On appelle la tache pour aller recuperer la photo
-                if (!mTaskRunning) {
-                    mTaskGetPhotoFromUrl.execute();
-                }
+                createAsyncTaskGetPhoto().execute();
+
             }
             if (resultCode == RESULT_CANCELED) {
                 // Sign in was canceled by the user, finish the activity
@@ -271,6 +287,30 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Icepick.saveInstanceState(this, outState);
+        agencyMapFragment = (AgencyMapFragment) getSupportFragmentManager().findFragmentByTag(TAG_AGENCY_MAP_FRAGMENT);
+        if (agencyMapFragment != null) {
+            getSupportFragmentManager().putFragment(outState, SAVED_AGENCY_FRAGMENT, agencyMapFragment);
+        }
+        if (searchParcelFragment != null) {
+            getSupportFragmentManager().putFragment(outState, SAVED_SEARCH_PARCEL_FRAGMENT, searchParcelFragment);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        for (ListenerPermissionResult listenerPermissionResult : mListenerPermissionResult) {
+            listenerPermissionResult.onPermissionRequestResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    @Override
+    public void onAttachPermissionActivity(ListenerPermissionResult listenerPermissionResult) {
+        mListenerPermissionResult.add(listenerPermissionResult);
+    }
+
+    @Override
+    public void onDetachToPermissionActivity(ListenerPermissionResult listenerPermissionResult) {
+        mListenerPermissionResult.remove(listenerPermissionResult);
     }
 }

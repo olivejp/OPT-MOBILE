@@ -1,6 +1,7 @@
-package nc.opt.mobile.optmobile;
+package nc.opt.mobile.optmobile.utils;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,7 +11,13 @@ import java.io.InputStream;
  */
 
 public class Utilities {
-    public static String loadJSONFromAsset(Context context, String fileName) {
+
+    private static final String TAG = Utilities.class.getName();
+
+    private Utilities() {
+    }
+
+    public static String loadStringFromAsset(Context context, String fileName) {
         String json;
         try {
             InputStream is = context.getAssets().open(fileName);
@@ -20,7 +27,7 @@ public class Utilities {
             is.close();
             json = new String(buffer, "UTF-8");
         } catch (IOException ex) {
-            ex.printStackTrace();
+            Log.e(TAG, ex.getMessage(), ex);
             return null;
         }
         return json;

@@ -1,7 +1,9 @@
 package nc.opt.mobile.optmobile.domain;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.chalup.microorm.annotations.Column;
-import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
 
 import nc.opt.mobile.optmobile.provider.AgencyInterface;
@@ -10,8 +12,7 @@ import nc.opt.mobile.optmobile.provider.AgencyInterface;
  * Created by orlanth23 on 08/08/2017.
  */
 
-@Parcel
-public class Agency {
+public class Agency implements Parcelable{
     @Column(AgencyInterface.OBJECTID)
     int OBJECTID;
 
@@ -255,4 +256,69 @@ public class Agency {
     public void setTYPE_GEOMETRY(String TYPE_GEOMETRY) {
         this.TYPE_GEOMETRY = TYPE_GEOMETRY;
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.OBJECTID);
+        dest.writeString(this.TEXTE);
+        dest.writeString(this.TYPE);
+        dest.writeString(this.NOM);
+        dest.writeString(this.ADRESSE);
+        dest.writeString(this.CODE_POSTAL);
+        dest.writeString(this.VILLE);
+        dest.writeString(this.TEL);
+        dest.writeString(this.FAX);
+        dest.writeString(this.HORAIRE);
+        dest.writeInt(this.DAB_INTERNE);
+        dest.writeInt(this.DAB_EXTERNE);
+        dest.writeInt(this.CONSEILLER_FINANCIER);
+        dest.writeInt(this.CONSEILLER_TELECOM);
+        dest.writeInt(this.CONSEILLER_POLYVALENT);
+        dest.writeInt(this.CONSEILLER_POSTAL);
+        dest.writeString(this.GLOBALID);
+        dest.writeDouble(this.LATITUDE);
+        dest.writeDouble(this.LONGITUDE);
+        dest.writeString(this.TYPE_GEOMETRY);
+    }
+
+    protected Agency(Parcel in) {
+        this.OBJECTID = in.readInt();
+        this.TEXTE = in.readString();
+        this.TYPE = in.readString();
+        this.NOM = in.readString();
+        this.ADRESSE = in.readString();
+        this.CODE_POSTAL = in.readString();
+        this.VILLE = in.readString();
+        this.TEL = in.readString();
+        this.FAX = in.readString();
+        this.HORAIRE = in.readString();
+        this.DAB_INTERNE = in.readInt();
+        this.DAB_EXTERNE = in.readInt();
+        this.CONSEILLER_FINANCIER = in.readInt();
+        this.CONSEILLER_TELECOM = in.readInt();
+        this.CONSEILLER_POLYVALENT = in.readInt();
+        this.CONSEILLER_POSTAL = in.readInt();
+        this.GLOBALID = in.readString();
+        this.LATITUDE = in.readDouble();
+        this.LONGITUDE = in.readDouble();
+        this.TYPE_GEOMETRY = in.readString();
+    }
+
+    public static final Creator<Agency> CREATOR = new Creator<Agency>() {
+        @Override
+        public Agency createFromParcel(Parcel source) {
+            return new Agency(source);
+        }
+
+        @Override
+        public Agency[] newArray(int size) {
+            return new Agency[size];
+        }
+    };
 }

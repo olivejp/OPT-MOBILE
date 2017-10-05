@@ -10,10 +10,10 @@ import org.chalup.microorm.MicroOrm;
 
 import java.util.ArrayList;
 
-import nc.opt.mobile.optmobile.Utilities;
 import nc.opt.mobile.optmobile.domain.Agency;
 import nc.opt.mobile.optmobile.domain.Feature;
 import nc.opt.mobile.optmobile.domain.FeatureCollection;
+import nc.opt.mobile.optmobile.utils.Utilities;
 
 /**
  * Created by orlanth23 on 12/08/2017.
@@ -28,10 +28,10 @@ public class ProviderUtilities {
     }
 
     public static void populateContentProviderFromAsset(Context context) {
-        String json = Utilities.loadJSONFromAsset(context, "opt_agencies.json");
+        String json = Utilities.loadStringFromAsset(context, "opt_agencies.json");
         Gson gson = new Gson();
 
-        // Okay we 've got the list in a json let's just transform to an arrayList and send it to the content provider.
+        // Okay we 've got the list in a json let's just getParcelResultFromHtml to an arrayList and send it to the content provider.
         FeatureCollection featureCollection = gson.fromJson(json, FeatureCollection.class);
         ProviderUtilities.populateContentProviderFromFeatureCollection(context, featureCollection);
     }
