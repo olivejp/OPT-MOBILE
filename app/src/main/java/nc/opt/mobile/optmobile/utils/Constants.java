@@ -1,4 +1,4 @@
-package nc.opt.mobile.optmobile.Utils;
+package nc.opt.mobile.optmobile.utils;
 
 /**
  * Created by orlanth23 on 08/08/2017.
@@ -14,4 +14,7 @@ public class Constants {
     public static final String URL_SUIVI_SERVICE_OPT = "IPSWeb_item_events.asp";
 
     public static final String ID_PARCEL_TEST = "EZ036524985US";
+
+    public static final String ENCODING_ISO = "iso8859-1";
+    public static final String ENCODING_UTF_8 = "UTF-8";
 }

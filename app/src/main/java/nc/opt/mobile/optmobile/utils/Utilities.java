@@ -1,4 +1,4 @@
-package nc.opt.mobile.optmobile.Utils;
+package nc.opt.mobile.optmobile.utils;
 
 import android.content.Context;
 import android.util.Log;

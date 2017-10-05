@@ -2,7 +2,6 @@ package nc.opt.mobile.optmobile.fragment;
 
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -26,9 +25,7 @@ import java.net.URLEncoder;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.Utils.HtmlTransformer;
-import nc.opt.mobile.optmobile.Utils.RequestQueueSingleton;
-import nc.opt.mobile.optmobile.domain.ParcelSearchResult;
+import nc.opt.mobile.optmobile.utils.RequestQueueSingleton;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -46,7 +43,7 @@ public class WebViewFragment extends Fragment implements Response.Listener<Strin
     @BindView(R.id.web_view)
     WebView webView;
 
-    public static WebViewFragment newInstance(@NotNull @NonNull String url, @Nullable String idParcel) {
+    public static WebViewFragment newInstance(@NotNull String url, @Nullable String idParcel) {
         WebViewFragment fragment = new WebViewFragment();
         Bundle args = new Bundle();
         args.putString(ARG_URL, url);
@@ -101,8 +98,6 @@ public class WebViewFragment extends Fragment implements Response.Listener<Strin
     public void onResponse(String response) {
         try {
             String newStr = URLDecoder.decode(URLEncoder.encode(response, "iso8859-1"), "UTF-8");
-
-            ParcelSearchResult parcelSearchResult = HtmlTransformer.transform(response, mIdParcel);
 
             setWebView(newStr);
 

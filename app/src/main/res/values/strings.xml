@@ -28,4 +28,5 @@
     <string name="courrier">Courrier</string>
     <string name="suivre_colis">Suivre colis</string>
     <string name="logo_opt">Content description Logo OPT</string>
+    <string name="page_malformed">La page retournée est invalide</string>
 </resources>

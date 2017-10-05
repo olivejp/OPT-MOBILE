@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -25,6 +26,14 @@ public class StepParcelSearchAdapter extends RecyclerView.Adapter<StepParcelSear
         mStepParcelSearchs = steps;
     }
 
+    public StepParcelSearchAdapter() {
+        mStepParcelSearchs = new ArrayList<>();
+    }
+
+    public List<StepParcelSearch> getmStepParcelSearchs() {
+        return mStepParcelSearchs;
+    }
+
     @Override
     public ViewHolderStepParcel onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -39,7 +48,11 @@ public class StepParcelSearchAdapter extends RecyclerView.Adapter<StepParcelSear
         holder.mStepPays.setText(mStepParcelSearchs.get(position).getPays());
         holder.mStepLocalisation.setText(mStepParcelSearchs.get(position).getLocalisation());
         holder.mStepDescription.setText(mStepParcelSearchs.get(position).getDescription());
-        holder.mStepCommentaire.setText(mStepParcelSearchs.get(position).getCommentaire());
+        if (mStepParcelSearchs.get(position).getCommentaire().isEmpty()){
+            holder.mStepCommentaire.setVisibility(View.GONE);
+        } else {
+            holder.mStepCommentaire.setText(mStepParcelSearchs.get(position).getCommentaire());
+        }
     }
 
     @Override

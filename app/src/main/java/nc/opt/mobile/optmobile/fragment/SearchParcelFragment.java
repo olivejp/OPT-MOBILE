@@ -2,13 +2,11 @@ package nc.opt.mobile.optmobile.fragment;
 
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,12 +22,6 @@ public class SearchParcelFragment extends Fragment {
 
     @BindView(R.id.edit_id_parcel)
     EditText editIdParcel;
-
-    @BindView(R.id.fab_search_parcel)
-    FloatingActionButton fabSearchParcel;
-
-    @BindView(R.id.layout_search)
-    RelativeLayout layoutSearch;
 
     public static SearchParcelFragment newInstance() {
         SearchParcelFragment fragment = new SearchParcelFragment();

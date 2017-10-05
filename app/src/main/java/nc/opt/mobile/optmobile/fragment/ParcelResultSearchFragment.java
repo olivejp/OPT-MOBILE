@@ -2,7 +2,6 @@ package nc.opt.mobile.optmobile.fragment;
 
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -27,11 +27,11 @@ import java.net.URLEncoder;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.Utils.Constants;
-import nc.opt.mobile.optmobile.Utils.HtmlTransformer;
-import nc.opt.mobile.optmobile.Utils.RequestQueueSingleton;
 import nc.opt.mobile.optmobile.adapter.StepParcelSearchAdapter;
 import nc.opt.mobile.optmobile.domain.ParcelSearchResult;
+import nc.opt.mobile.optmobile.utils.Constants;
+import nc.opt.mobile.optmobile.utils.HtmlTransformer;
+import nc.opt.mobile.optmobile.utils.RequestQueueSingleton;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,14 +42,17 @@ public class ParcelResultSearchFragment extends Fragment implements Response.Lis
     private static final String ARG_ID_PARCEL = "ARG_ID_PARCEL";
 
     private String mIdParcel;
-
-    private String mUrl;
+    private StepParcelSearchAdapter mStepParcelSearchAdapter;
+    private RequestQueueSingleton mRequestQueueSingleton;
+    private StringRequest mStringRequest;
 
     @BindView(R.id.recycler_parcel_list)
-    private RecyclerView mRecyclerView;
+    RecyclerView mRecyclerView;
 
+    @BindView(R.id.text_object_not_found)
+    TextView mTextObjectNotFound;
 
-    public static ParcelResultSearchFragment newInstance(@NotNull @NonNull String idParcel) {
+    public static ParcelResultSearchFragment newInstance(@NotNull String idParcel) {
         ParcelResultSearchFragment fragment = new ParcelResultSearchFragment();
         Bundle args = new Bundle();
         args.putString(ARG_ID_PARCEL, idParcel);
@@ -61,16 +64,49 @@ public class ParcelResultSearchFragment extends Fragment implements Response.Lis
         // Required empty public constructor
     }
 
+    private void populateAdapter(ParcelSearchResult parcelSearchResult){
+        mStepParcelSearchAdapter.getmStepParcelSearchs().clear();
+        mStepParcelSearchAdapter.getmStepParcelSearchs().addAll(parcelSearchResult.getStepParcelSearchArrayList());
+        mStepParcelSearchAdapter.notifyDataSetChanged();
+    }
+
+    private void transformHtmlToObject(String htmlToTransform) {
+        ParcelSearchResult parcelSearchResult = new ParcelSearchResult();
+        try {
+            int transformResult = HtmlTransformer.getParcelResultFromHtml(htmlToTransform, parcelSearchResult);
+            switch (transformResult) {
+                case HtmlTransformer.RESULT_SUCCESS:
+                    mTextObjectNotFound.setVisibility(View.GONE);
+                    populateAdapter(parcelSearchResult);
+                    break;
+                case HtmlTransformer.RESULT_NO_ITEM_FOUND:
+                    mTextObjectNotFound.setVisibility(View.VISIBLE);
+                    mRecyclerView.setVisibility(View.GONE);
+                    break;
+                default:
+                    break;
+            }
+        } catch (HtmlTransformer.HtmlTransformerException e) {
+            Log.e(TAG, e.getMessage(), e);
+            Toast.makeText(getActivity(), getActivity().getString(R.string.page_malformed), Toast.LENGTH_LONG).show();
+        }
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mIdParcel = getArguments().getString(ARG_ID_PARCEL);
 
-        mUrl = Constants.URL_SUIVI_COLIS
+        String url = Constants.URL_SUIVI_COLIS
                 .concat(Constants.URL_SUIVI_SERVICE_OPT)
                 .concat("?itemId=")
                 .concat(mIdParcel)
                 .concat("&Submit=Envoyer");
+
+        mRequestQueueSingleton = RequestQueueSingleton.getInstance(getActivity().getApplicationContext());
+
+        // Request a string response from the provided URL.
+        mStringRequest = new StringRequest(Request.Method.GET, url, this, this);
     }
 
     @Override
@@ -82,13 +118,13 @@ public class ParcelResultSearchFragment extends Fragment implements Response.Lis
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
-        RequestQueueSingleton mRequestQueueSingleton = RequestQueueSingleton.getInstance(getActivity().getApplicationContext());
+        // Création d'un nouvel adapter
+        mStepParcelSearchAdapter = new StepParcelSearchAdapter();
 
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, mUrl, this, this);
+        mRecyclerView.setAdapter(mStepParcelSearchAdapter);
 
         // Add the request to the RequestQueue.
-        mRequestQueueSingleton.addToRequestQueue(stringRequest);
+        mRequestQueueSingleton.addToRequestQueue(mStringRequest);
 
         return rootView;
     }
@@ -96,24 +132,18 @@ public class ParcelResultSearchFragment extends Fragment implements Response.Lis
     @Override
     public void onResponse(String response) {
         try {
-            String newStr = URLDecoder.decode(URLEncoder.encode(response, "iso8859-1"), "UTF-8");
-
-            ParcelSearchResult parcelSearchResult = HtmlTransformer.transform(newStr, mIdParcel);
-
-            StepParcelSearchAdapter stepParcelSearchAdapter = new StepParcelSearchAdapter(parcelSearchResult.getStepParcelSearchArrayList());
-
-            mRecyclerView.setAdapter(stepParcelSearchAdapter);
-
+            String newStr = URLDecoder.decode(URLEncoder.encode(response, Constants.ENCODING_ISO), Constants.ENCODING_UTF_8);
+            transformHtmlToObject(newStr);
         } catch (UnsupportedEncodingException e) {
             Log.e(TAG, e.getMessage(), e);
-            Toast.makeText(getActivity(), "Récupération d'une erreur sérieuse.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), getActivity().getString(R.string.page_malformed), Toast.LENGTH_LONG).show();
         }
     }
 
     @Override
     public void onErrorResponse(VolleyError error) {
         Log.e(TAG, error.getMessage(), error);
-        Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), getActivity().getString(R.string.page_malformed), Toast.LENGTH_LONG).show();
     }
 
     @Override
