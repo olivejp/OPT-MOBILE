@@ -1,4 +1,4 @@
-package nc.opt.mobile.optmobile;
+package nc.opt.mobile.optmobile.Utils;
 
 /**
  * Created by orlanth23 on 08/08/2017.
