@@ -12,26 +12,26 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.domain.StepParcelSearch;
+import nc.opt.mobile.optmobile.domain.EtapeAcheminement;
 
 /**
  * Created by orlanth23 on 05/10/2017.
  */
 
-public class StepParcelSearchAdapter extends RecyclerView.Adapter<StepParcelSearchAdapter.ViewHolderStepParcel> {
+public class EtapeAcheminementAdapter extends RecyclerView.Adapter<EtapeAcheminementAdapter.ViewHolderStepParcel> {
 
-    private final List<StepParcelSearch> mStepParcelSearchs;
+    private final List<EtapeAcheminement> mEtapeAcheminements;
 
-    public StepParcelSearchAdapter(List<StepParcelSearch> steps) {
-        mStepParcelSearchs = steps;
+    public EtapeAcheminementAdapter(List<EtapeAcheminement> steps) {
+        mEtapeAcheminements = steps;
     }
 
-    public StepParcelSearchAdapter() {
-        mStepParcelSearchs = new ArrayList<>();
+    public EtapeAcheminementAdapter() {
+        mEtapeAcheminements = new ArrayList<>();
     }
 
-    public List<StepParcelSearch> getmStepParcelSearchs() {
-        return mStepParcelSearchs;
+    public List<EtapeAcheminement> getmEtapeAcheminements() {
+        return mEtapeAcheminements;
     }
 
     @Override
@@ -43,21 +43,21 @@ public class StepParcelSearchAdapter extends RecyclerView.Adapter<StepParcelSear
 
     @Override
     public void onBindViewHolder(final ViewHolderStepParcel holder, int position) {
-        holder.mStepParcelSearch = mStepParcelSearchs.get(position);
-        holder.mStepDate.setText(mStepParcelSearchs.get(position).getDate());
-        holder.mStepPays.setText(mStepParcelSearchs.get(position).getPays());
-        holder.mStepLocalisation.setText(mStepParcelSearchs.get(position).getLocalisation());
-        holder.mStepDescription.setText(mStepParcelSearchs.get(position).getDescription());
-        if (mStepParcelSearchs.get(position).getCommentaire().isEmpty()){
+        holder.mEtapeAcheminement = mEtapeAcheminements.get(position);
+        holder.mStepDate.setText(mEtapeAcheminements.get(position).getDate());
+        holder.mStepPays.setText(mEtapeAcheminements.get(position).getPays());
+        holder.mStepLocalisation.setText(mEtapeAcheminements.get(position).getLocalisation());
+        holder.mStepDescription.setText(mEtapeAcheminements.get(position).getDescription());
+        if (mEtapeAcheminements.get(position).getCommentaire().isEmpty()) {
             holder.mStepCommentaire.setVisibility(View.GONE);
         } else {
-            holder.mStepCommentaire.setText(mStepParcelSearchs.get(position).getCommentaire());
+            holder.mStepCommentaire.setText(mEtapeAcheminements.get(position).getCommentaire());
         }
     }
 
     @Override
     public int getItemCount() {
-        return mStepParcelSearchs.size();
+        return mEtapeAcheminements.size();
     }
 
     class ViewHolderStepParcel extends RecyclerView.ViewHolder {
@@ -78,7 +78,7 @@ public class StepParcelSearchAdapter extends RecyclerView.Adapter<StepParcelSear
         @BindView(R.id.step_commentaire)
         TextView mStepCommentaire;
 
-        StepParcelSearch mStepParcelSearch;
+        EtapeAcheminement mEtapeAcheminement;
 
         ViewHolderStepParcel(View view) {
             super(view);

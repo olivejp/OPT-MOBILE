@@ -27,8 +27,8 @@ import java.net.URLEncoder;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.adapter.StepParcelSearchAdapter;
-import nc.opt.mobile.optmobile.domain.ParcelSearchResult;
+import nc.opt.mobile.optmobile.adapter.EtapeAcheminementAdapter;
+import nc.opt.mobile.optmobile.domain.Colis;
 import nc.opt.mobile.optmobile.utils.Constants;
 import nc.opt.mobile.optmobile.utils.HtmlTransformer;
 import nc.opt.mobile.optmobile.utils.RequestQueueSingleton;
@@ -42,7 +42,7 @@ public class ParcelResultSearchFragment extends Fragment implements Response.Lis
     private static final String ARG_ID_PARCEL = "ARG_ID_PARCEL";
 
     private String mIdParcel;
-    private StepParcelSearchAdapter mStepParcelSearchAdapter;
+    private EtapeAcheminementAdapter mEtapeAcheminementAdapter;
     private RequestQueueSingleton mRequestQueueSingleton;
     private StringRequest mStringRequest;
 
@@ -64,20 +64,20 @@ public class ParcelResultSearchFragment extends Fragment implements Response.Lis
         // Required empty public constructor
     }
 
-    private void populateAdapter(ParcelSearchResult parcelSearchResult){
-        mStepParcelSearchAdapter.getmStepParcelSearchs().clear();
-        mStepParcelSearchAdapter.getmStepParcelSearchs().addAll(parcelSearchResult.getStepParcelSearchArrayList());
-        mStepParcelSearchAdapter.notifyDataSetChanged();
+    private void populateAdapter(Colis colis){
+        mEtapeAcheminementAdapter.getmEtapeAcheminements().clear();
+        mEtapeAcheminementAdapter.getmEtapeAcheminements().addAll(colis.getEtapeAcheminementArrayList());
+        mEtapeAcheminementAdapter.notifyDataSetChanged();
     }
 
     private void transformHtmlToObject(String htmlToTransform) {
-        ParcelSearchResult parcelSearchResult = new ParcelSearchResult();
+        Colis colis = new Colis();
         try {
-            int transformResult = HtmlTransformer.getParcelResultFromHtml(htmlToTransform, parcelSearchResult);
+            int transformResult = HtmlTransformer.getParcelResultFromHtml(htmlToTransform, colis);
             switch (transformResult) {
                 case HtmlTransformer.RESULT_SUCCESS:
                     mTextObjectNotFound.setVisibility(View.GONE);
-                    populateAdapter(parcelSearchResult);
+                    populateAdapter(colis);
                     break;
                 case HtmlTransformer.RESULT_NO_ITEM_FOUND:
                     mTextObjectNotFound.setVisibility(View.VISIBLE);
@@ -119,9 +119,9 @@ public class ParcelResultSearchFragment extends Fragment implements Response.Lis
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
         // Création d'un nouvel adapter
-        mStepParcelSearchAdapter = new StepParcelSearchAdapter();
+        mEtapeAcheminementAdapter = new EtapeAcheminementAdapter();
 
-        mRecyclerView.setAdapter(mStepParcelSearchAdapter);
+        mRecyclerView.setAdapter(mEtapeAcheminementAdapter);
 
         // Add the request to the RequestQueue.
         mRequestQueueSingleton.addToRequestQueue(mStringRequest);
