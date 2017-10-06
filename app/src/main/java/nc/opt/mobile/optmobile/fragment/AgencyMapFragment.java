@@ -10,6 +10,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.RawRes;
 import android.support.design.widget.FloatingActionButton;
@@ -50,6 +51,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -80,7 +82,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     private BitmapDescriptor mIconAgence;
     private BitmapDescriptor mIconAnnexe;
     private Agency mAgencySelected;
-    private ArrayList<Agency> mList;
+    private List<Agency> mList;
     private LocationRequest mLocationRequest;
     private boolean mRequestingLocationUpdates;
     private Location mCurrentLocation;
@@ -100,7 +102,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     TextView txtAgenceNbDabExt;
 
     @BindView(R.id.fab_call_agency)
-    FloatingActionButton fab_call_agency;
+    FloatingActionButton fabCallAgency;
 
     /**
      * Customise the styling of the base map using a JSON object defined
@@ -161,7 +163,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         txtAgenceNbDabExt.setText(String.valueOf(agency.getDAB_EXTERNE()));
     }
 
-    private void populateMap(ArrayList<Agency> agencyList) {
+    private void populateMap(List<Agency> agencyList) {
         for (Agency agency : agencyList) {
             LatLng latLng = new LatLng(agency.getLATITUDE(), agency.getLONGITUDE());
 
@@ -191,16 +193,16 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
      *
      * @return AsyncTask<Void, Void, ArrayList<Agency>>
      */
-    private AsyncTask<Void, Void, ArrayList<Agency>> createTask() {
-        return new AsyncTask<Void, Void, ArrayList<Agency>>() {
+    private AsyncTask<Void, Void, List<Agency>> createTask() {
+        return new AsyncTask<Void, Void, List<Agency>>() {
             @Override
-            protected ArrayList<Agency> doInBackground(Void... voids) {
+            protected List<Agency> doInBackground(Void... voids) {
                 // Get the list of agencies from content provider
                 return ProviderUtilities.getListAgencyFromContentProvider(getActivity());
             }
 
             @Override
-            protected void onPostExecute(ArrayList<Agency> list) {
+            protected void onPostExecute(List<Agency> list) {
                 super.onPostExecute(list);
 
                 // Set the map in New Caledonia
@@ -267,6 +269,8 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
                             }
                             break;
                         case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                            break;
+                        default:
                             break;
                     }
                 }
@@ -357,7 +361,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList(ARG_LIST_AGENCIES, mList);
+        outState.putParcelableArrayList(ARG_LIST_AGENCIES, (ArrayList<? extends Parcelable>) mList);
         outState.putParcelable(ARG_AGENCY_SELECTED, mAgencySelected);
         outState.putBoolean(REQUESTING_LOCATION_UPDATES_KEY,
                 mRequestingLocationUpdates);

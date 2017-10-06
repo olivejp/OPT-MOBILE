@@ -12,7 +12,7 @@ import net.simonvt.schematic.annotation.TableEndpoint;
  */
 
 @ContentProvider(authority = OptProvider.AUTHORITY, database = OptDatabase.class, packageName = "nc.opt.mobile.optmobile")
-class OptProvider {
+public class OptProvider {
     static final String AUTHORITY = "nc.opt.mobile.OptProvider";
 
     private static final String AGENCY = "agency";
@@ -22,13 +22,13 @@ class OptProvider {
     private OptProvider(){}
 
     @TableEndpoint(table = OptDatabase.AGENCIES)
-    static class ListAgency {
+    public static class ListAgency {
         private ListAgency(){}
         @ContentUri(
                 path = "agency",
                 type = "vnd.android.cursor.dir/list",
                 defaultSort = AgencyInterface.OBJECTID + " ASC")
-        static final Uri LIST_AGENCY = Uri.parse("content://" + AUTHORITY + "/" + AGENCY);
+        public static final Uri LIST_AGENCY = Uri.parse("content://" + AUTHORITY + "/" + AGENCY);
 
         @InexactContentUri(
                 path = "agency/#",
@@ -43,13 +43,13 @@ class OptProvider {
 
 
     @TableEndpoint(table = OptDatabase.COLIS)
-    static class ListColis {
+    public static class ListColis {
         private ListColis(){}
         @ContentUri(
                 path = "colis",
                 type = "vnd.android.cursor.dir/list",
                 defaultSort = ColisInterface.ID_COLIS+ " ASC")
-        static final Uri LIST_COLIS = Uri.parse("content://" + AUTHORITY + "/" + COLIS);
+        public static final Uri LIST_COLIS = Uri.parse("content://" + AUTHORITY + "/" + COLIS);
 
         @InexactContentUri(
                 path = "colis/#",
@@ -64,13 +64,13 @@ class OptProvider {
 
 
     @TableEndpoint(table = OptDatabase.ETAPE_ACHEMINEMENT)
-    static class ListEtapeAcheminement {
+    public static class ListEtapeAcheminement {
         private ListEtapeAcheminement(){}
         @ContentUri(
                 path = "etape_acheminement",
                 type = "vnd.android.cursor.dir/list",
                 defaultSort = EtapeAcheminementInterface.ID_ETAPE_ACHEMINEMENT + " ASC")
-        static final Uri LIST_ETAPE = Uri.parse("content://" + AUTHORITY + "/" + ETAPE_ACHEMINEMENT);
+        public static final Uri LIST_ETAPE = Uri.parse("content://" + AUTHORITY + "/" + ETAPE_ACHEMINEMENT);
 
         @InexactContentUri(
                 path = "etape_acheminement/#",

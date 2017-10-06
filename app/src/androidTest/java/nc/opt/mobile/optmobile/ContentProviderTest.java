@@ -8,11 +8,11 @@ import android.net.Uri;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.orlanth23.bakingapp.provider.RecipesProvider;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import nc.opt.mobile.optmobile.provider.OptProvider;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -96,38 +96,26 @@ public class ContentProviderTest {
 
 
     @Test
-    public void deleteAllRecordsFromRecipeProvider() {
-        deleteRecords(RecipesProvider.ListRecipe.LIST_RECIPE);
-        deleteRecords(RecipesProvider.ListStep.LIST_STEP);
-        deleteRecords(RecipesProvider.ListIngredient.LIST_INGREDIENT);
+    public void deleteAllRecordsFromProvider() {
+        deleteRecords(OptProvider.ListColis.LIST_COLIS);
+        deleteRecords(OptProvider.ListEtapeAcheminement.LIST_ETAPE);
     }
 
     @Test
-    public void deleteAllRecordsFromIngredientProvider() {
-        deleteRecords(RecipesProvider.ListIngredient.LIST_INGREDIENT);
+    public void testInsertReadEtapeProvider() {
+        ContentValues testValuesStep = TestUtilities.createEtapeValues("RC123456789NC", 1234);
+        testInsertReadUriProvider(OptProvider.ListEtapeAcheminement.LIST_ETAPE, testValuesStep);
     }
 
     @Test
-    public void testInsertReadStepProvider() {
-        ContentValues testValuesStep = TestUtilities.createEtapeValues(1, 1234);
-        testInsertReadUriProvider(RecipesProvider.ListStep.LIST_STEP, testValuesStep);
+    public void testInsertReadEtapeWithNullIdProvider() {
+        ContentValues testValuesEtapeNull = TestUtilities.createEtapeValues("RC123456789NC", null);
+        testInsertReadUriProvider(OptProvider.ListEtapeAcheminement.LIST_ETAPE, testValuesEtapeNull);
     }
 
     @Test
-    public void testInsertReadIngredientProvider() {
-        ContentValues testValuesIngredient = TestUtilities.createIngredientValues(1, 1234);
-        testInsertReadUriProvider(RecipesProvider.ListIngredient.LIST_INGREDIENT, testValuesIngredient);
-    }
-
-    @Test
-    public void testInsertReadRecipeWithNullIdProvider() {
-        ContentValues testValuesAnnonceNull = TestUtilities.createRecipeValuesNullId();
-        testInsertReadUriProvider(RecipesProvider.ListRecipe.LIST_RECIPE, testValuesAnnonceNull);
-    }
-
-    @Test
-    public void testInsertReadRecipeProvider() {
-        ContentValues testValuesAnnonce = TestUtilities.createColisValues(1234);
-        testInsertReadUriProvider(RecipesProvider.ListRecipe.LIST_RECIPE, testValuesAnnonce);
+    public void testInsertReadColisProvider() {
+        ContentValues testValuesAnnonce = TestUtilities.createColisValues("RC123456789NC");
+        testInsertReadUriProvider(OptProvider.ListColis.LIST_COLIS, testValuesAnnonce);
     }
 }

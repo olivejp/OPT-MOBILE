@@ -67,8 +67,8 @@
         </activity>
 
         <provider
-            android:name=".AgencyProvider"
-            android:authorities="nc.opt.mobile.AgencyProvider"
+            android:name=".OptProvider"
+            android:authorities="nc.opt.mobile.OptProvider"
             android:exported="false" />
 
     </application>

@@ -11,14 +11,11 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
 
-import com.orlanth23.bakingapp.provider.IngredientInterface;
-import com.orlanth23.bakingapp.provider.RecipeInterface;
-import com.orlanth23.bakingapp.provider.StepInterface;
-
 import java.util.Map;
 import java.util.Set;
 
 import nc.opt.mobile.optmobile.provider.ColisInterface;
+import nc.opt.mobile.optmobile.provider.EtapeAcheminementInterface;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -26,19 +23,16 @@ import static junit.framework.Assert.assertTrue;
 
 class TestUtilities {
 
-    private static final String STEP_DESRIPTION = "description";
-    private static final String STEP_SHORT_DESRIPTION = "shortDescription";
-    private static final String STEP_VIDEO_URL = "videoUrl";
-    private static final String STEP_THUMBNAIL_URL = "thumbnailUrl";
-
+    private static final String ETAPE_DATE = "31/12/2017";
+    private static final String ETAPE_PAYS = "NOUVELLE-CALEDONIE";
+    private static final String ETAPE_COMMENTAIRE = "SIGNED BY OLIVE Edna";
+    private static final String ETAPE_DESCRIPTION = "This parcel is in transit to NC";
+    private static final String ETAPE_LOCALISATION = "NOUMEA CTC";
+    private static final String ETAPE_ID = "1";
 
     private static final String RECIPE_IMAGE = "recipeImage";
     private static final String RECIPE_NAME = "recipeName";
     private static final String RECIPE_SERVINGS = "recipeServings";
-
-    private static final String INGREDIENT_INGREDIENT = "ingredient";
-    private static final String INGREDIENT_MEASURE = "measure";
-    private static final double INGREDIENT_QUANTITY = 2.5;
 
     static boolean isTablet(AppCompatActivity activity) {
         Display display = activity.getWindowManager().getDefaultDisplay();
@@ -72,33 +66,14 @@ class TestUtilities {
     static ContentValues createEtapeValues(String idColis, @Nullable Integer idEtape) {
         ContentValues testValues = new ContentValues();
         if (idEtape != null) {
-            testValues.put(StepInterface._ID, idEtape);
+            testValues.put(EtapeAcheminementInterface.ID_ETAPE_ACHEMINEMENT, idEtape);
         }
-        testValues.put(StepInterface.description, STEP_DESRIPTION);
-        testValues.put(StepInterface.shortDescription, STEP_SHORT_DESRIPTION);
-        testValues.put(StepInterface.videoURL, STEP_VIDEO_URL);
-        testValues.put(StepInterface.thumbnailURL, STEP_THUMBNAIL_URL);
-        testValues.put(StepInterface.RECIPE_ID, idColis);
-        return testValues;
-    }
-
-    static ContentValues createIngredientValues(Integer idRecipe, @Nullable Integer idIngredient) {
-        ContentValues testValues = new ContentValues();
-        if (idIngredient != null) {
-            testValues.put(IngredientInterface._ID, idIngredient);
-        }
-        testValues.put(IngredientInterface.ingredient, INGREDIENT_INGREDIENT);
-        testValues.put(IngredientInterface.measure, INGREDIENT_MEASURE);
-        testValues.put(IngredientInterface.quantity, INGREDIENT_QUANTITY);
-        testValues.put(IngredientInterface.RECIPE_ID, idRecipe);
-        return testValues;
-    }
-
-    static ContentValues createRecipeValuesNullId() {
-        ContentValues testValues = new ContentValues();
-        testValues.put(RecipeInterface.image, RECIPE_IMAGE);
-        testValues.put(RecipeInterface.name, RECIPE_NAME);
-        testValues.put(RecipeInterface.servings, RECIPE_SERVINGS);
+        testValues.put(EtapeAcheminementInterface.DATE, ETAPE_DATE);
+        testValues.put(EtapeAcheminementInterface.PAYS, ETAPE_PAYS);
+        testValues.put(EtapeAcheminementInterface.COMMENTAIRE, ETAPE_COMMENTAIRE);
+        testValues.put(EtapeAcheminementInterface.DESCRIPTION, ETAPE_DESCRIPTION);
+        testValues.put(EtapeAcheminementInterface.LOCALISATION, ETAPE_LOCALISATION);
+        testValues.put(EtapeAcheminementInterface.ID_COLIS, idColis);
         return testValues;
     }
 

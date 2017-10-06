@@ -16,7 +16,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.adapter.ColisAdapter;
-import nc.opt.mobile.optmobile.adapter.EtapeAcheminementAdapter;
 import nc.opt.mobile.optmobile.domain.Colis;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 
@@ -48,7 +47,7 @@ public class GestionColisFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_result_search_parcel, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_parcel_management, container, false);
         ButterKnife.bind(this, rootView);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
