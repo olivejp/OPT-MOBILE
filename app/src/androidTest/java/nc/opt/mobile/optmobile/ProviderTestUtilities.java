@@ -21,18 +21,13 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
-class TestUtilities {
+class ProviderTestUtilities {
 
     private static final String ETAPE_DATE = "31/12/2017";
     private static final String ETAPE_PAYS = "NOUVELLE-CALEDONIE";
     private static final String ETAPE_COMMENTAIRE = "SIGNED BY OLIVE Edna";
     private static final String ETAPE_DESCRIPTION = "This parcel is in transit to NC";
     private static final String ETAPE_LOCALISATION = "NOUMEA CTC";
-    private static final String ETAPE_ID = "1";
-
-    private static final String RECIPE_IMAGE = "recipeImage";
-    private static final String RECIPE_NAME = "recipeName";
-    private static final String RECIPE_SERVINGS = "recipeServings";
 
     static boolean isTablet(AppCompatActivity activity) {
         Display display = activity.getWindowManager().getDefaultDisplay();

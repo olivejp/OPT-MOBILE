@@ -52,7 +52,7 @@ public class OptProvider {
         public static final Uri LIST_COLIS = Uri.parse("content://" + AUTHORITY + "/" + COLIS);
 
         @InexactContentUri(
-                path = "colis/#",
+                path = "colis/*",
                 name = "COLIS_ID",
                 type = "vnd.android.cursor.item/list",
                 whereColumn = ColisInterface.ID_COLIS,
@@ -75,7 +75,7 @@ public class OptProvider {
         @InexactContentUri(
                 path = "etape_acheminement/#",
                 name = "ETAPE_ACHEMINEMENT_ID",
-                type = "vnd.android.cursor.item/list",
+                type = "vnd.android.cursor.item/item",
                 whereColumn = EtapeAcheminementInterface.ID_ETAPE_ACHEMINEMENT,
                 pathSegment = 1)
         public static Uri withId(long id) {
@@ -83,11 +83,11 @@ public class OptProvider {
         }
 
         @InexactContentUri(
-                path = "etape_acheminement/id_colis/#",
+                path = "etape_acheminement/id_colis/*",
                 name = "COLIS_ID",
-                type = "vnd.android.cursor.item/list",
+                type = "vnd.android.cursor.dir/list",
                 whereColumn = EtapeAcheminementInterface.ID_COLIS,
-                pathSegment = 1)
+                pathSegment = 2)
         public static Uri withIdColis(String idColis) {
             return Uri.parse("content://" + AUTHORITY + "/" + ETAPE_ACHEMINEMENT + "/" + ColisInterface.ID_COLIS + "/" + idColis);
         }

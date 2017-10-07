@@ -9,7 +9,7 @@ import net.simonvt.schematic.annotation.Table;
 
 @Database(version = OptDatabase.VERSION, packageName = "nc.opt.mobile.optmobile")
 class OptDatabase {
-    static final int VERSION = 6;
+    static final int VERSION = 7;
 
     private OptDatabase() {
     }

@@ -20,7 +20,7 @@ public interface EtapeAcheminementInterface {
     String ID_ETAPE_ACHEMINEMENT = "id_etape_acheminement";
 
     @DataType(TEXT)
-    String ID_COLIS = "idColis";
+    String ID_COLIS = "id_colis";
 
     @DataType(TEXT)
     String DATE = "date";

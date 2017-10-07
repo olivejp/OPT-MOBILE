@@ -26,7 +26,7 @@ public class ContentProviderTest {
 
     private Context mContext;
 
-    private TestUtilities.TestContentObserver tco;
+    private ProviderTestUtilities.TestContentObserver tco;
 
     private void deleteRecords(Uri uri) {
         mContext.getContentResolver().delete(
@@ -50,6 +50,25 @@ public class ContentProviderTest {
         }
     }
 
+    private void validateUri(Uri uri, ContentValues contentValues, String selection, String[] selectionArgs) {
+        // A cursor is your primary interface to the query results.
+        Cursor cursor = mContext.getContentResolver().query(
+                uri,
+                null, // leaving "columns" null just returns all the columns.
+                selection, // cols for "where" clause
+                selectionArgs, // values for "where" clause
+                null  // sort order
+        );
+
+        ProviderTestUtilities.validateCursor("testInsertReadProvider. Error validating URI ".concat(uri.toString()),
+                cursor, contentValues);
+    }
+
+    private Uri insertContentValues(Uri uri, ContentValues contentValues) {
+        /* try to insert */
+        return mContext.getContentResolver().insert(uri, contentValues);
+    }
+
     private void testInsertReadUriProvider(Uri uri, ContentValues contentValues) {
 
         /* Suppression des enregistrements précédents */
@@ -59,7 +78,7 @@ public class ContentProviderTest {
         mContext.getContentResolver().registerContentObserver(uri, true, tco);
 
         /* try to insert */
-        Uri categorieUri = mContext.getContentResolver().insert(uri, contentValues);
+        Uri categorieUri = insertContentValues(uri, contentValues);
 
         /* verify that the notifyChange has been called */
         tco.waitForNotificationOrFail();
@@ -75,47 +94,52 @@ public class ContentProviderTest {
         // Data's inserted.  IN THEORY.  Now pull some out to stare at it and verify it made
         // the round trip.
 
-        // A cursor is your primary interface to the query results.
-        Cursor cursor = mContext.getContentResolver().query(
-                uri,
-                null, // leaving "columns" null just returns all the columns.
-                null, // cols for "where" clause
-                null, // values for "where" clause
-                null  // sort order
-        );
-
-        TestUtilities.validateCursor("testInsertReadProvider. Error validating URI ".concat(uri.toString()),
-                cursor, contentValues);
+        validateUri(uri, contentValues, null, null);
     }
 
     @Before
     public void precondition() {
         mContext = InstrumentationRegistry.getTargetContext();
-        tco = TestUtilities.getTestContentObserver();
+        tco = ProviderTestUtilities.getTestContentObserver();
+        deleteAllRecordsFromProvider();
     }
 
 
     @Test
     public void deleteAllRecordsFromProvider() {
+        deleteRecords(OptProvider.ListAgency.LIST_AGENCY);
         deleteRecords(OptProvider.ListColis.LIST_COLIS);
         deleteRecords(OptProvider.ListEtapeAcheminement.LIST_ETAPE);
     }
 
     @Test
     public void testInsertReadEtapeProvider() {
-        ContentValues testValuesStep = TestUtilities.createEtapeValues("RC123456789NC", 1234);
+        ContentValues testValuesStep = ProviderTestUtilities.createEtapeValues("RC123456789NC", 1234);
         testInsertReadUriProvider(OptProvider.ListEtapeAcheminement.LIST_ETAPE, testValuesStep);
     }
 
     @Test
     public void testInsertReadEtapeWithNullIdProvider() {
-        ContentValues testValuesEtapeNull = TestUtilities.createEtapeValues("RC123456789NC", null);
+        ContentValues testValuesEtapeNull = ProviderTestUtilities.createEtapeValues("RC123456789NC", null);
         testInsertReadUriProvider(OptProvider.ListEtapeAcheminement.LIST_ETAPE, testValuesEtapeNull);
     }
 
     @Test
     public void testInsertReadColisProvider() {
-        ContentValues testValuesAnnonce = TestUtilities.createColisValues("RC123456789NC");
+        ContentValues testValuesAnnonce = ProviderTestUtilities.createColisValues("RC123456789NC");
         testInsertReadUriProvider(OptProvider.ListColis.LIST_COLIS, testValuesAnnonce);
+    }
+
+    @Test
+    public void testInsertColisInsertEtapesRead() {
+        ContentValues testValuesColis = ProviderTestUtilities.createColisValues("RC123456789NC");
+        Uri uriColis = insertContentValues(OptProvider.ListColis.LIST_COLIS, testValuesColis);
+        if (ContentUris.parseId(uriColis) != -1) {
+            ContentValues testValuesEtape = ProviderTestUtilities.createEtapeValues("RC123456789NC", 1234);
+            Uri uriEtape = insertContentValues(OptProvider.ListEtapeAcheminement.LIST_ETAPE, testValuesEtape);
+
+            // validateUri(OptProvider.ListEtapeAcheminement.withIdColis("RC123456789NC"), testValuesEtape, "id_colis=?", new String[]{"RC123456789NC"});
+            validateUri(OptProvider.ListEtapeAcheminement.withIdColis("RC123456789NC"), testValuesEtape, null, null);
+        }
     }
 }
