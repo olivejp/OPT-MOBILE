@@ -23,6 +23,8 @@ import static junit.framework.Assert.assertTrue;
 
 class ProviderTestUtilities {
 
+    public static final String COLIS_ID = "RC123456789NC";
+
     private static final String ETAPE_DATE = "31/12/2017";
     private static final String ETAPE_PAYS = "NOUVELLE-CALEDONIE";
     private static final String ETAPE_COMMENTAIRE = "SIGNED BY OLIVE Edna";

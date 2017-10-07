@@ -93,7 +93,6 @@ public class ContentProviderTest {
 
         // Data's inserted.  IN THEORY.  Now pull some out to stare at it and verify it made
         // the round trip.
-
         validateUri(uri, contentValues, null, null);
     }
 
@@ -136,9 +135,7 @@ public class ContentProviderTest {
         Uri uriColis = insertContentValues(OptProvider.ListColis.LIST_COLIS, testValuesColis);
         if (ContentUris.parseId(uriColis) != -1) {
             ContentValues testValuesEtape = ProviderTestUtilities.createEtapeValues("RC123456789NC", 1234);
-            Uri uriEtape = insertContentValues(OptProvider.ListEtapeAcheminement.LIST_ETAPE, testValuesEtape);
-
-            // validateUri(OptProvider.ListEtapeAcheminement.withIdColis("RC123456789NC"), testValuesEtape, "id_colis=?", new String[]{"RC123456789NC"});
+            insertContentValues(OptProvider.ListEtapeAcheminement.LIST_ETAPE, testValuesEtape);
             validateUri(OptProvider.ListEtapeAcheminement.withIdColis("RC123456789NC"), testValuesEtape, null, null);
         }
     }
