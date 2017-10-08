@@ -1,6 +1,7 @@
 package nc.opt.mobile.optmobile.fragment;
 
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -8,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import butterknife.BindView;
@@ -51,17 +53,24 @@ public class SearchParcelFragment extends Fragment {
     @OnClick(R.id.fab_search_parcel)
     public void searchParcel(View view) {
         if (!editIdParcel.getText().toString().isEmpty()) {
+            String idColis = editIdParcel.getText().toString();
             Colis colis = new Colis();
-            colis.setIdColis(editIdParcel.getText().toString());
+            colis.setIdColis(idColis);
 
             // Query our ContentProvider to avoid duplicate
-            Cursor cursor = getActivity().getContentResolver().query(OptProvider.ListColis.withId(editIdParcel.getText().toString()), null, null, null, null);
+            Cursor cursor = getActivity().getContentResolver().query(OptProvider.ListColis.withId(idColis), null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 Snackbar.make(view, "Objet déjà suivi", Snackbar.LENGTH_LONG).show();
                 cursor.close();
             } else {
                 // Add the parcel to our ContentProvider
                 getActivity().getContentResolver().insert(OptProvider.ListColis.LIST_COLIS, ProviderUtilities.putColisToContentValues(colis));
+
+                // Hide the keyboard
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
+                Snackbar.make(view, idColis.concat(" ajouté au suivi"), Snackbar.LENGTH_LONG).show();
 
                 // Retour au fragment précédent
                 getActivity().getSupportFragmentManager().popBackStack();

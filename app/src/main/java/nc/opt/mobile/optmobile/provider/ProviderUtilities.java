@@ -8,7 +8,10 @@ import com.google.gson.Gson;
 
 import org.chalup.microorm.MicroOrm;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import nc.opt.mobile.optmobile.domain.Agency;
@@ -18,6 +21,13 @@ import nc.opt.mobile.optmobile.domain.Feature;
 import nc.opt.mobile.optmobile.domain.FeatureCollection;
 import nc.opt.mobile.optmobile.utils.Utilities;
 
+import static nc.opt.mobile.optmobile.provider.EtapeAcheminementInterface.COMMENTAIRE;
+import static nc.opt.mobile.optmobile.provider.EtapeAcheminementInterface.DATE;
+import static nc.opt.mobile.optmobile.provider.EtapeAcheminementInterface.DESCRIPTION;
+import static nc.opt.mobile.optmobile.provider.EtapeAcheminementInterface.ID_COLIS;
+import static nc.opt.mobile.optmobile.provider.EtapeAcheminementInterface.LOCALISATION;
+import static nc.opt.mobile.optmobile.provider.EtapeAcheminementInterface.PAYS;
+
 /**
  * Created by orlanth23 on 12/08/2017.
  */
@@ -26,12 +36,62 @@ public class ProviderUtilities {
 
     private static final MicroOrm uOrm = new MicroOrm();
 
+    // Check existence
+    private static String mWhereEtapeExistenceWhere = ID_COLIS.concat("=? AND ")
+            .concat(DATE).concat("=? AND ")
+            .concat(DESCRIPTION).concat("=? AND ")
+            .concat(COMMENTAIRE).concat("=? AND ")
+            .concat(LOCALISATION).concat("=? AND ")
+            .concat(PAYS).concat("=?");
+
     private ProviderUtilities() {
+
+    }
+
+    public static int updateLastUpdate(Context context, String idColis, boolean successful) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        Calendar cal = Calendar.getInstance();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(ColisInterface.LAST_UPDATE, dateFormat.format(cal.getTime()));
+        if (successful) {
+            contentValues.put(ColisInterface.LAST_UPDATE_SUCCESSFUL, dateFormat.format(cal.getTime()));
+        }
+
+        String where = ColisInterface.ID_COLIS.concat("=?");
+
+        return context.getContentResolver().update(OptProvider.ListColis.LIST_COLIS, contentValues, where, new String[]{idColis});
+    }
+
+    public static boolean checkExistence(Context context, String idColis, EtapeAcheminement etape) {
+        String[] args = new String[]{idColis,
+                etape.getDate(),
+                etape.getDescription(),
+                etape.getCommentaire(),
+                etape.getLocalisation(),
+                etape.getPays()};
+
+        Cursor cursor = context.getContentResolver()
+                .query(OptProvider.ListEtapeAcheminement.LIST_ETAPE, null, mWhereEtapeExistenceWhere, args, null);
+        if ((cursor != null) && (cursor.moveToFirst())) {
+            cursor.close();
+            return true;
+        }
+        return false;
+    }
+
+    public static void checkAndInsertEtape(Context context, String idColis, List<EtapeAcheminement> listEtape) {
+        for (EtapeAcheminement etape : listEtape) {
+            if (!checkExistence(context, idColis, etape)) {
+                // Création
+                context.getContentResolver().insert(OptProvider.ListColis.LIST_COLIS, putEtapeToContentValues(etape, idColis));
+            }
+        }
     }
 
     public static boolean deleteColis(Context context, String idColis) {
         // Suppression des étapes d'acheminement
-        context.getContentResolver().delete(OptProvider.ListEtapeAcheminement.LIST_ETAPE, EtapeAcheminementInterface.ID_COLIS.concat("=?"), new String[]{idColis});
+        context.getContentResolver().delete(OptProvider.ListEtapeAcheminement.LIST_ETAPE, ID_COLIS.concat("=?"), new String[]{idColis});
 
         // Suppression du colis
         int result = context.getContentResolver().delete(OptProvider.ListColis.LIST_COLIS, ColisInterface.ID_COLIS.concat("=?"), new String[]{idColis});
@@ -47,12 +107,12 @@ public class ProviderUtilities {
 
     public static ContentValues putEtapeToContentValues(EtapeAcheminement etapeAcheminement, String idColis) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(EtapeAcheminementInterface.PAYS, etapeAcheminement.getPays());
-        contentValues.put(EtapeAcheminementInterface.LOCALISATION, etapeAcheminement.getLocalisation());
-        contentValues.put(EtapeAcheminementInterface.COMMENTAIRE, etapeAcheminement.getCommentaire());
-        contentValues.put(EtapeAcheminementInterface.DESCRIPTION, etapeAcheminement.getDescription());
-        contentValues.put(EtapeAcheminementInterface.DATE, etapeAcheminement.getDate());
-        contentValues.put(EtapeAcheminementInterface.ID_COLIS, idColis);
+        contentValues.put(PAYS, etapeAcheminement.getPays());
+        contentValues.put(LOCALISATION, etapeAcheminement.getLocalisation());
+        contentValues.put(COMMENTAIRE, etapeAcheminement.getCommentaire());
+        contentValues.put(DESCRIPTION, etapeAcheminement.getDescription());
+        contentValues.put(DATE, etapeAcheminement.getDate());
+        contentValues.put(ID_COLIS, idColis);
         return contentValues;
     }
 

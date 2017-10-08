@@ -133,7 +133,7 @@ public class ParcelResultSearchFragment extends Fragment implements Response.Lis
         mRecyclerView.setAdapter(mEtapeAcheminementAdapter);
 
         // Add the request to the RequestQueue.
-        mRequestQueueSingleton.addToRequestQueue(mStringRequest);
+//        mRequestQueueSingleton.addToRequestQueue(mStringRequest);
 
         return rootView;
     }

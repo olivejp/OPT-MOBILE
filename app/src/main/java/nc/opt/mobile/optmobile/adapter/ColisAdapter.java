@@ -1,6 +1,7 @@
 package nc.opt.mobile.optmobile.adapter;
 
 import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -49,7 +50,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         holder.mIdColis.setText(holder.mColis.getIdColis());
         if (!holder.mColis.getEtapeAcheminementArrayList().isEmpty()) {
             // On prend la dernière étape
-            EtapeAcheminement etapeAcheminement = holder.mColis.getEtapeAcheminementArrayList().get(holder.mColis.getEtapeAcheminementArrayList().size()-1);
+            EtapeAcheminement etapeAcheminement = holder.mColis.getEtapeAcheminementArrayList().get(holder.mColis.getEtapeAcheminementArrayList().size() - 1);
             holder.mStepLastDate.setText(etapeAcheminement.getDate());
             holder.mStepLastPays.setText(etapeAcheminement.getPays());
             holder.mStepLastLocalisation.setText(etapeAcheminement.getLocalisation());
@@ -93,7 +94,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
 
         boolean mDeleteMode;
 
-        private void changeDeleteVisibility(){
+        private void changeDeleteVisibility() {
             relativeDeleteLayout.setVisibility(mDeleteMode ? View.VISIBLE : View.GONE);
         }
 
@@ -147,6 +148,8 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
 
                     // Notify the adapter
                     ColisAdapter.this.notifyDataSetChanged();
+
+                    Snackbar.make(mView, mColis.getIdColis().concat(" supprimé du suivi"), Snackbar.LENGTH_LONG).show();
                 }
             });
         }

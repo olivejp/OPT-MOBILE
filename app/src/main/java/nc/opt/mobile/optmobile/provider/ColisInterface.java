@@ -19,4 +19,10 @@ public interface ColisInterface {
 
     @DataType(TEXT)
     String DESCRIPTION = "description";
+
+    @DataType(TEXT)
+    String LAST_UPDATE = "last_update";
+
+    @DataType(TEXT)
+    String LAST_UPDATE_SUCCESSFUL = "last_update_successful";
 }

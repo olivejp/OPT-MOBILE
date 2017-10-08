@@ -38,6 +38,8 @@ import nc.opt.mobile.optmobile.fragment.GestionColisFragment;
 import nc.opt.mobile.optmobile.interfaces.AttachToPermissionActivity;
 import nc.opt.mobile.optmobile.interfaces.ListenerPermissionResult;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
+import nc.opt.mobile.optmobile.service.SyncColisService;
+import nc.opt.mobile.optmobile.utils.RequestQueueSingleton;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, AttachToPermissionActivity {
@@ -65,6 +67,7 @@ public class MainActivity extends AppCompatActivity
     private MenuItem mMenuItemProfil;
     private AgencyMapFragment agencyMapFragment;
     private GestionColisFragment gestionColisFragment;
+    private NetworkReceiver mNetworkReceiver;
     private static ArrayList<ListenerPermissionResult> mListenerPermissionResult = new ArrayList<>();
 
     private void callAgencyMapFragment() {
@@ -172,7 +175,8 @@ public class MainActivity extends AppCompatActivity
         }
 
         // On attache le receiver a l'application
-        registerReceiver(NetworkReceiver.getInstance(), NetworkReceiver.CONNECTIVITY_CHANGE_INTENT_FILTER);
+        mNetworkReceiver = NetworkReceiver.getInstance();
+        registerReceiver(mNetworkReceiver, NetworkReceiver.CONNECTIVITY_CHANGE_INTENT_FILTER);
 
         // Si la permission Internet n'a pas été accordée on va la demander
         if (!isInternetPermited()) {
@@ -200,6 +204,15 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // Appel de la premiere instance
+        RequestQueueSingleton.getInstance(this.getApplicationContext());
+
+        // Test du service
+        Intent syncService = new Intent(this, SyncColisService.class);
+        syncService.putExtra(SyncColisService.ARG_ACTION, SyncColisService.ARG_ACTION_SYNC_COLIS);
+        syncService.putExtra(SyncColisService.ARG_ID_COLIS, "EZ036524985US");
+        startService(syncService);
     }
 
     @Override
@@ -277,6 +290,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
+        if (mNetworkReceiver != null) {
+            unregisterReceiver(mNetworkReceiver);
+        }
         if (mAuthStateListener != null) {
             mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
         }
