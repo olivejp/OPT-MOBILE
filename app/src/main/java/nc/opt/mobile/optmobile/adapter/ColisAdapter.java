@@ -141,6 +141,10 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
                     // Remove from the content provider
                     ProviderUtilities.deleteColis(mContext, mColis.getIdColis());
 
+                    // Change visibility
+                    mDeleteMode = false;
+                    changeDeleteVisibility();
+
                     // Notify the adapter
                     ColisAdapter.this.notifyDataSetChanged();
                 }
