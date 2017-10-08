@@ -340,7 +340,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
         // Changement du titre
-        getActivity().setTitle("Agences OPT");
+        getActivity().setTitle(getActivity().getString(R.string.agences_opt));
     }
 
     @Override

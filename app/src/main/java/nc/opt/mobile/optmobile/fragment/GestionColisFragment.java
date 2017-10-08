@@ -65,7 +65,7 @@ public class GestionColisFragment extends Fragment {
         ButterKnife.bind(this, rootView);
 
         // Changement du titre
-        getActivity().setTitle("Suivi des colis");
+        getActivity().setTitle(getActivity().getString(R.string.suivi_des_colis));
 
         // Ajout d'une barre separatrice entre les elements
         mRecyclerView.addItemDecoration(new

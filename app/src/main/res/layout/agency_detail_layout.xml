@@ -86,10 +86,10 @@
         android:background="@android:color/darker_gray" />
 
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab_call_agency"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/sym_call_outgoing"
-            app:backgroundTint="@color/colorPrimaryDark" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_call_agency"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:backgroundTint="@color/colorPrimaryDark"
+        app:srcCompat="@drawable/ic_phone_white_48dp" />
 </LinearLayout>

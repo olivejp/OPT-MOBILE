@@ -174,6 +174,7 @@ public class MainActivity extends AppCompatActivity
         // On attache le receiver a l'application
         registerReceiver(NetworkReceiver.getInstance(), NetworkReceiver.CONNECTIVITY_CHANGE_INTENT_FILTER);
 
+        // Si la permission Internet n'a pas été accordée on va la demander
         if (!isInternetPermited()) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, RC_PERMISSION_INTERNET);
         }
@@ -253,8 +254,6 @@ public class MainActivity extends AppCompatActivity
         switch (item.getItemId()) {
             case R.id.nav_geo_agence:
                 callAgencyMapFragment();
-                break;
-            case R.id.nav_geo_fibre:
                 break;
             case R.id.nav_suivi_colis:
                 callSuiviColis();

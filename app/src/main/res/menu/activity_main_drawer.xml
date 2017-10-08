@@ -5,20 +5,16 @@
         <menu>
             <item
                 android:id="@+id/nav_geo_agence"
-                android:icon="@drawable/ic_menu_gallery"
+                android:icon="@drawable/ic_room_grey_900_48dp"
                 android:title="@string/agences_opt" />
-            <item
-                android:id="@+id/nav_geo_fibre"
-                android:icon="@drawable/ic_menu_gallery"
-                android:title="@string/d_ploiement_fibre" />
         </menu>
     </item>
     <item android:title="@string/courrier">
         <menu>
             <item
                 android:id="@+id/nav_suivi_colis"
-                android:icon="@drawable/ic_menu_share"
-                android:title="@string/suivre_colis" />
+                android:icon="@drawable/ic_archive_grey_900_48dp"
+                android:title="@string/suivi_des_colis" />
         </menu>
     </item>
 

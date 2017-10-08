@@ -43,6 +43,8 @@ public class SearchParcelFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_search_parcel, container, false);
         ButterKnife.bind(this, rootView);
 
+        getActivity().setTitle("Rechercher colis");
+
         return rootView;
     }
 
