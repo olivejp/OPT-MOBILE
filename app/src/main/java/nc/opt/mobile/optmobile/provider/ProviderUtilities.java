@@ -29,6 +29,16 @@ public class ProviderUtilities {
     private ProviderUtilities() {
     }
 
+    public static boolean deleteColis(Context context, String idColis) {
+        // Suppression des étapes d'acheminement
+        context.getContentResolver().delete(OptProvider.ListEtapeAcheminement.LIST_ETAPE, EtapeAcheminementInterface.ID_COLIS.concat("=?"), new String[]{idColis});
+
+        // Suppression du colis
+        int result = context.getContentResolver().delete(OptProvider.ListColis.LIST_COLIS, ColisInterface.ID_COLIS.concat("=?"), new String[]{idColis});
+
+        return result == 1;
+    }
+
     public static ContentValues putColisToContentValues(Colis colis) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(ColisInterface.ID_COLIS, colis.getIdColis());

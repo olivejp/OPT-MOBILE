@@ -4,6 +4,7 @@ package nc.opt.mobile.optmobile.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -117,6 +118,11 @@ public class ParcelResultSearchFragment extends Fragment implements Response.Lis
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(linearLayoutManager);
+
+        // Ajout d'une barre separatrice entre les elements
+        mRecyclerView.addItemDecoration(new
+                DividerItemDecoration(getActivity(),
+                DividerItemDecoration.VERTICAL));
 
         // Création d'un nouvel adapter
         mEtapeAcheminementAdapter = new EtapeAcheminementAdapter();

@@ -1,13 +1,16 @@
 package nc.opt.mobile.optmobile.activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -29,6 +32,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import nc.opt.mobile.optmobile.R;
+import nc.opt.mobile.optmobile.broadcast.NetworkReceiver;
 import nc.opt.mobile.optmobile.fragment.AgencyMapFragment;
 import nc.opt.mobile.optmobile.fragment.GestionColisFragment;
 import nc.opt.mobile.optmobile.interfaces.AttachToPermissionActivity;
@@ -46,9 +50,11 @@ public class MainActivity extends AppCompatActivity
 
     public static final int RC_PERMISSION_LOCATION = 100;
     public static final int RC_PERMISSION_CALL_PHONE = 200;
+    public static final int RC_PERMISSION_INTERNET = 300;
     public static final int RC_SIGN_IN = 300;
 
     private static final String PREF_POPULATED = "POPULATE_CP";
+
     private static final String SAVED_AGENCY_FRAGMENT = "SAVED_AGENCY_FRAGMENT";
     private static final String SAVED_GESTION_COLIS_FRAGMENT = "SAVED_GESTION_COLIS_FRAGMENT";
 
@@ -148,6 +154,10 @@ public class MainActivity extends AppCompatActivity
         invalidateOptionsMenu();
     }
 
+    private boolean isInternetPermited() {
+        return ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -159,6 +169,13 @@ public class MainActivity extends AppCompatActivity
         if (savedInstanceState != null) {
             agencyMapFragment = (AgencyMapFragment) getSupportFragmentManager().getFragment(savedInstanceState, SAVED_AGENCY_FRAGMENT);
             gestionColisFragment = (GestionColisFragment) getSupportFragmentManager().getFragment(savedInstanceState, SAVED_GESTION_COLIS_FRAGMENT);
+        }
+
+        // On attache le receiver a l'application
+        registerReceiver(NetworkReceiver.getInstance(), NetworkReceiver.CONNECTIVITY_CHANGE_INTENT_FILTER);
+
+        if (!isInternetPermited()) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, RC_PERMISSION_INTERNET);
         }
 
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -303,6 +320,17 @@ public class MainActivity extends AppCompatActivity
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         for (ListenerPermissionResult listenerPermissionResult : mListenerPermissionResult) {
             listenerPermissionResult.onPermissionRequestResult(requestCode, permissions, grantResults);
+        }
+
+        switch (requestCode) {
+            case RC_PERMISSION_INTERNET:
+                if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                    Toast.makeText(this, "Un accès à internet est nécessaire pour cette application.", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+                break;
+            default:
+                break;
         }
     }
 

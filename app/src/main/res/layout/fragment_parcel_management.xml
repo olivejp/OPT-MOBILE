@@ -18,7 +18,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:src="@android:drawable/ic_input_add"
         android:windowSoftInputMode="adjustResize"
-        app:backgroundTint="@color/colorPrimaryDark" />
+        app:backgroundTint="@color/colorPrimaryDark"
+        app:backgroundTintMode="src_over"
+        app:rippleColor="@color/colorAccent"
+        app:srcCompat="@drawable/ic_add_white_48dp" />
 </FrameLayout>

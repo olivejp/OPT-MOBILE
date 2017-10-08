@@ -4,6 +4,7 @@ package nc.opt.mobile.optmobile.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -61,6 +62,11 @@ public class HistoriqueColisFragment extends Fragment {
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(linearLayoutManager);
+
+        // Ajout d'une barre separatrice entre les elements
+        mRecyclerView.addItemDecoration(new
+                DividerItemDecoration(getActivity(),
+                DividerItemDecoration.VERTICAL));
 
         // Recuperer l'historique a partir du content provider
         List<EtapeAcheminement> list = ProviderUtilities.getListEtapeFromContentProvider(getActivity(), mIdColis);
