@@ -113,6 +113,7 @@
                 style="@style/Base.TextAppearance.AppCompat.Body1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:padding="2dp"
                 android:text="DAB intérieurs :" />
 
@@ -120,6 +121,7 @@
                 android:id="@+id/txt_agence_nb_dab_int"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:padding="2dp"
                 android:text="1" />
         </LinearLayout>
@@ -134,6 +136,7 @@
                 style="@style/Base.TextAppearance.AppCompat.Body1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:padding="2dp"
                 android:text="DAB extérieurs :" />
 
@@ -141,6 +144,7 @@
                 android:id="@+id/txt_agence_nb_dab_ext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:padding="2dp"
                 android:text="3" />
         </LinearLayout>
