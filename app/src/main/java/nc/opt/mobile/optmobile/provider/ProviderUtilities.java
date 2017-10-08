@@ -29,6 +29,23 @@ public class ProviderUtilities {
     private ProviderUtilities() {
     }
 
+    public static ContentValues putColisToContentValues(Colis colis) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(ColisInterface.ID_COLIS, colis.getIdColis());
+        return contentValues;
+    }
+
+    public static ContentValues putEtapeToContentValues(EtapeAcheminement etapeAcheminement, String idColis) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(EtapeAcheminementInterface.PAYS, etapeAcheminement.getPays());
+        contentValues.put(EtapeAcheminementInterface.LOCALISATION, etapeAcheminement.getLocalisation());
+        contentValues.put(EtapeAcheminementInterface.COMMENTAIRE, etapeAcheminement.getCommentaire());
+        contentValues.put(EtapeAcheminementInterface.DESCRIPTION, etapeAcheminement.getDescription());
+        contentValues.put(EtapeAcheminementInterface.DATE, etapeAcheminement.getDate());
+        contentValues.put(EtapeAcheminementInterface.ID_COLIS, idColis);
+        return contentValues;
+    }
+
     private static Agency getAgencyFromCursor(Cursor cursor) {
         return uOrm.fromCursor(cursor, Agency.class);
     }

@@ -39,8 +39,10 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, AttachToPermissionActivity {
 
     private static final String TAG = MainActivity.class.getName();
-    private static final String TAG_AGENCY_MAP_FRAGMENT = "AGENCY_MAP_FRAGMENT";
-    private static final String TAG_GESTION_COLIS_FRAGMENT = "TAG_GESTION_COLIS_FRAGMENT";
+    public static final String TAG_AGENCY_MAP_FRAGMENT = "AGENCY_MAP_FRAGMENT";
+    public static final String TAG_GESTION_COLIS_FRAGMENT = "TAG_GESTION_COLIS_FRAGMENT";
+    public static final String TAG_SEARCH_PARCEL_FRAGMENT = "TAG_SEARCH_PARCEL_FRAGMENT";
+    public static final String TAG_PARCEL_RESULT_SEARCH_FRAGMENT = "TAG_PARCEL_RESULT_SEARCH_FRAGMENT";
 
     public static final int RC_PERMISSION_LOCATION = 100;
     public static final int RC_PERMISSION_CALL_PHONE = 200;

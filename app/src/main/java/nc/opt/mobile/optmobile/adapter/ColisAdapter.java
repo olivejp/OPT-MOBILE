@@ -1,19 +1,22 @@
 package nc.opt.mobile.optmobile.adapter;
 
+import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
+import nc.opt.mobile.optmobile.activity.MainActivity;
 import nc.opt.mobile.optmobile.domain.Colis;
 import nc.opt.mobile.optmobile.domain.EtapeAcheminement;
+import nc.opt.mobile.optmobile.fragment.ParcelResultSearchFragment;
 
 /**
  * Created by orlanth23 on 05/10/2017.
@@ -23,12 +26,11 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
 
     private final List<Colis> mColisList;
 
-    public ColisAdapter(List<Colis> colisList) {
-        mColisList = colisList;
-    }
+    private Context mContext;
 
-    public ColisAdapter() {
-        mColisList = new ArrayList<>();
+    public ColisAdapter(Context context, List<Colis> colisList) {
+        mContext = context;
+        mColisList = colisList;
     }
 
     public List<Colis> getmColisList() {
@@ -85,6 +87,18 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
             super(view);
             mView = view;
             ButterKnife.bind(this, mView);
+
+            mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ParcelResultSearchFragment parcelResultSearchFragment = ParcelResultSearchFragment.newInstance(mColis.getIdColis());
+                    ((AppCompatActivity) mContext).getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.frame_main, parcelResultSearchFragment, MainActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT)
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
         }
     }
 }
