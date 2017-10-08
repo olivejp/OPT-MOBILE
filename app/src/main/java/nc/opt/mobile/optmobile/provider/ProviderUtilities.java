@@ -3,6 +3,7 @@ package nc.opt.mobile.optmobile.provider;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
 
@@ -48,7 +49,7 @@ public class ProviderUtilities {
 
     }
 
-    public static int updateLastUpdate(Context context, String idColis, boolean successful) {
+    public static int updateLastUpdate(Context context,@NonNull String idColis, boolean successful) {
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         Calendar cal = Calendar.getInstance();
 
@@ -63,7 +64,7 @@ public class ProviderUtilities {
         return context.getContentResolver().update(OptProvider.ListColis.LIST_COLIS, contentValues, where, new String[]{idColis});
     }
 
-    public static boolean checkExistence(Context context, String idColis, EtapeAcheminement etape) {
+    private static boolean checkExistence(Context context, String idColis, EtapeAcheminement etape) {
         String[] args = new String[]{idColis,
                 etape.getDate(),
                 etape.getDescription(),
@@ -84,7 +85,7 @@ public class ProviderUtilities {
         for (EtapeAcheminement etape : listEtape) {
             if (!checkExistence(context, idColis, etape)) {
                 // Création
-                context.getContentResolver().insert(OptProvider.ListColis.LIST_COLIS, putEtapeToContentValues(etape, idColis));
+                context.getContentResolver().insert(OptProvider.ListEtapeAcheminement.LIST_ETAPE, putEtapeToContentValues(etape, idColis));
             }
         }
     }
@@ -105,7 +106,7 @@ public class ProviderUtilities {
         return contentValues;
     }
 
-    public static ContentValues putEtapeToContentValues(EtapeAcheminement etapeAcheminement, String idColis) {
+    private static ContentValues putEtapeToContentValues(EtapeAcheminement etapeAcheminement, String idColis) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(PAYS, etapeAcheminement.getPays());
         contentValues.put(LOCALISATION, etapeAcheminement.getLocalisation());

@@ -53,7 +53,7 @@ public class SyncColisService extends IntentService {
                 String url = String.format(mUrl, idColis);
 
                 // Request a string response from the provided URL.
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new ActionSyncColisListener(), new ActionSyncColisErrorListener());
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new ActionSyncColisListener(idColis), new ActionSyncColisErrorListener(idColis));
 
                 // Add the request to the RequestQueue.
                 mRequestQueueSingleton.addToRequestQueue(stringRequest);
@@ -68,7 +68,7 @@ public class SyncColisService extends IntentService {
                 String url = String.format(mUrl, colis.getIdColis());
 
                 // Request a string response from the provided URL.
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new ActionSyncColisListener(), new ActionSyncColisErrorListener());
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new ActionSyncColisListener(colis.getIdColis()), new ActionSyncColisErrorListener(colis.getIdColis()));
 
                 // Add the request to the RequestQueue.
                 mRequestQueueSingleton.addToRequestQueue(stringRequest);
@@ -97,10 +97,15 @@ public class SyncColisService extends IntentService {
     }
 
     private class TransformHtmlTask extends AsyncTask<String, Void, Colis> {
+        private String idColis;
 
+        TransformHtmlTask(String idColis) {
+            this.idColis = idColis;
+        }
 
-        private Colis transformHtmlToObject(String htmlToTransform) {
+        private Colis transformHtmlToObject(String idColis, String htmlToTransform) {
             Colis colis = new Colis();
+            colis.setIdColis(idColis);
             try {
                 int transformResult = HtmlTransformer.getParcelResultFromHtml(htmlToTransform, colis);
                 switch (transformResult) {
@@ -125,7 +130,7 @@ public class SyncColisService extends IntentService {
         protected Colis doInBackground(String... params) {
             try {
                 String responseEncoded = URLDecoder.decode(URLEncoder.encode(params[0], Constants.ENCODING_ISO), Constants.ENCODING_UTF_8);
-                return transformHtmlToObject(responseEncoded);
+                return transformHtmlToObject(idColis, responseEncoded);
             } catch (UnsupportedEncodingException e) {
                 Log.e(TAG, e.getMessage(), e);
             }
@@ -134,14 +139,26 @@ public class SyncColisService extends IntentService {
     }
 
     private class ActionSyncColisListener implements Response.Listener<String> {
+        private String idColis;
+
+        ActionSyncColisListener(String idColis) {
+            this.idColis = idColis;
+        }
+
         @Override
         public void onResponse(final String response) {
-            TransformHtmlTask asyncTask = new TransformHtmlTask();
+            TransformHtmlTask asyncTask = new TransformHtmlTask(idColis);
             asyncTask.execute(response);
         }
     }
 
     private class ActionSyncColisErrorListener implements Response.ErrorListener {
+        private String idColis;
+
+        public ActionSyncColisErrorListener(String idColis) {
+            this.idColis = idColis;
+        }
+
         @Override
         public void onErrorResponse(VolleyError error) {
             Log.e(TAG, error.getMessage(), error);
