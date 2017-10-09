@@ -60,6 +60,9 @@ public class HistoriqueColisFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_result_search_parcel, container, false);
         ButterKnife.bind(this, rootView);
 
+        // Changement du titre
+        getActivity().setTitle(mIdColis);
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(linearLayoutManager);
 

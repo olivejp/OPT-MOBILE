@@ -19,6 +19,7 @@ import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.domain.Colis;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
+import nc.opt.mobile.optmobile.service.SyncColisService;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -65,6 +66,9 @@ public class SearchParcelFragment extends Fragment {
             } else {
                 // Add the parcel to our ContentProvider
                 getActivity().getContentResolver().insert(OptProvider.ListColis.LIST_COLIS, ProviderUtilities.putColisToContentValues(colis));
+
+                // Lancement du service de synchro
+                SyncColisService.launchSynchroByIdColis(getActivity(), colis.getIdColis());
 
                 // Hide the keyboard
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);

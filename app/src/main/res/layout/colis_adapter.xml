@@ -16,7 +16,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:layout_weight="0.7"
-        app:srcCompat="@drawable/ic_archive_grey_900_48dp" />
+        app:srcCompat="@mipmap/ic_colis_opt" />
 
     <LinearLayout
         android:id="@+id/linear_detail_layout"

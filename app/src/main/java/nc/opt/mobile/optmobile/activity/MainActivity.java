@@ -38,7 +38,6 @@ import nc.opt.mobile.optmobile.fragment.GestionColisFragment;
 import nc.opt.mobile.optmobile.interfaces.AttachToPermissionActivity;
 import nc.opt.mobile.optmobile.interfaces.ListenerPermissionResult;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
-import nc.opt.mobile.optmobile.service.SyncColisService;
 import nc.opt.mobile.optmobile.utils.RequestQueueSingleton;
 
 public class MainActivity extends AppCompatActivity
@@ -174,10 +173,6 @@ public class MainActivity extends AppCompatActivity
             gestionColisFragment = (GestionColisFragment) getSupportFragmentManager().getFragment(savedInstanceState, SAVED_GESTION_COLIS_FRAGMENT);
         }
 
-        // On attache le receiver a l'application
-        mNetworkReceiver = NetworkReceiver.getInstance();
-        registerReceiver(mNetworkReceiver, NetworkReceiver.CONNECTIVITY_CHANGE_INTENT_FILTER);
-
         // Si la permission Internet n'a pas été accordée on va la demander
         if (!isInternetPermited()) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, RC_PERMISSION_INTERNET);
@@ -207,12 +202,6 @@ public class MainActivity extends AppCompatActivity
 
         // Appel de la premiere instance
         RequestQueueSingleton.getInstance(this.getApplicationContext());
-
-        // Test du service
-        Intent syncService = new Intent(this, SyncColisService.class);
-        syncService.putExtra(SyncColisService.ARG_ACTION, SyncColisService.ARG_ACTION_SYNC_COLIS);
-        syncService.putExtra(SyncColisService.ARG_ID_COLIS, "EZ036524985US");
-        startService(syncService);
     }
 
     @Override
@@ -285,6 +274,10 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+
+        // On attache le receiver a l'application
+        mNetworkReceiver = NetworkReceiver.getInstance();
+        registerReceiver(mNetworkReceiver, NetworkReceiver.CONNECTIVITY_CHANGE_INTENT_FILTER);
     }
 
     @Override

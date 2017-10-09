@@ -20,7 +20,7 @@ import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.activity.MainActivity;
 import nc.opt.mobile.optmobile.domain.Colis;
 import nc.opt.mobile.optmobile.domain.EtapeAcheminement;
-import nc.opt.mobile.optmobile.fragment.ParcelResultSearchFragment;
+import nc.opt.mobile.optmobile.fragment.HistoriqueColisFragment;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 
 /**
@@ -61,6 +61,10 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
     @Override
     public int getItemCount() {
         return mColisList.size();
+    }
+
+    public List<Colis> getmColisList() {
+        return mColisList;
     }
 
     class ViewHolderStepParcel extends RecyclerView.ViewHolder {
@@ -110,10 +114,10 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
                     // If we aren't in delete mode we call the parcel result search fragment
                     // Otherwise we deactivate the delete mode and make the delete button invisible
                     if (!mDeleteMode) {
-                        ParcelResultSearchFragment parcelResultSearchFragment = ParcelResultSearchFragment.newInstance(mColis.getIdColis());
+                        HistoriqueColisFragment historiqueColisFragment = HistoriqueColisFragment.newInstance(mColis.getIdColis());
                         ((AppCompatActivity) mContext).getSupportFragmentManager()
                                 .beginTransaction()
-                                .replace(R.id.frame_main, parcelResultSearchFragment, MainActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT)
+                                .replace(R.id.frame_main, historiqueColisFragment, MainActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT)
                                 .addToBackStack(null)
                                 .commit();
                     } else {
@@ -145,9 +149,6 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
                     // Change visibility
                     mDeleteMode = false;
                     changeDeleteVisibility();
-
-                    // Notify the adapter
-                    ColisAdapter.this.notifyDataSetChanged();
 
                     Snackbar.make(mView, mColis.getIdColis().concat(" supprimé du suivi"), Snackbar.LENGTH_LONG).show();
                 }

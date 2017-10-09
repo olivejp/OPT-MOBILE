@@ -1,6 +1,7 @@
 package nc.opt.mobile.optmobile.service;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -39,6 +40,21 @@ public class SyncColisService extends IntentService {
     public SyncColisService() {
         super("SyncColisService");
         mRequestQueueSingleton = RequestQueueSingleton.getInstance(SyncColisService.this);
+    }
+
+    // Lancement du service de synchro
+    public static void launchSynchroByIdColis(Context context, String idColis) {
+        Intent syncService = new Intent(context, SyncColisService.class);
+        syncService.putExtra(SyncColisService.ARG_ACTION, SyncColisService.ARG_ACTION_SYNC_COLIS);
+        syncService.putExtra(SyncColisService.ARG_ID_COLIS, idColis);
+        context.startService(syncService);
+    }
+
+    // Lancement du service de synchro pour tous les objets
+    public static void launchSynchroForAll(Context context) {
+        Intent syncService = new Intent(context, SyncColisService.class);
+        syncService.putExtra(SyncColisService.ARG_ACTION, SyncColisService.ARG_ACTION_SYNC_ALL);
+        context.startService(syncService);
     }
 
     private void handleActionSyncColis(Bundle bundle) {
