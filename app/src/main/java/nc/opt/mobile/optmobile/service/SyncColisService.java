@@ -2,7 +2,6 @@ package nc.opt.mobile.optmobile.service;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -12,15 +11,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.List;
 
 import nc.opt.mobile.optmobile.domain.Colis;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 import nc.opt.mobile.optmobile.utils.Constants;
-import nc.opt.mobile.optmobile.utils.HtmlTransformer;
 import nc.opt.mobile.optmobile.utils.RequestQueueSingleton;
 
 public class SyncColisService extends IntentService {
@@ -46,14 +41,14 @@ public class SyncColisService extends IntentService {
         mRequestQueueSingleton = RequestQueueSingleton.getInstance(SyncColisService.this);
     }
 
-    private void actionSyncColis(Bundle bundle) {
+    private void handleActionSyncColis(Bundle bundle) {
         if (bundle.containsKey(ARG_ID_COLIS)) {
             String idColis = bundle.getString(ARG_ID_COLIS);
             if (idColis != null) {
                 String url = String.format(mUrl, idColis);
 
                 // Request a string response from the provided URL.
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new ActionSyncColisListener(idColis), new ActionSyncColisErrorListener(idColis));
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new ActionSyncColisListener(idColis), new ActionSyncColisErrorListener());
 
                 // Add the request to the RequestQueue.
                 mRequestQueueSingleton.addToRequestQueue(stringRequest);
@@ -61,14 +56,14 @@ public class SyncColisService extends IntentService {
         }
     }
 
-    private void actionSyncAll() {
+    private void handleActionSyncAll() {
         List<Colis> list = ProviderUtilities.getListColisFromContentProvider(this);
         if (!list.isEmpty()) {
             for (Colis colis : list) {
                 String url = String.format(mUrl, colis.getIdColis());
 
                 // Request a string response from the provided URL.
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new ActionSyncColisListener(colis.getIdColis()), new ActionSyncColisErrorListener(colis.getIdColis()));
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new ActionSyncColisListener(colis.getIdColis()), new ActionSyncColisErrorListener());
 
                 // Add the request to the RequestQueue.
                 mRequestQueueSingleton.addToRequestQueue(stringRequest);
@@ -84,57 +79,15 @@ public class SyncColisService extends IntentService {
                 String s = bundle.getString(ARG_ACTION);
                 switch (s) {
                     case ARG_ACTION_SYNC_COLIS:
-                        actionSyncColis(bundle);
+                        handleActionSyncColis(bundle);
                         break;
                     case ARG_ACTION_SYNC_ALL:
-                        actionSyncAll();
+                        handleActionSyncAll();
                         break;
                     default:
                         break;
                 }
             }
-        }
-    }
-
-    private class TransformHtmlTask extends AsyncTask<String, Void, Colis> {
-        private String idColis;
-
-        TransformHtmlTask(String idColis) {
-            this.idColis = idColis;
-        }
-
-        private Colis transformHtmlToObject(String idColis, String htmlToTransform) {
-            Colis colis = new Colis();
-            colis.setIdColis(idColis);
-            try {
-                int transformResult = HtmlTransformer.getParcelResultFromHtml(htmlToTransform, colis);
-                switch (transformResult) {
-                    case HtmlTransformer.RESULT_SUCCESS:
-                        ProviderUtilities.updateLastUpdate(SyncColisService.this, colis.getIdColis(), true);
-                        ProviderUtilities.checkAndInsertEtape(SyncColisService.this, colis.getIdColis(), colis.getEtapeAcheminementArrayList());
-                        return colis;
-                    case HtmlTransformer.RESULT_NO_ITEM_FOUND:
-                        ProviderUtilities.updateLastUpdate(SyncColisService.this, colis.getIdColis(), false);
-                        return null;
-                    default:
-                        break;
-                }
-
-            } catch (HtmlTransformer.HtmlTransformerException e) {
-                Log.e(TAG, e.getMessage(), e);
-            }
-            return null;
-        }
-
-        @Override
-        protected Colis doInBackground(String... params) {
-            try {
-                String responseEncoded = URLDecoder.decode(URLEncoder.encode(params[0], Constants.ENCODING_ISO), Constants.ENCODING_UTF_8);
-                return transformHtmlToObject(idColis, responseEncoded);
-            } catch (UnsupportedEncodingException e) {
-                Log.e(TAG, e.getMessage(), e);
-            }
-            return null;
         }
     }
 
@@ -147,18 +100,12 @@ public class SyncColisService extends IntentService {
 
         @Override
         public void onResponse(final String response) {
-            TransformHtmlTask asyncTask = new TransformHtmlTask(idColis);
+            TransformHtmlTask asyncTask = new TransformHtmlTask(SyncColisService.this, idColis);
             asyncTask.execute(response);
         }
     }
 
     private class ActionSyncColisErrorListener implements Response.ErrorListener {
-        private String idColis;
-
-        public ActionSyncColisErrorListener(String idColis) {
-            this.idColis = idColis;
-        }
-
         @Override
         public void onErrorResponse(VolleyError error) {
             Log.e(TAG, error.getMessage(), error);
