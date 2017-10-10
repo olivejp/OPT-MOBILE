@@ -16,14 +16,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -260,9 +256,9 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
 
     private void changeVisibility() {
         if (mAgencySelected != null) {
-            scaleView(linearLayoutAgenceDetail, 0f, 1f);
+            linearLayoutAgenceDetail.setVisibility(View.VISIBLE);
         } else {
-            scaleView(linearLayoutAgenceDetail, 0f, 0f);
+            linearLayoutAgenceDetail.setVisibility(View.GONE);
         }
     }
 
@@ -377,13 +373,13 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
                 mMarkerSelected.setIcon(mAgencySelected.getTYPE().equals("Agence") ? mIconAgence : mIconAnnexe);
             }
 
-            changeVisibility();
-
             mMarkerSelected = marker;
             mAgencySelected = (Agency) mMarkerSelected.getTag();
             mMarkerSelected.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
 
             setAgencyToLayout(mAgencySelected);
+
+            changeVisibility();
 
             return true;
         } else {
@@ -394,20 +390,13 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     @Override
     public void onPermissionRequestResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == RC_PERMISSION_LOCATION) {
-            enableLocation();
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED || grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                enableLocation();
+            }
         } else if (requestCode == RC_PERMISSION_CALL_PHONE) {
-            callSelectedAgency();
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                callSelectedAgency();
+            }
         }
-    }
-
-    public void scaleView(View v, float startScale, float endScale) {
-        Animation anim = new ScaleAnimation(
-                1f, 1f, // Start and end values for the X axis scaling
-                startScale, endScale, // Start and end values for the Y axis scaling
-                Animation.RELATIVE_TO_SELF, 0f, // Pivot point of X scaling
-                Animation.RELATIVE_TO_SELF, 1f); // Pivot point of Y scaling
-        anim.setFillAfter(true); // Needed to keep the result of the animation
-        anim.setDuration(500);
-        v.startAnimation(anim);
     }
 }

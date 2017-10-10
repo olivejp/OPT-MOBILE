@@ -1,12 +1,12 @@
 package nc.opt.mobile.optmobile.utils;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,35 +32,32 @@ public class NoticeDialogFragment extends DialogFragment {
     public static final int TYPE_IMAGE_INFORMATION = 120;
 
     private NoticeDialogListener mListenerContext;
-    private AppCompatActivity mAppCompatActivity;
+    private Activity mActivity;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            // Instantiate the NoticeDialogListener so we can send events to the host
             mListenerContext = (NoticeDialogListener) context;
         } catch (ClassCastException e) {
             Log.e("ClassCastException", e.getMessage(), e);
-            // The activity doesn't implement the interface, throw exception
             throw new ClassCastException(context.toString()
                     + " doit implementer l'interface NoticeDialogListener");
         }
 
         try {
-            // Instantiate the NoticeDialogListener so we can send events to the host
-            mAppCompatActivity = (AppCompatActivity) context;
+            mActivity = (Activity) context;
         } catch (ClassCastException e) {
             Log.e("ClassCastException", e.getMessage(), e);
             throw new ClassCastException(context.toString()
-                    + " doit étendre la classe AppCompatActivity");
+                    + " doit étendre la classe Activity");
         }
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mAppCompatActivity);
-        LayoutInflater inflater = mAppCompatActivity.getLayoutInflater();
+        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+        LayoutInflater inflater = mActivity.getLayoutInflater();
 
         View view = inflater.inflate(R.layout.dialog_layout, null);
         builder.setView(view);
@@ -119,7 +116,7 @@ public class NoticeDialogFragment extends DialogFragment {
         return builder.create();
     }
 
-    /* The activity that creates an instance of this dialog fragment must
+    /* The mActivity that creates an instance of this dialog fragment must
      * implement this interface in order to receive event callbacks.
      * Each method passes the DialogFragment in case the host needs to query it. */
     public interface NoticeDialogListener {
