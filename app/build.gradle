@@ -42,6 +42,7 @@ dependencies {
     compile "com.google.firebase:firebase-auth:${firebaseLibrary}"
     compile "com.google.firebase:firebase-database:${firebaseLibrary}"
     compile "com.google.firebase:firebase-messaging:${firebaseLibrary}"
+    compile "com.google.firebase:firebase-crash:${firebaseLibrary}"
 
     // Google play services
     compile "com.google.android.gms:play-services-maps:${firebaseLibrary}"
