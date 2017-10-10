@@ -51,10 +51,17 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         if (!holder.mColis.getEtapeAcheminementArrayList().isEmpty()) {
             // On prend la dernière étape
             EtapeAcheminement etapeAcheminement = holder.mColis.getEtapeAcheminementArrayList().get(holder.mColis.getEtapeAcheminementArrayList().size() - 1);
+            holder.tiret.setVisibility(View.VISIBLE);
             holder.mStepLastDate.setText(etapeAcheminement.getDate());
             holder.mStepLastPays.setText(etapeAcheminement.getPays());
             holder.mStepLastLocalisation.setText(etapeAcheminement.getLocalisation());
             holder.mStepLastDescription.setText(etapeAcheminement.getDescription());
+        } else {
+            holder.tiret.setVisibility(View.GONE);
+            holder.mStepLastDate.setText(null);
+            holder.mStepLastPays.setText(null);
+            holder.mStepLastLocalisation.setText(null);
+            holder.mStepLastDescription.setText(null);
         }
     }
 
@@ -93,6 +100,9 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
 
         @BindView(R.id.relative_delete_layout)
         RelativeLayout relativeDeleteLayout;
+
+        @BindView(R.id.colis_tiret)
+        TextView tiret;
 
         Colis mColis;
 

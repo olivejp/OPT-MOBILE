@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,8 @@ public class SearchParcelFragment extends Fragment {
     @BindView(R.id.edit_id_parcel)
     EditText editIdParcel;
 
+    private AppCompatActivity mActivity;
+
     public static SearchParcelFragment newInstance() {
         SearchParcelFragment fragment = new SearchParcelFragment();
         Bundle args = new Bundle();
@@ -41,12 +44,18 @@ public class SearchParcelFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mActivity = (AppCompatActivity) context;
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_search_parcel, container, false);
         ButterKnife.bind(this, rootView);
 
-        getActivity().setTitle("Rechercher colis");
+        mActivity.setTitle("Rechercher colis");
 
         return rootView;
     }
@@ -59,25 +68,25 @@ public class SearchParcelFragment extends Fragment {
             colis.setIdColis(idColis);
 
             // Query our ContentProvider to avoid duplicate
-            Cursor cursor = getActivity().getContentResolver().query(OptProvider.ListColis.withId(idColis), null, null, null, null);
+            Cursor cursor = mActivity.getContentResolver().query(OptProvider.ListColis.withId(idColis), null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 Snackbar.make(view, "Objet déjà suivi", Snackbar.LENGTH_LONG).show();
                 cursor.close();
             } else {
                 // Add the parcel to our ContentProvider
-                getActivity().getContentResolver().insert(OptProvider.ListColis.LIST_COLIS, ProviderUtilities.putColisToContentValues(colis));
+                mActivity.getContentResolver().insert(OptProvider.ListColis.LIST_COLIS, ProviderUtilities.putColisToContentValues(colis));
 
                 // Lancement du service de synchro
-                SyncColisService.launchSynchroByIdColis(getActivity(), colis.getIdColis());
+                SyncColisService.launchSynchroByIdColis(mActivity, colis.getIdColis());
 
                 // Hide the keyboard
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
                 Snackbar.make(view, idColis.concat(" ajouté au suivi"), Snackbar.LENGTH_LONG).show();
 
                 // Retour au fragment précédent
-                getActivity().getSupportFragmentManager().popBackStack();
+                mActivity.getSupportFragmentManager().popBackStack();
             }
         }
     }

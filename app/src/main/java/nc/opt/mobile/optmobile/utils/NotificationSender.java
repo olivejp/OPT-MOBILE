@@ -16,6 +16,7 @@ import nc.opt.mobile.optmobile.activity.MainActivity;
 
 public class NotificationSender {
     private static final int OPT_NOTIFICATION_ID = 100;
+    private static final String OPT_CHANNEL_ID = "OPT_CHANNEL";
 
     private NotificationSender() {
     }
@@ -23,7 +24,7 @@ public class NotificationSender {
     public static void sendNotification(Context context, String title, String textContent, @DrawableRes int drawableRes) {
 
         // The id of the channel.
-        String channel = "my_channel_01";
+        String channel = OPT_CHANNEL_ID;
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context, channel)
                         .setSmallIcon(drawableRes)

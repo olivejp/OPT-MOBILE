@@ -2,6 +2,7 @@ package nc.opt.mobile.optmobile.fragment;
 
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,6 +35,7 @@ import static nc.opt.mobile.optmobile.activity.MainActivity.TAG_SEARCH_PARCEL_FR
 public class GestionColisFragment extends Fragment {
 
     private ColisAdapter mColisAdapter;
+    private AppCompatActivity mActivity;
 
     @BindView(R.id.recycler_parcel_list_management)
     RecyclerView mRecyclerView;
@@ -54,11 +57,17 @@ public class GestionColisFragment extends Fragment {
     @OnClick(R.id.fab_add_parcel)
     public void onFloatingButtonClick(View view) {
         SearchParcelFragment searchParcelFragment = SearchParcelFragment.newInstance();
-        getActivity().getSupportFragmentManager()
+        mActivity.getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.frame_main, searchParcelFragment, TAG_SEARCH_PARCEL_FRAGMENT)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mActivity = (AppCompatActivity) context;
     }
 
     @Override
@@ -76,18 +85,18 @@ public class GestionColisFragment extends Fragment {
         ButterKnife.bind(this, rootView);
 
         // Changement du titre
-        getActivity().setTitle(getActivity().getString(R.string.suivi_des_colis));
+        mActivity.setTitle(getActivity().getString(R.string.suivi_des_colis));
 
         // Ajout d'une barre separatrice entre les elements
         mRecyclerView.addItemDecoration(new
-                DividerItemDecoration(getActivity(),
+                DividerItemDecoration(mActivity,
                 DividerItemDecoration.VERTICAL));
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mActivity);
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
         // Création d'un nouvel adapter
-        mColisAdapter = new ColisAdapter(getActivity(), ProviderUtilities.getListColisFromContentProvider(getActivity()));
+        mColisAdapter = new ColisAdapter(mActivity, ProviderUtilities.getListColisFromContentProvider(mActivity));
 
         mRecyclerView.setAdapter(mColisAdapter);
 
@@ -103,18 +112,13 @@ public class GestionColisFragment extends Fragment {
         }
 
         void observe() {
-            ContentResolver resolver = getActivity().getContentResolver();
-            // set our watcher for the Uri we are concerned with
-            resolver.registerContentObserver(
-                    OptProvider.ListColis.LIST_COLIS,
-                    false, // only notify that Uri of change *prob won't need true here often*
-                    this); // this innerclass handles onChange
+            ContentResolver resolver = mActivity.getContentResolver();
 
-            // set our watcher for the Uri we are concerned with
             resolver.registerContentObserver(
-                    OptProvider.ListEtapeAcheminement.LIST_ETAPE,
-                    false, // only notify that Uri of change *prob won't need true here often*
-                    this); // this innerclass handles onChange
+                    OptProvider.ListColis.LIST_COLIS, false, this);
+
+            resolver.registerContentObserver(
+                    OptProvider.ListEtapeAcheminement.LIST_ETAPE, false, this);
         }
 
         @Override
@@ -125,7 +129,7 @@ public class GestionColisFragment extends Fragment {
         @Override
         public void onChange(boolean selfChange, Uri uri) {
             mColisAdapter.getmColisList().clear();
-            mColisAdapter.getmColisList().addAll(ProviderUtilities.getListColisFromContentProvider(getActivity()));
+            mColisAdapter.getmColisList().addAll(ProviderUtilities.getListColisFromContentProvider(mActivity));
             mColisAdapter.notifyDataSetChanged();
         }
     }

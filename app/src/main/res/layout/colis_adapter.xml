@@ -79,6 +79,7 @@
                 tools:text="ETAT UNIS" />
 
             <TextView
+                android:id="@+id/colis_tiret"
                 style="@style/Base.TextAppearance.AppCompat.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

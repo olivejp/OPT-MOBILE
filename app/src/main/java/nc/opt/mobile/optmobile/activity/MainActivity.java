@@ -1,6 +1,7 @@
 package nc.opt.mobile.optmobile.activity;
 
 import android.Manifest;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -38,16 +39,20 @@ import nc.opt.mobile.optmobile.fragment.GestionColisFragment;
 import nc.opt.mobile.optmobile.interfaces.AttachToPermissionActivity;
 import nc.opt.mobile.optmobile.interfaces.ListenerPermissionResult;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
+import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
 import nc.opt.mobile.optmobile.utils.RequestQueueSingleton;
+import nc.opt.mobile.optmobile.utils.Utilities;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, AttachToPermissionActivity {
+        implements NavigationView.OnNavigationItemSelectedListener, AttachToPermissionActivity, NoticeDialogFragment.NoticeDialogListener {
 
     private static final String TAG = MainActivity.class.getName();
     public static final String TAG_AGENCY_MAP_FRAGMENT = "AGENCY_MAP_FRAGMENT";
     public static final String TAG_GESTION_COLIS_FRAGMENT = "TAG_GESTION_COLIS_FRAGMENT";
     public static final String TAG_SEARCH_PARCEL_FRAGMENT = "TAG_SEARCH_PARCEL_FRAGMENT";
     public static final String TAG_PARCEL_RESULT_SEARCH_FRAGMENT = "TAG_PARCEL_RESULT_SEARCH_FRAGMENT";
+
+    public static final String DIALOG_TAG_EXIT = "DIALOG_TAG_EXIT";
 
     public static final int RC_PERMISSION_LOCATION = 100;
     public static final int RC_PERMISSION_CALL_PHONE = 200;
@@ -164,8 +169,12 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Define the toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_add_white_48dp);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_add_white_48dp);
 
         // Get information back from the savedInstanceState
         if (savedInstanceState != null) {
@@ -206,11 +215,19 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
+        // Fermeture du drawer latéral s'il est ouvert
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+        if (drawer != null) {
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                    getSupportFragmentManager().popBackStack();
+                } else {
+                    // on demande avant de quitter l'application
+                    Utilities.SendDialogByActivity(this, "Voulez vous quitter l'application ?", NoticeDialogFragment.TYPE_BOUTON_YESNO, NoticeDialogFragment.TYPE_IMAGE_INFORMATION, DIALOG_TAG_EXIT);
+                }
+            }
         }
     }
 
@@ -240,6 +257,19 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                // Fermeture du drawer latéral s'il est ouvert
+                DrawerLayout drawer = findViewById(R.id.drawer_layout);
+                if (drawer != null) {
+                    if (drawer.isDrawerOpen(GravityCompat.START)) {
+                        drawer.closeDrawer(GravityCompat.START);
+                    } else {
+                        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                            getSupportFragmentManager().popBackStack();
+                        }
+                    }
+                }
+                return true;
             case R.id.action_settings:
                 return true;
             case R.id.action_sign_out:
@@ -350,5 +380,26 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onDetachToPermissionActivity(ListenerPermissionResult listenerPermissionResult) {
         mListenerPermissionResult.remove(listenerPermissionResult);
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        switch (dialog.getTag()) {
+            case DIALOG_TAG_EXIT:
+                finish();
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        switch (dialog.getTag()) {
+            case DIALOG_TAG_EXIT:
+                break;
+            default:
+                break;
+        }
     }
 }

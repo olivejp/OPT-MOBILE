@@ -15,6 +15,7 @@ import android.support.annotation.RawRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -78,6 +79,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     private BitmapDescriptor mIconAnnexe;
     private Agency mAgencySelected;
     private List<Agency> mList;
+    private AppCompatActivity mActivity;
     private boolean mRequestingLocationUpdates;
     private AttachToPermissionActivity mPermissionActivity;
 
@@ -254,6 +256,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mActivity = (AppCompatActivity) context;
         if (context instanceof AttachToPermissionActivity) {
             mPermissionActivity = (AttachToPermissionActivity) context;
             mPermissionActivity.onAttachPermissionActivity(this);
@@ -271,8 +274,8 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
 
     @OnClick(R.id.fab_call_agency)
     public void clickCallAgency(View v) {
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE}, RC_PERMISSION_CALL_PHONE);
+        if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.CALL_PHONE}, RC_PERMISSION_CALL_PHONE);
         } else {
             callSelectedAgency();
         }
@@ -291,7 +294,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         }
 
         // Changement du titre
-        getActivity().setTitle(getActivity().getString(R.string.agences_opt));
+        mActivity.setTitle(mActivity.getString(R.string.agences_opt));
     }
 
     @Override
@@ -335,10 +338,10 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         mMap.setOnMarkerClickListener(AgencyMapFragment.this);
 
         // We ask permission to get local position of the mobile
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // Call activity to request permissions
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, RC_PERMISSION_LOCATION);
+            ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, RC_PERMISSION_LOCATION);
         } else {
             // We already get the permissions, we enable the location
             enableLocation();

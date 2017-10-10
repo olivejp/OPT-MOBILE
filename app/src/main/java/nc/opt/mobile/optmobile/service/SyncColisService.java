@@ -72,8 +72,7 @@ public class SyncColisService extends IntentService {
                 String url = String.format(mUrl, idColis);
 
                 // Request a string response from the provided URL.
-                // ToDo - ActionSyncColisListener ne doit pas envoyer de notification dans ce cas.
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new ActionSyncColisListener(idColis, true), new ActionSyncColisErrorListener());
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new ActionSyncColisListener(idColis, false), new ActionSyncColisErrorListener());
 
                 // Add the request to the RequestQueue.
                 mRequestQueueSingleton.addToRequestQueue(stringRequest);

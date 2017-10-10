@@ -1,9 +1,12 @@
 package nc.opt.mobile.optmobile.fragment;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,6 +33,7 @@ public class HistoriqueColisFragment extends Fragment {
     private static final String TAG = HistoriqueColisFragment.class.getName();
     private static final String ARG_ID_PARCEL = "ARG_ID_PARCEL";
 
+    private AppCompatActivity mAppCompatActivity;
     private String mIdColis;
     private EtapeAcheminementAdapter mEtapeAcheminementAdapter;
 
@@ -49,6 +53,12 @@ public class HistoriqueColisFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mAppCompatActivity = (AppCompatActivity) context;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mIdColis = getArguments().getString(ARG_ID_PARCEL);
@@ -61,18 +71,23 @@ public class HistoriqueColisFragment extends Fragment {
         ButterKnife.bind(this, rootView);
 
         // Changement du titre
-        getActivity().setTitle(mIdColis);
+        mAppCompatActivity.setTitle(mIdColis);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        ActionBar actionBar = mAppCompatActivity.getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(true);
+        }
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mAppCompatActivity);
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
         // Ajout d'une barre separatrice entre les elements
         mRecyclerView.addItemDecoration(new
-                DividerItemDecoration(getActivity(),
+                DividerItemDecoration(mAppCompatActivity,
                 DividerItemDecoration.VERTICAL));
 
         // Recuperer l'historique a partir du content provider
-        List<EtapeAcheminement> list = ProviderUtilities.getListEtapeFromContentProvider(getActivity(), mIdColis);
+        List<EtapeAcheminement> list = ProviderUtilities.getListEtapeFromContentProvider(mAppCompatActivity, mIdColis);
 
         // Création d'un nouvel adapter avec notre liste
         mEtapeAcheminementAdapter = new EtapeAcheminementAdapter(list);
