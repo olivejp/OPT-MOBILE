@@ -27,6 +27,7 @@ public class SyncColisService extends IntentService {
     public static final String ARG_ACTION = "ARG_ACTION";
     public static final String ARG_ACTION_SYNC_COLIS = "ARG_ACTION_SYNC_COLIS";
     public static final String ARG_ACTION_SYNC_ALL = "ARG_ACTION_SYNC_ALL";
+    public static final String ARG_ACTION_SYNC_ALL_FROM_SCHEDULER = "ARG_ACTION_SYNC_ALL_FROM_SCHEDULER";
 
     // Create the URL to query
     private static String mUrl = Constants.URL_SUIVI_COLIS
@@ -57,6 +58,13 @@ public class SyncColisService extends IntentService {
         context.startService(syncService);
     }
 
+    // Lancement du service de synchro pour tous les objets
+    public static void launchSynchroFromScheduler(Context context) {
+        Intent syncService = new Intent(context, SyncColisService.class);
+        syncService.putExtra(SyncColisService.ARG_ACTION, SyncColisService.ARG_ACTION_SYNC_ALL_FROM_SCHEDULER);
+        context.startService(syncService);
+    }
+
     private void handleActionSyncColis(Bundle bundle) {
         if (bundle.containsKey(ARG_ID_COLIS)) {
             String idColis = bundle.getString(ARG_ID_COLIS);
@@ -64,7 +72,8 @@ public class SyncColisService extends IntentService {
                 String url = String.format(mUrl, idColis);
 
                 // Request a string response from the provided URL.
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new ActionSyncColisListener(idColis), new ActionSyncColisErrorListener());
+                // ToDo - ActionSyncColisListener ne doit pas envoyer de notification dans ce cas.
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new ActionSyncColisListener(idColis, true), new ActionSyncColisErrorListener());
 
                 // Add the request to the RequestQueue.
                 mRequestQueueSingleton.addToRequestQueue(stringRequest);
@@ -72,14 +81,14 @@ public class SyncColisService extends IntentService {
         }
     }
 
-    private void handleActionSyncAll() {
+    private void handleActionSyncAll(boolean sendNotification) {
         List<Colis> list = ProviderUtilities.getListColisFromContentProvider(this);
         if (!list.isEmpty()) {
             for (Colis colis : list) {
                 String url = String.format(mUrl, colis.getIdColis());
 
                 // Request a string response from the provided URL.
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new ActionSyncColisListener(colis.getIdColis()), new ActionSyncColisErrorListener());
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new ActionSyncColisListener(colis.getIdColis(), sendNotification), new ActionSyncColisErrorListener());
 
                 // Add the request to the RequestQueue.
                 mRequestQueueSingleton.addToRequestQueue(stringRequest);
@@ -98,7 +107,10 @@ public class SyncColisService extends IntentService {
                         handleActionSyncColis(bundle);
                         break;
                     case ARG_ACTION_SYNC_ALL:
-                        handleActionSyncAll();
+                        handleActionSyncAll(false);
+                        break;
+                    case ARG_ACTION_SYNC_ALL_FROM_SCHEDULER:
+                        handleActionSyncAll(true);
                         break;
                     default:
                         break;
@@ -109,14 +121,16 @@ public class SyncColisService extends IntentService {
 
     private class ActionSyncColisListener implements Response.Listener<String> {
         private String idColis;
+        private boolean sendNotification;
 
-        ActionSyncColisListener(String idColis) {
+        ActionSyncColisListener(String idColis, boolean sendNotification) {
             this.idColis = idColis;
+            this.sendNotification = sendNotification;
         }
 
         @Override
         public void onResponse(final String response) {
-            TransformHtmlTask asyncTask = new TransformHtmlTask(SyncColisService.this, idColis);
+            TransformHtmlTask asyncTask = new TransformHtmlTask(SyncColisService.this, idColis, sendNotification);
             asyncTask.execute(response);
         }
     }

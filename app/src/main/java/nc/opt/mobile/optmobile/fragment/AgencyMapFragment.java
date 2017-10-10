@@ -99,6 +99,8 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     @BindView(R.id.txt_type)
     TextView txtAgenceType;
 
+    @BindView(R.id.fab_hide_detail)
+    FloatingActionButton fab_hide;
 
     /**
      * Customise the styling of the base map using a JSON object defined

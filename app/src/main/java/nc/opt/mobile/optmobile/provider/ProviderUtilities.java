@@ -81,13 +81,23 @@ public class ProviderUtilities {
         return false;
     }
 
-    public static void checkAndInsertEtape(Context context, String idColis, List<EtapeAcheminement> listEtape) {
+    /**
+     * Vérification si cette étape était déjà enregistrée, sinon on la créé.
+     * @param context
+     * @param idColis
+     * @param listEtape
+     * @return true if at least one etape has been created, false instead.
+     */
+    public static boolean checkAndInsertEtape(Context context, String idColis, List<EtapeAcheminement> listEtape) {
+        boolean creation = false;
         for (EtapeAcheminement etape : listEtape) {
             if (!checkExistence(context, idColis, etape)) {
                 // Création
+                creation = true;
                 context.getContentResolver().insert(OptProvider.ListEtapeAcheminement.LIST_ETAPE, putEtapeToContentValues(etape, idColis));
             }
         }
+        return creation;
     }
 
     public static boolean deleteColis(Context context, String idColis) {

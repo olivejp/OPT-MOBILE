@@ -8,10 +8,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
+import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.domain.Colis;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 import nc.opt.mobile.optmobile.utils.Constants;
 import nc.opt.mobile.optmobile.utils.HtmlTransformer;
+import nc.opt.mobile.optmobile.utils.NotificationSender;
 
 /**
  * Created by 2761oli on 09/10/2017.
@@ -23,9 +25,11 @@ class TransformHtmlTask extends AsyncTask<String, Void, Colis> {
 
     private String idColis;
     private Context context;
+    private boolean sendNotification;
 
-    TransformHtmlTask(Context context, String idColis) {
+    TransformHtmlTask(Context context, String idColis, boolean sendNotification) {
         this.context = context;
+        this.sendNotification = sendNotification;
         this.idColis = idColis;
     }
 
@@ -37,7 +41,10 @@ class TransformHtmlTask extends AsyncTask<String, Void, Colis> {
             switch (transformResult) {
                 case HtmlTransformer.RESULT_SUCCESS:
                     ProviderUtilities.updateLastUpdate(context, colis.getIdColis(), true);
-                    ProviderUtilities.checkAndInsertEtape(context, colis.getIdColis(), colis.getEtapeAcheminementArrayList());
+                    if (ProviderUtilities.checkAndInsertEtape(context, colis.getIdColis(), colis.getEtapeAcheminementArrayList()) && sendNotification) {
+                        // Envoi d'une notification si l'objet a bougé.
+                        NotificationSender.sendNotification(context, "Suivi colis", idColis + " a été mis à jour.", R.drawable.ic_archive_grey_900_48dp);
+                    }
                     return colis;
                 case HtmlTransformer.RESULT_NO_ITEM_FOUND:
                     ProviderUtilities.updateLastUpdate(context, colis.getIdColis(), false);
