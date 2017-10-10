@@ -172,9 +172,7 @@ public class MainActivity extends AppCompatActivity
 
         // Define the toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_add_white_48dp);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_add_white_48dp);
 
         // Get information back from the savedInstanceState
         if (savedInstanceState != null) {
@@ -257,19 +255,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                // Fermeture du drawer latéral s'il est ouvert
-                DrawerLayout drawer = findViewById(R.id.drawer_layout);
-                if (drawer != null) {
-                    if (drawer.isDrawerOpen(GravityCompat.START)) {
-                        drawer.closeDrawer(GravityCompat.START);
-                    } else {
-                        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-                            getSupportFragmentManager().popBackStack();
-                        }
-                    }
-                }
-                return true;
             case R.id.action_settings:
                 return true;
             case R.id.action_sign_out:

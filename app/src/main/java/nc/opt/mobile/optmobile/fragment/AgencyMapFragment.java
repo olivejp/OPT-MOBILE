@@ -16,10 +16,15 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.common.api.ApiException;
@@ -71,7 +76,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
 
     private static final int RC_SEND_AGENCY_CALL = 300;
     private static final int REQUEST_CHECK_SETTINGS = 400;
-    private static final float S_ZOOM = 6.7f;
+    private static final float S_ZOOM = 6.6f;
 
     private GoogleMap mMap;
     private Marker mMarkerSelected;
@@ -101,8 +106,8 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     @BindView(R.id.txt_type)
     TextView txtAgenceType;
 
-    @BindView(R.id.fab_hide_detail)
-    FloatingActionButton fab_hide;
+    @BindView(R.id.linear_agence_detail)
+    LinearLayout linearLayoutAgenceDetail;
 
     /**
      * Customise the styling of the base map using a JSON object defined
@@ -253,6 +258,23 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         startActivityForResult(intent, RC_SEND_AGENCY_CALL);
     }
 
+    private void changeVisibility() {
+        if (mAgencySelected != null) {
+            scaleView(linearLayoutAgenceDetail, 0f, 1f);
+        } else {
+            scaleView(linearLayoutAgenceDetail, 0f, 0f);
+        }
+    }
+
+    @OnClick(R.id.fab_call_agency)
+    public void clickCallAgency(View v) {
+        if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.CALL_PHONE}, RC_PERMISSION_CALL_PHONE);
+        } else {
+            callSelectedAgency();
+        }
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -270,15 +292,6 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     public void onDetach() {
         super.onDetach();
         mPermissionActivity.onDetachToPermissionActivity(this);
-    }
-
-    @OnClick(R.id.fab_call_agency)
-    public void clickCallAgency(View v) {
-        if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.CALL_PHONE}, RC_PERMISSION_CALL_PHONE);
-        } else {
-            callSelectedAgency();
-        }
     }
 
     @Override
@@ -311,6 +324,8 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
 
         mIconAgence = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
         mIconAnnexe = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+
+        changeVisibility();
 
         return rootView;
 
@@ -362,6 +377,8 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
                 mMarkerSelected.setIcon(mAgencySelected.getTYPE().equals("Agence") ? mIconAgence : mIconAnnexe);
             }
 
+            changeVisibility();
+
             mMarkerSelected = marker;
             mAgencySelected = (Agency) mMarkerSelected.getTag();
             mMarkerSelected.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
@@ -381,5 +398,16 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         } else if (requestCode == RC_PERMISSION_CALL_PHONE) {
             callSelectedAgency();
         }
+    }
+
+    public void scaleView(View v, float startScale, float endScale) {
+        Animation anim = new ScaleAnimation(
+                1f, 1f, // Start and end values for the X axis scaling
+                startScale, endScale, // Start and end values for the Y axis scaling
+                Animation.RELATIVE_TO_SELF, 0f, // Pivot point of X scaling
+                Animation.RELATIVE_TO_SELF, 1f); // Pivot point of Y scaling
+        anim.setFillAfter(true); // Needed to keep the result of the animation
+        anim.setDuration(500);
+        v.startAnimation(anim);
     }
 }

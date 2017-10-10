@@ -11,7 +11,7 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/include_detail_layout"
+        app:layout_constraintBottom_toTopOf="@+id/linear_agence_detail"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -19,19 +19,19 @@
         tools:layout_editor_absoluteX="-13dp"
         tools:layout_editor_absoluteY="-226dp" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_hide_detail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <include
-        android:id="@+id/include_detail_layout"
-        layout="@layout/agency_detail_layout"
+    <LinearLayout
+        android:id="@+id/linear_agence_detail"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/map"
-        app:layout_constraintVertical_weight="3" />
+        app:layout_constraintVertical_weight="3">
+
+        <include
+            layout="@layout/agency_detail_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>
