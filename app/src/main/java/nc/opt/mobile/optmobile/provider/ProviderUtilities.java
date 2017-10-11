@@ -49,6 +49,17 @@ public class ProviderUtilities {
 
     }
 
+    public static int countColis(Context context) {
+        // Query the content provider to get a cursor of Colis
+        int count = 0;
+        Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, null, null, null);
+        if (cursorListColis!=null) {
+            count = cursorListColis.getCount();
+            cursorListColis.close();
+        }
+        return count;
+    }
+
     public static int updateLastUpdate(Context context,@NonNull String idColis, boolean successful) {
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         Calendar cal = Calendar.getInstance();

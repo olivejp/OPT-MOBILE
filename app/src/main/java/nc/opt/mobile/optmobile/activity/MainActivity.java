@@ -2,24 +2,32 @@ package nc.opt.mobile.optmobile.activity;
 
 import android.Manifest;
 import android.app.DialogFragment;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.ContentObserver;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -38,13 +46,15 @@ import nc.opt.mobile.optmobile.fragment.AgencyMapFragment;
 import nc.opt.mobile.optmobile.fragment.GestionColisFragment;
 import nc.opt.mobile.optmobile.interfaces.AttachToPermissionActivity;
 import nc.opt.mobile.optmobile.interfaces.ListenerPermissionResult;
+import nc.opt.mobile.optmobile.provider.OptProvider;
+import nc.opt.mobile.optmobile.provider.ProviderObserver;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
 import nc.opt.mobile.optmobile.utils.RequestQueueSingleton;
 import nc.opt.mobile.optmobile.utils.Utilities;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, AttachToPermissionActivity, NoticeDialogFragment.NoticeDialogListener {
+        implements NavigationView.OnNavigationItemSelectedListener, AttachToPermissionActivity, NoticeDialogFragment.NoticeDialogListener, ProviderObserver.ProviderObserverListener {
 
     private static final String TAG = MainActivity.class.getName();
     public static final String TAG_AGENCY_MAP_FRAGMENT = "AGENCY_MAP_FRAGMENT";
@@ -73,6 +83,7 @@ public class MainActivity extends AppCompatActivity
     private GestionColisFragment gestionColisFragment;
     private NetworkReceiver mNetworkReceiver;
     private static ArrayList<ListenerPermissionResult> mListenerPermissionResult = new ArrayList<>();
+    private NavigationView navigationView;
 
     private void callAgencyMapFragment() {
         agencyMapFragment = (AgencyMapFragment) getSupportFragmentManager().findFragmentByTag(TAG_AGENCY_MAP_FRAGMENT);
@@ -165,6 +176,16 @@ public class MainActivity extends AppCompatActivity
         return ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED;
     }
 
+    private void updateBadge(){
+        // Récupération du textView présent dans le menu
+        Menu menu = navigationView.getMenu();
+        TextView suiviColisBadgeCounter = (TextView) menu.findItem(R.id.nav_suivi_colis).getActionView();
+        suiviColisBadgeCounter.setGravity(Gravity.CENTER_VERTICAL);
+        suiviColisBadgeCounter.setTypeface(null, Typeface.BOLD);
+        suiviColisBadgeCounter.setTextColor(getResources().getColor(R.color.colorPrimary));
+        suiviColisBadgeCounter.setText(String.valueOf(ProviderUtilities.countColis(this)));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -204,11 +225,18 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        updateBadge();
 
         // Appel de la premiere instance
         RequestQueueSingleton.getInstance(this.getApplicationContext());
+
+        // Enregistrement d'un observer pour écouter les modifications sur le ContentProvider
+        ArrayList<Uri> uris = new ArrayList<>();
+        uris.add(OptProvider.ListColis.LIST_COLIS);
+        ProviderObserver providerObserver = ProviderObserver.getInstance();
+        providerObserver.observe(this, this, uris);
     }
 
     @Override
@@ -239,6 +267,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
+
         if (mFirebaseUser != null) {
             if (mMenuItemProfil != null) {
                 menu.removeItem(mMenuItemProfil.getItemId());
@@ -386,5 +415,10 @@ public class MainActivity extends AppCompatActivity
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onProviderChange() {
+        updateBadge();
     }
 }

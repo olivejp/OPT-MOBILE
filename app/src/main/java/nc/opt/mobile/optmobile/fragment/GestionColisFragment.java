@@ -18,12 +18,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.adapter.ColisAdapter;
 import nc.opt.mobile.optmobile.provider.OptProvider;
+import nc.opt.mobile.optmobile.provider.ProviderObserver;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 
 import static nc.opt.mobile.optmobile.activity.MainActivity.TAG_SEARCH_PARCEL_FRAGMENT;
@@ -32,7 +35,7 @@ import static nc.opt.mobile.optmobile.activity.MainActivity.TAG_SEARCH_PARCEL_FR
  * Fragment that shows list of followed parcel
  * -FAB allow to add a parcel
  */
-public class GestionColisFragment extends Fragment {
+public class GestionColisFragment extends Fragment implements ProviderObserver.ProviderObserverListener{
 
     private ColisAdapter mColisAdapter;
     private AppCompatActivity mActivity;
@@ -74,8 +77,13 @@ public class GestionColisFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Création d'un ColisObserver
-        ColisObserver colisObserver = new ColisObserver(new Handler());
-        colisObserver.observe();
+        ArrayList<Uri> uris = new ArrayList<>();
+        uris.add(OptProvider.ListColis.LIST_COLIS);
+        uris.add(OptProvider.ListEtapeAcheminement.LIST_ETAPE);
+
+        // Création d'un ProviderObserver pour écouter les modifications sur le content provider
+        ProviderObserver providerObserver = ProviderObserver.getInstance();
+        providerObserver.observe(mActivity, this, uris);
     }
 
     @Override
@@ -105,32 +113,10 @@ public class GestionColisFragment extends Fragment {
         return rootView;
     }
 
-    // Anonymous inner class to handle watching Uris
-    private class ColisObserver extends ContentObserver {
-        ColisObserver(Handler handler) {
-            super(handler);
-        }
-
-        void observe() {
-            ContentResolver resolver = mActivity.getContentResolver();
-
-            resolver.registerContentObserver(
-                    OptProvider.ListColis.LIST_COLIS, false, this);
-
-            resolver.registerContentObserver(
-                    OptProvider.ListEtapeAcheminement.LIST_ETAPE, false, this);
-        }
-
-        @Override
-        public void onChange(boolean selfChange) {
-            onChange(selfChange, null);
-        }
-
-        @Override
-        public void onChange(boolean selfChange, Uri uri) {
-            mColisAdapter.getmColisList().clear();
-            mColisAdapter.getmColisList().addAll(ProviderUtilities.getListColisFromContentProvider(mActivity));
-            mColisAdapter.notifyDataSetChanged();
-        }
+    @Override
+    public void onProviderChange() {
+        mColisAdapter.getmColisList().clear();
+        mColisAdapter.getmColisList().addAll(ProviderUtilities.getListColisFromContentProvider(mActivity));
+        mColisAdapter.notifyDataSetChanged();
     }
 }
