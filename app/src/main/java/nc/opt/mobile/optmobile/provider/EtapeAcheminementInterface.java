@@ -6,27 +6,34 @@ import net.simonvt.schematic.annotation.NotNull;
 import net.simonvt.schematic.annotation.PrimaryKey;
 
 import static net.simonvt.schematic.annotation.DataType.Type.INTEGER;
-import static net.simonvt.schematic.annotation.DataType.Type.REAL;
 import static net.simonvt.schematic.annotation.DataType.Type.TEXT;
 
 /**
  * Created by orlanth23 on 10/08/2017.
  */
-public interface CoordinateInterface {
+public interface EtapeAcheminementInterface {
 
-    @AutoIncrement
     @DataType(INTEGER)
+    @AutoIncrement
     @PrimaryKey
     @NotNull
-    String COORDINATEID = "coordinate_id";
+    String ID_ETAPE_ACHEMINEMENT = "id_etape_acheminement";
 
     @DataType(TEXT)
-    String OBJECTID = "object_id";
+    String ID_COLIS = "id_colis";
 
-    @DataType(REAL)
-    String LATITUDE = "latitude";
+    @DataType(TEXT)
+    String DATE = "date";
 
-    @DataType(REAL)
-    String LONGITUDE = "longitude";
+    @DataType(TEXT)
+    String PAYS = "pays";
 
+    @DataType(TEXT)
+    String LOCALISATION = "localisation";
+
+    @DataType(TEXT)
+    String DESCRIPTION = "description";
+
+    @DataType(TEXT)
+    String COMMENTAIRE = "commentaire";
 }

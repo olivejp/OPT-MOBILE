@@ -1,21 +1,33 @@
 package nc.opt.mobile.optmobile.activity;
 
+import android.Manifest;
+import android.app.DialogFragment;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.database.ContentObserver;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -29,26 +41,38 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import nc.opt.mobile.optmobile.R;
+import nc.opt.mobile.optmobile.broadcast.NetworkReceiver;
 import nc.opt.mobile.optmobile.fragment.AgencyMapFragment;
-import nc.opt.mobile.optmobile.fragment.SearchParcelFragment;
+import nc.opt.mobile.optmobile.fragment.GestionColisFragment;
 import nc.opt.mobile.optmobile.interfaces.AttachToPermissionActivity;
 import nc.opt.mobile.optmobile.interfaces.ListenerPermissionResult;
+import nc.opt.mobile.optmobile.provider.OptProvider;
+import nc.opt.mobile.optmobile.provider.ProviderObserver;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
+import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
+import nc.opt.mobile.optmobile.utils.RequestQueueSingleton;
+import nc.opt.mobile.optmobile.utils.Utilities;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, AttachToPermissionActivity {
+        implements NavigationView.OnNavigationItemSelectedListener, AttachToPermissionActivity, NoticeDialogFragment.NoticeDialogListener, ProviderObserver.ProviderObserverListener {
 
     private static final String TAG = MainActivity.class.getName();
-    private static final String TAG_AGENCY_MAP_FRAGMENT = "AGENCY_MAP_FRAGMENT";
-    private static final String TAG_SEARCH_PARCEL_FRAGMENT = "TAG_SEARCH_PARCEL_FRAGMENT";
+    public static final String TAG_AGENCY_MAP_FRAGMENT = "AGENCY_MAP_FRAGMENT";
+    public static final String TAG_GESTION_COLIS_FRAGMENT = "TAG_GESTION_COLIS_FRAGMENT";
+    public static final String TAG_SEARCH_PARCEL_FRAGMENT = "TAG_SEARCH_PARCEL_FRAGMENT";
+    public static final String TAG_PARCEL_RESULT_SEARCH_FRAGMENT = "TAG_PARCEL_RESULT_SEARCH_FRAGMENT";
+
+    public static final String DIALOG_TAG_EXIT = "DIALOG_TAG_EXIT";
 
     public static final int RC_PERMISSION_LOCATION = 100;
     public static final int RC_PERMISSION_CALL_PHONE = 200;
+    public static final int RC_PERMISSION_INTERNET = 300;
     public static final int RC_SIGN_IN = 300;
 
     private static final String PREF_POPULATED = "POPULATE_CP";
+
     private static final String SAVED_AGENCY_FRAGMENT = "SAVED_AGENCY_FRAGMENT";
-    private static final String SAVED_SEARCH_PARCEL_FRAGMENT = "SAVED_SEARCH_PARCEL_FRAGMENT";
+    private static final String SAVED_GESTION_COLIS_FRAGMENT = "SAVED_GESTION_COLIS_FRAGMENT";
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
@@ -56,8 +80,10 @@ public class MainActivity extends AppCompatActivity
     private Drawable mDrawablePhoto;
     private MenuItem mMenuItemProfil;
     private AgencyMapFragment agencyMapFragment;
-    private SearchParcelFragment searchParcelFragment;
+    private GestionColisFragment gestionColisFragment;
+    private NetworkReceiver mNetworkReceiver;
     private static ArrayList<ListenerPermissionResult> mListenerPermissionResult = new ArrayList<>();
+    private NavigationView navigationView;
 
     private void callAgencyMapFragment() {
         agencyMapFragment = (AgencyMapFragment) getSupportFragmentManager().findFragmentByTag(TAG_AGENCY_MAP_FRAGMENT);
@@ -72,13 +98,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void callSuiviColis() {
-        searchParcelFragment = (SearchParcelFragment) getSupportFragmentManager().findFragmentByTag(TAG_SEARCH_PARCEL_FRAGMENT);
-        if (searchParcelFragment == null) {
-            searchParcelFragment = searchParcelFragment.newInstance();
+        gestionColisFragment = (GestionColisFragment) getSupportFragmentManager().findFragmentByTag(TAG_GESTION_COLIS_FRAGMENT);
+        if (gestionColisFragment == null) {
+            gestionColisFragment = GestionColisFragment.newInstance();
         }
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.frame_main, searchParcelFragment, TAG_SEARCH_PARCEL_FRAGMENT)
+                .replace(R.id.frame_main, gestionColisFragment, TAG_GESTION_COLIS_FRAGMENT)
                 .addToBackStack(null)
                 .commit();
     }
@@ -146,17 +172,38 @@ public class MainActivity extends AppCompatActivity
         invalidateOptionsMenu();
     }
 
+    private boolean isInternetPermited() {
+        return ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void updateBadge(){
+        // Récupération du textView présent dans le menu
+        Menu menu = navigationView.getMenu();
+        TextView suiviColisBadgeCounter = (TextView) menu.findItem(R.id.nav_suivi_colis).getActionView();
+        suiviColisBadgeCounter.setGravity(Gravity.CENTER_VERTICAL);
+        suiviColisBadgeCounter.setTypeface(null, Typeface.BOLD);
+        suiviColisBadgeCounter.setTextColor(getResources().getColor(R.color.colorPrimary));
+        suiviColisBadgeCounter.setText(String.valueOf(ProviderUtilities.countColis(this)));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Define the toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // Get information back from the savedInstanceState
         if (savedInstanceState != null) {
             agencyMapFragment = (AgencyMapFragment) getSupportFragmentManager().getFragment(savedInstanceState, SAVED_AGENCY_FRAGMENT);
-            searchParcelFragment = (SearchParcelFragment) getSupportFragmentManager().getFragment(savedInstanceState, SAVED_SEARCH_PARCEL_FRAGMENT);
+            gestionColisFragment = (GestionColisFragment) getSupportFragmentManager().getFragment(savedInstanceState, SAVED_GESTION_COLIS_FRAGMENT);
+        }
+
+        // Si la permission Internet n'a pas été accordée on va la demander
+        if (!isInternetPermited()) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, RC_PERMISSION_INTERNET);
         }
 
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -178,17 +225,35 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        updateBadge();
+
+        // Appel de la premiere instance
+        RequestQueueSingleton.getInstance(this.getApplicationContext());
+
+        // Enregistrement d'un observer pour écouter les modifications sur le ContentProvider
+        ArrayList<Uri> uris = new ArrayList<>();
+        uris.add(OptProvider.ListColis.LIST_COLIS);
+        ProviderObserver providerObserver = ProviderObserver.getInstance();
+        providerObserver.observe(this, this, uris);
     }
 
     @Override
     public void onBackPressed() {
+        // Fermeture du drawer latéral s'il est ouvert
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+        if (drawer != null) {
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                    getSupportFragmentManager().popBackStack();
+                } else {
+                    // on demande avant de quitter l'application
+                    Utilities.SendDialogByActivity(this, "Voulez vous quitter l'application ?", NoticeDialogFragment.TYPE_BOUTON_YESNO, NoticeDialogFragment.TYPE_IMAGE_INFORMATION, DIALOG_TAG_EXIT);
+                }
+            }
         }
     }
 
@@ -202,6 +267,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
+
         if (mFirebaseUser != null) {
             if (mMenuItemProfil != null) {
                 menu.removeItem(mMenuItemProfil.getItemId());
@@ -235,8 +301,6 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_geo_agence:
                 callAgencyMapFragment();
                 break;
-            case R.id.nav_geo_fibre:
-                break;
             case R.id.nav_suivi_colis:
                 callSuiviColis();
                 break;
@@ -254,11 +318,18 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+
+        // On attache le receiver a l'application
+        mNetworkReceiver = NetworkReceiver.getInstance();
+        registerReceiver(mNetworkReceiver, NetworkReceiver.CONNECTIVITY_CHANGE_INTENT_FILTER);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        if (mNetworkReceiver != null) {
+            unregisterReceiver(mNetworkReceiver);
+        }
         if (mAuthStateListener != null) {
             mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
         }
@@ -291,8 +362,8 @@ public class MainActivity extends AppCompatActivity
         if (agencyMapFragment != null) {
             getSupportFragmentManager().putFragment(outState, SAVED_AGENCY_FRAGMENT, agencyMapFragment);
         }
-        if (searchParcelFragment != null) {
-            getSupportFragmentManager().putFragment(outState, SAVED_SEARCH_PARCEL_FRAGMENT, searchParcelFragment);
+        if (gestionColisFragment != null) {
+            getSupportFragmentManager().putFragment(outState, SAVED_GESTION_COLIS_FRAGMENT, gestionColisFragment);
         }
     }
 
@@ -301,6 +372,17 @@ public class MainActivity extends AppCompatActivity
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         for (ListenerPermissionResult listenerPermissionResult : mListenerPermissionResult) {
             listenerPermissionResult.onPermissionRequestResult(requestCode, permissions, grantResults);
+        }
+
+        switch (requestCode) {
+            case RC_PERMISSION_INTERNET:
+                if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                    Toast.makeText(this, "Un accès à internet est nécessaire pour cette application.", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+                break;
+            default:
+                break;
         }
     }
 
@@ -312,5 +394,31 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onDetachToPermissionActivity(ListenerPermissionResult listenerPermissionResult) {
         mListenerPermissionResult.remove(listenerPermissionResult);
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        switch (dialog.getTag()) {
+            case DIALOG_TAG_EXIT:
+                finish();
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        switch (dialog.getTag()) {
+            case DIALOG_TAG_EXIT:
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onProviderChange() {
+        updateBadge();
     }
 }
