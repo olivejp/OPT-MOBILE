@@ -19,8 +19,8 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
-            android:textAlignment="center"
             android:text="Un numéro de colis ou de suivi est nécessaire pour effectuer une recherche. Ce numéro de suivi doit comporter 13 caractères (chiffres et lettres sans espace)."
+            android:textAlignment="center"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -28,11 +28,11 @@
         <ImageView
             android:layout_width="35dp"
             android:layout_height="35dp"
-            app:srcCompat="@drawable/ic_search_grey_900_48dp"
-            app:layout_constraintRight_toLeftOf="@+id/edit_id_parcel"
             android:layout_marginRight="0dp"
             android:layout_marginTop="46dp"
-            app:layout_constraintTop_toBottomOf="@+id/text_suivi_colis_explicatif" />
+            app:layout_constraintRight_toLeftOf="@+id/edit_id_parcel"
+            app:layout_constraintTop_toBottomOf="@+id/text_suivi_colis_explicatif"
+            app:srcCompat="@drawable/ic_search_grey_900_48dp" />
 
         <EditText
             android:id="@+id/edit_id_parcel"
@@ -41,14 +41,14 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="46dp"
-            android:hint="Numéro de suivi"
-            android:inputType="text"
             android:gravity="center"
+            android:hint="Numéro de suivi"
+            android:inputType="textCapCharacters"
             android:maxLength="13"
-            android:text="EZ036524985US"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_suivi_colis_explicatif" />
+            app:layout_constraintTop_toBottomOf="@+id/text_suivi_colis_explicatif"
+            tools:text="EZ036524985US" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_search_parcel"
@@ -60,10 +60,10 @@
             android:layout_margin="16dp"
             android:layout_marginBottom="8dp"
             android:layout_marginRight="8dp"
-            app:srcCompat="@drawable/ic_search_white_48dp"
             android:windowSoftInputMode="adjustResize"
             app:backgroundTint="@color/colorPrimaryDark"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent" />
+            app:layout_constraintRight_toRightOf="parent"
+            app:srcCompat="@drawable/ic_search_white_48dp" />
     </android.support.constraint.ConstraintLayout>
 </FrameLayout>

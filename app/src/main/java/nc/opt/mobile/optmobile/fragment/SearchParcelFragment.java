@@ -76,8 +76,8 @@ public class SearchParcelFragment extends Fragment {
                 // Add the parcel to our ContentProvider
                 mActivity.getContentResolver().insert(OptProvider.ListColis.LIST_COLIS, ProviderUtilities.putColisToContentValues(colis));
 
-                // Lancement du service de synchro
-                SyncColisService.launchSynchroByIdColis(mActivity, colis.getIdColis());
+                // On lance une première fois le service de synchro
+                SyncColisService.launchSynchroByIdColis(mActivity, colis.getIdColis(), false);
 
                 // Hide the keyboard
                 InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);

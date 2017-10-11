@@ -4,6 +4,7 @@ package nc.opt.mobile.optmobile.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -20,10 +21,12 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.adapter.EtapeAcheminementAdapter;
 import nc.opt.mobile.optmobile.domain.EtapeAcheminement;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
+import nc.opt.mobile.optmobile.service.SyncColisService;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -40,6 +43,9 @@ public class HistoriqueColisFragment extends Fragment {
     @BindView(R.id.recycler_parcel_list)
     RecyclerView mRecyclerView;
 
+    @BindView(R.id.fab_refresh_colis_search)
+    FloatingActionButton fabRefresh;
+
     public static HistoriqueColisFragment newInstance(@NotNull String idColis) {
         HistoriqueColisFragment fragment = new HistoriqueColisFragment();
         Bundle args = new Bundle();
@@ -50,6 +56,11 @@ public class HistoriqueColisFragment extends Fragment {
 
     public HistoriqueColisFragment() {
         // Required empty public constructor
+    }
+
+    @OnClick(R.id.fab_refresh_colis_search)
+    public void refresh(View v){
+        SyncColisService.launchSynchroByIdColis(mAppCompatActivity, mIdColis, false);
     }
 
     @Override

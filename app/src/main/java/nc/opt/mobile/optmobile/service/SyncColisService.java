@@ -28,6 +28,7 @@ public class SyncColisService extends IntentService {
     public static final String ARG_ACTION_SYNC_COLIS = "ARG_ACTION_SYNC_COLIS";
     public static final String ARG_ACTION_SYNC_ALL = "ARG_ACTION_SYNC_ALL";
     public static final String ARG_ACTION_SYNC_ALL_FROM_SCHEDULER = "ARG_ACTION_SYNC_ALL_FROM_SCHEDULER";
+    public static final String ARG_NOTIFICATION = "ARG_NOTIFICATION";
 
     // Create the URL to query
     private static String mUrl = Constants.URL_SUIVI_COLIS
@@ -44,17 +45,19 @@ public class SyncColisService extends IntentService {
     }
 
     // Lancement du service de synchro
-    public static void launchSynchroByIdColis(Context context, String idColis) {
+    public static void launchSynchroByIdColis(Context context, String idColis, boolean sendNotification) {
         Intent syncService = new Intent(context, SyncColisService.class);
         syncService.putExtra(SyncColisService.ARG_ACTION, SyncColisService.ARG_ACTION_SYNC_COLIS);
         syncService.putExtra(SyncColisService.ARG_ID_COLIS, idColis);
+        syncService.putExtra(SyncColisService.ARG_NOTIFICATION, sendNotification);
         context.startService(syncService);
     }
 
     // Lancement du service de synchro pour tous les objets
-    public static void launchSynchroForAll(Context context) {
+    public static void launchSynchroForAll(Context context, boolean sendNotification) {
         Intent syncService = new Intent(context, SyncColisService.class);
         syncService.putExtra(SyncColisService.ARG_ACTION, SyncColisService.ARG_ACTION_SYNC_ALL);
+        syncService.putExtra(SyncColisService.ARG_NOTIFICATION, sendNotification);
         context.startService(syncService);
     }
 
@@ -62,17 +65,19 @@ public class SyncColisService extends IntentService {
     public static void launchSynchroFromScheduler(Context context) {
         Intent syncService = new Intent(context, SyncColisService.class);
         syncService.putExtra(SyncColisService.ARG_ACTION, SyncColisService.ARG_ACTION_SYNC_ALL_FROM_SCHEDULER);
+        syncService.putExtra(SyncColisService.ARG_NOTIFICATION, true);
         context.startService(syncService);
     }
 
-    private void handleActionSyncColis(Bundle bundle) {
+    private void handleActionSyncColis(Bundle bundle, boolean sendNotification) {
         if (bundle.containsKey(ARG_ID_COLIS)) {
             String idColis = bundle.getString(ARG_ID_COLIS);
+
             if (idColis != null) {
                 String url = String.format(mUrl, idColis);
 
                 // Request a string response from the provided URL.
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new ActionSyncColisListener(idColis, false), new ActionSyncColisErrorListener());
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new ActionSyncColisListener(idColis, sendNotification), new ActionSyncColisErrorListener());
 
                 // Add the request to the RequestQueue.
                 mRequestQueueSingleton.addToRequestQueue(stringRequest);
@@ -101,12 +106,13 @@ public class SyncColisService extends IntentService {
             Bundle bundle = intent.getExtras();
             if (bundle.containsKey(ARG_ACTION)) {
                 String s = bundle.getString(ARG_ACTION);
+                boolean sendNotification = (bundle.containsKey(ARG_NOTIFICATION)) && bundle.getBoolean(ARG_NOTIFICATION);
                 switch (s) {
                     case ARG_ACTION_SYNC_COLIS:
-                        handleActionSyncColis(bundle);
+                        handleActionSyncColis(bundle, sendNotification);
                         break;
                     case ARG_ACTION_SYNC_ALL:
-                        handleActionSyncAll(false);
+                        handleActionSyncAll(sendNotification);
                         break;
                     case ARG_ACTION_SYNC_ALL_FROM_SCHEDULER:
                         handleActionSyncAll(true);

@@ -49,6 +49,7 @@ import nc.opt.mobile.optmobile.interfaces.ListenerPermissionResult;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.ProviderObserver;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
+import nc.opt.mobile.optmobile.service.SyncColisService;
 import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
 import nc.opt.mobile.optmobile.utils.RequestQueueSingleton;
 import nc.opt.mobile.optmobile.utils.Utilities;
@@ -176,7 +177,7 @@ public class MainActivity extends AppCompatActivity
         return ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED;
     }
 
-    private void updateBadge(){
+    private void updateBadge() {
         // Récupération du textView présent dans le menu
         Menu menu = navigationView.getMenu();
         TextView suiviColisBadgeCounter = (TextView) menu.findItem(R.id.nav_suivi_colis).getActionView();
@@ -237,6 +238,10 @@ public class MainActivity extends AppCompatActivity
         uris.add(OptProvider.ListColis.LIST_COLIS);
         ProviderObserver providerObserver = ProviderObserver.getInstance();
         providerObserver.observe(this, this, uris);
+
+        // Lancement du service de synchro
+        SyncColisService.launchSynchroForAll(this, true);
+
     }
 
     @Override
@@ -362,6 +367,7 @@ public class MainActivity extends AppCompatActivity
         if (agencyMapFragment != null) {
             getSupportFragmentManager().putFragment(outState, SAVED_AGENCY_FRAGMENT, agencyMapFragment);
         }
+        gestionColisFragment = (GestionColisFragment) getSupportFragmentManager().findFragmentByTag(TAG_GESTION_COLIS_FRAGMENT);
         if (gestionColisFragment != null) {
             getSupportFragmentManager().putFragment(outState, SAVED_GESTION_COLIS_FRAGMENT, gestionColisFragment);
         }
