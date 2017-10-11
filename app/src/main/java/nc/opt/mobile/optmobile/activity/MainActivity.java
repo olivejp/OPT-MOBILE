@@ -2,23 +2,19 @@ package nc.opt.mobile.optmobile.activity;
 
 import android.Manifest;
 import android.app.DialogFragment;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.ContentObserver;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -75,6 +71,9 @@ public class MainActivity extends AppCompatActivity
     private static final String SAVED_AGENCY_FRAGMENT = "SAVED_AGENCY_FRAGMENT";
     private static final String SAVED_GESTION_COLIS_FRAGMENT = "SAVED_GESTION_COLIS_FRAGMENT";
 
+    private static final String BACK_STACK_MAP = "BACK_STACK_MAP";
+    private static final String BACK_STACK_COLIS = "BACK_STACK_COLIS";
+
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -87,27 +86,36 @@ public class MainActivity extends AppCompatActivity
     private NavigationView navigationView;
 
     private void callAgencyMapFragment() {
-        agencyMapFragment = (AgencyMapFragment) getSupportFragmentManager().findFragmentByTag(TAG_AGENCY_MAP_FRAGMENT);
-        if (agencyMapFragment == null) {
-            agencyMapFragment = AgencyMapFragment.newInstance();
+        if (!(getSupportFragmentManager().findFragmentById(R.id.frame_main) instanceof AgencyMapFragment)) {
+            agencyMapFragment = (AgencyMapFragment) getSupportFragmentManager().findFragmentByTag(TAG_AGENCY_MAP_FRAGMENT);
+            if (agencyMapFragment == null) {
+                agencyMapFragment = AgencyMapFragment.newInstance();
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.frame_main, agencyMapFragment, TAG_AGENCY_MAP_FRAGMENT)
+                        .addToBackStack(BACK_STACK_MAP)
+                        .commit();
+            } else {
+                getSupportFragmentManager().popBackStack(BACK_STACK_MAP, 0);
+            }
         }
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.frame_main, agencyMapFragment, TAG_AGENCY_MAP_FRAGMENT)
-                .addToBackStack(null)
-                .commit();
     }
 
+
     private void callSuiviColis() {
-        gestionColisFragment = (GestionColisFragment) getSupportFragmentManager().findFragmentByTag(TAG_GESTION_COLIS_FRAGMENT);
-        if (gestionColisFragment == null) {
-            gestionColisFragment = GestionColisFragment.newInstance();
+        if (!(getSupportFragmentManager().findFragmentById(R.id.frame_main) instanceof GestionColisFragment)) {
+            gestionColisFragment = (GestionColisFragment) getSupportFragmentManager().findFragmentByTag(TAG_GESTION_COLIS_FRAGMENT);
+            if (gestionColisFragment == null) {
+                gestionColisFragment = GestionColisFragment.newInstance();
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.frame_main, gestionColisFragment, TAG_GESTION_COLIS_FRAGMENT)
+                        .addToBackStack(BACK_STACK_COLIS)
+                        .commit();
+            } else {
+                getSupportFragmentManager().popBackStack(BACK_STACK_COLIS, 0);
+            }
         }
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.frame_main, gestionColisFragment, TAG_GESTION_COLIS_FRAGMENT)
-                .addToBackStack(null)
-                .commit();
     }
 
     private void defineAuthListener() {
