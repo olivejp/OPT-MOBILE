@@ -7,8 +7,8 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 
-import nc.opt.mobile.optmobile.domain.ParcelSearchResult;
-import nc.opt.mobile.optmobile.domain.StepParcelSearch;
+import nc.opt.mobile.optmobile.domain.Colis;
+import nc.opt.mobile.optmobile.domain.EtapeAcheminement;
 
 /**
  * Created by 2761oli on 05/10/2017.
@@ -29,12 +29,12 @@ public class HtmlTransformer {
      * If we find the keyword "objet introuvable" into a <p> then we send back null
      *
      * @param htmlToTransform
-     * @param parcelSearchResult
+     * @param colis
      * @return RESULT_NO_ITEM_FOUND if no object found
      * RESULT_SUCCESS if everything's fine
      * @throws HtmlTransformerException
      */
-    public static int getParcelResultFromHtml(final String htmlToTransform, ParcelSearchResult parcelSearchResult) throws HtmlTransformerException {
+    public static int getParcelResultFromHtml(final String htmlToTransform, Colis colis) throws HtmlTransformerException {
         Document document = Jsoup.parse(htmlToTransform);
 
         // Si on trouve la chaine "objet introuvable", on renvoie RESULT_NO_ITEM_FOUND
@@ -61,7 +61,7 @@ public class HtmlTransformer {
             throw new HtmlTransformerException("Aucune balise <tr> dans le résultat");
         }
 
-        ArrayList<StepParcelSearch> listStepParcelSearch = new ArrayList<>();
+        ArrayList<EtapeAcheminement> listEtapeAcheminement = new ArrayList<>();
 
         // Parcours de tous les éléments <tr> pour trouver les colonnes <td>
         for (int i = 1, l = tableauTr.size(); i < l; i++) {
@@ -86,12 +86,12 @@ public class HtmlTransformer {
                 String description = colonneTd.get(3).text();
                 String commentaire = colonneTd.get(4).text();
 
-                StepParcelSearch stepParcelSearch = new StepParcelSearch(date, pays, localisation, description, commentaire);
-                listStepParcelSearch.add(stepParcelSearch);
+                EtapeAcheminement etapeAcheminement = new EtapeAcheminement(date, pays, localisation, description, commentaire);
+                listEtapeAcheminement.add(etapeAcheminement);
             }
         }
 
-        parcelSearchResult.setStepParcelSearchArrayList(listStepParcelSearch);
+        colis.setEtapeAcheminementArrayList(listEtapeAcheminement);
         return RESULT_SUCCESS;
     }
 

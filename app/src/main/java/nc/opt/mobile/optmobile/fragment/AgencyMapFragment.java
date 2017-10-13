@@ -6,28 +6,27 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.RawRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.ResolvableApiException;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
@@ -46,10 +45,10 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -73,19 +72,17 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
 
     private static final int RC_SEND_AGENCY_CALL = 300;
     private static final int REQUEST_CHECK_SETTINGS = 400;
-    private static final float S_ZOOM = 6.7f;
+    private static final float S_ZOOM = 6.6f;
 
     private GoogleMap mMap;
     private Marker mMarkerSelected;
     private BitmapDescriptor mIconAgence;
     private BitmapDescriptor mIconAnnexe;
     private Agency mAgencySelected;
-    private ArrayList<Agency> mList;
-    private LocationRequest mLocationRequest;
+    private List<Agency> mList;
+    private AppCompatActivity mActivity;
     private boolean mRequestingLocationUpdates;
-    private Location mCurrentLocation;
     private AttachToPermissionActivity mPermissionActivity;
-    private FusedLocationProviderClient mFusedLocationClient;
 
     @BindView(R.id.txt_agence_nom)
     TextView txtAgenceNom;
@@ -100,7 +97,13 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     TextView txtAgenceNbDabExt;
 
     @BindView(R.id.fab_call_agency)
-    FloatingActionButton fab_call_agency;
+    FloatingActionButton fabCallAgency;
+
+    @BindView(R.id.txt_type)
+    TextView txtAgenceType;
+
+    @BindView(R.id.linear_agence_detail)
+    LinearLayout linearLayoutAgenceDetail;
 
     /**
      * Customise the styling of the base map using a JSON object defined
@@ -131,18 +134,6 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         }
     }
 
-    private LocationCallback mLocationCallback = new LocationCallback() {
-        @Override
-        public void onLocationResult(LocationResult locationResult) {
-            for (Location location : locationResult.getLocations()) {
-                mCurrentLocation = location;
-            }
-        }
-    };
-
-    public AgencyMapFragment() {
-    }
-
     public static AgencyMapFragment newInstance() {
         AgencyMapFragment fragment = new AgencyMapFragment();
         Bundle args = new Bundle();
@@ -156,12 +147,13 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     private void setAgencyToLayout(Agency agency) {
         // Mise à jour des infos de l'agence sélectionnée
         txtAgenceNom.setText(agency.getNOM());
+        txtAgenceType.setText(agency.getTYPE());
         txtAgenceHoraire.setText(agency.getHORAIRE());
         txtAgenceNbDabInt.setText(String.valueOf(agency.getDAB_INTERNE()));
         txtAgenceNbDabExt.setText(String.valueOf(agency.getDAB_EXTERNE()));
     }
 
-    private void populateMap(ArrayList<Agency> agencyList) {
+    private void populateMap(List<Agency> agencyList) {
         for (Agency agency : agencyList) {
             LatLng latLng = new LatLng(agency.getLATITUDE(), agency.getLONGITUDE());
 
@@ -191,16 +183,16 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
      *
      * @return AsyncTask<Void, Void, ArrayList<Agency>>
      */
-    private AsyncTask<Void, Void, ArrayList<Agency>> createTask() {
-        return new AsyncTask<Void, Void, ArrayList<Agency>>() {
+    private AsyncTask<Void, Void, List<Agency>> createTask() {
+        return new AsyncTask<Void, Void, List<Agency>>() {
             @Override
-            protected ArrayList<Agency> doInBackground(Void... voids) {
+            protected List<Agency> doInBackground(Void... voids) {
                 // Get the list of agencies from content provider
                 return ProviderUtilities.getListAgencyFromContentProvider(getActivity());
             }
 
             @Override
-            protected void onPostExecute(ArrayList<Agency> list) {
+            protected void onPostExecute(List<Agency> list) {
                 super.onPostExecute(list);
 
                 // Set the map in New Caledonia
@@ -213,26 +205,13 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         };
     }
 
-    private void startLocationUpdates() {
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            mFusedLocationClient.requestLocationUpdates(mLocationRequest,
-                    mLocationCallback,
-                    null);
-        }
-    }
-
-    private void stopLocationUpdates() {
-        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
-    }
-
     private void enableLocation() {
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
 
             // Add settings to the location request
-            mLocationRequest = new LocationRequest();
+            LocationRequest mLocationRequest = new LocationRequest();
             mLocationRequest.setInterval(10000);
             mLocationRequest.setFastestInterval(5000);
             mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -243,14 +222,6 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
 
             SettingsClient client = LocationServices.getSettingsClient(getActivity());
             Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
-
-            // If the check of the location settings is success, then we start location updates
-            task.addOnSuccessListener(getActivity(), new OnSuccessListener<LocationSettingsResponse>() {
-                @Override
-                public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                    startLocationUpdates();
-                }
-            });
 
             task.addOnFailureListener(getActivity(), new OnFailureListener() {
                 @Override
@@ -268,6 +239,8 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
                             break;
                         case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
                             break;
+                        default:
+                            break;
                     }
                 }
             });
@@ -281,9 +254,27 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         startActivityForResult(intent, RC_SEND_AGENCY_CALL);
     }
 
+    private void changeVisibility() {
+        if (mAgencySelected != null) {
+            linearLayoutAgenceDetail.setVisibility(View.VISIBLE);
+        } else {
+            linearLayoutAgenceDetail.setVisibility(View.GONE);
+        }
+    }
+
+    @OnClick(R.id.fab_call_agency)
+    public void clickCallAgency(View v) {
+        if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.CALL_PHONE}, RC_PERMISSION_CALL_PHONE);
+        } else {
+            callSelectedAgency();
+        }
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mActivity = (AppCompatActivity) context;
         if (context instanceof AttachToPermissionActivity) {
             mPermissionActivity = (AttachToPermissionActivity) context;
             mPermissionActivity.onAttachPermissionActivity(this);
@@ -299,29 +290,6 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         mPermissionActivity.onDetachToPermissionActivity(this);
     }
 
-    @OnClick(R.id.fab_call_agency)
-    public void clickCallAgency(View v) {
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE}, RC_PERMISSION_CALL_PHONE);
-        } else {
-            callSelectedAgency();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mRequestingLocationUpdates) {
-            startLocationUpdates();
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        stopLocationUpdates();
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -333,7 +301,9 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
                         REQUESTING_LOCATION_UPDATES_KEY);
             }
         }
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+
+        // Changement du titre
+        mActivity.setTitle(mActivity.getString(R.string.agences_opt));
     }
 
     @Override
@@ -351,13 +321,15 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         mIconAgence = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
         mIconAnnexe = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
 
+        changeVisibility();
+
         return rootView;
 
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList(ARG_LIST_AGENCIES, mList);
+        outState.putParcelableArrayList(ARG_LIST_AGENCIES, (ArrayList<? extends Parcelable>) mList);
         outState.putParcelable(ARG_AGENCY_SELECTED, mAgencySelected);
         outState.putBoolean(REQUESTING_LOCATION_UPDATES_KEY,
                 mRequestingLocationUpdates);
@@ -377,10 +349,10 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         mMap.setOnMarkerClickListener(AgencyMapFragment.this);
 
         // We ask permission to get local position of the mobile
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // Call activity to request permissions
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, RC_PERMISSION_LOCATION);
+            ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, RC_PERMISSION_LOCATION);
         } else {
             // We already get the permissions, we enable the location
             enableLocation();
@@ -407,6 +379,8 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
 
             setAgencyToLayout(mAgencySelected);
 
+            changeVisibility();
+
             return true;
         } else {
             return false;
@@ -416,9 +390,13 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     @Override
     public void onPermissionRequestResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == RC_PERMISSION_LOCATION) {
-            enableLocation();
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED || grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                enableLocation();
+            }
         } else if (requestCode == RC_PERMISSION_CALL_PHONE) {
-            callSelectedAgency();
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                callSelectedAgency();
+            }
         }
     }
 }

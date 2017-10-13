@@ -2,25 +2,35 @@ package nc.opt.mobile.optmobile.domain;
 
 import android.os.Parcelable;
 
-import org.parceler.Parcel;
-import org.parceler.ParcelConstructor;
+import org.chalup.microorm.annotations.Column;
+
+import nc.opt.mobile.optmobile.provider.EtapeAcheminementInterface;
 
 /**
  * Created by 2761oli on 05/10/2017.
  */
 
-public class StepParcelSearch implements Parcelable {
+public class EtapeAcheminement implements Parcelable {
 
-    String date;
-    String pays;
-    String localisation;
-    String description;
-    String commentaire;
+    @Column(EtapeAcheminementInterface.DATE)
+    private String date;
 
-    public StepParcelSearch() {
+    @Column(EtapeAcheminementInterface.PAYS)
+    private String pays;
+
+    @Column(EtapeAcheminementInterface.LOCALISATION)
+    private String localisation;
+
+    @Column(EtapeAcheminementInterface.DESCRIPTION)
+    private String description;
+
+    @Column(EtapeAcheminementInterface.COMMENTAIRE)
+    private String commentaire;
+
+    public EtapeAcheminement() {
     }
 
-    public StepParcelSearch(String date, String pays, String localisation, String description, String commentaire) {
+    public EtapeAcheminement(String date, String pays, String localisation, String description, String commentaire) {
         this.date = date;
         this.pays = pays;
         this.localisation = localisation;
@@ -82,7 +92,7 @@ public class StepParcelSearch implements Parcelable {
         dest.writeString(this.commentaire);
     }
 
-    protected StepParcelSearch(android.os.Parcel in) {
+    private EtapeAcheminement(android.os.Parcel in) {
         this.date = in.readString();
         this.pays = in.readString();
         this.localisation = in.readString();
@@ -90,15 +100,15 @@ public class StepParcelSearch implements Parcelable {
         this.commentaire = in.readString();
     }
 
-    public static final Creator<StepParcelSearch> CREATOR = new Creator<StepParcelSearch>() {
+    public static final Creator<EtapeAcheminement> CREATOR = new Creator<EtapeAcheminement>() {
         @Override
-        public StepParcelSearch createFromParcel(android.os.Parcel source) {
-            return new StepParcelSearch(source);
+        public EtapeAcheminement createFromParcel(android.os.Parcel source) {
+            return new EtapeAcheminement(source);
         }
 
         @Override
-        public StepParcelSearch[] newArray(int size) {
-            return new StepParcelSearch[size];
+        public EtapeAcheminement[] newArray(int size) {
+            return new EtapeAcheminement[size];
         }
     };
 }

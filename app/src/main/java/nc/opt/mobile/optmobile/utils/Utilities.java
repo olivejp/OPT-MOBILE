@@ -1,7 +1,13 @@
 package nc.opt.mobile.optmobile.utils;
 
+import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,5 +37,38 @@ public class Utilities {
             return null;
         }
         return json;
+    }
+
+    /**
+     * @param fragmentManager Get from the context
+     * @param message         The message to be send
+     * @param type            From NoticeDialogFragment
+     * @param img             From NoticeDialogFragment
+     * @param tag             A text to be a tag
+     */
+    public static void SendDialogByFragmentManager(FragmentManager fragmentManager, String message, int type, int img, @Nullable String tag) {
+        NoticeDialogFragment dialogErreur = new NoticeDialogFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(NoticeDialogFragment.P_MESSAGE, message);
+        bundle.putInt(NoticeDialogFragment.P_TYPE, type);
+        bundle.putInt(NoticeDialogFragment.P_IMG, img);
+        dialogErreur.setArguments(bundle);
+        dialogErreur.show(fragmentManager, tag);
+    }
+
+    // Envoi d'un message
+    public static void SendDialogByActivity(Activity activity, String message, int type, int img, String tag) {
+        SendDialogByFragmentManager(activity.getFragmentManager(), message, type, img, tag);
+    }
+
+    public static void hideKeyboard(Context ctx) {
+        InputMethodManager inputManager = (InputMethodManager) ctx
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        View v = ((Activity) ctx).getCurrentFocus();
+        if (v == null)
+            return;
+
+        inputManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 }

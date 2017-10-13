@@ -1,0 +1,5 @@
+Pour signer l'apk sur bitrise il faut renseigner les variables d'env. suivantes :
+$BITRISEIO_ANDROID_KEYSTORE_URL = L'url de notre .jks   (file://../oliweb_keystore.jks)
+$BITRISEIO_ANDROID_KEYSTORE_PASSWORD = Password du store
+$BITRISEIO_ANDROID_KEYSTORE_ALIAS = Alias de la clé utilisée
+$BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD = Le mot de passe de la clé

@@ -3,34 +3,67 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:layout_marginTop="?attr/actionBarSize"
+    android:fitsSystemWindows="true"
     tools:context="nc.opt.mobile.optmobile.fragment.SearchParcelFragment">
 
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/layout_search"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/text_suivi_colis_explicatif"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Un numéro de colis ou de suivi est nécessaire pour effectuer une recherche. Ce numéro de suivi doit comporter 13 caractères (chiffres et lettres sans espace)."
+            android:textAlignment="center"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="46dp"
+            app:layout_constraintRight_toLeftOf="@+id/edit_id_parcel"
+            app:layout_constraintTop_toBottomOf="@+id/text_suivi_colis_explicatif"
+            app:srcCompat="@drawable/ic_search_grey_900_48dp" />
 
         <EditText
             android:id="@+id/edit_id_parcel"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:inputType="text"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="46dp"
+            android:gravity="center"
+            android:hint="Numéro de suivi"
+            android:inputType="textCapCharacters"
             android:maxLength="13"
-            android:text="EZ036524985US"/>
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_suivi_colis_explicatif"
+            tools:text="EZ036524985US" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_search_parcel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
             android:layout_margin="16dp"
-            android:src="@android:drawable/ic_menu_search"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="8dp"
             android:windowSoftInputMode="adjustResize"
-            app:backgroundTint="@color/colorPrimaryDark" />
-    </RelativeLayout>
+            app:backgroundTint="@color/colorPrimaryDark"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:srcCompat="@drawable/ic_search_white_48dp" />
+    </android.support.constraint.ConstraintLayout>
 </FrameLayout>
