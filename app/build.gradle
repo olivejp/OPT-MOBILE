@@ -8,7 +8,20 @@ ext {
     icepickVersion = "3.2.0"
 }
 
+// Catch the keystore properties from file
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
+    signingConfigs {
+        config {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
     compileSdkVersion 26
     buildToolsVersion "26.0.2"
     defaultConfig {
@@ -25,6 +38,12 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+        debug {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
 }
@@ -37,26 +56,20 @@ dependencies {
     compile "com.android.support:design:${supportLibrary}"
     compile "com.android.support:support-v4:${supportLibrary}"
     compile "com.android.support:support-vector-drawable:${supportLibrary}"
-
     // All the Firebase libraries
     compile "com.google.firebase:firebase-auth:${firebaseLibrary}"
     compile "com.google.firebase:firebase-database:${firebaseLibrary}"
     compile "com.google.firebase:firebase-messaging:${firebaseLibrary}"
     compile "com.google.firebase:firebase-crash:${firebaseLibrary}"
-
     // Google play services
     compile "com.google.android.gms:play-services-maps:${firebaseLibrary}"
     compile "com.google.android.gms:play-services-location:${firebaseLibrary}"
-
     compile 'com.android.volley:volley:1.0.0'
-
     // Facebook SDK to authenticate users with their Facebook account.
     // Third libraries
     compile "com.github.bumptech.glide:glide:${glideVersion}"
-
     // Allow cursor to object serialisation
     compile "frankiesardo:icepick:${icepickVersion}"
-
     // App's dependencies
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
@@ -73,10 +86,8 @@ dependencies {
     compile 'org.jetbrains:annotations-java5:15.0'
     compile 'org.jsoup:jsoup:1.10.3'
     compile 'com.evernote:android-job:1.2.0'
-
     // Test dependecies
     testCompile 'junit:junit:4.12'
-
     // Processor dependencies
     annotationProcessor 'org.parceler:parceler:1.1.9'
     annotationProcessor 'net.simonvt.schematic:schematic-compiler:0.7.0'

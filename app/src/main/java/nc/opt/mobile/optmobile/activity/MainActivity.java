@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     private void callSuiviColis() {
         if (!(getSupportFragmentManager().findFragmentById(R.id.frame_main) instanceof GestionColisFragment)) {
             gestionColisFragment = (GestionColisFragment) getSupportFragmentManager().findFragmentByTag(TAG_GESTION_COLIS_FRAGMENT);
