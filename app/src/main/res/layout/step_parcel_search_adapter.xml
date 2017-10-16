@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="15dp"
@@ -11,6 +12,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
         android:orientation="horizontal">
 
         <TextView
@@ -21,12 +23,13 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:gravity="start"
-            android:text="21/12/2017 13:45" />
+            tools:text="21/12/2017 13:45" />
     </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
         android:orientation="horizontal">
 
         <TextView
@@ -34,16 +37,16 @@
             style="@style/Base.TextAppearance.AppCompat.Body2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="NOUVELLE-CALEDONIE" />
+            tools:text="NOUVELLE-CALEDONIE" />
 
         <TextView
             android:id="@+id/step_localisation"
-            style="@style/Base.TextAppearance.AppCompat.Body2"
+            style="@style/Base.TextAppearance.AppCompat.Body1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:text="NOUMEA CTC" />
+            tools:text="NOUMEA CTC" />
 
     </RelativeLayout>
 
@@ -53,13 +56,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        android:text="Traitement douanier en cours" />
+        android:layout_marginBottom="5dp"
+        tools:text="Traitement douanier en cours" />
 
     <TextView
         android:id="@+id/step_commentaire"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        android:text="Retention reason : Biens a valeur elevee - Declaration douaniere requise"
-        android:textStyle="italic" />
+        android:textStyle="italic"
+        tools:text="Retention reason : Biens a valeur elevee - Declaration douaniere requise" />
 </LinearLayout>

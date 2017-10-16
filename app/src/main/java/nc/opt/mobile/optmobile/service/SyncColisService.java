@@ -14,7 +14,7 @@ import com.android.volley.toolbox.StringRequest;
 
 import java.util.List;
 
-import nc.opt.mobile.optmobile.domain.Colis;
+import nc.opt.mobile.optmobile.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 import nc.opt.mobile.optmobile.utils.Constants;
 import nc.opt.mobile.optmobile.utils.RequestQueueSingleton;
@@ -86,9 +86,9 @@ public class SyncColisService extends IntentService {
     }
 
     private void handleActionSyncAll(boolean sendNotification) {
-        List<Colis> list = ProviderUtilities.getListColisFromContentProvider(this);
+        List<ColisEntity> list = ProviderUtilities.getListColisFromContentProvider(this);
         if (!list.isEmpty()) {
-            for (Colis colis : list) {
+            for (ColisEntity colis : list) {
                 String url = String.format(mUrl, colis.getIdColis());
 
                 // Request a string response from the provided URL.

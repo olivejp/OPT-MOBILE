@@ -13,6 +13,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.domain.EtapeAcheminement;
+import nc.opt.mobile.optmobile.entity.EtapeAcheminementEntity;
 
 /**
  * Created by orlanth23 on 05/10/2017.
@@ -20,9 +21,9 @@ import nc.opt.mobile.optmobile.domain.EtapeAcheminement;
 
 public class EtapeAcheminementAdapter extends RecyclerView.Adapter<EtapeAcheminementAdapter.ViewHolderStepParcel> {
 
-    private final List<EtapeAcheminement> mEtapeAcheminements;
+    private final List<EtapeAcheminementEntity> mEtapeAcheminements;
 
-    public EtapeAcheminementAdapter(List<EtapeAcheminement> steps) {
+    public EtapeAcheminementAdapter(List<EtapeAcheminementEntity> steps) {
         mEtapeAcheminements = steps;
     }
 
@@ -30,7 +31,7 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<EtapeAchemine
         mEtapeAcheminements = new ArrayList<>();
     }
 
-    public List<EtapeAcheminement> getmEtapeAcheminements() {
+    public List<EtapeAcheminementEntity> getmEtapeAcheminements() {
         return mEtapeAcheminements;
     }
 
@@ -78,7 +79,7 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<EtapeAchemine
         @BindView(R.id.step_commentaire)
         TextView mStepCommentaire;
 
-        EtapeAcheminement mEtapeAcheminement;
+        EtapeAcheminementEntity mEtapeAcheminement;
 
         ViewHolderStepParcel(View view) {
             super(view);

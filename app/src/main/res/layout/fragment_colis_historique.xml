@@ -16,9 +16,8 @@
         android:id="@+id/text_object_not_found"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         android:textStyle="bold"
-        android:textSize="35sp"
+        android:textSize="25sp"
         android:padding="20dp"
         android:text="Désolé, cet objet n'a pas été trouvé."
         android:gravity="center_horizontal|center_vertical"/>

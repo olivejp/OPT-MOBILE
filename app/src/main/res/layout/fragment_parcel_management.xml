@@ -12,6 +12,17 @@
         android:layout_height="match_parent"
         app:layoutManager="GridLayoutManager" />
 
+    <TextView
+        android:id="@+id/text_explicatif_suivi_colis"
+        style="@style/Base.TextAppearance.AppCompat.Body1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="40dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="Commencez à suivre vos colis.\n\nAppuyez sur le bouton + pour ajouter un nouveau colis au suivi.\n\nDès que la situation de vos colis évoluera une notification vous sera envoyée. (ce service nécessite une connexion internet)" />
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_add_parcel"
         android:layout_width="wrap_content"

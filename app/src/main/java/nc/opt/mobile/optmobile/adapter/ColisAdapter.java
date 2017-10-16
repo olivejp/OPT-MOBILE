@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -18,8 +19,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.activity.MainActivity;
-import nc.opt.mobile.optmobile.domain.Colis;
-import nc.opt.mobile.optmobile.domain.EtapeAcheminement;
+import nc.opt.mobile.optmobile.entity.ColisEntity;
+import nc.opt.mobile.optmobile.entity.EtapeAcheminementEntity;
 import nc.opt.mobile.optmobile.fragment.HistoriqueColisFragment;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 
@@ -29,10 +30,10 @@ import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 
 public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderStepParcel> {
 
-    private final List<Colis> mColisList;
+    private final List<ColisEntity> mColisList;
     private Context mContext;
 
-    public ColisAdapter(Context context, List<Colis> colisList) {
+    public ColisAdapter(Context context, List<ColisEntity> colisList) {
         mContext = context;
         mColisList = colisList;
     }
@@ -50,17 +51,13 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         holder.mIdColis.setText(holder.mColis.getIdColis());
         if (!holder.mColis.getEtapeAcheminementArrayList().isEmpty()) {
             // On prend la dernière étape
-            EtapeAcheminement etapeAcheminement = holder.mColis.getEtapeAcheminementArrayList().get(holder.mColis.getEtapeAcheminementArrayList().size() - 1);
-            holder.tiret.setVisibility(View.VISIBLE);
+            EtapeAcheminementEntity etapeAcheminement = holder.mColis.getEtapeAcheminementArrayList().get(holder.mColis.getEtapeAcheminementArrayList().size() - 1);
             holder.mStepLastDate.setText(etapeAcheminement.getDate());
             holder.mStepLastPays.setText(etapeAcheminement.getPays());
-            holder.mStepLastLocalisation.setText(etapeAcheminement.getLocalisation());
             holder.mStepLastDescription.setText(etapeAcheminement.getDescription());
         } else {
-            holder.tiret.setVisibility(View.GONE);
             holder.mStepLastDate.setText(null);
             holder.mStepLastPays.setText(null);
-            holder.mStepLastLocalisation.setText(null);
             holder.mStepLastDescription.setText(null);
         }
     }
@@ -70,7 +67,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         return mColisList.size();
     }
 
-    public List<Colis> getmColisList() {
+    public List<ColisEntity> getmColisList() {
         return mColisList;
     }
 
@@ -86,14 +83,11 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         @BindView(R.id.step_last_pays)
         TextView mStepLastPays;
 
-        @BindView(R.id.step_last_localisation)
-        TextView mStepLastLocalisation;
-
         @BindView(R.id.step_last_description)
         TextView mStepLastDescription;
 
         @BindView(R.id.fab_delete_colis)
-        ImageButton mDeleteButton;
+        Button mDeleteButton;
 
         @BindView(R.id.linear_detail_layout)
         LinearLayout linearDetailLayout;
@@ -101,10 +95,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         @BindView(R.id.relative_delete_layout)
         RelativeLayout relativeDeleteLayout;
 
-        @BindView(R.id.colis_tiret)
-        TextView tiret;
-
-        Colis mColis;
+        ColisEntity mColis;
 
         boolean mDeleteMode;
 

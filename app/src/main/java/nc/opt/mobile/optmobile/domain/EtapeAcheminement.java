@@ -2,29 +2,16 @@ package nc.opt.mobile.optmobile.domain;
 
 import android.os.Parcelable;
 
-import org.chalup.microorm.annotations.Column;
-
-import nc.opt.mobile.optmobile.provider.EtapeAcheminementInterface;
-
 /**
  * Created by 2761oli on 05/10/2017.
  */
 
 public class EtapeAcheminement implements Parcelable {
 
-    @Column(EtapeAcheminementInterface.DATE)
     private String date;
-
-    @Column(EtapeAcheminementInterface.PAYS)
     private String pays;
-
-    @Column(EtapeAcheminementInterface.LOCALISATION)
     private String localisation;
-
-    @Column(EtapeAcheminementInterface.DESCRIPTION)
     private String description;
-
-    @Column(EtapeAcheminementInterface.COMMENTAIRE)
     private String commentaire;
 
     public EtapeAcheminement() {
