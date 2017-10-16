@@ -339,11 +339,16 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-        if (mNetworkReceiver != null) {
-            unregisterReceiver(mNetworkReceiver);
-        }
         if (mAuthStateListener != null) {
             mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mNetworkReceiver != null) {
+            unregisterReceiver(mNetworkReceiver);
         }
     }
 

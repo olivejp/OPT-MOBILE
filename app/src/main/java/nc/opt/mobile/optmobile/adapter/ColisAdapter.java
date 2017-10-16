@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -51,16 +52,12 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         if (!holder.mColis.getEtapeAcheminementArrayList().isEmpty()) {
             // On prend la dernière étape
             EtapeAcheminementEntity etapeAcheminement = holder.mColis.getEtapeAcheminementArrayList().get(holder.mColis.getEtapeAcheminementArrayList().size() - 1);
-            holder.tiret.setVisibility(View.VISIBLE);
             holder.mStepLastDate.setText(etapeAcheminement.getDate());
             holder.mStepLastPays.setText(etapeAcheminement.getPays());
-            holder.mStepLastLocalisation.setText(etapeAcheminement.getLocalisation());
             holder.mStepLastDescription.setText(etapeAcheminement.getDescription());
         } else {
-            holder.tiret.setVisibility(View.GONE);
             holder.mStepLastDate.setText(null);
             holder.mStepLastPays.setText(null);
-            holder.mStepLastLocalisation.setText(null);
             holder.mStepLastDescription.setText(null);
         }
     }
@@ -86,23 +83,17 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         @BindView(R.id.step_last_pays)
         TextView mStepLastPays;
 
-        @BindView(R.id.step_last_localisation)
-        TextView mStepLastLocalisation;
-
         @BindView(R.id.step_last_description)
         TextView mStepLastDescription;
 
         @BindView(R.id.fab_delete_colis)
-        ImageButton mDeleteButton;
+        Button mDeleteButton;
 
         @BindView(R.id.linear_detail_layout)
         LinearLayout linearDetailLayout;
 
         @BindView(R.id.relative_delete_layout)
         RelativeLayout relativeDeleteLayout;
-
-        @BindView(R.id.colis_tiret)
-        TextView tiret;
 
         ColisEntity mColis;
 
