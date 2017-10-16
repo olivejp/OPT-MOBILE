@@ -123,9 +123,10 @@ public class ProviderUtilities {
         return result == 1;
     }
 
-    public static ContentValues putColisToContentValues(Colis colis) {
+    public static ContentValues putColisToContentValues(ColisEntity colis) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(ColisEntity.ColisInterface.ID_COLIS, colis.getIdColis());
+        contentValues.put(ColisEntity.ColisInterface.DESCRIPTION, colis.getDescription());
         return contentValues;
     }
 

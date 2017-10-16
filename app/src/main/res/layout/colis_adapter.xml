@@ -75,7 +75,8 @@
                 style="@style/Base.TextAppearance.AppCompat.Body2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="ETAT UNIS" />
+                android:layout_gravity="center_vertical"
+                tools:text="PAYS-BAS" />
 
             <TextView
                 android:id="@+id/colis_tiret"
@@ -91,7 +92,7 @@
                 style="@style/Base.TextAppearance.AppCompat.Body1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="SAN FRANCISCO" />
+                tools:text="AMSTERDAM E INTERNATIONAL MAIL" />
 
         </LinearLayout>
     </LinearLayout>
