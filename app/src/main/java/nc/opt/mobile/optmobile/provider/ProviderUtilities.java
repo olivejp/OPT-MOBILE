@@ -20,14 +20,16 @@ import nc.opt.mobile.optmobile.domain.Colis;
 import nc.opt.mobile.optmobile.domain.EtapeAcheminement;
 import nc.opt.mobile.optmobile.domain.Feature;
 import nc.opt.mobile.optmobile.domain.FeatureCollection;
+import nc.opt.mobile.optmobile.entity.ColisEntity;
+import nc.opt.mobile.optmobile.entity.EtapeAcheminementEntity;
 import nc.opt.mobile.optmobile.utils.Utilities;
 
-import static nc.opt.mobile.optmobile.provider.EtapeAcheminementInterface.COMMENTAIRE;
-import static nc.opt.mobile.optmobile.provider.EtapeAcheminementInterface.DATE;
-import static nc.opt.mobile.optmobile.provider.EtapeAcheminementInterface.DESCRIPTION;
-import static nc.opt.mobile.optmobile.provider.EtapeAcheminementInterface.ID_COLIS;
-import static nc.opt.mobile.optmobile.provider.EtapeAcheminementInterface.LOCALISATION;
-import static nc.opt.mobile.optmobile.provider.EtapeAcheminementInterface.PAYS;
+import static nc.opt.mobile.optmobile.entity.EtapeAcheminementEntity.EtapeAcheminementInterface.COMMENTAIRE;
+import static nc.opt.mobile.optmobile.entity.EtapeAcheminementEntity.EtapeAcheminementInterface.DATE;
+import static nc.opt.mobile.optmobile.entity.EtapeAcheminementEntity.EtapeAcheminementInterface.DESCRIPTION;
+import static nc.opt.mobile.optmobile.entity.EtapeAcheminementEntity.EtapeAcheminementInterface.ID_COLIS;
+import static nc.opt.mobile.optmobile.entity.EtapeAcheminementEntity.EtapeAcheminementInterface.LOCALISATION;
+import static nc.opt.mobile.optmobile.entity.EtapeAcheminementEntity.EtapeAcheminementInterface.PAYS;
 
 /**
  * Created by orlanth23 on 12/08/2017.
@@ -65,12 +67,12 @@ public class ProviderUtilities {
         Calendar cal = Calendar.getInstance();
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put(ColisInterface.LAST_UPDATE, dateFormat.format(cal.getTime()));
+        contentValues.put(ColisEntity.ColisInterface.LAST_UPDATE, dateFormat.format(cal.getTime()));
         if (successful) {
-            contentValues.put(ColisInterface.LAST_UPDATE_SUCCESSFUL, dateFormat.format(cal.getTime()));
+            contentValues.put(ColisEntity.ColisInterface.LAST_UPDATE_SUCCESSFUL, dateFormat.format(cal.getTime()));
         }
 
-        String where = ColisInterface.ID_COLIS.concat("=?");
+        String where = ColisEntity.ColisInterface.ID_COLIS.concat("=?");
 
         return context.getContentResolver().update(OptProvider.ListColis.LIST_COLIS, contentValues, where, new String[]{idColis});
     }
@@ -116,14 +118,14 @@ public class ProviderUtilities {
         context.getContentResolver().delete(OptProvider.ListEtapeAcheminement.LIST_ETAPE, ID_COLIS.concat("=?"), new String[]{idColis});
 
         // Suppression du colis
-        int result = context.getContentResolver().delete(OptProvider.ListColis.LIST_COLIS, ColisInterface.ID_COLIS.concat("=?"), new String[]{idColis});
+        int result = context.getContentResolver().delete(OptProvider.ListColis.LIST_COLIS, ColisEntity.ColisInterface.ID_COLIS.concat("=?"), new String[]{idColis});
 
         return result == 1;
     }
 
     public static ContentValues putColisToContentValues(Colis colis) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(ColisInterface.ID_COLIS, colis.getIdColis());
+        contentValues.put(ColisEntity.ColisInterface.ID_COLIS, colis.getIdColis());
         return contentValues;
     }
 
@@ -142,12 +144,12 @@ public class ProviderUtilities {
         return uOrm.fromCursor(cursor, Agency.class);
     }
 
-    private static Colis getColisFromCursor(Cursor cursor) {
-        return uOrm.fromCursor(cursor, Colis.class);
+    private static ColisEntity getColisFromCursor(Cursor cursor) {
+        return uOrm.fromCursor(cursor, ColisEntity.class);
     }
 
-    private static EtapeAcheminement getEtapeFromCursor(Cursor cursor) {
-        return uOrm.fromCursor(cursor, EtapeAcheminement.class);
+    private static EtapeAcheminementEntity getEtapeFromCursor(Cursor cursor) {
+        return uOrm.fromCursor(cursor, EtapeAcheminementEntity.class);
     }
 
     public static void populateContentProviderFromAsset(Context context) {
@@ -186,13 +188,12 @@ public class ProviderUtilities {
      * @return List of recipe
      */
     public static List<Agency> getListAgencyFromContentProvider(Context context) {
-        ArrayList<Agency> agencyList = null;
+        ArrayList<Agency> agencyList = new ArrayList<>();
 
         // Query the content provider to get a cursor of Agency
         Cursor cursorListAgency = context.getContentResolver().query(OptProvider.ListAgency.LIST_AGENCY, null, null, null, null);
 
         if (cursorListAgency != null) {
-            agencyList = new ArrayList<>();
             while (cursorListAgency.moveToNext()) {
                 Agency agency = ProviderUtilities.getAgencyFromCursor(cursorListAgency);
                 agencyList.add(agency);
@@ -202,17 +203,16 @@ public class ProviderUtilities {
         return agencyList;
     }
 
-    public static List<Colis> getListColisFromContentProvider(Context context) {
-        List<Colis> colisList = null;
+    public static List<ColisEntity> getListColisFromContentProvider(Context context) {
+        List<ColisEntity> colisList = new ArrayList<>();
 
         // Query the content provider to get a cursor of Colis
         Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, null, null, null);
 
         if (cursorListColis != null) {
-            colisList = new ArrayList<>();
             while (cursorListColis.moveToNext()) {
-                Colis colis = ProviderUtilities.getColisFromCursor(cursorListColis);
-                List<EtapeAcheminement> listEtape = ProviderUtilities.getListEtapeFromContentProvider(context, colis.getIdColis());
+                ColisEntity colis = ProviderUtilities.getColisFromCursor(cursorListColis);
+                List<EtapeAcheminementEntity> listEtape = ProviderUtilities.getListEtapeFromContentProvider(context, colis.getIdColis());
                 colis.setEtapeAcheminementArrayList(listEtape);
                 colisList.add(colis);
             }
@@ -221,16 +221,15 @@ public class ProviderUtilities {
         return colisList;
     }
 
-    public static List<EtapeAcheminement> getListEtapeFromContentProvider(Context context, String idColis) {
-        List<EtapeAcheminement> etapeList = null;
+    public static List<EtapeAcheminementEntity> getListEtapeFromContentProvider(Context context, String idColis) {
+        List<EtapeAcheminementEntity> etapeList = new ArrayList<>();
 
         // Query the content provider to get a cursor of Etape
         Cursor cursorListEtape = context.getContentResolver().query(OptProvider.ListEtapeAcheminement.withIdColis(idColis), null, null, null, null);
 
         if (cursorListEtape != null) {
-            etapeList = new ArrayList<>();
             while (cursorListEtape.moveToNext()) {
-                EtapeAcheminement etape = ProviderUtilities.getEtapeFromCursor(cursorListEtape);
+                EtapeAcheminementEntity etape = ProviderUtilities.getEtapeFromCursor(cursorListEtape);
                 etapeList.add(etape);
             }
             cursorListEtape.close();

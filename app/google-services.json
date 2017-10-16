@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1026607285869-3rg7bkhso0lligunj33salo7dvrtuh94.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "nc.opt.mobile.optmobile",
+            "certificate_hash": "cee3ea73b4ab5d9710f2d368b6dc7faa219ef68b"
+          }
+        },
+        {
           "client_id": "1026607285869-8pao6q36sa18qm6f0bva6euo9bfvtlsl.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

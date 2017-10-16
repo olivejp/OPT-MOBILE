@@ -1,0 +1,2 @@
+# Commande à lancer pour avoir le fingerprint à rajouter à Firebase
+keytool -exportcert -list -alias opt_mobile_key -keystore C:\Users\2761OLI\Android\oliweb_keystore.jks

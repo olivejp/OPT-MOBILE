@@ -18,8 +18,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.activity.MainActivity;
-import nc.opt.mobile.optmobile.domain.Colis;
-import nc.opt.mobile.optmobile.domain.EtapeAcheminement;
+import nc.opt.mobile.optmobile.entity.ColisEntity;
+import nc.opt.mobile.optmobile.entity.EtapeAcheminementEntity;
 import nc.opt.mobile.optmobile.fragment.HistoriqueColisFragment;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 
@@ -29,10 +29,10 @@ import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 
 public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderStepParcel> {
 
-    private final List<Colis> mColisList;
+    private final List<ColisEntity> mColisList;
     private Context mContext;
 
-    public ColisAdapter(Context context, List<Colis> colisList) {
+    public ColisAdapter(Context context, List<ColisEntity> colisList) {
         mContext = context;
         mColisList = colisList;
     }
@@ -50,7 +50,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         holder.mIdColis.setText(holder.mColis.getIdColis());
         if (!holder.mColis.getEtapeAcheminementArrayList().isEmpty()) {
             // On prend la dernière étape
-            EtapeAcheminement etapeAcheminement = holder.mColis.getEtapeAcheminementArrayList().get(holder.mColis.getEtapeAcheminementArrayList().size() - 1);
+            EtapeAcheminementEntity etapeAcheminement = holder.mColis.getEtapeAcheminementArrayList().get(holder.mColis.getEtapeAcheminementArrayList().size() - 1);
             holder.tiret.setVisibility(View.VISIBLE);
             holder.mStepLastDate.setText(etapeAcheminement.getDate());
             holder.mStepLastPays.setText(etapeAcheminement.getPays());
@@ -70,7 +70,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         return mColisList.size();
     }
 
-    public List<Colis> getmColisList() {
+    public List<ColisEntity> getmColisList() {
         return mColisList;
     }
 
@@ -104,7 +104,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         @BindView(R.id.colis_tiret)
         TextView tiret;
 
-        Colis mColis;
+        ColisEntity mColis;
 
         boolean mDeleteMode;
 

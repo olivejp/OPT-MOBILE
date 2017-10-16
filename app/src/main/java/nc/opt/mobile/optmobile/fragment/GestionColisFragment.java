@@ -1,12 +1,8 @@
 package nc.opt.mobile.optmobile.fragment;
 
-
-import android.content.ContentResolver;
 import android.content.Context;
-import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -17,18 +13,21 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.adapter.ColisAdapter;
+import nc.opt.mobile.optmobile.domain.Colis;
+import nc.opt.mobile.optmobile.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.ProviderObserver;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
-import nc.opt.mobile.optmobile.service.SyncColisService;
 
 import static nc.opt.mobile.optmobile.activity.MainActivity.TAG_SEARCH_PARCEL_FRAGMENT;
 
@@ -36,7 +35,7 @@ import static nc.opt.mobile.optmobile.activity.MainActivity.TAG_SEARCH_PARCEL_FR
  * Fragment that shows list of followed parcel
  * -FAB allow to add a parcel
  */
-public class GestionColisFragment extends Fragment implements ProviderObserver.ProviderObserverListener{
+public class GestionColisFragment extends Fragment implements ProviderObserver.ProviderObserverListener {
 
     private ColisAdapter mColisAdapter;
     private AppCompatActivity mActivity;
@@ -46,6 +45,9 @@ public class GestionColisFragment extends Fragment implements ProviderObserver.P
 
     @BindView(R.id.fab_add_parcel)
     FloatingActionButton mFloatingButtonAddParcel;
+
+    @BindView(R.id.text_explicatif_suivi_colis)
+    TextView textExplicatifSuiviColis;
 
     public static GestionColisFragment newInstance() {
         GestionColisFragment fragment = new GestionColisFragment();
@@ -77,12 +79,12 @@ public class GestionColisFragment extends Fragment implements ProviderObserver.P
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Création d'un ColisObserver
+        // create a ColisObserver
         ArrayList<Uri> uris = new ArrayList<>();
         uris.add(OptProvider.ListColis.LIST_COLIS);
         uris.add(OptProvider.ListEtapeAcheminement.LIST_ETAPE);
 
-        // Création d'un ProviderObserver pour écouter les modifications sur le content provider
+        // create a ProviderObserver to listen updates from the provider
         ProviderObserver providerObserver = ProviderObserver.getInstance();
         providerObserver.observe(mActivity, this, uris);
     }
@@ -93,10 +95,10 @@ public class GestionColisFragment extends Fragment implements ProviderObserver.P
         View rootView = inflater.inflate(R.layout.fragment_parcel_management, container, false);
         ButterKnife.bind(this, rootView);
 
-        // Changement du titre
+        // change title
         mActivity.setTitle(getActivity().getString(R.string.suivi_des_colis));
 
-        // Ajout d'une barre separatrice entre les elements
+        // add separator between each element
         mRecyclerView.addItemDecoration(new
                 DividerItemDecoration(mActivity,
                 DividerItemDecoration.VERTICAL));
@@ -104,12 +106,15 @@ public class GestionColisFragment extends Fragment implements ProviderObserver.P
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mActivity);
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
-        // Création d'un nouvel adapter
-        mColisAdapter = new ColisAdapter(mActivity, ProviderUtilities.getListColisFromContentProvider(mActivity));
-
+        // get the list from the provider
+        List<ColisEntity> list = ProviderUtilities.getListColisFromContentProvider(mActivity);
+        mColisAdapter = new ColisAdapter(mActivity, list);
         mRecyclerView.setAdapter(mColisAdapter);
-
         mColisAdapter.notifyDataSetChanged();
+
+        // change visibility depending on the list content
+        textExplicatifSuiviColis.setVisibility(list.isEmpty() ? View.VISIBLE : View.GONE);
+        mRecyclerView.setVisibility(list.isEmpty() ? View.GONE : View.VISIBLE);
 
         return rootView;
     }

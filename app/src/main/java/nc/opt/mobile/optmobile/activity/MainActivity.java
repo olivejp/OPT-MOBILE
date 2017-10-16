@@ -51,7 +51,7 @@ import nc.opt.mobile.optmobile.utils.RequestQueueSingleton;
 import nc.opt.mobile.optmobile.utils.Utilities;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, AttachToPermissionActivity, NoticeDialogFragment.NoticeDialogListener, ProviderObserver.ProviderObserverListener {
+        implements NavigationView.OnNavigationItemSelectedListener, AttachToPermissionActivity, NoticeDialogFragment.NoticeDialogListener, ProviderObserver.ProviderObserverListener, NetworkReceiver.NetworkChangeListener {
 
     private static final String TAG = MainActivity.class.getName();
     public static final String TAG_AGENCY_MAP_FRAGMENT = "AGENCY_MAP_FRAGMENT";
@@ -433,5 +433,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onProviderChange() {
         updateBadge();
+    }
+
+    @Override
+    public void OnNetworkEnable() {
+        SyncColisService.launchSynchroForAll(MainActivity.this, true);
+    }
+
+    @Override
+    public void OnNetworkDisable() {
+        throw new UnsupportedOperationException();
     }
 }

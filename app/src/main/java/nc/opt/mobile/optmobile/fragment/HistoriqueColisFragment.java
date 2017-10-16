@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -24,27 +25,31 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.adapter.EtapeAcheminementAdapter;
-import nc.opt.mobile.optmobile.domain.EtapeAcheminement;
+import nc.opt.mobile.optmobile.entity.EtapeAcheminementEntity;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 import nc.opt.mobile.optmobile.service.SyncColisService;
+
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class HistoriqueColisFragment extends Fragment {
 
-    private static final String TAG = HistoriqueColisFragment.class.getName();
     private static final String ARG_ID_PARCEL = "ARG_ID_PARCEL";
 
     private AppCompatActivity mAppCompatActivity;
     private String mIdColis;
-    private EtapeAcheminementAdapter mEtapeAcheminementAdapter;
 
     @BindView(R.id.recycler_parcel_list)
     RecyclerView mRecyclerView;
 
     @BindView(R.id.fab_refresh_colis_search)
     FloatingActionButton fabRefresh;
+
+    @BindView(R.id.text_object_not_found)
+    TextView textObjectNotFound;
 
     public static HistoriqueColisFragment newInstance(@NotNull String idColis) {
         HistoriqueColisFragment fragment = new HistoriqueColisFragment();
@@ -59,7 +64,7 @@ public class HistoriqueColisFragment extends Fragment {
     }
 
     @OnClick(R.id.fab_refresh_colis_search)
-    public void refresh(View v){
+    public void refresh(View v) {
         SyncColisService.launchSynchroByIdColis(mAppCompatActivity, mIdColis, false);
     }
 
@@ -97,15 +102,17 @@ public class HistoriqueColisFragment extends Fragment {
                 DividerItemDecoration(mAppCompatActivity,
                 DividerItemDecoration.VERTICAL));
 
-        // Recuperer l'historique a partir du content provider
-        List<EtapeAcheminement> list = ProviderUtilities.getListEtapeFromContentProvider(mAppCompatActivity, mIdColis);
+        // get history from the provider
+        List<EtapeAcheminementEntity> list = ProviderUtilities.getListEtapeFromContentProvider(mAppCompatActivity, mIdColis);
 
-        // Création d'un nouvel adapter avec notre liste
-        mEtapeAcheminementAdapter = new EtapeAcheminementAdapter(list);
-
+        // create new adapter from the provider list
+        EtapeAcheminementAdapter mEtapeAcheminementAdapter = new EtapeAcheminementAdapter(list);
         mRecyclerView.setAdapter(mEtapeAcheminementAdapter);
-
         mEtapeAcheminementAdapter.notifyDataSetChanged();
+
+        // Change the visibility of the textView
+        textObjectNotFound.setVisibility(list.isEmpty() ? VISIBLE : GONE);
+        mRecyclerView.setVisibility(list.isEmpty() ? View.GONE : VISIBLE);
 
         return rootView;
     }

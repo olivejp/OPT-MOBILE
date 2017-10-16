@@ -3,12 +3,7 @@ package nc.opt.mobile.optmobile.domain;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import org.chalup.microorm.annotations.Column;
-
 import java.util.List;
-
-import nc.opt.mobile.optmobile.provider.AgencyInterface;
-import nc.opt.mobile.optmobile.provider.ColisInterface;
 
 /**
  * Created by 2761oli on 05/10/2017.
@@ -16,7 +11,6 @@ import nc.opt.mobile.optmobile.provider.ColisInterface;
 
 public class Colis implements Parcelable {
 
-    @Column(ColisInterface.ID_COLIS)
     private String idColis;
 
     private List<EtapeAcheminement> etapeAcheminementArrayList;
