@@ -11,13 +11,23 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/linear_agence_detail"
+        app:layout_constraintBottom_toTopOf="@+id/separator"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_weight="5"
         tools:layout_editor_absoluteX="-13dp"
         tools:layout_editor_absoluteY="-226dp" />
+
+    <View
+        android:id="@+id/separator"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        app:layout_constraintBottom_toTopOf="@+id/linear_agence_detail"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/map"
+        android:background="@color/colorPrimaryDark"/>
 
     <LinearLayout
         android:id="@+id/linear_agence_detail"
@@ -26,7 +36,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/map"
+        app:layout_constraintTop_toBottomOf="@+id/separator"
         app:layout_constraintVertical_weight="3">
 
         <include
