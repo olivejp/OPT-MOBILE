@@ -88,7 +88,9 @@ public class MainActivity extends AppCompatActivity
     private void callAgencyMapFragment() {
         if (!(getSupportFragmentManager().findFragmentById(R.id.frame_main) instanceof AgencyMapFragment)) {
             if (!getSupportFragmentManager().popBackStackImmediate(BACK_STACK_MAP, 0)) {
-                agencyMapFragment = AgencyMapFragment.newInstance();
+                if (agencyMapFragment == null) {
+                    agencyMapFragment = AgencyMapFragment.newInstance();
+                }
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.frame_main, agencyMapFragment, TAG_AGENCY_MAP_FRAGMENT)
@@ -101,7 +103,9 @@ public class MainActivity extends AppCompatActivity
     private void callSuiviColis() {
         if (!(getSupportFragmentManager().findFragmentById(R.id.frame_main) instanceof GestionColisFragment)) {
             if (!getSupportFragmentManager().popBackStackImmediate(BACK_STACK_COLIS, 0)) {
-                gestionColisFragment = GestionColisFragment.newInstance();
+                if (gestionColisFragment == null) {
+                    gestionColisFragment = GestionColisFragment.newInstance();
+                }
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.frame_main, gestionColisFragment, TAG_GESTION_COLIS_FRAGMENT)
