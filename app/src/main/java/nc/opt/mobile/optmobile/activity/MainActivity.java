@@ -10,15 +10,20 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.Slide;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -296,8 +301,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                return true;
             case R.id.action_sign_out:
                 mFirebaseAuth.signOut();
                 return true;
@@ -375,13 +378,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        agencyMapFragment = (AgencyMapFragment) getSupportFragmentManager().findFragmentByTag(TAG_AGENCY_MAP_FRAGMENT);
-        if (agencyMapFragment != null) {
-            getSupportFragmentManager().putFragment(outState, SAVED_AGENCY_FRAGMENT, agencyMapFragment);
+        AgencyMapFragment fragA = (AgencyMapFragment) getSupportFragmentManager().findFragmentByTag(TAG_AGENCY_MAP_FRAGMENT);
+        if (fragA != null) {
+            getSupportFragmentManager().putFragment(outState, SAVED_AGENCY_FRAGMENT, fragA);
         }
-        gestionColisFragment = (GestionColisFragment) getSupportFragmentManager().findFragmentByTag(TAG_GESTION_COLIS_FRAGMENT);
-        if (gestionColisFragment != null) {
-            getSupportFragmentManager().putFragment(outState, SAVED_GESTION_COLIS_FRAGMENT, gestionColisFragment);
+        GestionColisFragment fragB = (GestionColisFragment) getSupportFragmentManager().findFragmentByTag(TAG_GESTION_COLIS_FRAGMENT);
+        if (fragB != null) {
+            getSupportFragmentManager().putFragment(outState, SAVED_GESTION_COLIS_FRAGMENT, fragB);
         }
     }
 
