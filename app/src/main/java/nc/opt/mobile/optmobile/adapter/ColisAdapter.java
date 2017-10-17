@@ -48,6 +48,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
     public void onBindViewHolder(final ViewHolderStepParcel holder, int position) {
         holder.mColis = mColisList.get(position);
         holder.mIdColis.setText(holder.mColis.getIdColis());
+        holder.parcelDescription.setText(holder.mColis.getDescription());
         if (!holder.mColis.getEtapeAcheminementArrayList().isEmpty()) {
             // On prend la dernière étape
             EtapeAcheminementEntity etapeAcheminement = holder.mColis.getEtapeAcheminementArrayList().get(holder.mColis.getEtapeAcheminementArrayList().size() - 1);
@@ -88,6 +89,9 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         @BindView(R.id.fab_delete_colis)
         Button mDeleteButton;
 
+        @BindView(R.id.parcel_description)
+        TextView parcelDescription;
+
         @BindView(R.id.constraint_detail_colis_layout)
         ConstraintLayout constraintDetailColisLayout;
 
@@ -99,7 +103,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         boolean mDeleteMode;
 
         private void changeDeleteVisibility() {
-            relativeDeleteLayout.setVisibility(mDeleteMode ? View.VISIBLE : View.GONE);
+            mDeleteButton.setVisibility(mDeleteMode ? View.VISIBLE : View.GONE);
         }
 
         ViewHolderStepParcel(View view) {
