@@ -301,18 +301,12 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
             mAgencySelected = savedInstanceState.getParcelable(ARG_AGENCY_SELECTED);
             mList = savedInstanceState.getParcelableArrayList(ARG_LIST_AGENCIES);
             if (savedInstanceState.keySet().contains(REQUESTING_LOCATION_UPDATES_KEY)) {
-                mRequestingLocationUpdates = savedInstanceState.getBoolean(
-                        REQUESTING_LOCATION_UPDATES_KEY);
+                mRequestingLocationUpdates = savedInstanceState.getBoolean(REQUESTING_LOCATION_UPDATES_KEY);
             }
         }
 
         // Changement du titre
         mActivity.setTitle(mActivity.getString(R.string.agences_opt));
-    }
-
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
     }
 
     @Override
@@ -323,13 +317,8 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         ButterKnife.bind(this, rootView);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        if (savedInstanceState != null && savedInstanceState.containsKey(MAP_KEY)) {
-            mapFragment = (SupportMapFragment) getChildFragmentManager().getFragment(savedInstanceState, MAP_KEY);
-        } else {
-            mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        }
+        mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
 
         mIconAgence = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
         mIconAnnexe = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
@@ -345,7 +334,6 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         outState.putParcelableArrayList(ARG_LIST_AGENCIES, (ArrayList<? extends Parcelable>) mList);
         outState.putParcelable(ARG_AGENCY_SELECTED, mAgencySelected);
         outState.putBoolean(REQUESTING_LOCATION_UPDATES_KEY, mRequestingLocationUpdates);
-        getChildFragmentManager().putFragment(outState, MAP_KEY, mapFragment);
         super.onSaveInstanceState(outState);
     }
 

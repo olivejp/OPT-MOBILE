@@ -10,20 +10,15 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.transition.Slide;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -92,32 +87,26 @@ public class MainActivity extends AppCompatActivity
 
     private void callAgencyMapFragment() {
         if (!(getSupportFragmentManager().findFragmentById(R.id.frame_main) instanceof AgencyMapFragment)) {
-            agencyMapFragment = (AgencyMapFragment) getSupportFragmentManager().findFragmentByTag(TAG_AGENCY_MAP_FRAGMENT);
-            if (agencyMapFragment == null) {
+            if (!getSupportFragmentManager().popBackStackImmediate(BACK_STACK_MAP, 0)) {
                 agencyMapFragment = AgencyMapFragment.newInstance();
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.frame_main, agencyMapFragment, TAG_AGENCY_MAP_FRAGMENT)
                         .addToBackStack(BACK_STACK_MAP)
                         .commit();
-            } else {
-                getSupportFragmentManager().popBackStack(BACK_STACK_MAP, 0);
             }
         }
     }
 
     private void callSuiviColis() {
         if (!(getSupportFragmentManager().findFragmentById(R.id.frame_main) instanceof GestionColisFragment)) {
-            gestionColisFragment = (GestionColisFragment) getSupportFragmentManager().findFragmentByTag(TAG_GESTION_COLIS_FRAGMENT);
-            if (gestionColisFragment == null) {
+            if (!getSupportFragmentManager().popBackStackImmediate(BACK_STACK_COLIS, 0)) {
                 gestionColisFragment = GestionColisFragment.newInstance();
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.frame_main, gestionColisFragment, TAG_GESTION_COLIS_FRAGMENT)
                         .addToBackStack(BACK_STACK_COLIS)
                         .commit();
-            } else {
-                getSupportFragmentManager().popBackStack(BACK_STACK_COLIS, 0);
             }
         }
     }
