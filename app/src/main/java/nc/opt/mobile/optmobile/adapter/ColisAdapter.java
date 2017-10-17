@@ -1,6 +1,7 @@
 package nc.opt.mobile.optmobile.adapter;
 
 import android.content.Context;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -8,8 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -49,6 +48,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
     public void onBindViewHolder(final ViewHolderStepParcel holder, int position) {
         holder.mColis = mColisList.get(position);
         holder.mIdColis.setText(holder.mColis.getIdColis());
+        holder.parcelDescription.setText(holder.mColis.getDescription());
         if (!holder.mColis.getEtapeAcheminementArrayList().isEmpty()) {
             // On prend la dernière étape
             EtapeAcheminementEntity etapeAcheminement = holder.mColis.getEtapeAcheminementArrayList().get(holder.mColis.getEtapeAcheminementArrayList().size() - 1);
@@ -89,8 +89,11 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         @BindView(R.id.fab_delete_colis)
         Button mDeleteButton;
 
-        @BindView(R.id.linear_detail_layout)
-        LinearLayout linearDetailLayout;
+        @BindView(R.id.parcel_description)
+        TextView parcelDescription;
+
+        @BindView(R.id.constraint_detail_colis_layout)
+        ConstraintLayout constraintDetailColisLayout;
 
         @BindView(R.id.relative_delete_layout)
         RelativeLayout relativeDeleteLayout;
@@ -100,7 +103,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         boolean mDeleteMode;
 
         private void changeDeleteVisibility() {
-            relativeDeleteLayout.setVisibility(mDeleteMode ? View.VISIBLE : View.GONE);
+            mDeleteButton.setVisibility(mDeleteMode ? View.VISIBLE : View.GONE);
         }
 
         ViewHolderStepParcel(View view) {
@@ -109,7 +112,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
             mDeleteMode = false;
             ButterKnife.bind(this, mView);
 
-            linearDetailLayout.setOnClickListener(new View.OnClickListener() {
+            constraintDetailColisLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // If we aren't in delete mode we call the parcel result search fragment
@@ -129,7 +132,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
             });
 
             // When we long click on the view, we display Delete button
-            linearDetailLayout.setOnLongClickListener(new View.OnLongClickListener() {
+            constraintDetailColisLayout.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     mDeleteMode = !mDeleteMode;

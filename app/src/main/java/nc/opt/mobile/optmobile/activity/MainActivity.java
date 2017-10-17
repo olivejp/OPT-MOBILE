@@ -87,32 +87,30 @@ public class MainActivity extends AppCompatActivity
 
     private void callAgencyMapFragment() {
         if (!(getSupportFragmentManager().findFragmentById(R.id.frame_main) instanceof AgencyMapFragment)) {
-            agencyMapFragment = (AgencyMapFragment) getSupportFragmentManager().findFragmentByTag(TAG_AGENCY_MAP_FRAGMENT);
-            if (agencyMapFragment == null) {
-                agencyMapFragment = AgencyMapFragment.newInstance();
+            if (!getSupportFragmentManager().popBackStackImmediate(BACK_STACK_MAP, 0)) {
+                if (agencyMapFragment == null) {
+                    agencyMapFragment = AgencyMapFragment.newInstance();
+                }
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.frame_main, agencyMapFragment, TAG_AGENCY_MAP_FRAGMENT)
                         .addToBackStack(BACK_STACK_MAP)
                         .commit();
-            } else {
-                getSupportFragmentManager().popBackStack(BACK_STACK_MAP, 0);
             }
         }
     }
 
     private void callSuiviColis() {
         if (!(getSupportFragmentManager().findFragmentById(R.id.frame_main) instanceof GestionColisFragment)) {
-            gestionColisFragment = (GestionColisFragment) getSupportFragmentManager().findFragmentByTag(TAG_GESTION_COLIS_FRAGMENT);
-            if (gestionColisFragment == null) {
-                gestionColisFragment = GestionColisFragment.newInstance();
+            if (!getSupportFragmentManager().popBackStackImmediate(BACK_STACK_COLIS, 0)) {
+                if (gestionColisFragment == null) {
+                    gestionColisFragment = GestionColisFragment.newInstance();
+                }
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.frame_main, gestionColisFragment, TAG_GESTION_COLIS_FRAGMENT)
                         .addToBackStack(BACK_STACK_COLIS)
                         .commit();
-            } else {
-                getSupportFragmentManager().popBackStack(BACK_STACK_COLIS, 0);
             }
         }
     }
@@ -296,8 +294,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                return true;
             case R.id.action_sign_out:
                 mFirebaseAuth.signOut();
                 return true;
@@ -375,13 +371,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        agencyMapFragment = (AgencyMapFragment) getSupportFragmentManager().findFragmentByTag(TAG_AGENCY_MAP_FRAGMENT);
-        if (agencyMapFragment != null) {
-            getSupportFragmentManager().putFragment(outState, SAVED_AGENCY_FRAGMENT, agencyMapFragment);
+        AgencyMapFragment fragA = (AgencyMapFragment) getSupportFragmentManager().findFragmentByTag(TAG_AGENCY_MAP_FRAGMENT);
+        if (fragA != null) {
+            getSupportFragmentManager().putFragment(outState, SAVED_AGENCY_FRAGMENT, fragA);
         }
-        gestionColisFragment = (GestionColisFragment) getSupportFragmentManager().findFragmentByTag(TAG_GESTION_COLIS_FRAGMENT);
-        if (gestionColisFragment != null) {
-            getSupportFragmentManager().putFragment(outState, SAVED_GESTION_COLIS_FRAGMENT, gestionColisFragment);
+        GestionColisFragment fragB = (GestionColisFragment) getSupportFragmentManager().findFragmentByTag(TAG_GESTION_COLIS_FRAGMENT);
+        if (fragB != null) {
+            getSupportFragmentManager().putFragment(outState, SAVED_GESTION_COLIS_FRAGMENT, fragB);
         }
     }
 

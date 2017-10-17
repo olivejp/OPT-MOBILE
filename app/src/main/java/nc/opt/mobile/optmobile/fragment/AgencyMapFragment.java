@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RawRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -70,6 +71,8 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     private static final String ARG_LIST_AGENCIES = "ARG_LIST_AGENCIES";
     private static final String REQUESTING_LOCATION_UPDATES_KEY = "REQUESTING_LOCATION_UPDATES_KEY";
 
+    private static final String MAP_KEY = "MAP_KEY";
+
     private static final int RC_SEND_AGENCY_CALL = 300;
     private static final int REQUEST_CHECK_SETTINGS = 400;
     private static final float S_ZOOM = 6.6f;
@@ -83,6 +86,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     private AppCompatActivity mActivity;
     private boolean mRequestingLocationUpdates;
     private AttachToPermissionActivity mPermissionActivity;
+    private SupportMapFragment mapFragment;
 
     @BindView(R.id.txt_agence_nom)
     TextView txtAgenceNom;
@@ -297,8 +301,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
             mAgencySelected = savedInstanceState.getParcelable(ARG_AGENCY_SELECTED);
             mList = savedInstanceState.getParcelableArrayList(ARG_LIST_AGENCIES);
             if (savedInstanceState.keySet().contains(REQUESTING_LOCATION_UPDATES_KEY)) {
-                mRequestingLocationUpdates = savedInstanceState.getBoolean(
-                        REQUESTING_LOCATION_UPDATES_KEY);
+                mRequestingLocationUpdates = savedInstanceState.getBoolean(REQUESTING_LOCATION_UPDATES_KEY);
             }
         }
 
@@ -314,8 +317,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         ButterKnife.bind(this, rootView);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-
+        mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         mIconAgence = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
@@ -331,8 +333,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList(ARG_LIST_AGENCIES, (ArrayList<? extends Parcelable>) mList);
         outState.putParcelable(ARG_AGENCY_SELECTED, mAgencySelected);
-        outState.putBoolean(REQUESTING_LOCATION_UPDATES_KEY,
-                mRequestingLocationUpdates);
+        outState.putBoolean(REQUESTING_LOCATION_UPDATES_KEY, mRequestingLocationUpdates);
         super.onSaveInstanceState(outState);
     }
 
