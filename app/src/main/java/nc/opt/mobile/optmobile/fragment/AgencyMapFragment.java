@@ -41,6 +41,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
@@ -71,8 +72,6 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     private static final String ARG_LIST_AGENCIES = "ARG_LIST_AGENCIES";
     private static final String REQUESTING_LOCATION_UPDATES_KEY = "REQUESTING_LOCATION_UPDATES_KEY";
 
-    private static final String MAP_KEY = "MAP_KEY";
-
     private static final int RC_SEND_AGENCY_CALL = 300;
     private static final int REQUEST_CHECK_SETTINGS = 400;
     private static final float S_ZOOM = 6.6f;
@@ -87,6 +86,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     private boolean mRequestingLocationUpdates;
     private AttachToPermissionActivity mPermissionActivity;
     private SupportMapFragment mapFragment;
+    private CameraPosition previousCameraPosition = null;
 
     @BindView(R.id.txt_agence_nom)
     TextView txtAgenceNom;
@@ -292,6 +292,9 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     public void onDetach() {
         super.onDetach();
         mPermissionActivity.onDetachToPermissionActivity(this);
+        if (mMap != null) {
+            previousCameraPosition = mMap.getCameraPosition();
+        }
     }
 
     @Override
@@ -317,7 +320,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         ButterKnife.bind(this, rootView);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mapFragment =  (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         mIconAgence = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
@@ -342,6 +345,10 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         mMap = googleMap;
 
         changeMapStyle(mMap, R.raw.google_map_style_retro);
+
+        if (previousCameraPosition != null) {
+            centerMap(previousCameraPosition.target.latitude, previousCameraPosition.target.longitude, previousCameraPosition.zoom);
+        }
 
         // Activation des boutons de zoom
         UiSettings uiSettings = mMap.getUiSettings();
