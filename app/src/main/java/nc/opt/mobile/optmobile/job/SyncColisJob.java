@@ -9,6 +9,9 @@ import java.util.concurrent.TimeUnit;
 
 import nc.opt.mobile.optmobile.service.SyncColisService;
 
+import static nc.opt.mobile.optmobile.utils.Constants.INTERVAL_SYNC_JOB_MINS;
+import static nc.opt.mobile.optmobile.utils.Constants.PERIODIC_SYNC_JOB_MINS;
+
 /**
  * Created by 2761oli on 10/10/2017.
  */
@@ -29,10 +32,11 @@ public class SyncColisJob extends Job {
      */
     public static void scheduleJob() {
         new JobRequest.Builder(SyncColisJob.TAG)
+                .setRequiresDeviceIdle(false)
                 .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
                 .setRequirementsEnforced(true)
                 .setUpdateCurrent(true)
-                .setPeriodic(TimeUnit.MINUTES.toMillis(30), TimeUnit.MINUTES.toMillis(5))
+                .setPeriodic(TimeUnit.MINUTES.toMillis(PERIODIC_SYNC_JOB_MINS), TimeUnit.MINUTES.toMillis(INTERVAL_SYNC_JOB_MINS))
                 .build()
                 .schedule();
     }

@@ -17,4 +17,14 @@ public class Constants {
 
     public static final String ENCODING_ISO = "iso8859-1";
     public static final String ENCODING_UTF_8 = "UTF-8";
+
+    /**
+     * Minutes we will wait before launch the sync
+     */
+    public static final long PERIODIC_SYNC_JOB_MINS = 15;
+
+    /**
+     * How close to the end of the period the job should run
+     */
+    public static final long INTERVAL_SYNC_JOB_MINS = 5;
 }

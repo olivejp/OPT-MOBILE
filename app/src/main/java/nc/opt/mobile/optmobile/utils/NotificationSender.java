@@ -23,14 +23,12 @@ public class NotificationSender {
 
     public static void sendNotification(Context context, String title, String textContent, @DrawableRes int drawableRes) {
 
-        // The id of the channel.
-        String channel = OPT_CHANNEL_ID;
         NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(context, channel)
+                new NotificationCompat.Builder(context, OPT_CHANNEL_ID)
                         .setSmallIcon(drawableRes)
                         .setContentTitle(title)
                         .setContentText(textContent)
-                        .setChannelId(channel);
+                        .setChannelId(OPT_CHANNEL_ID);
 
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(context, MainActivity.class);

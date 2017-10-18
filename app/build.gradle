@@ -66,8 +66,9 @@ dependencies {
     compile "com.google.firebase:firebase-messaging:${firebaseLibrary}"
     compile "com.google.firebase:firebase-crash:${firebaseLibrary}"
     // Google play services
-    compile "com.google.android.gms:play-services-maps:${firebaseLibrary}"
     compile "com.google.android.gms:play-services-location:${firebaseLibrary}"
+    compile "com.google.android.gms:play-services-maps:${firebaseLibrary}"
+    compile "com.google.android.gms:play-services-gcm:${firebaseLibrary}"
     compile 'com.android.volley:volley:1.0.0'
     // Facebook SDK to authenticate users with their Facebook account.
     // Third libraries
