@@ -11,7 +11,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.RawRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -41,6 +40,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
@@ -71,7 +71,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     private static final String ARG_LIST_AGENCIES = "ARG_LIST_AGENCIES";
     private static final String REQUESTING_LOCATION_UPDATES_KEY = "REQUESTING_LOCATION_UPDATES_KEY";
 
-    private static final String MAP_KEY = "MAP_KEY";
+    private static final String KEY_MAP_FRAGMENT = "KEY_MAP_FRAGMENT";
 
     private static final int RC_SEND_AGENCY_CALL = 300;
     private static final int REQUEST_CHECK_SETTINGS = 400;
@@ -87,6 +87,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     private boolean mRequestingLocationUpdates;
     private AttachToPermissionActivity mPermissionActivity;
     private SupportMapFragment mapFragment;
+    private CameraPosition mCameraPosition = null;
 
     @BindView(R.id.txt_agence_nom)
     TextView txtAgenceNom;
@@ -150,11 +151,13 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
      */
     private void setAgencyToLayout(Agency agency) {
         // Mise à jour des infos de l'agence sélectionnée
-        txtAgenceNom.setText(agency.getNOM());
-        txtAgenceType.setText(agency.getTYPE());
-        txtAgenceHoraire.setText(agency.getHORAIRE());
-        txtAgenceNbDabInt.setText(String.valueOf(agency.getDAB_INTERNE()));
-        txtAgenceNbDabExt.setText(String.valueOf(agency.getDAB_EXTERNE()));
+        if (agency != null) {
+            txtAgenceNom.setText(agency.getNOM());
+            txtAgenceType.setText(agency.getTYPE());
+            txtAgenceHoraire.setText(agency.getHORAIRE());
+            txtAgenceNbDabInt.setText(String.valueOf(agency.getDAB_INTERNE()));
+            txtAgenceNbDabExt.setText(String.valueOf(agency.getDAB_EXTERNE()));
+        }
     }
 
     private void populateMap(List<Agency> agencyList) {
@@ -292,17 +295,29 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     public void onDetach() {
         super.onDetach();
         mPermissionActivity.onDetachToPermissionActivity(this);
+        if (mMap != null) {
+            mCameraPosition = mMap.getCameraPosition();
+        }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
-            mAgencySelected = savedInstanceState.getParcelable(ARG_AGENCY_SELECTED);
-            mList = savedInstanceState.getParcelableArrayList(ARG_LIST_AGENCIES);
+            if (savedInstanceState.containsKey(ARG_AGENCY_SELECTED)) {
+                mAgencySelected = savedInstanceState.getParcelable(ARG_AGENCY_SELECTED);
+            }
+            if (savedInstanceState.containsKey(ARG_LIST_AGENCIES)) {
+                mList = savedInstanceState.getParcelableArrayList(ARG_LIST_AGENCIES);
+            }
             if (savedInstanceState.keySet().contains(REQUESTING_LOCATION_UPDATES_KEY)) {
                 mRequestingLocationUpdates = savedInstanceState.getBoolean(REQUESTING_LOCATION_UPDATES_KEY);
             }
+            if (savedInstanceState.keySet().contains(KEY_MAP_FRAGMENT)) {
+                mapFragment = (SupportMapFragment) getChildFragmentManager().getFragment(savedInstanceState, KEY_MAP_FRAGMENT);
+            }
+        } else {
+            mapFragment = new SupportMapFragment();
         }
 
         // Changement du titre
@@ -317,13 +332,13 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         ButterKnife.bind(this, rootView);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        if (getChildFragmentManager().findFragmentById(R.id.map) != mapFragment) {
+            getChildFragmentManager().beginTransaction().replace(R.id.map, mapFragment).commit();
+        }
         mapFragment.getMapAsync(this);
 
-        mIconAgence = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
-        mIconAnnexe = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
-
         changeVisibility();
+        setAgencyToLayout(mAgencySelected);
 
         return rootView;
 
@@ -334,6 +349,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         outState.putParcelableArrayList(ARG_LIST_AGENCIES, (ArrayList<? extends Parcelable>) mList);
         outState.putParcelable(ARG_AGENCY_SELECTED, mAgencySelected);
         outState.putBoolean(REQUESTING_LOCATION_UPDATES_KEY, mRequestingLocationUpdates);
+        getChildFragmentManager().putFragment(outState, KEY_MAP_FRAGMENT, mapFragment);
         super.onSaveInstanceState(outState);
     }
 
@@ -341,7 +357,14 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        mIconAgence = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+        mIconAnnexe = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+
         changeMapStyle(mMap, R.raw.google_map_style_retro);
+
+        if (mCameraPosition != null){
+            centerMap(mCameraPosition.target.latitude, mCameraPosition.target.longitude, mCameraPosition.zoom);
+        }
 
         // Activation des boutons de zoom
         UiSettings uiSettings = mMap.getUiSettings();
