@@ -43,7 +43,7 @@ class TransformHtmlTask extends AsyncTask<String, Void, Colis> {
                     ProviderUtilities.updateLastUpdate(context, colis.getIdColis(), true);
                     if (ProviderUtilities.checkAndInsertEtape(context, colis.getIdColis(), colis.getEtapeAcheminementArrayList()) && sendNotification) {
                         // Envoi d'une notification si l'objet a bougé.
-                        NotificationSender.sendNotification(context, "Suivi colis", idColis + " a été mis à jour.", R.drawable.ic_archive_white_48dp);
+                        NotificationSender.sendNotification(context, context.getString(R.string.app_name), idColis + " a été mis à jour.", R.drawable.ic_archive_white_48dp);
                     }
                     return colis;
                 case HtmlTransformer.RESULT_NO_ITEM_FOUND:

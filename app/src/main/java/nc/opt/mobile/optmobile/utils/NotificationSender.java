@@ -4,9 +4,12 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.SystemClock;
 import android.support.annotation.DrawableRes;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+
+import java.util.Random;
 
 import nc.opt.mobile.optmobile.activity.MainActivity;
 
@@ -15,7 +18,7 @@ import nc.opt.mobile.optmobile.activity.MainActivity;
  */
 
 public class NotificationSender {
-    private static final int OPT_NOTIFICATION_ID = 100;
+    private static final String OPT_NOTIFICATION_TAG = "OPT_NOTIFICATION_TAG";
     private static final String OPT_CHANNEL_ID = "OPT_CHANNEL";
 
     private NotificationSender() {
@@ -54,6 +57,7 @@ public class NotificationSender {
         // OPT_NOTIFICATION_ID is a unique integer your app uses to identify the
         // notification. For example, to cancel the notification, you can pass its ID
         // number to NotificationManager.cancel().
-        mNotificationManager.notify(OPT_NOTIFICATION_ID, mBuilder.build());
+        Random randomGenerator = new Random();
+        mNotificationManager.notify(OPT_NOTIFICATION_TAG, randomGenerator.nextInt(), mBuilder.build());
     }
 }
