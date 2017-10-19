@@ -80,6 +80,8 @@
         <service
             android:name=".service.SyncColisService"
             android:exported="false" />
+
+        <activity android:name=".activity.ColisGestionActivity"></activity>
     </application>
 
 </manifest>

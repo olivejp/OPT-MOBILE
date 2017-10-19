@@ -12,7 +12,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.domain.EtapeAcheminement;
 import nc.opt.mobile.optmobile.entity.EtapeAcheminementEntity;
 
 /**
@@ -42,7 +41,7 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<EtapeAchemine
     @Override
     public ViewHolderStepParcel onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.step_parcel_search_adapter, parent, false);
+                .inflate(R.layout.adapter_step_parcel_search, parent, false);
         return new ViewHolderStepParcel(view);
     }
 

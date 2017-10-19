@@ -1,7 +1,6 @@
 package nc.opt.mobile.optmobile.adapter;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -20,7 +19,6 @@ import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.activity.MainActivity;
 import nc.opt.mobile.optmobile.entity.ColisEntity;
 import nc.opt.mobile.optmobile.entity.EtapeAcheminementEntity;
-import nc.opt.mobile.optmobile.fragment.GestionColisFragment;
 import nc.opt.mobile.optmobile.fragment.HistoriqueColisFragment;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 
@@ -32,18 +30,16 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
 
     private final List<ColisEntity> mColisList;
     private Context mContext;
-    private GestionColisFragment.CustomSnackbarCallback mSnackbarCallback;
 
-    public ColisAdapter(Context context, List<ColisEntity> colisList, @Nullable GestionColisFragment.CustomSnackbarCallback snackbarCallback) {
+    public ColisAdapter(Context context, List<ColisEntity> colisList) {
         mContext = context;
         mColisList = colisList;
-        mSnackbarCallback = snackbarCallback;
     }
 
     @Override
     public ViewHolderStepParcel onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.colis_adapter, parent, false);
+                .inflate(R.layout.adapter_colis, parent, false);
         return new ViewHolderStepParcel(view);
     }
 
@@ -155,9 +151,6 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
                     changeDeleteVisibility();
 
                     Snackbar snackbar = Snackbar.make(mView, mColis.getIdColis().concat(" supprimé du suivi"), Snackbar.LENGTH_LONG);
-                    if (mSnackbarCallback != null) {
-                        snackbar.addCallback(mSnackbarCallback);
-                    }
                     snackbar.show();
                 }
             });

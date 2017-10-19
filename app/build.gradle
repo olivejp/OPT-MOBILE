@@ -69,13 +69,20 @@ dependencies {
     compile "com.google.android.gms:play-services-location:${firebaseLibrary}"
     compile "com.google.android.gms:play-services-maps:${firebaseLibrary}"
     compile "com.google.android.gms:play-services-gcm:${firebaseLibrary}"
-    compile 'com.android.volley:volley:1.0.0'
     // Facebook SDK to authenticate users with their Facebook account.
     // Third libraries
     compile "com.github.bumptech.glide:glide:${glideVersion}"
     // Allow cursor to object serialisation
     compile "frankiesardo:icepick:${icepickVersion}"
     // App's dependencies
+    // Test dependecies
+    // Processor dependencies
+    annotationProcessor "com.github.bumptech.glide:compiler:${glideVersion}"
+    androidTestCompile('com.android.support.test.espresso:espresso-core:3.0.1', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    provided "frankiesardo:icepick-processor:${icepickVersion}"
+    compile 'com.android.volley:volley:1.0.0'
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.firebaseui:firebase-ui-auth:2.3.0'
@@ -91,17 +98,10 @@ dependencies {
     compile 'org.jetbrains:annotations-java5:15.0'
     compile 'org.jsoup:jsoup:1.10.3'
     compile 'com.evernote:android-job:1.2.0'
-    // Test dependecies
     testCompile 'junit:junit:4.12'
-    // Processor dependencies
     annotationProcessor 'org.parceler:parceler:1.1.9'
     annotationProcessor 'net.simonvt.schematic:schematic-compiler:0.7.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-    annotationProcessor "com.github.bumptech.glide:compiler:${glideVersion}"
-    androidTestCompile('com.android.support.test.espresso:espresso-core:3.0.1', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    provided "frankiesardo:icepick-processor:${icepickVersion}"
 }
 
 apply plugin: 'com.google.gms.google-services'

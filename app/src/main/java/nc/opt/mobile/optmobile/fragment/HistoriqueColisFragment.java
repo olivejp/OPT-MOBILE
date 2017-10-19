@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -84,11 +83,7 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(ARG_ID_PARCEL)) {
-                mIdColis = getArguments().getString(ARG_ID_PARCEL);
-            }
-        }
+        mIdColis = getArguments().getString(ARG_ID_PARCEL);
 
         // create new adapter from the provider mListEtape
         mEtapeAcheminementAdapter = new EtapeAcheminementAdapter();
@@ -104,7 +99,7 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_result_search_parcel, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_historique_colis, container, false);
         ButterKnife.bind(this, rootView);
 
         // Changement du titre
@@ -125,7 +120,6 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
                 DividerItemDecoration.VERTICAL));
 
         // get history from the provider
-        mListEtape.clear();
         mListEtape = ProviderUtilities.getListEtapeFromContentProvider(mAppCompatActivity, mIdColis);
         mEtapeAcheminementAdapter.setmEtapeAcheminements(mListEtape);
         mRecyclerView.setAdapter(mEtapeAcheminementAdapter);
@@ -146,7 +140,6 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
 
     @Override
     public void onProviderChange() {
-        mListEtape.clear();
         mListEtape = ProviderUtilities.getListEtapeFromContentProvider(mAppCompatActivity, mIdColis);
         mEtapeAcheminementAdapter.setmEtapeAcheminements(mListEtape);
         mEtapeAcheminementAdapter.notifyDataSetChanged();
