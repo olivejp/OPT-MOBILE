@@ -14,8 +14,8 @@ import android.view.Display;
 import java.util.Map;
 import java.util.Set;
 
-import nc.opt.mobile.optmobile.provider.ColisInterface;
-import nc.opt.mobile.optmobile.provider.EtapeAcheminementInterface;
+import nc.opt.mobile.optmobile.entity.EtapeAcheminementEntity;
+import nc.opt.mobile.optmobile.entity.ColisEntity;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -63,20 +63,20 @@ class ProviderTestUtilities {
     static ContentValues createEtapeValues(String idColis, @Nullable Integer idEtape) {
         ContentValues testValues = new ContentValues();
         if (idEtape != null) {
-            testValues.put(EtapeAcheminementInterface.ID_ETAPE_ACHEMINEMENT, idEtape);
+            testValues.put(EtapeAcheminementEntity.EtapeAcheminementInterface.ID_ETAPE_ACHEMINEMENT, idEtape);
         }
-        testValues.put(EtapeAcheminementInterface.DATE, ETAPE_DATE);
-        testValues.put(EtapeAcheminementInterface.PAYS, ETAPE_PAYS);
-        testValues.put(EtapeAcheminementInterface.COMMENTAIRE, ETAPE_COMMENTAIRE);
-        testValues.put(EtapeAcheminementInterface.DESCRIPTION, ETAPE_DESCRIPTION);
-        testValues.put(EtapeAcheminementInterface.LOCALISATION, ETAPE_LOCALISATION);
-        testValues.put(EtapeAcheminementInterface.ID_COLIS, idColis);
+        testValues.put(EtapeAcheminementEntity.EtapeAcheminementInterface.DATE, ETAPE_DATE);
+        testValues.put(EtapeAcheminementEntity.EtapeAcheminementInterface.PAYS, ETAPE_PAYS);
+        testValues.put(EtapeAcheminementEntity.EtapeAcheminementInterface.COMMENTAIRE, ETAPE_COMMENTAIRE);
+        testValues.put(EtapeAcheminementEntity.EtapeAcheminementInterface.DESCRIPTION, ETAPE_DESCRIPTION);
+        testValues.put(EtapeAcheminementEntity.EtapeAcheminementInterface.LOCALISATION, ETAPE_LOCALISATION);
+        testValues.put(EtapeAcheminementEntity.EtapeAcheminementInterface.ID_COLIS, idColis);
         return testValues;
     }
 
     static ContentValues createColisValues(String idColis) {
         ContentValues testValues = new ContentValues();
-        testValues.put(ColisInterface.ID_COLIS, idColis);
+        testValues.put(ColisEntity.ColisInterface.ID_COLIS, idColis);
         return testValues;
     }
 

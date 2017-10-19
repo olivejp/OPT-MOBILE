@@ -21,9 +21,9 @@
     <application
         android:name=".App"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_opt_round"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_opt_round"
+        android:roundIcon="@mipmap/ic_launcher_rounded"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
@@ -71,6 +71,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.ColisGestionActivity"/>
 
         <provider
             android:name=".OptProvider"
@@ -81,7 +82,7 @@
             android:name=".service.SyncColisService"
             android:exported="false" />
 
-        <activity android:name=".activity.ColisGestionActivity"></activity>
+
     </application>
 
 </manifest>
