@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -36,8 +37,23 @@ import static nc.opt.mobile.optmobile.activity.MainActivity.TAG_SEARCH_PARCEL_FR
  */
 public class GestionColisFragment extends Fragment implements ProviderObserver.ProviderObserverListener {
 
+    public class CustomSnackbarCallback extends Snackbar.Callback {
+        @Override
+        public void onShown(Snackbar sb) {
+            super.onShown(sb);
+            mFloatingButtonAddParcel.animate().translationY(mFloatingButtonAddParcel.getY() + 1);
+        }
+
+        @Override
+        public void onDismissed(Snackbar transientBottomBar, int event) {
+            super.onDismissed(transientBottomBar, event);
+            mFloatingButtonAddParcel.animate().translationY(mFloatingButtonAddParcel.getY() - 1);
+        }
+    }
+
     private ColisAdapter mColisAdapter;
     private AppCompatActivity mActivity;
+    private CustomSnackbarCallback snackbarCallback = new CustomSnackbarCallback();
 
     @BindView(R.id.recycler_parcel_list_management)
     RecyclerView mRecyclerView;
@@ -107,7 +123,7 @@ public class GestionColisFragment extends Fragment implements ProviderObserver.P
 
         // get the list from the provider
         List<ColisEntity> list = ProviderUtilities.getListColisFromContentProvider(mActivity);
-        mColisAdapter = new ColisAdapter(mActivity, list);
+        mColisAdapter = new ColisAdapter(mActivity, list, snackbarCallback);
         mRecyclerView.setAdapter(mColisAdapter);
         mColisAdapter.notifyDataSetChanged();
 

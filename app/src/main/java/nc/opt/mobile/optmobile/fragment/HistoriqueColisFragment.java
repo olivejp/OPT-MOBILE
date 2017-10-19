@@ -2,9 +2,11 @@ package nc.opt.mobile.optmobile.fragment;
 
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +20,7 @@ import android.widget.TextView;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -26,6 +29,8 @@ import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.adapter.EtapeAcheminementAdapter;
 import nc.opt.mobile.optmobile.entity.EtapeAcheminementEntity;
+import nc.opt.mobile.optmobile.provider.OptProvider;
+import nc.opt.mobile.optmobile.provider.ProviderObserver;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 import nc.opt.mobile.optmobile.service.SyncColisService;
 
@@ -35,12 +40,14 @@ import static android.view.View.VISIBLE;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HistoriqueColisFragment extends Fragment {
+public class HistoriqueColisFragment extends Fragment implements ProviderObserver.ProviderObserverListener {
 
     private static final String ARG_ID_PARCEL = "ARG_ID_PARCEL";
 
     private AppCompatActivity mAppCompatActivity;
     private String mIdColis;
+    private List<EtapeAcheminementEntity> mListEtape;
+    private EtapeAcheminementAdapter mEtapeAcheminementAdapter;
 
     @BindView(R.id.recycler_parcel_list)
     RecyclerView mRecyclerView;
@@ -77,7 +84,21 @@ public class HistoriqueColisFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mIdColis = getArguments().getString(ARG_ID_PARCEL);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(ARG_ID_PARCEL)) {
+                mIdColis = getArguments().getString(ARG_ID_PARCEL);
+            }
+        }
+
+        // create new adapter from the provider mListEtape
+        mEtapeAcheminementAdapter = new EtapeAcheminementAdapter();
+
+        // create a ProviderObserver to listen updates from the provider
+        ArrayList<Uri> uris = new ArrayList<>();
+        uris.add(OptProvider.ListColis.LIST_COLIS);
+        uris.add(OptProvider.ListEtapeAcheminement.LIST_ETAPE);
+        ProviderObserver providerObserver = ProviderObserver.getInstance();
+        providerObserver.observe(mAppCompatActivity, this, uris);
     }
 
     @Override
@@ -92,6 +113,7 @@ public class HistoriqueColisFragment extends Fragment {
         ActionBar actionBar = mAppCompatActivity.getSupportActionBar();
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_add_white_48dp);
         }
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mAppCompatActivity);
@@ -103,16 +125,15 @@ public class HistoriqueColisFragment extends Fragment {
                 DividerItemDecoration.VERTICAL));
 
         // get history from the provider
-        List<EtapeAcheminementEntity> list = ProviderUtilities.getListEtapeFromContentProvider(mAppCompatActivity, mIdColis);
-
-        // create new adapter from the provider list
-        EtapeAcheminementAdapter mEtapeAcheminementAdapter = new EtapeAcheminementAdapter(list);
+        mListEtape.clear();
+        mListEtape = ProviderUtilities.getListEtapeFromContentProvider(mAppCompatActivity, mIdColis);
+        mEtapeAcheminementAdapter.setmEtapeAcheminements(mListEtape);
         mRecyclerView.setAdapter(mEtapeAcheminementAdapter);
         mEtapeAcheminementAdapter.notifyDataSetChanged();
 
         // Change the visibility of the textView
-        textObjectNotFound.setVisibility(list.isEmpty() ? VISIBLE : GONE);
-        mRecyclerView.setVisibility(list.isEmpty() ? View.GONE : VISIBLE);
+        textObjectNotFound.setVisibility(mListEtape.isEmpty() ? VISIBLE : GONE);
+        mRecyclerView.setVisibility(mListEtape.isEmpty() ? View.GONE : VISIBLE);
 
         return rootView;
     }
@@ -121,5 +142,13 @@ public class HistoriqueColisFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(ARG_ID_PARCEL, mIdColis);
+    }
+
+    @Override
+    public void onProviderChange() {
+        mListEtape.clear();
+        mListEtape = ProviderUtilities.getListEtapeFromContentProvider(mAppCompatActivity, mIdColis);
+        mEtapeAcheminementAdapter.setmEtapeAcheminements(mListEtape);
+        mEtapeAcheminementAdapter.notifyDataSetChanged();
     }
 }

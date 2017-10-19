@@ -1,6 +1,7 @@
 package nc.opt.mobile.optmobile.adapter;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -20,6 +20,7 @@ import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.activity.MainActivity;
 import nc.opt.mobile.optmobile.entity.ColisEntity;
 import nc.opt.mobile.optmobile.entity.EtapeAcheminementEntity;
+import nc.opt.mobile.optmobile.fragment.GestionColisFragment;
 import nc.opt.mobile.optmobile.fragment.HistoriqueColisFragment;
 import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 
@@ -31,10 +32,12 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
 
     private final List<ColisEntity> mColisList;
     private Context mContext;
+    private GestionColisFragment.CustomSnackbarCallback mSnackbarCallback;
 
-    public ColisAdapter(Context context, List<ColisEntity> colisList) {
+    public ColisAdapter(Context context, List<ColisEntity> colisList, @Nullable GestionColisFragment.CustomSnackbarCallback snackbarCallback) {
         mContext = context;
         mColisList = colisList;
+        mSnackbarCallback = snackbarCallback;
     }
 
     @Override
@@ -95,9 +98,6 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         @BindView(R.id.constraint_detail_colis_layout)
         ConstraintLayout constraintDetailColisLayout;
 
-        @BindView(R.id.relative_delete_layout)
-        RelativeLayout relativeDeleteLayout;
-
         ColisEntity mColis;
 
         boolean mDeleteMode;
@@ -154,7 +154,11 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
                     mDeleteMode = false;
                     changeDeleteVisibility();
 
-                    Snackbar.make(mView, mColis.getIdColis().concat(" supprimé du suivi"), Snackbar.LENGTH_LONG).show();
+                    Snackbar snackbar = Snackbar.make(mView, mColis.getIdColis().concat(" supprimé du suivi"), Snackbar.LENGTH_LONG);
+                    if (mSnackbarCallback != null) {
+                        snackbar.addCallback(mSnackbarCallback);
+                    }
+                    snackbar.show();
                 }
             });
         }
