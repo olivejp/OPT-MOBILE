@@ -33,8 +33,8 @@ android {
         applicationId "nc.opt.mobile.optmobile"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 3
-        versionName "alpha-1.2"
+        versionCode 4
+        versionName "alpha-1.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
