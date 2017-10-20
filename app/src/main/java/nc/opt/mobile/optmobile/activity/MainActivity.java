@@ -90,9 +90,6 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.drawer_layout)
     DrawerLayout drawer;
 
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-
     @BindView(R.id.nav_view)
     NavigationView navigationView;
 
@@ -213,6 +210,7 @@ public class MainActivity extends AppCompatActivity
         ButterKnife.bind(this);
 
         // Define the toolbar
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
