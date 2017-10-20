@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.broadcast.NetworkReceiver;
 import nc.opt.mobile.optmobile.fragment.AgencyMapFragment;
@@ -84,7 +86,15 @@ public class MainActivity extends AppCompatActivity
     private GestionColisFragment gestionColisFragment;
     private NetworkReceiver mNetworkReceiver;
     private static ArrayList<ListenerPermissionResult> mListenerPermissionResult = new ArrayList<>();
-    private NavigationView navigationView;
+
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawer;
+
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
+    @BindView(R.id.nav_view)
+    NavigationView navigationView;
 
     private void callAgencyMapFragment() {
         if (!(getSupportFragmentManager().findFragmentById(R.id.frame_main) instanceof AgencyMapFragment)) {
@@ -200,8 +210,9 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ButterKnife.bind(this);
+
         // Define the toolbar
-        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
@@ -241,13 +252,11 @@ public class MainActivity extends AppCompatActivity
 
         defineAuthListener();
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         updateBadge();
 
@@ -267,7 +276,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         // Fermeture du drawer latéral s'il est ouvert
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer != null) {
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
@@ -332,7 +340,6 @@ public class MainActivity extends AppCompatActivity
         }
 
         // Après avoir cliquer sur un menu, on ferme le menu latéral
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

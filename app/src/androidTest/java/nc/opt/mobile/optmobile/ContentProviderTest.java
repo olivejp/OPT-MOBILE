@@ -14,8 +14,8 @@ import org.junit.runner.RunWith;
 
 import nc.opt.mobile.optmobile.provider.OptProvider;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * Created by orlanth23 on 06/10/2017.

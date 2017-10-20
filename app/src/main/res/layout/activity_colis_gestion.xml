@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="nc.opt.mobile.optmobile.activity.ColisGestionActivity">
+    tools:context="nc.opt.mobile.optmobile.activity.GestionColisActivity">
 
     <fragment
         android:id="@+id/frame_master"
@@ -14,6 +14,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout="@layout/fragment_gestion_colis" />
 
 </android.support.constraint.ConstraintLayout>

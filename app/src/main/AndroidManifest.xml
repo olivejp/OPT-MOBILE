@@ -71,7 +71,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.ColisGestionActivity"/>
+        <activity android:name=".activity.GestionColisActivity"/>
 
         <provider
             android:name=".OptProvider"

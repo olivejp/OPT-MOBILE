@@ -2,8 +2,8 @@
 apply plugin: 'com.android.application'
 
 ext {
-    supportLibrary = "26.0.1"
-    firebaseLibrary = "11.0.4"
+    supportLibrary = "26.1.0"
+    firebaseLibrary = "11.4.2"
     glideVersion = "4.1.1"
     icepickVersion = "3.2.0"
 }
@@ -43,10 +43,6 @@ android {
             versionNameSuffix '-release'
         }
         debug {
-            shrinkResources true
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
             versionNameSuffix '-debug'
         }
     }
@@ -54,54 +50,68 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    // All the Android libraries
-    compile "com.android.support:appcompat-v7:${supportLibrary}"
-    compile "com.android.support:cardview-v7:${supportLibrary}"
-    compile "com.android.support:design:${supportLibrary}"
-    compile "com.android.support:support-v4:${supportLibrary}"
-    compile "com.android.support:support-vector-drawable:${supportLibrary}"
-    // All the Firebase libraries
-    compile "com.google.firebase:firebase-auth:${firebaseLibrary}"
-    compile "com.google.firebase:firebase-database:${firebaseLibrary}"
-    compile "com.google.firebase:firebase-messaging:${firebaseLibrary}"
-    compile "com.google.firebase:firebase-crash:${firebaseLibrary}"
-    // Google play services
-    compile "com.google.android.gms:play-services-location:${firebaseLibrary}"
-    compile "com.google.android.gms:play-services-maps:${firebaseLibrary}"
-    compile "com.google.android.gms:play-services-gcm:${firebaseLibrary}"
-    // Facebook SDK to authenticate users with their Facebook account.
-    // Third libraries
-    compile "com.github.bumptech.glide:glide:${glideVersion}"
-    // Allow cursor to object serialisation
-    compile "frankiesardo:icepick:${icepickVersion}"
-    // App's dependencies
-    // Test dependecies
-    // Processor dependencies
-    annotationProcessor "com.github.bumptech.glide:compiler:${glideVersion}"
-    androidTestCompile('com.android.support.test.espresso:espresso-core:3.0.1', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    provided "frankiesardo:icepick-processor:${icepickVersion}"
+    compile 'com.android.support:appcompat-v7:26.1.0'
+    compile 'com.android.support:cardview-v7:26.1.0'
+    compile 'com.android.support:design:26.1.0'
+    compile 'com.android.support:support-v4:26.1.0'
+    compile 'com.android.support:support-vector-drawable:26.1.0'
+
+    compile "com.google.firebase:firebase-auth:11.4.2"
+    compile "com.google.firebase:firebase-database:11.4.2"
+    compile "com.google.firebase:firebase-messaging:11.4.2"
+    compile "com.google.firebase:firebase-crash:11.4.2"
+
+    compile "com.google.android.gms:play-services-location:11.4.2"
+    compile "com.google.android.gms:play-services-maps:11.4.2"
+    compile "com.google.android.gms:play-services-gcm:11.4.2"
+
+    compile 'com.github.bumptech.glide:glide:4.2.0'
+
+    compile "frankiesardo:icepick:3.2.0"
+
+    provided "frankiesardo:icepick-processor:3.2.0"
     compile 'com.android.volley:volley:1.0.0'
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
-    compile 'com.firebaseui:firebase-ui-auth:2.3.0'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.google.code.gson:gson:2.8.1'
-    compile 'com.facebook.android:facebook-android-sdk:4.26.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+    compile 'com.firebaseui:firebase-ui-auth:3.1.0'
+    compile 'com.android.support.constraint:constraint-layout:1.1.0-beta1'
+    compile 'com.google.code.gson:gson:2.8.2'
+    compile 'com.facebook.android:facebook-android-sdk:4.27.0'
     compile 'net.simonvt.schematic:schematic:0.7.0'
     compile 'org.parceler:parceler-api:1.1.9'
     compile 'org.chalup.microorm:microorm:0.8.0'
     compile 'com.jakewharton:butterknife:8.8.1'
     compile 'jp.wasabeef:glide-transformations:3.0.1'
-    compile 'com.android.support:support-annotations:25.3.1'
+    compile 'com.android.support:support-annotations:26.1.0'
     compile 'org.jetbrains:annotations-java5:15.0'
     compile 'org.jsoup:jsoup:1.10.3'
     compile 'com.evernote:android-job:1.2.0'
-    testCompile 'junit:junit:4.12'
+
+    annotationProcessor "com.github.bumptech.glide:compiler:4.1.1"
     annotationProcessor 'org.parceler:parceler:1.1.9'
     annotationProcessor 'net.simonvt.schematic:schematic-compiler:0.7.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    androidTestCompile 'com.android.support:support-annotations:26.1.0';
+    androidTestCompile 'com.android.support.test:runner:1.0.1'
+    androidTestCompile 'com.android.support.test:rules:1.0.1'
+    androidTestCompile 'com.android.support.test.espresso:espresso-idling-resource:3.0.1'
+    androidTestCompile ('com.android.support.test.espresso:espresso-core:3.0.1') {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.google.guava', module: 'guava'
+    }
+    androidTestCompile('com.android.support.test.espresso:espresso-contrib:3.0.1') {
+        exclude group: 'com.android.support', module: 'appcompat'
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'com.android.support', module: 'design'
+        exclude group: 'com.android.support', module: 'transition'
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude module: 'recyclerview-v7'
+    }
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:2.11.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
