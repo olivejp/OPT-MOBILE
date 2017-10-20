@@ -1,10 +1,8 @@
 package nc.opt.mobile.optmobile.utils;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,33 +29,10 @@ public class NoticeDialogFragment extends DialogFragment {
     public static final int TYPE_IMAGE_ERROR = 110;
     public static final int TYPE_IMAGE_INFORMATION = 120;
 
-    private NoticeDialogListener mListenerContext;
-    private Activity mActivity;
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            mListenerContext = (NoticeDialogListener) context;
-        } catch (ClassCastException e) {
-            Log.e("ClassCastException", e.getMessage(), e);
-            throw new ClassCastException(context.toString()
-                    + " doit implementer l'interface NoticeDialogListener");
-        }
-
-        try {
-            mActivity = (Activity) context;
-        } catch (ClassCastException e) {
-            Log.e("ClassCastException", e.getMessage(), e);
-            throw new ClassCastException(context.toString()
-                    + " doit étendre la classe Activity");
-        }
-    }
-
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        LayoutInflater inflater = mActivity.getLayoutInflater();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
 
         View view = inflater.inflate(R.layout.dialog_layout, null);
         builder.setView(view);
@@ -73,7 +48,7 @@ public class NoticeDialogFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Clic sur OK
-                        mListenerContext.onDialogPositiveClick(NoticeDialogFragment.this);
+                        ((NoticeDialogListener) getActivity()).onDialogPositiveClick(NoticeDialogFragment.this);
                     }
                 });
                 break;
@@ -82,13 +57,27 @@ public class NoticeDialogFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Clic sur OK
-                        mListenerContext.onDialogPositiveClick(NoticeDialogFragment.this);
+                        try {
+                            NoticeDialogListener mListenerContext = (NoticeDialogListener) getActivity();
+                            mListenerContext.onDialogPositiveClick(NoticeDialogFragment.this);
+                        } catch (ClassCastException e) {
+                            Log.e("ClassCastException", e.getMessage(), e);
+                            throw new ClassCastException(getActivity().toString()
+                                    + " doit implementer l'interface NoticeDialogListener");
+                        }
                     }
                 }).setNegativeButton("Non", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Clic sur annuler
-                        mListenerContext.onDialogNegativeClick(NoticeDialogFragment.this);
+                        try {
+                            NoticeDialogListener mListenerContext = (NoticeDialogListener) getActivity();
+                            mListenerContext.onDialogNegativeClick(NoticeDialogFragment.this);
+                        } catch (ClassCastException e) {
+                            Log.e("ClassCastException", e.getMessage(), e);
+                            throw new ClassCastException(getActivity().toString()
+                                    + " doit implementer l'interface NoticeDialogListener");
+                        }
                     }
                 });
                 break;
