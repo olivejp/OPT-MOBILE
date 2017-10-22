@@ -24,6 +24,9 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -87,6 +90,10 @@ public class MainActivity extends AppCompatActivity
     private NetworkReceiver mNetworkReceiver;
     private static ArrayList<ListenerPermissionResult> mListenerPermissionResult = new ArrayList<>();
 
+    private ImageView mImageViewProfile;
+    private Button mButtonConnexion;
+    private TextView mProfilName;
+
     @BindView(R.id.drawer_layout)
     DrawerLayout drawer;
 
@@ -125,6 +132,23 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void signIn() {
+        // User is signed out
+        onSignedOutCleanup();
+
+        List<AuthUI.IdpConfig> listProviders = new ArrayList<>();
+        listProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build());
+        listProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build());
+
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setIsSmartLockEnabled(false)
+                        .setAvailableProviders(listProviders)
+                        .build(),
+                RC_SIGN_IN);
+    }
+
     private void defineAuthListener() {
         // On veut que l'utilisateur soit identifié pour continuer
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -133,22 +157,11 @@ public class MainActivity extends AppCompatActivity
                 mFirebaseUser = firebaseAuth.getCurrentUser();
 
                 if (mFirebaseUser != null) {
+                    mButtonConnexion.setText("SE DECONNECTER");
+                    mProfilName.setText(mFirebaseUser.getDisplayName());
                     createAsyncTaskGetPhoto().execute();
                 } else {
-                    // User is signed out
                     onSignedOutCleanup();
-
-                    List<AuthUI.IdpConfig> listProviders = new ArrayList<>();
-                    listProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build());
-                    listProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build());
-
-                    startActivityForResult(
-                            AuthUI.getInstance()
-                                    .createSignInIntentBuilder()
-                                    .setIsSmartLockEnabled(false)
-                                    .setAvailableProviders(listProviders)
-                                    .build(),
-                            RC_SIGN_IN);
                 }
             }
         };
@@ -176,6 +189,7 @@ public class MainActivity extends AppCompatActivity
             protected void onPostExecute(Drawable drawable) {
                 if (drawable != null) {
                     mDrawablePhoto = drawable;
+                    mImageViewProfile.setImageDrawable(mDrawablePhoto);
                     invalidateOptionsMenu();
                 }
             }
@@ -183,8 +197,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void onSignedOutCleanup() {
+        mButtonConnexion.setText("SE CONNECTER");
+        mProfilName.setText(null);
         mFirebaseUser = null;
         mDrawablePhoto = null;
+        mImageViewProfile.setImageResource(R.drawable.ic_person_grey_900_48dp);
         invalidateOptionsMenu();
     }
 
@@ -208,6 +225,26 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
+
+        View headerLayout = navigationView.getHeaderView(0);
+        mImageViewProfile = headerLayout.findViewById(R.id.image_view_profile);
+        mButtonConnexion = headerLayout.findViewById(R.id.button_connexion);
+        mProfilName = headerLayout.findViewById(R.id.text_profil_name);
+
+        mFirebaseAuth = FirebaseAuth.getInstance();
+
+        defineAuthListener();
+
+        mButtonConnexion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mFirebaseUser != null) {
+                    onSignedOutCleanup();
+                } else {
+                    signIn();
+                }
+            }
+        });
 
         // Define the toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -237,8 +274,6 @@ public class MainActivity extends AppCompatActivity
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, RC_PERMISSION_INTERNET);
         }
 
-        mFirebaseAuth = FirebaseAuth.getInstance();
-
         // Populate the contentProvider with assets, only the first time
         SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
         if (!sharedPreferences.getBoolean(PREF_POPULATED, false)) {
@@ -247,8 +282,6 @@ public class MainActivity extends AppCompatActivity
             editor.putBoolean(PREF_POPULATED, true);
             editor.apply();
         }
-
-        defineAuthListener();
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -296,23 +329,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-
-        if (mFirebaseUser != null) {
-            if (mMenuItemProfil != null) {
-                menu.removeItem(mMenuItemProfil.getItemId());
-            }
-            mMenuItemProfil = menu.add(mFirebaseUser.getDisplayName())
-                    .setIcon(mDrawablePhoto)
-                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        } else {
-            mMenuItemProfil = null;
-        }
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_sign_out:
@@ -345,7 +361,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+        if (mFirebaseAuth != null) {
+            mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+        }
 
         // On attache le receiver a l'application
         mNetworkReceiver = NetworkReceiver.getInstance();

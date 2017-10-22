@@ -25,7 +25,7 @@ import nc.opt.mobile.optmobile.service.SyncColisService;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SearchParcelFragment extends Fragment {
+public class SearchColisFragment extends Fragment {
 
     @BindView(R.id.edit_id_parcel)
     EditText editIdParcel;
@@ -35,14 +35,14 @@ public class SearchParcelFragment extends Fragment {
 
     private AppCompatActivity mActivity;
 
-    public static SearchParcelFragment newInstance() {
-        SearchParcelFragment fragment = new SearchParcelFragment();
+    public static SearchColisFragment newInstance() {
+        SearchColisFragment fragment = new SearchColisFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
     }
 
-    public SearchParcelFragment() {
+    public SearchColisFragment() {
         // Required empty public constructor
     }
 
@@ -55,7 +55,7 @@ public class SearchParcelFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_search_parcel, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_search_colis, container, false);
         ButterKnife.bind(this, rootView);
 
         mActivity.setTitle("Rechercher colis");

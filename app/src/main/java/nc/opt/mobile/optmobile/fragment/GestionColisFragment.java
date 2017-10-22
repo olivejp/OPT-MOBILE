@@ -61,10 +61,10 @@ public class GestionColisFragment extends Fragment implements ProviderObserver.P
 
     @OnClick(R.id.fab_add_parcel)
     public void onFloatingButtonClick(View view) {
-        SearchParcelFragment searchParcelFragment = SearchParcelFragment.newInstance();
+        SearchColisFragment searchColisFragment = SearchColisFragment.newInstance();
         mActivity.getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.frame_main, searchParcelFragment, TAG_SEARCH_PARCEL_FRAGMENT)
+                .replace(R.id.frame_main, searchColisFragment, TAG_SEARCH_PARCEL_FRAGMENT)
                 .addToBackStack(null)
                 .commit();
     }

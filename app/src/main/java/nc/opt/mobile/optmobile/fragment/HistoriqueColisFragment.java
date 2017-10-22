@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -104,12 +103,6 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
 
         // Changement du titre
         mAppCompatActivity.setTitle(mIdColis);
-
-        ActionBar actionBar = mAppCompatActivity.getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setHomeButtonEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_add_white_48dp);
-        }
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mAppCompatActivity);
         mRecyclerView.setLayoutManager(linearLayoutManager);

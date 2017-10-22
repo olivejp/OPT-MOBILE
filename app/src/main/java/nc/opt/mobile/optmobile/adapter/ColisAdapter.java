@@ -51,8 +51,6 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         holder.mStepLastUpdate.setText(holder.mColis.getLastUpdate());
         if (!holder.mColis.getEtapeAcheminementArrayList().isEmpty()) {
             // On prend la dernière étape
-            holder.mStepLastDate.setVisibility(View.VISIBLE);
-            holder.mStepLastPays.setVisibility(View.VISIBLE);
             EtapeAcheminementEntity etapeAcheminement = holder.mColis.getEtapeAcheminementArrayList().get(holder.mColis.getEtapeAcheminementArrayList().size() - 1);
             holder.mStepLastDate.setText(etapeAcheminement.getDate());
             holder.mStepLastPays.setText(etapeAcheminement.getPays());
@@ -60,8 +58,6 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         } else {
             holder.mStepLastDate.setText(null);
             holder.mStepLastPays.setText(null);
-            holder.mStepLastDate.setVisibility(View.GONE);
-            holder.mStepLastPays.setVisibility(View.GONE);
             holder.mStepLastDescription.setText("Aucune données récupérées pour ce colis.");
         }
     }
