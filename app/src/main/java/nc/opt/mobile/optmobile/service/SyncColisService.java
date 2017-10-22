@@ -4,7 +4,6 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -15,10 +14,11 @@ import com.android.volley.toolbox.StringRequest;
 
 import java.util.List;
 
-import nc.opt.mobile.optmobile.entity.ColisEntity;
-import nc.opt.mobile.optmobile.provider.ProviderUtilities;
+import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.utils.Constants;
 import nc.opt.mobile.optmobile.utils.RequestQueueSingleton;
+
+import static nc.opt.mobile.optmobile.provider.services.ColisService.listFromProvider;
 
 public class SyncColisService extends IntentService {
 
@@ -87,7 +87,7 @@ public class SyncColisService extends IntentService {
     }
 
     private void handleActionSyncAll(boolean sendNotification) {
-        List<ColisEntity> list = ProviderUtilities.getListColisFromContentProvider(this);
+        List<ColisEntity> list = listFromProvider(this);
         if (!list.isEmpty()) {
             for (ColisEntity colis : list) {
                 String url = String.format(mUrl, colis.getIdColis());

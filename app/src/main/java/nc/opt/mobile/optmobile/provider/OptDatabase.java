@@ -3,8 +3,8 @@ package nc.opt.mobile.optmobile.provider;
 import net.simonvt.schematic.annotation.Database;
 import net.simonvt.schematic.annotation.Table;
 
-import nc.opt.mobile.optmobile.entity.ColisEntity;
-import nc.opt.mobile.optmobile.entity.EtapeAcheminementEntity;
+import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
+import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
 
 /**
  * Created by orlanth23 on 01/07/2017.
@@ -12,7 +12,7 @@ import nc.opt.mobile.optmobile.entity.EtapeAcheminementEntity;
 
 @Database(version = OptDatabase.VERSION, packageName = "nc.opt.mobile.optmobile")
 class OptDatabase {
-    static final int VERSION = 12;
+    static final int VERSION = 14;
 
     private OptDatabase() {
     }

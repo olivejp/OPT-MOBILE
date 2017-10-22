@@ -13,14 +13,14 @@ public class Colis implements Parcelable {
 
     private String idColis;
 
-    private List<EtapeAcheminement> etapeAcheminementArrayList;
+    private List<EtapeAcheminementDto> etapeAcheminementDtoArrayList;
 
     public Colis() {
     }
 
-    public Colis(String idColis, List<EtapeAcheminement> etapeAcheminementArrayList) {
+    public Colis(String idColis, List<EtapeAcheminementDto> etapeAcheminementDtoArrayList) {
         this.idColis = idColis;
-        this.etapeAcheminementArrayList = etapeAcheminementArrayList;
+        this.etapeAcheminementDtoArrayList = etapeAcheminementDtoArrayList;
     }
 
     public String getIdColis() {
@@ -31,12 +31,12 @@ public class Colis implements Parcelable {
         this.idColis = idColis;
     }
 
-    public List<EtapeAcheminement> getEtapeAcheminementArrayList() {
-        return etapeAcheminementArrayList;
+    public List<EtapeAcheminementDto> getEtapeAcheminementDtoArrayList() {
+        return etapeAcheminementDtoArrayList;
     }
 
-    public void setEtapeAcheminementArrayList(List<EtapeAcheminement> etapeAcheminementArrayList) {
-        this.etapeAcheminementArrayList = etapeAcheminementArrayList;
+    public void setEtapeAcheminementDtoArrayList(List<EtapeAcheminementDto> etapeAcheminementDtoArrayList) {
+        this.etapeAcheminementDtoArrayList = etapeAcheminementDtoArrayList;
     }
 
     @Override
@@ -47,12 +47,12 @@ public class Colis implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.idColis);
-        dest.writeTypedList(this.etapeAcheminementArrayList);
+        dest.writeTypedList(this.etapeAcheminementDtoArrayList);
     }
 
     private Colis(Parcel in) {
         this.idColis = in.readString();
-        this.etapeAcheminementArrayList = in.createTypedArrayList(EtapeAcheminement.CREATOR);
+        this.etapeAcheminementDtoArrayList = in.createTypedArrayList(EtapeAcheminementDto.CREATOR);
     }
 
     public static final Creator<Colis> CREATOR = new Creator<Colis>() {

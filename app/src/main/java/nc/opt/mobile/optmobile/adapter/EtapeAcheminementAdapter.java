@@ -12,7 +12,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.entity.EtapeAcheminementEntity;
+import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
+import nc.opt.mobile.optmobile.utils.DateConverter;
 
 /**
  * Created by orlanth23 on 05/10/2017.
@@ -47,8 +48,8 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<EtapeAchemine
 
     @Override
     public void onBindViewHolder(final ViewHolderStepParcel holder, int position) {
-        holder.mEtapeAcheminement = mEtapeAcheminements.get(position);
-        holder.mStepDate.setText(mEtapeAcheminements.get(position).getDate());
+        holder.mEtapeEntity = mEtapeAcheminements.get(position);
+        holder.mStepDate.setText(DateConverter.convertDateEntityToDto(mEtapeAcheminements.get(position).getDate()));
         holder.mStepPays.setText(mEtapeAcheminements.get(position).getPays());
         holder.mStepLocalisation.setText(mEtapeAcheminements.get(position).getLocalisation());
         holder.mStepDescription.setText(mEtapeAcheminements.get(position).getDescription());
@@ -82,7 +83,7 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<EtapeAchemine
         @BindView(R.id.step_commentaire)
         TextView mStepCommentaire;
 
-        EtapeAcheminementEntity mEtapeAcheminement;
+        EtapeAcheminementEntity mEtapeEntity;
 
         ViewHolderStepParcel(View view) {
             super(view);

@@ -18,13 +18,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.adapter.ColisAdapter;
-import nc.opt.mobile.optmobile.entity.ColisEntity;
+import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.fragment.SearchColisFragment;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.ProviderObserver;
-import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 
 import static nc.opt.mobile.optmobile.activity.MainActivity.TAG_SEARCH_PARCEL_FRAGMENT;
+import static nc.opt.mobile.optmobile.provider.services.ColisService.listFromProvider;
 
 public class GestionColisActivity extends AppCompatActivity implements ProviderObserver.ProviderObserverListener {
 
@@ -66,7 +66,7 @@ public class GestionColisActivity extends AppCompatActivity implements ProviderO
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
         // get the list from the provider
-        List<ColisEntity> list = ProviderUtilities.getListColisFromContentProvider(this);
+        List<ColisEntity> list = listFromProvider(this);
         mColisAdapter = new ColisAdapter(this, list);
         mRecyclerView.setAdapter(mColisAdapter);
         mColisAdapter.notifyDataSetChanged();
@@ -79,7 +79,7 @@ public class GestionColisActivity extends AppCompatActivity implements ProviderO
     @Override
     public void onProviderChange() {
         mColisAdapter.getmColisList().clear();
-        mColisAdapter.getmColisList().addAll(ProviderUtilities.getListColisFromContentProvider(this));
+        mColisAdapter.getmColisList().addAll(listFromProvider(this));
         mColisAdapter.notifyDataSetChanged();
     }
 

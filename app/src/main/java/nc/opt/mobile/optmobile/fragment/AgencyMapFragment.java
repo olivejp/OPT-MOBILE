@@ -58,10 +58,10 @@ import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.domain.Agency;
 import nc.opt.mobile.optmobile.interfaces.AttachToPermissionActivity;
 import nc.opt.mobile.optmobile.interfaces.ListenerPermissionResult;
-import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 
 import static nc.opt.mobile.optmobile.activity.MainActivity.RC_PERMISSION_CALL_PHONE;
 import static nc.opt.mobile.optmobile.activity.MainActivity.RC_PERMISSION_LOCATION;
+import static nc.opt.mobile.optmobile.provider.services.AgencyService.listFromProvider;
 
 public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, ListenerPermissionResult {
 
@@ -195,7 +195,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
             @Override
             protected List<Agency> doInBackground(Void... voids) {
                 // Get the list of agencies from content provider
-                return ProviderUtilities.getListAgencyFromContentProvider(getActivity());
+                return listFromProvider(getActivity());
             }
 
             @Override
@@ -362,7 +362,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
 
         changeMapStyle(mMap, R.raw.google_map_style_retro);
 
-        if (mCameraPosition != null){
+        if (mCameraPosition != null) {
             centerMap(mCameraPosition.target.latitude, mCameraPosition.target.longitude, mCameraPosition.zoom);
         }
 

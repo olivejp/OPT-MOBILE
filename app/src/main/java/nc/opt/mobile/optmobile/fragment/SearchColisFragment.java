@@ -17,10 +17,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.OptProvider;
-import nc.opt.mobile.optmobile.provider.ProviderUtilities;
+import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.service.SyncColisService;
+
+import static nc.opt.mobile.optmobile.provider.services.ColisService.putToContentValues;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -78,7 +79,7 @@ public class SearchColisFragment extends Fragment {
                 cursor.close();
             } else {
                 // Add the parcel to our ContentProvider
-                mActivity.getContentResolver().insert(OptProvider.ListColis.LIST_COLIS, ProviderUtilities.putColisToContentValues(colis));
+                mActivity.getContentResolver().insert(OptProvider.ListColis.LIST_COLIS, putToContentValues(colis));
 
                 // On lance une première fois le service de synchro
                 SyncColisService.launchSynchroByIdColis(mActivity, colis.getIdColis(), false);

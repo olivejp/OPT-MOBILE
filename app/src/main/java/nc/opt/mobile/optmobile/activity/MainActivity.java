@@ -50,11 +50,13 @@ import nc.opt.mobile.optmobile.interfaces.AttachToPermissionActivity;
 import nc.opt.mobile.optmobile.interfaces.ListenerPermissionResult;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.ProviderObserver;
-import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 import nc.opt.mobile.optmobile.service.SyncColisService;
 import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
 import nc.opt.mobile.optmobile.utils.RequestQueueSingleton;
 import nc.opt.mobile.optmobile.utils.Utilities;
+
+import static nc.opt.mobile.optmobile.provider.services.AgencyService.populateContentProviderFromAsset;
+import static nc.opt.mobile.optmobile.provider.services.ColisService.count;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, AttachToPermissionActivity, NoticeDialogFragment.NoticeDialogListener, ProviderObserver.ProviderObserverListener, NetworkReceiver.NetworkChangeListener {
@@ -84,7 +86,6 @@ public class MainActivity extends AppCompatActivity
     private FirebaseUser mFirebaseUser;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private Drawable mDrawablePhoto;
-    private MenuItem mMenuItemProfil;
     private AgencyMapFragment agencyMapFragment;
     private GestionColisFragment gestionColisFragment;
     private NetworkReceiver mNetworkReceiver;
@@ -134,7 +135,7 @@ public class MainActivity extends AppCompatActivity
 
     private void signIn() {
         // User is signed out
-        onSignedOutCleanup();
+        signOut();
 
         List<AuthUI.IdpConfig> listProviders = new ArrayList<>();
         listProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build());
@@ -149,6 +150,15 @@ public class MainActivity extends AppCompatActivity
                 RC_SIGN_IN);
     }
 
+    private void signOut() {
+        mButtonConnexion.setText(R.string.login);
+        mProfilName.setText(null);
+        mFirebaseUser = null;
+        mDrawablePhoto = null;
+        mImageViewProfile.setImageResource(R.drawable.ic_person_grey_900_48dp);
+        invalidateOptionsMenu();
+    }
+
     private void defineAuthListener() {
         // On veut que l'utilisateur soit identifié pour continuer
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -157,11 +167,11 @@ public class MainActivity extends AppCompatActivity
                 mFirebaseUser = firebaseAuth.getCurrentUser();
 
                 if (mFirebaseUser != null) {
-                    mButtonConnexion.setText("SE DECONNECTER");
+                    mButtonConnexion.setText(R.string.logout);
                     mProfilName.setText(mFirebaseUser.getDisplayName());
                     createAsyncTaskGetPhoto().execute();
                 } else {
-                    onSignedOutCleanup();
+                    signOut();
                 }
             }
         };
@@ -196,15 +206,6 @@ public class MainActivity extends AppCompatActivity
         };
     }
 
-    private void onSignedOutCleanup() {
-        mButtonConnexion.setText("SE CONNECTER");
-        mProfilName.setText(null);
-        mFirebaseUser = null;
-        mDrawablePhoto = null;
-        mImageViewProfile.setImageResource(R.drawable.ic_person_grey_900_48dp);
-        invalidateOptionsMenu();
-    }
-
     private boolean isInternetPermited() {
         return ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED;
     }
@@ -216,7 +217,7 @@ public class MainActivity extends AppCompatActivity
         suiviColisBadgeCounter.setGravity(Gravity.CENTER_VERTICAL);
         suiviColisBadgeCounter.setTypeface(null, Typeface.BOLD);
         suiviColisBadgeCounter.setTextColor(getResources().getColor(R.color.colorPrimary));
-        suiviColisBadgeCounter.setText(String.valueOf(ProviderUtilities.countColis(this)));
+        suiviColisBadgeCounter.setText(String.valueOf(count(this)));
     }
 
     @Override
@@ -239,7 +240,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 if (mFirebaseUser != null) {
-                    onSignedOutCleanup();
+                    signOut();
                 } else {
                     signIn();
                 }
@@ -277,7 +278,7 @@ public class MainActivity extends AppCompatActivity
         // Populate the contentProvider with assets, only the first time
         SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
         if (!sharedPreferences.getBoolean(PREF_POPULATED, false)) {
-            ProviderUtilities.populateContentProviderFromAsset(this);
+            populateContentProviderFromAsset(this);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putBoolean(PREF_POPULATED, true);
             editor.apply();
@@ -315,7 +316,7 @@ public class MainActivity extends AppCompatActivity
                     getSupportFragmentManager().popBackStack();
                 } else {
                     // on demande avant de quitter l'application
-                    Utilities.SendDialogByActivity(this, "Voulez vous quitter l'application ?", NoticeDialogFragment.TYPE_BOUTON_YESNO, NoticeDialogFragment.TYPE_IMAGE_INFORMATION, DIALOG_TAG_EXIT);
+                    Utilities.SendDialogByActivity(this, getString(R.string.want_you_quit), NoticeDialogFragment.TYPE_BOUTON_YESNO, NoticeDialogFragment.TYPE_IMAGE_INFORMATION, DIALOG_TAG_EXIT);
                 }
             }
         }
@@ -330,12 +331,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_sign_out:
-                mFirebaseAuth.signOut();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        int i = item.getItemId();
+        if (i == R.id.action_sign_out) {
+            mFirebaseAuth.signOut();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
     }
 
@@ -427,15 +428,9 @@ public class MainActivity extends AppCompatActivity
             listenerPermissionResult.onPermissionRequestResult(requestCode, permissions, grantResults);
         }
 
-        switch (requestCode) {
-            case RC_PERMISSION_INTERNET:
-                if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                    Toast.makeText(this, "Un accès à internet est nécessaire pour cette application.", Toast.LENGTH_LONG).show();
-                    finish();
-                }
-                break;
-            default:
-                break;
+        if (requestCode == RC_PERMISSION_INTERNET && grantResults[0] == PackageManager.PERMISSION_DENIED) {
+            Toast.makeText(this, R.string.internet_needed, Toast.LENGTH_LONG).show();
+            finish();
         }
     }
 
@@ -451,23 +446,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
-        switch (dialog.getTag()) {
-            case DIALOG_TAG_EXIT:
-                finish();
-                break;
-            default:
-                break;
+        String s = dialog.getTag();
+        if (s.equals(DIALOG_TAG_EXIT)) {
+            finish();
         }
     }
 
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
-        switch (dialog.getTag()) {
-            case DIALOG_TAG_EXIT:
-                break;
-            default:
-                break;
-        }
     }
 
     @Override

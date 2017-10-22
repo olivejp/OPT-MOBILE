@@ -28,4 +28,10 @@
     <string name="page_malformed">La page retournée est invalide</string>
     <string name="suivi_des_colis">Suivi des colis</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
+    <string name="login">SE CONNECTER</string>
+    <string name="logout">SE DECONNECTER</string>
+    <string name="internet_needed">Un accès à internet est nécessaire pour cette application.</string>
+    <string name="want_you_quit">Voulez vous quitter l\'application ?</string>
+    <string name="no_data_for_parcel">Aucune données récupérées pour ce colis.</string>
+    <string name="deleted_from_management">supprimé du suivi</string>
 </resources>

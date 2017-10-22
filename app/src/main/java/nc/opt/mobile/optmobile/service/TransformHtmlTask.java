@@ -10,10 +10,12 @@ import java.net.URLEncoder;
 
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.domain.Colis;
-import nc.opt.mobile.optmobile.provider.ProviderUtilities;
 import nc.opt.mobile.optmobile.utils.Constants;
 import nc.opt.mobile.optmobile.utils.HtmlTransformer;
 import nc.opt.mobile.optmobile.utils.NotificationSender;
+
+import static nc.opt.mobile.optmobile.provider.services.ColisService.updateLastUpdate;
+import static nc.opt.mobile.optmobile.provider.services.EtapeAcheminementService.checkAndInsert;
 
 /**
  * Created by 2761oli on 09/10/2017.
@@ -40,14 +42,14 @@ class TransformHtmlTask extends AsyncTask<String, Void, Colis> {
             int transformResult = HtmlTransformer.getParcelResultFromHtml(htmlToTransform, colis);
             switch (transformResult) {
                 case HtmlTransformer.RESULT_SUCCESS:
-                    ProviderUtilities.updateLastUpdate(context, colis.getIdColis(), true);
-                    if (ProviderUtilities.checkAndInsertEtape(context, colis.getIdColis(), colis.getEtapeAcheminementArrayList()) && sendNotification) {
+                    updateLastUpdate(context, colis.getIdColis(), true);
+                    if (checkAndInsert(context, colis.getIdColis(), colis.getEtapeAcheminementDtoArrayList()) && sendNotification) {
                         // Envoi d'une notification si l'objet a bougé.
                         NotificationSender.sendNotification(context, context.getString(R.string.app_name), idColis + " a été mis à jour.", R.drawable.ic_archive_white_48dp);
                     }
                     return colis;
                 case HtmlTransformer.RESULT_NO_ITEM_FOUND:
-                    ProviderUtilities.updateLastUpdate(context, colis.getIdColis(), false);
+                    updateLastUpdate(context, colis.getIdColis(), false);
                     return null;
                 default:
                     break;
