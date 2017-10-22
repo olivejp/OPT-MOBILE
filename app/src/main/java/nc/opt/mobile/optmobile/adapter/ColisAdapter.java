@@ -47,9 +47,12 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
     public void onBindViewHolder(final ViewHolderStepParcel holder, int position) {
         holder.mColis = mColisList.get(position);
         holder.mIdColis.setText(holder.mColis.getIdColis());
-        holder.parcelDescription.setText(holder.mColis.getDescription());
+        holder.mParcelDescription.setText(holder.mColis.getDescription());
+        holder.mStepLastUpdate.setText(holder.mColis.getLastUpdate());
         if (!holder.mColis.getEtapeAcheminementArrayList().isEmpty()) {
             // On prend la dernière étape
+            holder.mStepLastDate.setVisibility(View.VISIBLE);
+            holder.mStepLastPays.setVisibility(View.VISIBLE);
             EtapeAcheminementEntity etapeAcheminement = holder.mColis.getEtapeAcheminementArrayList().get(holder.mColis.getEtapeAcheminementArrayList().size() - 1);
             holder.mStepLastDate.setText(etapeAcheminement.getDate());
             holder.mStepLastPays.setText(etapeAcheminement.getPays());
@@ -57,7 +60,9 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         } else {
             holder.mStepLastDate.setText(null);
             holder.mStepLastPays.setText(null);
-            holder.mStepLastDescription.setText(null);
+            holder.mStepLastDate.setVisibility(View.GONE);
+            holder.mStepLastPays.setVisibility(View.GONE);
+            holder.mStepLastDescription.setText("Aucune données récupérées pour ce colis.");
         }
     }
 
@@ -73,7 +78,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
     class ViewHolderStepParcel extends RecyclerView.ViewHolder {
         final View mView;
 
-        @BindView(R.id.text_id_colis)
+        @BindView(R.id.step_id_colis)
         TextView mIdColis;
 
         @BindView(R.id.step_last_date)
@@ -89,10 +94,13 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         Button mDeleteButton;
 
         @BindView(R.id.parcel_description)
-        TextView parcelDescription;
+        TextView mParcelDescription;
 
         @BindView(R.id.constraint_detail_colis_layout)
-        ConstraintLayout constraintDetailColisLayout;
+        ConstraintLayout mConstraintDetailColisLayout;
+
+        @BindView(R.id.step_last_update)
+        TextView mStepLastUpdate;
 
         ColisEntity mColis;
 
@@ -108,7 +116,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
             mDeleteMode = false;
             ButterKnife.bind(this, mView);
 
-            constraintDetailColisLayout.setOnClickListener(new View.OnClickListener() {
+            mConstraintDetailColisLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // If we aren't in delete mode we call the parcel result search fragment
@@ -128,7 +136,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
             });
 
             // When we long click on the view, we display Delete button
-            constraintDetailColisLayout.setOnLongClickListener(new View.OnLongClickListener() {
+            mConstraintDetailColisLayout.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     mDeleteMode = !mDeleteMode;

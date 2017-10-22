@@ -43,13 +43,6 @@ public class MainActivityInstrumentedTest {
         // We check that the frame for the recipe detail is present
         onView(withId(R.id.frame_main)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
         mainActivityTestRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-        // We check that the frame for the recipe detail is present
-        onView(withId(R.id.frame_main)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
-        mainActivityTestRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
-        // We check that the frame for the recipe detail is present
-        onView(withId(R.id.frame_main)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
     }
 }
 

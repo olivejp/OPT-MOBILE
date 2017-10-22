@@ -10,7 +10,7 @@
     android:orientation="horizontal">
 
     <ImageView
-        android:id="@+id/ds"
+        android:id="@+id/step_image_colis"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
@@ -23,15 +23,14 @@
 
 
     <TextView
-        android:id="@+id/text_id_colis"
+        android:id="@+id/step_id_colis"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
-        app:layout_constraintLeft_toRightOf="@+id/ds"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBaseline_toBaselineOf="@+id/parcel_description"
+        app:layout_constraintLeft_toRightOf="@+id/step_image_colis"
         tools:text="RC12345678912" />
 
     <TextView
@@ -39,11 +38,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintLeft_toRightOf="@+id/text_id_colis"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/step_id_colis"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Colis de maman" />
 
@@ -55,10 +52,9 @@
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="12dp"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="0dp"
         android:textSize="12sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/step_last_date"
         app:layout_constraintLeft_toRightOf="@+id/step_last_date"
-        app:layout_constraintTop_toTopOf="@+id/step_last_date"
         tools:text="PAYS-BAS" />
 
     <TextView
@@ -66,12 +62,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
+        android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:textSize="12sp"
-        app:layout_constraintLeft_toRightOf="@+id/ds"
-        app:layout_constraintTop_toBottomOf="@+id/text_id_colis"
+        app:layout_constraintBottom_toTopOf="@+id/step_last_description"
+        app:layout_constraintLeft_toRightOf="@+id/step_image_colis"
+        app:layout_constraintTop_toBottomOf="@+id/step_id_colis"
         tools:text="08/10/2017 19:00" />
 
 
@@ -79,16 +77,39 @@
         android:id="@+id/step_last_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
         android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/relative_delete_layout"
-        app:layout_constraintLeft_toRightOf="@+id/ds"
+        app:layout_constraintBottom_toTopOf="@+id/step_last_update"
+        app:layout_constraintLeft_toRightOf="@+id/step_image_colis"
         app:layout_constraintTop_toBottomOf="@+id/step_last_date"
         app:layout_constraintVertical_chainStyle="spread"
         tools:text="Envoyé mais pas encore reçu" />
+
+    <TextView
+        android:id="@+id/step_last_update_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dernière mise à jour : "
+        android:textSize="12sp"
+        android:textStyle="italic"
+        app:layout_constraintBaseline_toBaselineOf="@+id/step_last_update"
+        app:layout_constraintRight_toLeftOf="@+id/step_last_update" />
+
+    <TextView
+        android:id="@+id/step_last_update"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:textSize="12sp"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toTopOf="@+id/relative_delete_layout"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/step_last_description"
+        tools:text="10/10/2017" />
 
     <RelativeLayout
         android:id="@+id/relative_delete_layout"
@@ -99,7 +120,7 @@
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/step_last_description">
+        app:layout_constraintTop_toBottomOf="@+id/step_last_update">
 
         <Button
             android:id="@+id/fab_delete_colis"

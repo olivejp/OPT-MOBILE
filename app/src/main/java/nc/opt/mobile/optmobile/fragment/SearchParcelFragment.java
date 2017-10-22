@@ -66,7 +66,7 @@ public class SearchParcelFragment extends Fragment {
     @OnClick(R.id.fab_search_parcel)
     public void searchParcel(View view) {
         if (!editIdParcel.getText().toString().isEmpty()) {
-            String idColis = editIdParcel.getText().toString();
+            String idColis = editIdParcel.getText().toString().toUpperCase();
             ColisEntity colis = new ColisEntity();
             colis.setIdColis(idColis);
             colis.setDescription(editDescriptionParcel.getText().toString());
