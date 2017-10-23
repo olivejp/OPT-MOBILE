@@ -39,4 +39,5 @@
     <string name="add_colis">Ajouter colis</string>
     <string name="colis_already_added">Objet déjà suivi</string>
     <string name="colis_added">ajouté au suivi</string>
+    <string name="refresh">Rafraîchir</string>
 </resources>

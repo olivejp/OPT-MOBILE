@@ -23,13 +23,11 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.adapter.EtapeAcheminementAdapter;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.ProviderObserver;
 import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
-import nc.opt.mobile.optmobile.service.SyncColisService;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -50,9 +48,6 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
     @BindView(R.id.recycler_parcel_list)
     RecyclerView mRecyclerView;
 
-    @BindView(R.id.fab_refresh_colis_search)
-    FloatingActionButton fabRefresh;
-
     @BindView(R.id.text_object_not_found)
     TextView textObjectNotFound;
 
@@ -66,11 +61,6 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
 
     public HistoriqueColisFragment() {
         // Required empty public constructor
-    }
-
-    @OnClick(R.id.fab_refresh_colis_search)
-    public void refresh(View v) {
-        SyncColisService.launchSynchroByIdColis(mAppCompatActivity, mIdColis, false);
     }
 
     @Override

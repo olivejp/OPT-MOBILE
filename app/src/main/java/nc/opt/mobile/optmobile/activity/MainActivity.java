@@ -236,9 +236,6 @@ public class MainActivity extends AttachToPermissionActivity
         uris.add(OptProvider.ListColis.LIST_COLIS);
         ProviderObserver providerObserver = ProviderObserver.getInstance();
         providerObserver.observe(this, this, uris);
-
-        // Lancement du service de synchro
-        SyncColisService.launchSynchroForAll(this, true);
     }
 
     @Override

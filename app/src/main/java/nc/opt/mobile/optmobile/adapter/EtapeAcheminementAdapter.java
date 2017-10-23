@@ -42,7 +42,7 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<EtapeAchemine
     @Override
     public ViewHolderStepParcel onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.adapter_step_parcel_search, parent, false);
+                .inflate(R.layout.adapter_etape, parent, false);
         return new ViewHolderStepParcel(view);
     }
 

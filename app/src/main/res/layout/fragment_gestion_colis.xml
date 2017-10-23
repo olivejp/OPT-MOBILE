@@ -9,7 +9,7 @@
         android:id="@+id/recycler_parcel_list_management"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutManager="GridLayoutManager"/>
+        app:layoutManager="GridLayoutManager" />
 
     <TextView
         android:id="@+id/text_explicatif_suivi_colis"

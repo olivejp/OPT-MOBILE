@@ -83,8 +83,7 @@ public class AddColisFragment extends Fragment {
 
                 Snackbar.make(view, idColis.concat(getString(R.string.colis_added)), Snackbar.LENGTH_LONG).show();
 
-                // Retour au fragment précédent
-                mActivity.getSupportFragmentManager().popBackStack();
+                mActivity.finish();
             }
         }
     }

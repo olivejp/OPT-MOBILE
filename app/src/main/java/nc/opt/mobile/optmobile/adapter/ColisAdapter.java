@@ -124,11 +124,11 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
                     // Otherwise we deactivate the delete mode and make the delete button invisible
                     if (!mDeleteMode) {
                         HistoriqueColisFragment historiqueColisFragment = HistoriqueColisFragment.newInstance(mColis.getIdColis());
+                        v.setSelected(true);
                         if (mTwoPane) {
                             ((AppCompatActivity) mContext).getSupportFragmentManager()
                                     .beginTransaction()
                                     .replace(R.id.frame_detail, historiqueColisFragment, GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT)
-                                    .addToBackStack(null)
                                     .commit();
                         } else {
                             ((AppCompatActivity) mContext).getSupportFragmentManager()
