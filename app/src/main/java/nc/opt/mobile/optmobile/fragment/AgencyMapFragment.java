@@ -287,7 +287,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
             mPermissionActivity.onAttachPermissionActivity(this);
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement AttachToPermissionActivity");
         }
     }
 

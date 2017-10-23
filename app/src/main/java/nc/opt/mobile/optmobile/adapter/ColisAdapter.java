@@ -16,6 +16,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
+import nc.opt.mobile.optmobile.activity.GestionColisActivity;
 import nc.opt.mobile.optmobile.activity.MainActivity;
 import nc.opt.mobile.optmobile.fragment.HistoriqueColisFragment;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
@@ -32,10 +33,12 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
 
     private final List<ColisEntity> mColisList;
     private Context mContext;
+    private boolean mTwoPane;
 
-    public ColisAdapter(Context context, List<ColisEntity> colisList) {
+    public ColisAdapter(Context context, List<ColisEntity> colisList, boolean twoPane) {
         mContext = context;
         mColisList = colisList;
+        mTwoPane = twoPane;
     }
 
     @Override
@@ -121,11 +124,19 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
                     // Otherwise we deactivate the delete mode and make the delete button invisible
                     if (!mDeleteMode) {
                         HistoriqueColisFragment historiqueColisFragment = HistoriqueColisFragment.newInstance(mColis.getIdColis());
-                        ((AppCompatActivity) mContext).getSupportFragmentManager()
-                                .beginTransaction()
-                                .replace(R.id.frame_main, historiqueColisFragment, MainActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT)
-                                .addToBackStack(null)
-                                .commit();
+                        if (mTwoPane) {
+                            ((AppCompatActivity) mContext).getSupportFragmentManager()
+                                    .beginTransaction()
+                                    .replace(R.id.frame_detail, historiqueColisFragment, GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT)
+                                    .addToBackStack(null)
+                                    .commit();
+                        } else {
+                            ((AppCompatActivity) mContext).getSupportFragmentManager()
+                                    .beginTransaction()
+                                    .replace(R.id.frame_master, historiqueColisFragment, GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT)
+                                    .addToBackStack(null)
+                                    .commit();
+                        }
                     } else {
                         mDeleteMode = !mDeleteMode;
                         changeDeleteVisibility();

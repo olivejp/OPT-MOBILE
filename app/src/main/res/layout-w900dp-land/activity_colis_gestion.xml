@@ -5,9 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <fragment
+    <FrameLayout
         android:id="@+id/frame_master"
-        android:name="nc.opt.mobile.optmobile.fragment.GestionColisFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -17,9 +16,8 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:layout="@layout/fragment_gestion_colis" />
 
-    <fragment
+    <FrameLayout
         android:id="@+id/frame_detail"
-        android:name="nc.opt.mobile.optmobile.fragment.HistoriqueColisFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

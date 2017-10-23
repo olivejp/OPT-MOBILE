@@ -6,15 +6,25 @@
     android:layout_height="match_parent"
     tools:context="nc.opt.mobile.optmobile.activity.GestionColisActivity">
 
-    <fragment
+    <FrameLayout
         android:id="@+id/frame_master"
-        android:name="nc.opt.mobile.optmobile.fragment.GestionColisFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout="@layout/fragment_gestion_colis" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_add_parcel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:windowSoftInputMode="adjustResize"
+        app:backgroundTint="@color/colorPrimaryDark"
+        app:backgroundTintMode="src_over"
+        app:rippleColor="@color/colorAccent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@drawable/ic_add_white_48dp" />
 </android.support.constraint.ConstraintLayout>

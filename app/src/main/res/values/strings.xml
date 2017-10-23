@@ -34,4 +34,9 @@
     <string name="want_you_quit">Voulez vous quitter l\'application ?</string>
     <string name="no_data_for_parcel">Aucune données récupérées pour ce colis.</string>
     <string name="deleted_from_management">supprimé du suivi</string>
+    <string name="tag_fragment_search_colis">TAG_FRAGMENT_SEARCH_COLIS</string>
+    <string name="tag_fragment_add_colis">TAG_FRAGMENT_ADD_COLIS</string>
+    <string name="add_colis">Ajouter colis</string>
+    <string name="colis_already_added">Objet déjà suivi</string>
+    <string name="colis_added">ajouté au suivi</string>
 </resources>

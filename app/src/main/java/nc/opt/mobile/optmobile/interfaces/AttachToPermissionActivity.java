@@ -1,11 +1,32 @@
 package nc.opt.mobile.optmobile.interfaces;
 
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
+
+import java.util.ArrayList;
+
 /**
  * Created by orlanth23 on 03/10/2017.
  */
 
-public interface AttachToPermissionActivity {
-    void onAttachPermissionActivity(ListenerPermissionResult listenerPermissionResult);
+public abstract class AttachToPermissionActivity extends AppCompatActivity {
 
-    void onDetachToPermissionActivity(ListenerPermissionResult listenerPermissionResult);
+    private static ArrayList<ListenerPermissionResult> mListenerPermissionResult = new ArrayList<>();
+
+    public void onAttachPermissionActivity(ListenerPermissionResult listenerPermissionResult) {
+        mListenerPermissionResult.add(listenerPermissionResult);
+    }
+
+    public void onDetachToPermissionActivity(ListenerPermissionResult listenerPermissionResult) {
+        mListenerPermissionResult.remove(listenerPermissionResult);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        for (ListenerPermissionResult listenerPermissionResult : mListenerPermissionResult) {
+            listenerPermissionResult.onPermissionRequestResult(requestCode, permissions, grantResults);
+        }
+    }
 }
