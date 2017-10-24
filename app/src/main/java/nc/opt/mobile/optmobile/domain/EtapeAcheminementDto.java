@@ -6,7 +6,7 @@ import android.os.Parcelable;
  * Created by 2761oli on 05/10/2017.
  */
 
-public class EtapeAcheminement implements Parcelable {
+public class EtapeAcheminementDto implements Parcelable {
 
     private String date;
     private String pays;
@@ -14,10 +14,10 @@ public class EtapeAcheminement implements Parcelable {
     private String description;
     private String commentaire;
 
-    public EtapeAcheminement() {
+    public EtapeAcheminementDto() {
     }
 
-    public EtapeAcheminement(String date, String pays, String localisation, String description, String commentaire) {
+    public EtapeAcheminementDto(String date, String pays, String localisation, String description, String commentaire) {
         this.date = date;
         this.pays = pays;
         this.localisation = localisation;
@@ -79,7 +79,7 @@ public class EtapeAcheminement implements Parcelable {
         dest.writeString(this.commentaire);
     }
 
-    private EtapeAcheminement(android.os.Parcel in) {
+    private EtapeAcheminementDto(android.os.Parcel in) {
         this.date = in.readString();
         this.pays = in.readString();
         this.localisation = in.readString();
@@ -87,15 +87,15 @@ public class EtapeAcheminement implements Parcelable {
         this.commentaire = in.readString();
     }
 
-    public static final Creator<EtapeAcheminement> CREATOR = new Creator<EtapeAcheminement>() {
+    public static final Creator<EtapeAcheminementDto> CREATOR = new Creator<EtapeAcheminementDto>() {
         @Override
-        public EtapeAcheminement createFromParcel(android.os.Parcel source) {
-            return new EtapeAcheminement(source);
+        public EtapeAcheminementDto createFromParcel(android.os.Parcel source) {
+            return new EtapeAcheminementDto(source);
         }
 
         @Override
-        public EtapeAcheminement[] newArray(int size) {
-            return new EtapeAcheminement[size];
+        public EtapeAcheminementDto[] newArray(int size) {
+            return new EtapeAcheminementDto[size];
         }
     };
 }

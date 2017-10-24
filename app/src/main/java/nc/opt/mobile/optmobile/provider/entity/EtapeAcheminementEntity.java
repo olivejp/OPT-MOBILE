@@ -1,4 +1,4 @@
-package nc.opt.mobile.optmobile.entity;
+package nc.opt.mobile.optmobile.provider.entity;
 
 import net.simonvt.schematic.annotation.AutoIncrement;
 import net.simonvt.schematic.annotation.DataType;
@@ -22,7 +22,7 @@ public class EtapeAcheminementEntity {
     private String idColis;
 
     @Column(EtapeAcheminementInterface.DATE)
-    private String date;
+    private Long date;
 
     @Column(EtapeAcheminementInterface.PAYS)
     private String pays;
@@ -39,7 +39,7 @@ public class EtapeAcheminementEntity {
     public EtapeAcheminementEntity() {
     }
 
-    public EtapeAcheminementEntity(String idEtapeAcheminement, String idColis, String date, String pays, String localisation, String description, String commentaire) {
+    public EtapeAcheminementEntity(String idEtapeAcheminement, String idColis, Long date, String pays, String localisation, String description, String commentaire) {
         this.idEtapeAcheminement = idEtapeAcheminement;
         this.idColis = idColis;
         this.date = date;
@@ -54,19 +54,19 @@ public class EtapeAcheminementEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        EtapeAcheminementEntity that = (EtapeAcheminementEntity) o;
+        EtapeAcheminementEntity etapeEntity = (EtapeAcheminementEntity) o;
 
-        if (idEtapeAcheminement != null ? !idEtapeAcheminement.equals(that.idEtapeAcheminement) : that.idEtapeAcheminement != null)
+        if (idEtapeAcheminement != null ? !idEtapeAcheminement.equals(etapeEntity.idEtapeAcheminement) : etapeEntity.idEtapeAcheminement != null)
             return false;
-        if (idColis != null ? !idColis.equals(that.idColis) : that.idColis != null)
+        if (idColis != null ? !idColis.equals(etapeEntity.idColis) : etapeEntity.idColis != null)
             return false;
-        if (date != null ? !date.equals(that.date) : that.date != null) return false;
-        if (pays != null ? !pays.equals(that.pays) : that.pays != null) return false;
-        if (localisation != null ? !localisation.equals(that.localisation) : that.localisation != null)
+        if (date != null ? !date.equals(etapeEntity.date) : etapeEntity.date != null) return false;
+        if (pays != null ? !pays.equals(etapeEntity.pays) : etapeEntity.pays != null) return false;
+        if (localisation != null ? !localisation.equals(etapeEntity.localisation) : etapeEntity.localisation != null)
             return false;
-        if (description != null ? !description.equals(that.description) : that.description != null)
+        if (description != null ? !description.equals(etapeEntity.description) : etapeEntity.description != null)
             return false;
-        return commentaire != null ? commentaire.equals(that.commentaire) : that.commentaire == null;
+        return commentaire != null ? commentaire.equals(etapeEntity.commentaire) : etapeEntity.commentaire == null;
 
     }
 
@@ -86,11 +86,11 @@ public class EtapeAcheminementEntity {
         this.idColis = idColis;
     }
 
-    public String getDate() {
+    public Long getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Long date) {
         this.date = date;
     }
 

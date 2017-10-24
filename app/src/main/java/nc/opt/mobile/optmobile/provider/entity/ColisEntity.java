@@ -1,4 +1,4 @@
-package nc.opt.mobile.optmobile.entity;
+package nc.opt.mobile.optmobile.provider.entity;
 
 import net.simonvt.schematic.annotation.DataType;
 import net.simonvt.schematic.annotation.NotNull;
@@ -7,8 +7,6 @@ import net.simonvt.schematic.annotation.PrimaryKey;
 import org.chalup.microorm.annotations.Column;
 
 import java.util.List;
-
-import nc.opt.mobile.optmobile.domain.EtapeAcheminement;
 
 import static net.simonvt.schematic.annotation.DataType.Type.TEXT;
 
@@ -24,17 +22,17 @@ public class ColisEntity {
     private String description;
 
     @Column(ColisInterface.LAST_UPDATE)
-    private String lastUpdate;
+    private Long lastUpdate;
 
     @Column(ColisInterface.LAST_UPDATE_SUCCESSFUL)
-    private String lastUpdateSuccessful;
+    private Long lastUpdateSuccessful;
 
     private List<EtapeAcheminementEntity> etapeAcheminementArrayList;
 
     public ColisEntity() {
     }
 
-    public ColisEntity(String idColis, String description, String lastUpdate, String lastUpdateSuccessful) {
+    public ColisEntity(String idColis, String description, Long lastUpdate, Long lastUpdateSuccessful) {
         this.idColis = idColis;
         this.description = description;
         this.lastUpdate = lastUpdate;
@@ -74,19 +72,19 @@ public class ColisEntity {
         this.description = description;
     }
 
-    public String getLastUpdate() {
+    public Long getLastUpdate() {
         return lastUpdate;
     }
 
-    public void setLastUpdate(String lastUpdate) {
+    public void setLastUpdate(Long lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
 
-    public String getLastUpdateSuccessful() {
+    public Long getLastUpdateSuccessful() {
         return lastUpdateSuccessful;
     }
 
-    public void setLastUpdateSuccessful(String lastUpdateSuccessful) {
+    public void setLastUpdateSuccessful(Long lastUpdateSuccessful) {
         this.lastUpdateSuccessful = lastUpdateSuccessful;
     }
 

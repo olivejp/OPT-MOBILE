@@ -17,15 +17,16 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.OptProvider;
-import nc.opt.mobile.optmobile.provider.ProviderUtilities;
+import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.service.SyncColisService;
+
+import static nc.opt.mobile.optmobile.provider.services.ColisService.putToContentValues;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SearchColisFragment extends Fragment {
+public class AddColisFragment extends Fragment {
 
     @BindView(R.id.edit_id_parcel)
     EditText editIdParcel;
@@ -35,14 +36,7 @@ public class SearchColisFragment extends Fragment {
 
     private AppCompatActivity mActivity;
 
-    public static SearchColisFragment newInstance() {
-        SearchColisFragment fragment = new SearchColisFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    public SearchColisFragment() {
+    public AddColisFragment() {
         // Required empty public constructor
     }
 
@@ -55,10 +49,10 @@ public class SearchColisFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_search_colis, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_add_colis, container, false);
         ButterKnife.bind(this, rootView);
 
-        mActivity.setTitle("Rechercher colis");
+        mActivity.setTitle(getString(R.string.add_colis));
 
         return rootView;
     }
@@ -74,11 +68,11 @@ public class SearchColisFragment extends Fragment {
             // Query our ContentProvider to avoid duplicate
             Cursor cursor = mActivity.getContentResolver().query(OptProvider.ListColis.withId(idColis), null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
-                Snackbar.make(view, "Objet déjà suivi", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(view, R.string.colis_already_added, Snackbar.LENGTH_LONG).show();
                 cursor.close();
             } else {
                 // Add the parcel to our ContentProvider
-                mActivity.getContentResolver().insert(OptProvider.ListColis.LIST_COLIS, ProviderUtilities.putColisToContentValues(colis));
+                mActivity.getContentResolver().insert(OptProvider.ListColis.LIST_COLIS, putToContentValues(colis));
 
                 // On lance une première fois le service de synchro
                 SyncColisService.launchSynchroByIdColis(mActivity, colis.getIdColis(), false);
@@ -87,10 +81,9 @@ public class SearchColisFragment extends Fragment {
                 InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
-                Snackbar.make(view, idColis.concat(" ajouté au suivi"), Snackbar.LENGTH_LONG).show();
+                Snackbar.make(view, idColis.concat(getString(R.string.colis_added)), Snackbar.LENGTH_LONG).show();
 
-                // Retour au fragment précédent
-                mActivity.getSupportFragmentManager().popBackStack();
+                mActivity.finish();
             }
         }
     }

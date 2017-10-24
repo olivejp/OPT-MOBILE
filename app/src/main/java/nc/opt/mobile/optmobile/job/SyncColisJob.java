@@ -22,7 +22,6 @@ public class SyncColisJob extends Job {
     @Override
     @NonNull
     protected Result onRunJob(Params params) {
-
         SyncColisService.launchSynchroFromScheduler(getContext());
         return Result.SUCCESS;
     }
@@ -39,5 +38,10 @@ public class SyncColisJob extends Job {
                 .setPeriodic(TimeUnit.MINUTES.toMillis(PERIODIC_SYNC_JOB_MINS), TimeUnit.MINUTES.toMillis(INTERVAL_SYNC_JOB_MINS))
                 .build()
                 .schedule();
+    }
+
+    public static void launchImmediateJob() {
+        new JobRequest.Builder(SyncColisJob.TAG)
+                .startNow();
     }
 }

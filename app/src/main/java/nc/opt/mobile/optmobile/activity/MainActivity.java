@@ -18,7 +18,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
@@ -43,27 +42,20 @@ import java.util.concurrent.ExecutionException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.broadcast.NetworkReceiver;
-import nc.opt.mobile.optmobile.fragment.AgencyMapFragment;
-import nc.opt.mobile.optmobile.fragment.GestionColisFragment;
 import nc.opt.mobile.optmobile.interfaces.AttachToPermissionActivity;
-import nc.opt.mobile.optmobile.interfaces.ListenerPermissionResult;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.ProviderObserver;
-import nc.opt.mobile.optmobile.provider.ProviderUtilities;
-import nc.opt.mobile.optmobile.service.SyncColisService;
 import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
 import nc.opt.mobile.optmobile.utils.RequestQueueSingleton;
 import nc.opt.mobile.optmobile.utils.Utilities;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, AttachToPermissionActivity, NoticeDialogFragment.NoticeDialogListener, ProviderObserver.ProviderObserverListener, NetworkReceiver.NetworkChangeListener {
+import static nc.opt.mobile.optmobile.provider.services.AgencyService.populateContentProviderFromAsset;
+import static nc.opt.mobile.optmobile.provider.services.ColisService.count;
+
+public class MainActivity extends AttachToPermissionActivity
+        implements NavigationView.OnNavigationItemSelectedListener, NoticeDialogFragment.NoticeDialogListener, ProviderObserver.ProviderObserverListener {
 
     private static final String TAG = MainActivity.class.getName();
-    public static final String TAG_AGENCY_MAP_FRAGMENT = "AGENCY_MAP_FRAGMENT";
-    public static final String TAG_GESTION_COLIS_FRAGMENT = "TAG_GESTION_COLIS_FRAGMENT";
-    public static final String TAG_SEARCH_PARCEL_FRAGMENT = "TAG_SEARCH_PARCEL_FRAGMENT";
-    public static final String TAG_PARCEL_RESULT_SEARCH_FRAGMENT = "TAG_PARCEL_RESULT_SEARCH_FRAGMENT";
 
     public static final String DIALOG_TAG_EXIT = "DIALOG_TAG_EXIT";
 
@@ -74,21 +66,10 @@ public class MainActivity extends AppCompatActivity
 
     private static final String PREF_POPULATED = "POPULATE_CP";
 
-    private static final String SAVED_AGENCY_FRAGMENT = "SAVED_AGENCY_FRAGMENT";
-    private static final String SAVED_GESTION_COLIS_FRAGMENT = "SAVED_GESTION_COLIS_FRAGMENT";
-
-    private static final String BACK_STACK_MAP = "BACK_STACK_MAP";
-    private static final String BACK_STACK_COLIS = "BACK_STACK_COLIS";
-
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private Drawable mDrawablePhoto;
-    private MenuItem mMenuItemProfil;
-    private AgencyMapFragment agencyMapFragment;
-    private GestionColisFragment gestionColisFragment;
-    private NetworkReceiver mNetworkReceiver;
-    private static ArrayList<ListenerPermissionResult> mListenerPermissionResult = new ArrayList<>();
 
     private ImageView mImageViewProfile;
     private Button mButtonConnexion;
@@ -100,41 +81,9 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.nav_view)
     NavigationView navigationView;
 
-    private void callAgencyMapFragment() {
-        if (!(getSupportFragmentManager().findFragmentById(R.id.frame_main) instanceof AgencyMapFragment)) {
-            if (getSupportFragmentManager().findFragmentByTag(TAG_AGENCY_MAP_FRAGMENT) == null) {
-                if (agencyMapFragment == null) {
-                    agencyMapFragment = AgencyMapFragment.newInstance();
-                }
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.frame_main, agencyMapFragment, TAG_AGENCY_MAP_FRAGMENT)
-                        .addToBackStack(BACK_STACK_MAP)
-                        .commit();
-            } else {
-                getSupportFragmentManager().popBackStack(BACK_STACK_MAP, 0);
-            }
-        }
-    }
-
-    private void callSuiviColis() {
-        if (!(getSupportFragmentManager().findFragmentById(R.id.frame_main) instanceof GestionColisFragment)) {
-            if (getSupportFragmentManager().findFragmentByTag(TAG_GESTION_COLIS_FRAGMENT) == null) {
-                if (gestionColisFragment == null) {
-                    gestionColisFragment = GestionColisFragment.newInstance();
-                }
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.frame_main, gestionColisFragment, TAG_GESTION_COLIS_FRAGMENT)
-                        .addToBackStack(BACK_STACK_COLIS)
-                        .commit();
-            } else {
-                getSupportFragmentManager().popBackStack(BACK_STACK_COLIS, 0);
-            }
-        }
-    }
-
     private void signIn() {
         // User is signed out
-        onSignedOutCleanup();
+        signOut();
 
         List<AuthUI.IdpConfig> listProviders = new ArrayList<>();
         listProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build());
@@ -149,19 +98,26 @@ public class MainActivity extends AppCompatActivity
                 RC_SIGN_IN);
     }
 
+    private void signOut() {
+        mButtonConnexion.setText(R.string.login);
+        mProfilName.setText(null);
+        mFirebaseUser = null;
+        mDrawablePhoto = null;
+        mImageViewProfile.setImageResource(R.drawable.ic_person_white_48dp);
+        invalidateOptionsMenu();
+    }
+
     private void defineAuthListener() {
-        // On veut que l'utilisateur soit identifié pour continuer
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 mFirebaseUser = firebaseAuth.getCurrentUser();
-
                 if (mFirebaseUser != null) {
-                    mButtonConnexion.setText("SE DECONNECTER");
+                    mButtonConnexion.setText(R.string.logout);
                     mProfilName.setText(mFirebaseUser.getDisplayName());
                     createAsyncTaskGetPhoto().execute();
                 } else {
-                    onSignedOutCleanup();
+                    signOut();
                 }
             }
         };
@@ -196,15 +152,6 @@ public class MainActivity extends AppCompatActivity
         };
     }
 
-    private void onSignedOutCleanup() {
-        mButtonConnexion.setText("SE CONNECTER");
-        mProfilName.setText(null);
-        mFirebaseUser = null;
-        mDrawablePhoto = null;
-        mImageViewProfile.setImageResource(R.drawable.ic_person_grey_900_48dp);
-        invalidateOptionsMenu();
-    }
-
     private boolean isInternetPermited() {
         return ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED;
     }
@@ -216,7 +163,7 @@ public class MainActivity extends AppCompatActivity
         suiviColisBadgeCounter.setGravity(Gravity.CENTER_VERTICAL);
         suiviColisBadgeCounter.setTypeface(null, Typeface.BOLD);
         suiviColisBadgeCounter.setTextColor(getResources().getColor(R.color.colorPrimary));
-        suiviColisBadgeCounter.setText(String.valueOf(ProviderUtilities.countColis(this)));
+        suiviColisBadgeCounter.setText(String.valueOf(count(this)));
     }
 
     @Override
@@ -239,7 +186,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 if (mFirebaseUser != null) {
-                    onSignedOutCleanup();
+                    signOut();
                 } else {
                     signIn();
                 }
@@ -254,21 +201,6 @@ public class MainActivity extends AppCompatActivity
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
-        // Get information back from the savedInstanceState
-        if (savedInstanceState != null) {
-            agencyMapFragment = (AgencyMapFragment) getSupportFragmentManager().getFragment(savedInstanceState, SAVED_AGENCY_FRAGMENT);
-            gestionColisFragment = (GestionColisFragment) getSupportFragmentManager().getFragment(savedInstanceState, SAVED_GESTION_COLIS_FRAGMENT);
-        } else {
-            agencyMapFragment = (AgencyMapFragment) getSupportFragmentManager().findFragmentByTag(TAG_AGENCY_MAP_FRAGMENT);
-            if (agencyMapFragment == null) {
-                agencyMapFragment = AgencyMapFragment.newInstance();
-            }
-            gestionColisFragment = (GestionColisFragment) getSupportFragmentManager().findFragmentByTag(TAG_GESTION_COLIS_FRAGMENT);
-            if (gestionColisFragment == null) {
-                gestionColisFragment = GestionColisFragment.newInstance();
-            }
-        }
-
         // Si la permission Internet n'a pas été accordée on va la demander
         if (!isInternetPermited()) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, RC_PERMISSION_INTERNET);
@@ -277,7 +209,7 @@ public class MainActivity extends AppCompatActivity
         // Populate the contentProvider with assets, only the first time
         SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
         if (!sharedPreferences.getBoolean(PREF_POPULATED, false)) {
-            ProviderUtilities.populateContentProviderFromAsset(this);
+            populateContentProviderFromAsset(this);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putBoolean(PREF_POPULATED, true);
             editor.apply();
@@ -299,9 +231,6 @@ public class MainActivity extends AppCompatActivity
         uris.add(OptProvider.ListColis.LIST_COLIS);
         ProviderObserver providerObserver = ProviderObserver.getInstance();
         providerObserver.observe(this, this, uris);
-
-        // Lancement du service de synchro
-        SyncColisService.launchSynchroForAll(this, true);
     }
 
     @Override
@@ -315,7 +244,7 @@ public class MainActivity extends AppCompatActivity
                     getSupportFragmentManager().popBackStack();
                 } else {
                     // on demande avant de quitter l'application
-                    Utilities.SendDialogByActivity(this, "Voulez vous quitter l'application ?", NoticeDialogFragment.TYPE_BOUTON_YESNO, NoticeDialogFragment.TYPE_IMAGE_INFORMATION, DIALOG_TAG_EXIT);
+                    Utilities.SendDialogByActivity(this, getString(R.string.want_you_quit), NoticeDialogFragment.TYPE_BOUTON_YESNO, NoticeDialogFragment.TYPE_IMAGE_INFORMATION, DIALOG_TAG_EXIT);
                 }
             }
         }
@@ -330,12 +259,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_sign_out:
-                mFirebaseAuth.signOut();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        int i = item.getItemId();
+        if (i == R.id.action_sign_out) {
+            mFirebaseAuth.signOut();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
     }
 
@@ -344,10 +273,10 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_geo_agence:
-                callAgencyMapFragment();
+                startActivity(new Intent(this, AgenceActivity.class));
                 break;
             case R.id.nav_suivi_colis:
-                callSuiviColis();
+                startActivity(new Intent(this, GestionColisActivity.class));
                 break;
             default:
                 break;
@@ -364,25 +293,15 @@ public class MainActivity extends AppCompatActivity
         if (mFirebaseAuth != null) {
             mFirebaseAuth.addAuthStateListener(mAuthStateListener);
         }
-
-        // On attache le receiver a l'application
-        mNetworkReceiver = NetworkReceiver.getInstance();
-        registerReceiver(mNetworkReceiver, NetworkReceiver.CONNECTIVITY_CHANGE_INTENT_FILTER);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (mAuthStateListener != null) {
-            mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mNetworkReceiver != null) {
-            unregisterReceiver(mNetworkReceiver);
+        if (mFirebaseAuth != null) {
+            if (mAuthStateListener != null) {
+                mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
+            }
         }
     }
 
@@ -407,81 +326,29 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        AgencyMapFragment fragA = (AgencyMapFragment) getSupportFragmentManager().findFragmentByTag(TAG_AGENCY_MAP_FRAGMENT);
-        if (fragA != null) {
-            getSupportFragmentManager().putFragment(outState, SAVED_AGENCY_FRAGMENT, fragA);
-        }
-        GestionColisFragment fragB = (GestionColisFragment) getSupportFragmentManager().findFragmentByTag(TAG_GESTION_COLIS_FRAGMENT);
-        if (fragB != null) {
-            getSupportFragmentManager().putFragment(outState, SAVED_GESTION_COLIS_FRAGMENT, fragB);
-        }
-    }
-
-    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        for (ListenerPermissionResult listenerPermissionResult : mListenerPermissionResult) {
-            listenerPermissionResult.onPermissionRequestResult(requestCode, permissions, grantResults);
+        if (requestCode == RC_PERMISSION_INTERNET && grantResults[0] == PackageManager.PERMISSION_DENIED) {
+            Toast.makeText(this, R.string.internet_needed, Toast.LENGTH_LONG).show();
+            finish();
         }
-
-        switch (requestCode) {
-            case RC_PERMISSION_INTERNET:
-                if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                    Toast.makeText(this, "Un accès à internet est nécessaire pour cette application.", Toast.LENGTH_LONG).show();
-                    finish();
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void onAttachPermissionActivity(ListenerPermissionResult listenerPermissionResult) {
-        mListenerPermissionResult.add(listenerPermissionResult);
-    }
-
-    @Override
-    public void onDetachToPermissionActivity(ListenerPermissionResult listenerPermissionResult) {
-        mListenerPermissionResult.remove(listenerPermissionResult);
     }
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
-        switch (dialog.getTag()) {
-            case DIALOG_TAG_EXIT:
-                finish();
-                break;
-            default:
-                break;
+        String s = dialog.getTag();
+        if (s.equals(DIALOG_TAG_EXIT)) {
+            finish();
         }
     }
 
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
-        switch (dialog.getTag()) {
-            case DIALOG_TAG_EXIT:
-                break;
-            default:
-                break;
-        }
     }
 
     @Override
     public void onProviderChange() {
         updateBadge();
-    }
-
-    @Override
-    public void OnNetworkEnable() {
-        SyncColisService.launchSynchroForAll(MainActivity.this, true);
-    }
-
-    @Override
-    public void OnNetworkDisable() {
-        throw new UnsupportedOperationException();
     }
 }

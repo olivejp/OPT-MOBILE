@@ -5,7 +5,6 @@
     android:id="@+id/constraint_detail_colis_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
     android:baselineAligned="false"
     android:orientation="horizontal">
 
@@ -70,7 +69,7 @@
         app:layout_constraintBottom_toTopOf="@+id/step_last_description"
         app:layout_constraintLeft_toRightOf="@+id/step_image_colis"
         app:layout_constraintTop_toBottomOf="@+id/step_id_colis"
-        tools:text="08/10/2017 19:00" />
+        tools:text="09 déc. 2016 à 09:05"/>
 
 
     <TextView
@@ -90,7 +89,7 @@
         android:id="@+id/step_last_update_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Dernière mise à jour : "
+        android:text="Mis à jour le "
         android:textSize="12sp"
         android:textStyle="italic"
         app:layout_constraintBaseline_toBaselineOf="@+id/step_last_update"
@@ -108,7 +107,7 @@
         app:layout_constraintBottom_toTopOf="@+id/relative_delete_layout"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/step_last_description"
-        tools:text="10/10/2017" />
+        tools:text="24 oct. 2017 à 10:36" />
 
     <RelativeLayout
         android:id="@+id/relative_delete_layout"

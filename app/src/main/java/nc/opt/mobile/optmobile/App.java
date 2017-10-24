@@ -19,8 +19,12 @@ public class App extends Application {
         // Première instanciation du singleton
         RequestQueueSingleton.getInstance(getApplicationContext());
 
-        // Plannification d'un job
         JobManager.create(this).addJobCreator(new SyncColisJobCreator());
+
+        // Plannification d'un job
         SyncColisJob.scheduleJob();
+
+        // Lancement d'une synchro dès le début du programme
+        SyncColisJob.launchImmediateJob();
     }
 }

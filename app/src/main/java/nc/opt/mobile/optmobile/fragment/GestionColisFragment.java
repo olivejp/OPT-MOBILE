@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -20,15 +19,13 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.adapter.ColisAdapter;
-import nc.opt.mobile.optmobile.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.ProviderObserver;
-import nc.opt.mobile.optmobile.provider.ProviderUtilities;
+import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 
-import static nc.opt.mobile.optmobile.activity.MainActivity.TAG_SEARCH_PARCEL_FRAGMENT;
+import static nc.opt.mobile.optmobile.provider.services.ColisService.listFromProvider;
 
 /**
  * Fragment that shows list of followed parcel
@@ -38,35 +35,25 @@ public class GestionColisFragment extends Fragment implements ProviderObserver.P
 
     private ColisAdapter mColisAdapter;
     private AppCompatActivity mActivity;
+    private boolean mTwoPane;
+    private static final String ARG_TWO_PANE = "ARG_TWO_PANE";
 
     @BindView(R.id.recycler_parcel_list_management)
     RecyclerView mRecyclerView;
 
-    @BindView(R.id.fab_add_parcel)
-    FloatingActionButton mFloatingButtonAddParcel;
-
     @BindView(R.id.text_explicatif_suivi_colis)
     TextView textExplicatifSuiviColis;
 
-    public static GestionColisFragment newInstance() {
+    public static GestionColisFragment newInstance(boolean twoPane) {
         GestionColisFragment fragment = new GestionColisFragment();
         Bundle args = new Bundle();
+        args.putBoolean(ARG_TWO_PANE, twoPane);
         fragment.setArguments(args);
         return fragment;
     }
 
     public GestionColisFragment() {
         // Required empty public constructor
-    }
-
-    @OnClick(R.id.fab_add_parcel)
-    public void onFloatingButtonClick(View view) {
-        SearchColisFragment searchColisFragment = SearchColisFragment.newInstance();
-        mActivity.getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.frame_main, searchColisFragment, TAG_SEARCH_PARCEL_FRAGMENT)
-                .addToBackStack(null)
-                .commit();
     }
 
     @Override
@@ -78,6 +65,12 @@ public class GestionColisFragment extends Fragment implements ProviderObserver.P
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mTwoPane = false;
+        if (getArguments() != null && getArguments().containsKey(ARG_TWO_PANE)) {
+            mTwoPane = getArguments().getBoolean(ARG_TWO_PANE);
+        }
+
         // create a ColisObserver
         ArrayList<Uri> uris = new ArrayList<>();
         uris.add(OptProvider.ListColis.LIST_COLIS);
@@ -106,8 +99,8 @@ public class GestionColisFragment extends Fragment implements ProviderObserver.P
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
         // get the list from the provider
-        List<ColisEntity> list = ProviderUtilities.getListColisFromContentProvider(mActivity);
-        mColisAdapter = new ColisAdapter(mActivity, list);
+        List<ColisEntity> list = listFromProvider(mActivity);
+        mColisAdapter = new ColisAdapter(mActivity, list, mTwoPane);
         mRecyclerView.setAdapter(mColisAdapter);
         mColisAdapter.notifyDataSetChanged();
 
@@ -121,7 +114,7 @@ public class GestionColisFragment extends Fragment implements ProviderObserver.P
     @Override
     public void onProviderChange() {
         mColisAdapter.getmColisList().clear();
-        mColisAdapter.getmColisList().addAll(ProviderUtilities.getListColisFromContentProvider(mActivity));
+        mColisAdapter.getmColisList().addAll(listFromProvider(mActivity));
         mColisAdapter.notifyDataSetChanged();
     }
 }

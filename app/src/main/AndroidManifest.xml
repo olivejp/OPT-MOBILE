@@ -74,10 +74,27 @@
         </activity>
         <activity
             android:name=".activity.GestionColisActivity"
-            android:parentActivityName=".activity.MainActivity">
+            android:parentActivityName=".activity.MainActivity"
+            android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity" />
+        </activity>
+        <activity
+            android:name=".activity.AgenceActivity"
+            android:parentActivityName=".activity.MainActivity"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.MainActivity" />
+        </activity>
+        <activity
+            android:name=".activity.AddColisActivity"
+            android:parentActivityName=".activity.GestionColisActivity"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.GestionColisActivity" />
         </activity>
 
         <provider
@@ -88,7 +105,6 @@
         <service
             android:name=".service.SyncColisService"
             android:exported="false" />
-
 
     </application>
 

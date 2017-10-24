@@ -16,11 +16,13 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.activity.MainActivity;
-import nc.opt.mobile.optmobile.entity.ColisEntity;
-import nc.opt.mobile.optmobile.entity.EtapeAcheminementEntity;
+import nc.opt.mobile.optmobile.activity.GestionColisActivity;
 import nc.opt.mobile.optmobile.fragment.HistoriqueColisFragment;
-import nc.opt.mobile.optmobile.provider.ProviderUtilities;
+import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
+import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
+import nc.opt.mobile.optmobile.utils.DateConverter;
+
+import static nc.opt.mobile.optmobile.provider.services.ColisService.delete;
 
 /**
  * Created by orlanth23 on 05/10/2017.
@@ -30,10 +32,12 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
 
     private final List<ColisEntity> mColisList;
     private Context mContext;
+    private boolean mTwoPane;
 
-    public ColisAdapter(Context context, List<ColisEntity> colisList) {
+    public ColisAdapter(Context context, List<ColisEntity> colisList, boolean twoPane) {
         mContext = context;
         mColisList = colisList;
+        mTwoPane = twoPane;
     }
 
     @Override
@@ -48,17 +52,17 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         holder.mColis = mColisList.get(position);
         holder.mIdColis.setText(holder.mColis.getIdColis());
         holder.mParcelDescription.setText(holder.mColis.getDescription());
-        holder.mStepLastUpdate.setText(holder.mColis.getLastUpdate());
+        holder.mStepLastUpdate.setText(DateConverter.convertDateEntityToUi(holder.mColis.getLastUpdate()));
         if (!holder.mColis.getEtapeAcheminementArrayList().isEmpty()) {
             // On prend la dernière étape
             EtapeAcheminementEntity etapeAcheminement = holder.mColis.getEtapeAcheminementArrayList().get(holder.mColis.getEtapeAcheminementArrayList().size() - 1);
-            holder.mStepLastDate.setText(etapeAcheminement.getDate());
+            holder.mStepLastDate.setText(DateConverter.convertDateEntityToUi(etapeAcheminement.getDate()));
             holder.mStepLastPays.setText(etapeAcheminement.getPays());
             holder.mStepLastDescription.setText(etapeAcheminement.getDescription());
         } else {
             holder.mStepLastDate.setText(null);
             holder.mStepLastPays.setText(null);
-            holder.mStepLastDescription.setText("Aucune données récupérées pour ce colis.");
+            holder.mStepLastDescription.setText(R.string.no_data_for_parcel);
         }
     }
 
@@ -119,11 +123,18 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
                     // Otherwise we deactivate the delete mode and make the delete button invisible
                     if (!mDeleteMode) {
                         HistoriqueColisFragment historiqueColisFragment = HistoriqueColisFragment.newInstance(mColis.getIdColis());
-                        ((AppCompatActivity) mContext).getSupportFragmentManager()
-                                .beginTransaction()
-                                .replace(R.id.frame_main, historiqueColisFragment, MainActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT)
-                                .addToBackStack(null)
-                                .commit();
+                        if (mTwoPane) {
+                            ((AppCompatActivity) mContext).getSupportFragmentManager()
+                                    .beginTransaction()
+                                    .replace(R.id.frame_detail, historiqueColisFragment, GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT)
+                                    .commit();
+                        } else {
+                            ((AppCompatActivity) mContext).getSupportFragmentManager()
+                                    .beginTransaction()
+                                    .replace(R.id.frame_master, historiqueColisFragment, GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT)
+                                    .addToBackStack(null)
+                                    .commit();
+                        }
                     } else {
                         mDeleteMode = !mDeleteMode;
                         changeDeleteVisibility();
@@ -148,13 +159,13 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
                     mColisList.remove(mColis);
 
                     // Remove from the content provider
-                    ProviderUtilities.deleteColis(mContext, mColis.getIdColis());
+                    delete(mContext, mColis.getIdColis());
 
                     // Change visibility
                     mDeleteMode = false;
                     changeDeleteVisibility();
 
-                    Snackbar snackbar = Snackbar.make(mView, mColis.getIdColis().concat(" supprimé du suivi"), Snackbar.LENGTH_LONG);
+                    Snackbar snackbar = Snackbar.make(mView, mColis.getIdColis().concat(mContext.getString(R.string.deleted_from_management)), Snackbar.LENGTH_LONG);
                     snackbar.show();
                 }
             });

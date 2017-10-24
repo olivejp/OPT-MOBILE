@@ -23,17 +23,15 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.adapter.EtapeAcheminementAdapter;
-import nc.opt.mobile.optmobile.entity.EtapeAcheminementEntity;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.ProviderObserver;
-import nc.opt.mobile.optmobile.provider.ProviderUtilities;
-import nc.opt.mobile.optmobile.service.SyncColisService;
+import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static nc.opt.mobile.optmobile.provider.services.EtapeAcheminementService.listFromProvider;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,9 +48,6 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
     @BindView(R.id.recycler_parcel_list)
     RecyclerView mRecyclerView;
 
-    @BindView(R.id.fab_refresh_colis_search)
-    FloatingActionButton fabRefresh;
-
     @BindView(R.id.text_object_not_found)
     TextView textObjectNotFound;
 
@@ -66,11 +61,6 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
 
     public HistoriqueColisFragment() {
         // Required empty public constructor
-    }
-
-    @OnClick(R.id.fab_refresh_colis_search)
-    public void refresh(View v) {
-        SyncColisService.launchSynchroByIdColis(mAppCompatActivity, mIdColis, false);
     }
 
     @Override
@@ -113,7 +103,7 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
                 DividerItemDecoration.VERTICAL));
 
         // get history from the provider
-        mListEtape = ProviderUtilities.getListEtapeFromContentProvider(mAppCompatActivity, mIdColis);
+        mListEtape = listFromProvider(mAppCompatActivity, mIdColis);
         mEtapeAcheminementAdapter.setmEtapeAcheminements(mListEtape);
         mRecyclerView.setAdapter(mEtapeAcheminementAdapter);
         mEtapeAcheminementAdapter.notifyDataSetChanged();
@@ -133,7 +123,7 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
 
     @Override
     public void onProviderChange() {
-        mListEtape = ProviderUtilities.getListEtapeFromContentProvider(mAppCompatActivity, mIdColis);
+        mListEtape = listFromProvider(mAppCompatActivity, mIdColis);
         mEtapeAcheminementAdapter.setmEtapeAcheminements(mListEtape);
         mEtapeAcheminementAdapter.notifyDataSetChanged();
     }

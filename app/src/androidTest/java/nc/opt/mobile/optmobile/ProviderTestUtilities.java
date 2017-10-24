@@ -14,8 +14,8 @@ import android.view.Display;
 import java.util.Map;
 import java.util.Set;
 
-import nc.opt.mobile.optmobile.entity.EtapeAcheminementEntity;
-import nc.opt.mobile.optmobile.entity.ColisEntity;
+import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
+import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;

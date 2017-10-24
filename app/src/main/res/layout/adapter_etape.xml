@@ -17,12 +17,13 @@
 
         <TextView
             android:id="@+id/step_date"
-            style="@style/Base.TextAppearance.AppCompat.Body2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
             android:gravity="start"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
+            android:textSize="12sp"
             tools:text="21/12/2017 13:45" />
     </LinearLayout>
 
@@ -34,9 +35,10 @@
 
         <TextView
             android:id="@+id/step_pays"
-            style="@style/Base.TextAppearance.AppCompat.Body2"
+            style="@style/Base.TextAppearance.AppCompat.Body1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="12sp"
             tools:text="NOUVELLE-CALEDONIE" />
 
         <TextView
@@ -46,6 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
+            android:textSize="12sp"
             tools:text="NOUMEA CTC" />
 
     </RelativeLayout>
@@ -57,6 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:layout_marginBottom="5dp"
+        android:textSize="12sp"
         tools:text="Traitement douanier en cours" />
 
     <TextView
@@ -64,6 +68,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
+        android:textSize="12sp"
         android:textStyle="italic"
         tools:text="Retention reason : Biens a valeur elevee - Declaration douaniere requise" />
 </LinearLayout>

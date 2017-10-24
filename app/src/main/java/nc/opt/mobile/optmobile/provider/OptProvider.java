@@ -7,8 +7,8 @@ import net.simonvt.schematic.annotation.ContentUri;
 import net.simonvt.schematic.annotation.InexactContentUri;
 import net.simonvt.schematic.annotation.TableEndpoint;
 
-import nc.opt.mobile.optmobile.entity.ColisEntity;
-import nc.opt.mobile.optmobile.entity.EtapeAcheminementEntity;
+import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
+import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
 
 /**
  * Created by orlanth23 on 10/08/2017.
