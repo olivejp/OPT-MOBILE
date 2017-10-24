@@ -1,3 +1,1 @@
-Update the libraries to the latest versions.
-Update the proguard file to shrink the app.
-Log to google or facebook is not mandatory anymore.
+-La connexion avec un compte Facebook est maintenant possible.
