@@ -42,11 +42,9 @@ import java.util.concurrent.ExecutionException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.broadcast.NetworkReceiver;
 import nc.opt.mobile.optmobile.interfaces.AttachToPermissionActivity;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.ProviderObserver;
-import nc.opt.mobile.optmobile.service.SyncColisService;
 import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
 import nc.opt.mobile.optmobile.utils.RequestQueueSingleton;
 import nc.opt.mobile.optmobile.utils.Utilities;
@@ -55,7 +53,7 @@ import static nc.opt.mobile.optmobile.provider.services.AgencyService.populateCo
 import static nc.opt.mobile.optmobile.provider.services.ColisService.count;
 
 public class MainActivity extends AttachToPermissionActivity
-        implements NavigationView.OnNavigationItemSelectedListener, NoticeDialogFragment.NoticeDialogListener, ProviderObserver.ProviderObserverListener, NetworkReceiver.NetworkChangeListener {
+        implements NavigationView.OnNavigationItemSelectedListener, NoticeDialogFragment.NoticeDialogListener, ProviderObserver.ProviderObserverListener {
 
     private static final String TAG = MainActivity.class.getName();
 
@@ -72,7 +70,6 @@ public class MainActivity extends AttachToPermissionActivity
     private FirebaseUser mFirebaseUser;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private Drawable mDrawablePhoto;
-    private NetworkReceiver mNetworkReceiver;
 
     private ImageView mImageViewProfile;
     private Button mButtonConnexion;
@@ -106,17 +103,15 @@ public class MainActivity extends AttachToPermissionActivity
         mProfilName.setText(null);
         mFirebaseUser = null;
         mDrawablePhoto = null;
-        mImageViewProfile.setImageResource(R.drawable.ic_person_grey_900_48dp);
+        mImageViewProfile.setImageResource(R.drawable.ic_person_white_48dp);
         invalidateOptionsMenu();
     }
 
     private void defineAuthListener() {
-        // On veut que l'utilisateur soit identifié pour continuer
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 mFirebaseUser = firebaseAuth.getCurrentUser();
-
                 if (mFirebaseUser != null) {
                     mButtonConnexion.setText(R.string.logout);
                     mProfilName.setText(mFirebaseUser.getDisplayName());
@@ -298,25 +293,15 @@ public class MainActivity extends AttachToPermissionActivity
         if (mFirebaseAuth != null) {
             mFirebaseAuth.addAuthStateListener(mAuthStateListener);
         }
-
-        // On attache le receiver a l'application
-        mNetworkReceiver = NetworkReceiver.getInstance();
-        registerReceiver(mNetworkReceiver, NetworkReceiver.CONNECTIVITY_CHANGE_INTENT_FILTER);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (mAuthStateListener != null) {
-            mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mNetworkReceiver != null) {
-            unregisterReceiver(mNetworkReceiver);
+        if (mFirebaseAuth != null) {
+            if (mAuthStateListener != null) {
+                mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
+            }
         }
     }
 
@@ -365,15 +350,5 @@ public class MainActivity extends AttachToPermissionActivity
     @Override
     public void onProviderChange() {
         updateBadge();
-    }
-
-    @Override
-    public void OnNetworkEnable() {
-        SyncColisService.launchSynchroForAll(MainActivity.this, true);
-    }
-
-    @Override
-    public void OnNetworkDisable() {
-        throw new UnsupportedOperationException();
     }
 }

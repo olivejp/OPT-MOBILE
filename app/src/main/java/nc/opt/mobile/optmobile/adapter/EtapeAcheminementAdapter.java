@@ -49,14 +49,14 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<EtapeAchemine
     @Override
     public void onBindViewHolder(final ViewHolderStepParcel holder, int position) {
         holder.mEtapeEntity = mEtapeAcheminements.get(position);
-        holder.mStepDate.setText(DateConverter.convertDateEntityToDto(mEtapeAcheminements.get(position).getDate()));
-        holder.mStepPays.setText(mEtapeAcheminements.get(position).getPays());
-        holder.mStepLocalisation.setText(mEtapeAcheminements.get(position).getLocalisation());
-        holder.mStepDescription.setText(mEtapeAcheminements.get(position).getDescription());
-        if (mEtapeAcheminements.get(position).getCommentaire().isEmpty()) {
+        holder.mStepDate.setText(DateConverter.convertDateEntityToUi(holder.mEtapeEntity.getDate()));
+        holder.mStepPays.setText(holder.mEtapeEntity.getPays());
+        holder.mStepLocalisation.setText(holder.mEtapeEntity.getLocalisation());
+        holder.mStepDescription.setText(holder.mEtapeEntity.getDescription());
+        if (holder.mEtapeEntity.getCommentaire().isEmpty()) {
             holder.mStepCommentaire.setVisibility(View.GONE);
         } else {
-            holder.mStepCommentaire.setText(mEtapeAcheminements.get(position).getCommentaire());
+            holder.mStepCommentaire.setText(holder.mEtapeEntity.getCommentaire());
         }
     }
 

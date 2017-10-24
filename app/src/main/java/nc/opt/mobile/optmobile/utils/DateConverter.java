@@ -15,7 +15,22 @@ import java.util.Locale;
 public class DateConverter {
     private static final String TAG = DateConverter.class.getName();
     private static final SimpleDateFormat simpleDtoDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.FRANCE);
+    private static final SimpleDateFormat simpleUiDateFormat = new SimpleDateFormat("dd MMM yyyy à HH:mm", Locale.FRANCE);
     private static final SimpleDateFormat simpleEntityDateFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.FRANCE);
+
+    /**
+     * Transformation d'une date de type yyyyMMddHHmmss vers le format dd MMM yy HH:mm
+     * @param dateEntity
+     * @return
+     */
+    public static String convertDateEntityToUi(Long dateEntity) {
+        try {
+            return simpleUiDateFormat.format(simpleEntityDateFormat.parse(String.valueOf(dateEntity)));
+        } catch (ParseException e) {
+            Log.e(TAG, e.getMessage(), e);
+        }
+        return null;
+    }
 
     /**
      * Transformation d'une date de type dd/MM/yyyy HH:mm:ss vers le format yyyyMMddHHmmss en Long

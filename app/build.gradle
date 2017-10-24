@@ -48,6 +48,7 @@ android {
             signingConfig signingConfigs.config
         }
         debug {
+            signingConfig signingConfigs.config
             versionNameSuffix '-debug'
             shrinkResources false
             minifyEnabled false

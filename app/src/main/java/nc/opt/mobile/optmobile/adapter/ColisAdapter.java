@@ -17,7 +17,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.activity.GestionColisActivity;
-import nc.opt.mobile.optmobile.activity.MainActivity;
 import nc.opt.mobile.optmobile.fragment.HistoriqueColisFragment;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
@@ -53,11 +52,11 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         holder.mColis = mColisList.get(position);
         holder.mIdColis.setText(holder.mColis.getIdColis());
         holder.mParcelDescription.setText(holder.mColis.getDescription());
-        holder.mStepLastUpdate.setText(DateConverter.convertDateEntityToDto(holder.mColis.getLastUpdate()));
+        holder.mStepLastUpdate.setText(DateConverter.convertDateEntityToUi(holder.mColis.getLastUpdate()));
         if (!holder.mColis.getEtapeAcheminementArrayList().isEmpty()) {
             // On prend la dernière étape
             EtapeAcheminementEntity etapeAcheminement = holder.mColis.getEtapeAcheminementArrayList().get(holder.mColis.getEtapeAcheminementArrayList().size() - 1);
-            holder.mStepLastDate.setText(DateConverter.convertDateEntityToDto(etapeAcheminement.getDate()));
+            holder.mStepLastDate.setText(DateConverter.convertDateEntityToUi(etapeAcheminement.getDate()));
             holder.mStepLastPays.setText(etapeAcheminement.getPays());
             holder.mStepLastDescription.setText(etapeAcheminement.getDescription());
         } else {
@@ -124,7 +123,6 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
                     // Otherwise we deactivate the delete mode and make the delete button invisible
                     if (!mDeleteMode) {
                         HistoriqueColisFragment historiqueColisFragment = HistoriqueColisFragment.newInstance(mColis.getIdColis());
-                        v.setSelected(true);
                         if (mTwoPane) {
                             ((AppCompatActivity) mContext).getSupportFragmentManager()
                                     .beginTransaction()
