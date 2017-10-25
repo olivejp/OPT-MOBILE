@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -78,11 +77,6 @@ public class ActualiteFragment extends Fragment implements ProviderObserver.Prov
 
         // change title
         mActivity.setTitle(getActivity().getString(R.string.activity_title_actualite));
-
-        // add separator between each element
-        mRecyclerView.addItemDecoration(new
-                DividerItemDecoration(mActivity,
-                DividerItemDecoration.VERTICAL));
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mActivity);
         mRecyclerView.setLayoutManager(linearLayoutManager);

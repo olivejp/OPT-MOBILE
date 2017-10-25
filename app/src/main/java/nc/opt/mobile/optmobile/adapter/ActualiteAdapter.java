@@ -20,7 +20,7 @@ import nc.opt.mobile.optmobile.utils.DateConverter;
  * Created by orlanth23 on 25/10/2017.
  */
 
-public class ActualiteAdapter extends RecyclerView.Adapter<ActualiteAdapter.ViewHolderStepParcel> {
+public class ActualiteAdapter extends RecyclerView.Adapter<ActualiteAdapter.ViewHolderActualite> {
 
     private List<ActualiteEntity> mActualites;
 
@@ -41,14 +41,14 @@ public class ActualiteAdapter extends RecyclerView.Adapter<ActualiteAdapter.View
     }
 
     @Override
-    public ViewHolderStepParcel onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolderActualite onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.adapter_etape, parent, false);
-        return new ViewHolderStepParcel(view);
+                .inflate(R.layout.adapter_actualite, parent, false);
+        return new ViewHolderActualite(view);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolderStepParcel holder, int position) {
+    public void onBindViewHolder(final ViewHolderActualite holder, int position) {
         holder.mActualite = mActualites.get(position);
         holder.mDate.setText(DateConverter.convertDateEntityToUi(holder.mActualite.getDate()));
         holder.mTitre.setText(holder.mActualite.getTitre());
@@ -60,7 +60,7 @@ public class ActualiteAdapter extends RecyclerView.Adapter<ActualiteAdapter.View
         return mActualites.size();
     }
 
-    class ViewHolderStepParcel extends RecyclerView.ViewHolder {
+    class ViewHolderActualite extends RecyclerView.ViewHolder {
         final View mView;
 
         @BindView(R.id.titre_actualite)
@@ -77,7 +77,7 @@ public class ActualiteAdapter extends RecyclerView.Adapter<ActualiteAdapter.View
 
         ActualiteEntity mActualite;
 
-        ViewHolderStepParcel(View view) {
+        ViewHolderActualite(View view) {
             super(view);
             mView = view;
             ButterKnife.bind(this, mView);

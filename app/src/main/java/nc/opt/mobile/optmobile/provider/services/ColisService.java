@@ -7,18 +7,15 @@ import android.support.annotation.NonNull;
 
 import org.chalup.microorm.MicroOrm;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
 
 import static nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity.EtapeAcheminementInterface.ID_COLIS;
-import static nc.opt.mobile.optmobile.utils.DateConverter.getNowDto;
+import static nc.opt.mobile.optmobile.utils.DateConverter.getNowEntity;
 
 /**
  * Created by 2761oli on 23/10/2017.
@@ -80,9 +77,9 @@ public class ColisService {
 
     public static int updateLastUpdate(Context context, @NonNull String idColis, boolean successful) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(ColisEntity.ColisInterface.LAST_UPDATE, getNowDto());
+        contentValues.put(ColisEntity.ColisInterface.LAST_UPDATE, getNowEntity());
         if (successful) {
-            contentValues.put(ColisEntity.ColisInterface.LAST_UPDATE_SUCCESSFUL, getNowDto());
+            contentValues.put(ColisEntity.ColisInterface.LAST_UPDATE_SUCCESSFUL, getNowEntity());
         }
 
         String where = ColisEntity.ColisInterface.ID_COLIS.concat("=?");

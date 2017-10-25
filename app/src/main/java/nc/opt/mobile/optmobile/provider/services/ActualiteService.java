@@ -1,8 +1,10 @@
 package nc.opt.mobile.optmobile.provider.services;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 
 import org.chalup.microorm.MicroOrm;
 
@@ -36,11 +38,18 @@ public class ActualiteService {
             .concat(TYPE).concat("=? AND ")
             .concat(TITRE).concat("=? AND ");
 
+    public static Long insertActualite(Context context, ActualiteDto actualiteDto) {
+        ContentValues contentValues = putToContentValues(actualiteDto);
+        Uri uriInserted = context.getContentResolver().insert(OptProvider.ListActualite.LIST_ACTUALITE, contentValues);
+        return ContentUris.parseId(uriInserted);
+    }
+
     public static List<ActualiteEntity> listFromProvider(Context context) {
         List<ActualiteEntity> actualiteList = new ArrayList<>();
 
         // Query the content provider to get a cursor of Etape
-        Cursor cursorListActualite = context.getContentResolver().query(OptProvider.ListActualite.LIST_ACTUALITE, null, null, null, null);
+        String sortOrder = ActualiteEntity.ActualiteInterface.DATE + " DESC";
+        Cursor cursorListActualite = context.getContentResolver().query(OptProvider.ListActualite.LIST_ACTUALITE, null, null, null, sortOrder);
 
         if (cursorListActualite != null) {
             while (cursorListActualite.moveToNext()) {
