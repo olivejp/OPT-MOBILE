@@ -1,0 +1,18 @@
+On veut pouvoir avoir sur la page principale les actualites.
+Dans les actualités on va retrouver les evenements locaux :
+    -Ajout d'un nouveau colis au suivi
+    -Nouvelle etape d'un colis
+    -Actualites de l'application
+    -Actualites sur l'OPT (sorti d'un nouveau service, coupure de réseau programmé, incident sur le réseau,...)
+
+
+Idees d'évolution
+    -Recevoir une notification sur son mobile quand on recoit un courrier dans sa BP (voir POC RFID de Kenichi)
+    -Recevoir une notification/sms quand un avis de mise en instance est emis pour un client
+    -Recevoir une notification/sms quand un recouvrement est engagé contre le client (non paiement du contrat BP, non paiement d'une facture mobilis)
+    -Faire un virement sur un compte (compte du meme client, ou compte d'une autre personne)
+
+Dans le cas des actualites :
+Creation d'un nouveau fragment
+Creation d'une nouvelle table dans la BD
+Creation d'un nouveau service
