@@ -111,7 +111,7 @@ dependencies {
     annotationProcessor 'org.parceler:parceler:1.1.9'
     annotationProcessor 'net.simonvt.schematic:schematic-compiler:0.7.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-    provided 'frankiesardo:icepick-processor:3.2.0'
+    annotationProcessor 'frankiesardo:icepick-processor:3.2.0'
 }
 
 
