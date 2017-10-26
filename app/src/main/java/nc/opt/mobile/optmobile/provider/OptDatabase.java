@@ -24,7 +24,7 @@ import static nc.opt.mobile.optmobile.provider.entity.ActualiteEntity.ActualiteI
 
 @Database(version = OptDatabase.VERSION, packageName = "nc.opt.mobile.optmobile")
 public class OptDatabase {
-    static final int VERSION = 16;
+    static final int VERSION = 17;
 
     private OptDatabase() {
     }

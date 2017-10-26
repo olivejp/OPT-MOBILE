@@ -1,0 +1,12 @@
+Création d'une librairie sur la base de Schematic.
+L'idée est de pouvoir créer un service pour chaque table que l'on créé.
+Ce service sera charger d'implémenter les méthodes CRUD de l'entity créer.
+On pourrait penser à un paramètre booléan nommé 'Service' à rajouter sur l'annotation @Table de Schematic.
+Quand il serait à true, on pourrait créer un service complet
+
+Ce qu'il faut au service :
+
+
+Insert
+    -Context
+    -

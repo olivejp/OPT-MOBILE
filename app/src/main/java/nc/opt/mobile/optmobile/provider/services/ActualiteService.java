@@ -38,8 +38,8 @@ public class ActualiteService {
             .concat(TYPE).concat("=? AND ")
             .concat(TITRE).concat("=? AND ");
 
-    public static Long insertActualite(Context context, ActualiteDto actualiteDto) {
-        ContentValues contentValues = putToContentValues(actualiteDto);
+    public static Long insertActualite(Context context, ActualiteEntity actualiteEntity) {
+        ContentValues contentValues = uOrm.toContentValues(actualiteEntity);
         Uri uriInserted = context.getContentResolver().insert(OptProvider.ListActualite.LIST_ACTUALITE, contentValues);
         return ContentUris.parseId(uriInserted);
     }

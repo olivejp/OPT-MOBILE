@@ -103,12 +103,12 @@ public class ContentProviderTest {
         deleteAllRecordsFromProvider();
     }
 
-
     @Test
     public void deleteAllRecordsFromProvider() {
         deleteRecords(OptProvider.ListAgency.LIST_AGENCY);
         deleteRecords(OptProvider.ListColis.LIST_COLIS);
         deleteRecords(OptProvider.ListEtapeAcheminement.LIST_ETAPE);
+        deleteRecords(OptProvider.ListActualite.LIST_ACTUALITE);
     }
 
     @Test
@@ -138,5 +138,11 @@ public class ContentProviderTest {
             insertContentValues(OptProvider.ListEtapeAcheminement.LIST_ETAPE, testValuesEtape);
             validateUri(OptProvider.ListEtapeAcheminement.withIdColis("RC123456789NC"), testValuesEtape, null, null);
         }
+    }
+
+    @Test
+    public void testInsertReadActualiteProvider() {
+        ContentValues testActualite = ProviderTestUtilities.createActualiteValues();
+        testInsertReadUriProvider(OptProvider.ListActualite.LIST_ACTUALITE, testActualite);
     }
 }

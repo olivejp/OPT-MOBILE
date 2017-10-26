@@ -30,6 +30,14 @@ public class ActualiteEntity {
     @Column(ActualiteInterface.CONTENU)
     private String contenu;
 
+    @Column(ActualiteInterface.DISMISSABLE)
+    private String dismissable;
+
+    @Column(ActualiteInterface.DISMISSED)
+    private String dismissed;
+
+    public ActualiteEntity() {
+    }
 
     public ActualiteEntity(int idActualite, Long date, String type, String titre, String contenu) {
         this.idActualite = idActualite;
@@ -79,6 +87,22 @@ public class ActualiteEntity {
         this.contenu = contenu;
     }
 
+    public String getDismissable() {
+        return dismissable;
+    }
+
+    public void setDismissable(String dismissable) {
+        this.dismissable = dismissable;
+    }
+
+    public String getDismissed() {
+        return dismissed;
+    }
+
+    public void setDismissed(String dismissed) {
+        this.dismissed = dismissed;
+    }
+
     public interface ActualiteInterface {
 
         @DataType(INTEGER)
@@ -98,5 +122,11 @@ public class ActualiteEntity {
 
         @DataType(TEXT)
         String CONTENU = "contenu";
+
+        @DataType(TEXT)
+        String DISMISSABLE = "dismissable";
+
+        @DataType(TEXT)
+        String DISMISSED = "dismissed";
     }
 }

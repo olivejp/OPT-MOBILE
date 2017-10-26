@@ -19,6 +19,7 @@ import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.domain.ActualiteDto;
 import nc.opt.mobile.optmobile.provider.OptProvider;
+import nc.opt.mobile.optmobile.provider.entity.ActualiteEntity;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.services.ActualiteService;
 import nc.opt.mobile.optmobile.service.SyncColisService;
@@ -89,12 +90,12 @@ public class AddColisFragment extends Fragment {
                 Snackbar.make(view, idColis.concat(getString(R.string.colis_added)), Snackbar.LENGTH_LONG).show();
 
                 // Ajout d'une actualité
-                ActualiteDto actualiteDto = new ActualiteDto();
-                actualiteDto.setTitre(idColis + " ajouté au suivi");
-                actualiteDto.setType("1");
-                actualiteDto.setContenu("Vous avez ajouté " + idColis + " au suivi des colis. Vous serez notifié de son évolution lors de son acheminement.");
-                actualiteDto.setDate(String.valueOf(DateConverter.getNowEntity()));
-                ActualiteService.insertActualite(mActivity, actualiteDto);
+                ActualiteEntity actualiteEntity = new ActualiteEntity();
+                actualiteEntity.setTitre(idColis + " ajouté au suivi");
+                actualiteEntity.setType("1");
+                actualiteEntity.setContenu("Vous avez ajouté " + idColis + " au suivi des colis. Vous serez notifié de son évolution lors de son acheminement.");
+                actualiteEntity.setDate(DateConverter.getNowEntity());
+                ActualiteService.insertActualite(mActivity, actualiteEntity);
 
                 mActivity.finish();
             }

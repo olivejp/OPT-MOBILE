@@ -18,7 +18,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
-            android:padding="20dp"
+            android:padding="5dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -28,13 +28,18 @@
                 style="@style/Base.TextAppearance.AppCompat.Large"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="16dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
                 android:gravity="start"
                 android:textColor="@android:color/white"
+                app:layout_constraintBottom_toTopOf="@+id/date_actualite"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/date_actualite"
+                app:layout_constraintRight_toLeftOf="@+id/dismiss"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:text="Le forfait M est arrivé !" />
 
             <TextView
@@ -44,9 +49,22 @@
                 android:layout_height="wrap_content"
                 android:gravity="end"
                 android:textColor="@android:color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/titre_actualite"
+                tools:text="25 oct." />
+
+            <ImageButton
+                android:id="@+id/dismiss"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/fui_transparent"
+                android:scaleType="fitXY"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="25 oct." />
+                app:srcCompat="@drawable/ic_close_white_48dp" />
         </android.support.constraint.ConstraintLayout>
 
         <TextView

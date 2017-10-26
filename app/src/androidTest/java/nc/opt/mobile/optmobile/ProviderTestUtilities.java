@@ -14,6 +14,7 @@ import android.view.Display;
 import java.util.Map;
 import java.util.Set;
 
+import nc.opt.mobile.optmobile.provider.entity.ActualiteEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 
@@ -30,6 +31,11 @@ class ProviderTestUtilities {
     private static final String ETAPE_COMMENTAIRE = "SIGNED BY OLIVE Edna";
     private static final String ETAPE_DESCRIPTION = "This parcel is in transit to NC";
     private static final String ETAPE_LOCALISATION = "NOUMEA CTC";
+
+    private static final String ACTUALITE_DATE = "20170101210000";
+    private static final String ACTUALITE_TITRE = "Mon titre";
+    private static final String ACTUALITE_CONTENU = "Contenu de mon actualite";
+    private static final String ACTUALITE_TYPE = "1";
 
     static boolean isTablet(AppCompatActivity activity) {
         Display display = activity.getWindowManager().getDefaultDisplay();
@@ -58,6 +64,15 @@ class ProviderTestUtilities {
                     "' did not match the expected value '" +
                     expectedValue + "'. " + error, expectedValue, valueCursor.getString(idx));
         }
+    }
+
+    static ContentValues createActualiteValues() {
+        ContentValues testValues = new ContentValues();
+        testValues.put(ActualiteEntity.ActualiteInterface.DATE, ACTUALITE_DATE);
+        testValues.put(ActualiteEntity.ActualiteInterface.TITRE, ACTUALITE_TITRE);
+        testValues.put(ActualiteEntity.ActualiteInterface.CONTENU, ACTUALITE_CONTENU);
+        testValues.put(ActualiteEntity.ActualiteInterface.TYPE, ACTUALITE_TYPE);
+        return testValues;
     }
 
     static ContentValues createEtapeValues(String idColis, @Nullable Integer idEtape) {
