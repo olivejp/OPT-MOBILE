@@ -13,6 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +26,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.adapter.ActualiteAdapter;
+import nc.opt.mobile.optmobile.domain.ActualiteDto;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.ProviderObserver;
 import nc.opt.mobile.optmobile.provider.entity.ActualiteEntity;
@@ -30,8 +37,13 @@ import nc.opt.mobile.optmobile.provider.services.ActualiteService;
  */
 public class ActualiteFragment extends Fragment implements ProviderObserver.ProviderObserverListener {
 
+    private static final String KEY_ACTUALITE = "actualites";
+
     private ActualiteAdapter mActualiteFragment;
     private AppCompatActivity mActivity;
+    private ChildEventListener mChildEventListener;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mDatabaseReference;
 
     @BindView(R.id.recycler_actualite)
     RecyclerView mRecyclerView;
@@ -50,6 +62,43 @@ public class ActualiteFragment extends Fragment implements ProviderObserver.Prov
         // Required empty public constructor
     }
 
+    private void attachDatabaseListener() {
+
+        ChildEventListener childEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                ActualiteDto actualiteDto = dataSnapshot.getValue(ActualiteDto.class);
+                ActualiteService.insertActualite(getActivity(), actualiteDto);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                ActualiteDto actualiteDto = dataSnapshot.getValue(ActualiteDto.class);
+                ActualiteService.updateActualite(getActivity(), actualiteDto);
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                ActualiteDto actualiteDto = dataSnapshot.getValue(ActualiteDto.class);
+                ActualiteService.deleteActualite(getActivity(), actualiteDto);
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+
+        mDatabaseReference = mFirebaseDatabase.getReference().child(KEY_ACTUALITE);
+        mDatabaseReference.addChildEventListener(childEventListener);
+        mChildEventListener = childEventListener;
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -59,6 +108,9 @@ public class ActualiteFragment extends Fragment implements ProviderObserver.Prov
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        attachDatabaseListener();
 
         // create a ActualiteObserver
         ArrayList<Uri> uris = new ArrayList<>();
@@ -99,5 +151,13 @@ public class ActualiteFragment extends Fragment implements ProviderObserver.Prov
         mActualiteFragment.getmActualites().clear();
         mActualiteFragment.getmActualites().addAll(ActualiteService.listFromProvider(mActivity));
         mActualiteFragment.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mChildEventListener != null) {
+            mDatabaseReference.removeEventListener(mChildEventListener);
+        }
     }
 }

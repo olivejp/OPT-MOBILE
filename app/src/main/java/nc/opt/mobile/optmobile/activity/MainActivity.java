@@ -11,7 +11,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -51,7 +50,7 @@ import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
 import nc.opt.mobile.optmobile.utils.RequestQueueSingleton;
 import nc.opt.mobile.optmobile.utils.Utilities;
 
-import static nc.opt.mobile.optmobile.provider.services.AgencyService.populateContentProviderFromAsset;
+import static nc.opt.mobile.optmobile.provider.services.AgenceService.populateContentProviderFromAsset;
 import static nc.opt.mobile.optmobile.provider.services.ColisService.count;
 
 public class MainActivity extends AttachToPermissionActivity

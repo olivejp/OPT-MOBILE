@@ -7,11 +7,12 @@ import net.simonvt.schematic.annotation.ContentUri;
 import net.simonvt.schematic.annotation.InexactContentUri;
 import net.simonvt.schematic.annotation.TableEndpoint;
 
-import nc.opt.mobile.optmobile.provider.entity.ActualiteEntity;
-import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
-import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
+import nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface;
+import nc.opt.mobile.optmobile.provider.interfaces.AgenceInterface;
+import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
+import nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface;
 
-import static nc.opt.mobile.optmobile.provider.entity.ActualiteEntity.ActualiteInterface.TYPE;
+import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.TYPE;
 
 /**
  * Created by orlanth23 on 10/08/2017.
@@ -37,14 +38,14 @@ public class OptProvider {
         @ContentUri(
                 path = "agency",
                 type = "vnd.android.cursor.dir/list",
-                defaultSort = AgencyInterface.OBJECTID + " ASC")
+                defaultSort = AgenceInterface.OBJECTID + " ASC")
         public static final Uri LIST_AGENCY = Uri.parse("content://" + AUTHORITY + "/" + AGENCY);
 
         @InexactContentUri(
                 path = "agency/#",
                 name = "AGENCY_ID",
                 type = "vnd.android.cursor.item/list",
-                whereColumn = AgencyInterface.OBJECTID,
+                whereColumn = AgenceInterface.OBJECTID,
                 pathSegment = 1)
         public static Uri withId(long id) {
             return Uri.parse("content://" + AUTHORITY + "/" + AGENCY + "/" + id);
@@ -60,14 +61,14 @@ public class OptProvider {
         @ContentUri(
                 path = "colis",
                 type = "vnd.android.cursor.dir/list",
-                defaultSort = ColisEntity.ColisInterface.ID_COLIS + " ASC")
+                defaultSort = ColisInterface.ID_COLIS + " ASC")
         public static final Uri LIST_COLIS = Uri.parse("content://" + AUTHORITY + "/" + COLIS);
 
         @InexactContentUri(
                 path = "colis/*",
                 name = "COLIS_ID",
                 type = "vnd.android.cursor.item/list",
-                whereColumn = ColisEntity.ColisInterface.ID_COLIS,
+                whereColumn = ColisInterface.ID_COLIS,
                 pathSegment = 1)
         public static Uri withId(String id) {
             return Uri.parse("content://" + AUTHORITY + "/" + COLIS + "/" + id);
@@ -83,14 +84,14 @@ public class OptProvider {
         @ContentUri(
                 path = "etape_acheminement",
                 type = "vnd.android.cursor.dir/list",
-                defaultSort = EtapeAcheminementEntity.EtapeAcheminementInterface.ID_ETAPE_ACHEMINEMENT + " ASC")
+                defaultSort = EtapeAcheminementInterface.ID_ETAPE_ACHEMINEMENT + " ASC")
         public static final Uri LIST_ETAPE = Uri.parse("content://" + AUTHORITY + "/" + ETAPE_ACHEMINEMENT);
 
         @InexactContentUri(
                 path = "etape_acheminement/#",
                 name = "ETAPE_ACHEMINEMENT_ID",
                 type = "vnd.android.cursor.item/item",
-                whereColumn = EtapeAcheminementEntity.EtapeAcheminementInterface.ID_ETAPE_ACHEMINEMENT,
+                whereColumn = EtapeAcheminementInterface.ID_ETAPE_ACHEMINEMENT,
                 pathSegment = 1)
         public static Uri withId(long id) {
             return Uri.parse("content://" + AUTHORITY + "/" + ETAPE_ACHEMINEMENT + "/" + id);
@@ -100,10 +101,10 @@ public class OptProvider {
                 path = "etape_acheminement/id_colis/*",
                 name = "COLIS_ID",
                 type = "vnd.android.cursor.dir/list",
-                whereColumn = EtapeAcheminementEntity.EtapeAcheminementInterface.ID_COLIS,
+                whereColumn = EtapeAcheminementInterface.ID_COLIS,
                 pathSegment = 2)
         public static Uri withIdColis(String idColis) {
-            return Uri.parse("content://" + AUTHORITY + "/" + ETAPE_ACHEMINEMENT + "/" + ColisEntity.ColisInterface.ID_COLIS + "/" + idColis);
+            return Uri.parse("content://" + AUTHORITY + "/" + ETAPE_ACHEMINEMENT + "/" + ColisInterface.ID_COLIS + "/" + idColis);
         }
     }
 
@@ -115,14 +116,14 @@ public class OptProvider {
         @ContentUri(
                 path = "actualite",
                 type = "vnd.android.cursor.dir/list",
-                defaultSort = ActualiteEntity.ActualiteInterface.ID_ACTUALITE + " ASC")
+                defaultSort = ActualiteInterface.ID_ACTUALITE + " ASC")
         public static final Uri LIST_ACTUALITE = Uri.parse("content://" + AUTHORITY + "/" + ACTUALITE);
 
         @InexactContentUri(
                 path = "actualite/#",
                 name = "ACTUALITE_ID",
                 type = "vnd.android.cursor.item/item",
-                whereColumn = ActualiteEntity.ActualiteInterface.ID_ACTUALITE,
+                whereColumn = ActualiteInterface.ID_ACTUALITE,
                 pathSegment = 1)
         public static Uri withId(int id) {
             return Uri.parse("content://" + AUTHORITY + "/" + ACTUALITE + "/" + id);

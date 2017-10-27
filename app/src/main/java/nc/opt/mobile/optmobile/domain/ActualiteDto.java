@@ -10,6 +10,7 @@ import android.os.Parcelable;
 public class ActualiteDto implements Parcelable {
 
     private String idActualite;
+    private String idFirebase;
     private String date;
     private String titre;
     private String type;

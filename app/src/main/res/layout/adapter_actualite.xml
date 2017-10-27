@@ -38,7 +38,7 @@
                 android:textColor="@android:color/white"
                 app:layout_constraintBottom_toTopOf="@+id/date_actualite"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@+id/dismiss"
+                app:layout_constraintRight_toLeftOf="@+id/image_button_dismiss"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Le forfait M est arrivé !" />
 
@@ -55,7 +55,7 @@
                 tools:text="25 oct." />
 
             <ImageButton
-                android:id="@+id/dismiss"
+                android:id="@+id/image_button_dismiss"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginTop="8dp"

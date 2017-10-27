@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -62,6 +63,9 @@ public class ActualiteAdapter extends RecyclerView.Adapter<ActualiteAdapter.View
 
     class ViewHolderActualite extends RecyclerView.ViewHolder {
         final View mView;
+
+        @BindView(R.id.image_button_dismiss)
+        ImageButton mImageButtonDismiss;
 
         @BindView(R.id.titre_actualite)
         TextView mTitre;

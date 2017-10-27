@@ -6,75 +6,75 @@ import android.os.Parcelable;
 import org.chalup.microorm.annotations.Column;
 import org.parceler.ParcelConstructor;
 
-import nc.opt.mobile.optmobile.provider.AgencyInterface;
+import nc.opt.mobile.optmobile.provider.interfaces.AgenceInterface;
 
 /**
  * Created by orlanth23 on 08/08/2017.
  */
 
-public class Agency implements Parcelable{
-    @Column(AgencyInterface.OBJECTID)
+public class Agence implements Parcelable{
+    @Column(AgenceInterface.OBJECTID)
     int OBJECTID;
 
-    @Column(AgencyInterface.TEXTE)
+    @Column(AgenceInterface.TEXTE)
     String TEXTE;
 
-    @Column(AgencyInterface.TYPE)
+    @Column(AgenceInterface.TYPE)
     String TYPE;
 
-    @Column(AgencyInterface.NOM)
+    @Column(AgenceInterface.NOM)
     String NOM;
 
-    @Column(AgencyInterface.ADRESSE)
+    @Column(AgenceInterface.ADRESSE)
     String ADRESSE;
 
-    @Column(AgencyInterface.CODE_POSTAL)
+    @Column(AgenceInterface.CODE_POSTAL)
     String CODE_POSTAL;
 
-    @Column(AgencyInterface.VILLE)
+    @Column(AgenceInterface.VILLE)
     String VILLE;
 
-    @Column(AgencyInterface.TEL)
+    @Column(AgenceInterface.TEL)
     String TEL;
 
-    @Column(AgencyInterface.FAX)
+    @Column(AgenceInterface.FAX)
     String FAX;
 
-    @Column(AgencyInterface.HORAIRE)
+    @Column(AgenceInterface.HORAIRE)
     String HORAIRE;
 
-    @Column(AgencyInterface.DAB_INTERNE)
+    @Column(AgenceInterface.DAB_INTERNE)
     int DAB_INTERNE;
 
-    @Column(AgencyInterface.DAB_EXTERNE)
+    @Column(AgenceInterface.DAB_EXTERNE)
     int DAB_EXTERNE;
 
-    @Column(AgencyInterface.CONSEILLER_FINANCIER)
+    @Column(AgenceInterface.CONSEILLER_FINANCIER)
     int CONSEILLER_FINANCIER;
 
-    @Column(AgencyInterface.CONSEILLER_TELECOM)
+    @Column(AgenceInterface.CONSEILLER_TELECOM)
     int CONSEILLER_TELECOM;
 
-    @Column(AgencyInterface.CONSEILLER_POLYVALENT)
+    @Column(AgenceInterface.CONSEILLER_POLYVALENT)
     int CONSEILLER_POLYVALENT;
 
-    @Column(AgencyInterface.CONSEILLER_POSTAL)
+    @Column(AgenceInterface.CONSEILLER_POSTAL)
     int CONSEILLER_POSTAL;
 
-    @Column(AgencyInterface.GLOBALID)
+    @Column(AgenceInterface.GLOBALID)
     String GLOBALID;
 
-    @Column(AgencyInterface.LATITUDE)
+    @Column(AgenceInterface.LATITUDE)
     double LATITUDE;
 
-    @Column(AgencyInterface.LONGITUDE)
+    @Column(AgenceInterface.LONGITUDE)
     double LONGITUDE;
 
-    @Column(AgencyInterface.TYPE_GEOMETRY)
+    @Column(AgenceInterface.TYPE_GEOMETRY)
     String TYPE_GEOMETRY;
 
     @ParcelConstructor
-    public Agency(int OBJECTID, String TEXTE, String TYPE, String NOM, String ADRESSE, String CODE_POSTAL, String VILLE, String TEL, String FAX, String HORAIRE, int DAB_INTERNE, int DAB_EXTERNE, int CONSEILLER_FINANCIER, int CONSEILLER_TELECOM, int CONSEILLER_POLYVALENT, int CONSEILLER_POSTAL, String GLOBALID, double LATITUDE, double LONGITUDE, String TYPE_GEOMETRY) {
+    public Agence(int OBJECTID, String TEXTE, String TYPE, String NOM, String ADRESSE, String CODE_POSTAL, String VILLE, String TEL, String FAX, String HORAIRE, int DAB_INTERNE, int DAB_EXTERNE, int CONSEILLER_FINANCIER, int CONSEILLER_TELECOM, int CONSEILLER_POLYVALENT, int CONSEILLER_POSTAL, String GLOBALID, double LATITUDE, double LONGITUDE, String TYPE_GEOMETRY) {
         this.OBJECTID = OBJECTID;
         this.TEXTE = TEXTE;
         this.TYPE = TYPE;
@@ -287,7 +287,7 @@ public class Agency implements Parcelable{
         dest.writeString(this.TYPE_GEOMETRY);
     }
 
-    protected Agency(Parcel in) {
+    protected Agence(Parcel in) {
         this.OBJECTID = in.readInt();
         this.TEXTE = in.readString();
         this.TYPE = in.readString();
@@ -310,15 +310,15 @@ public class Agency implements Parcelable{
         this.TYPE_GEOMETRY = in.readString();
     }
 
-    public static final Creator<Agency> CREATOR = new Creator<Agency>() {
+    public static final Creator<Agence> CREATOR = new Creator<Agence>() {
         @Override
-        public Agency createFromParcel(Parcel source) {
-            return new Agency(source);
+        public Agence createFromParcel(Parcel source) {
+            return new Agence(source);
         }
 
         @Override
-        public Agency[] newArray(int size) {
-            return new Agency[size];
+        public Agence[] newArray(int size) {
+            return new Agence[size];
         }
     };
 }
