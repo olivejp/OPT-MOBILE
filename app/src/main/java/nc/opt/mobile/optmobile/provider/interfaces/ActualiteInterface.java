@@ -1,9 +1,11 @@
 package nc.opt.mobile.optmobile.provider.interfaces;
 
 import net.simonvt.schematic.annotation.AutoIncrement;
+import net.simonvt.schematic.annotation.ConflictResolutionType;
 import net.simonvt.schematic.annotation.DataType;
 import net.simonvt.schematic.annotation.NotNull;
 import net.simonvt.schematic.annotation.PrimaryKey;
+import net.simonvt.schematic.annotation.Unique;
 
 import static net.simonvt.schematic.annotation.DataType.Type.INTEGER;
 import static net.simonvt.schematic.annotation.DataType.Type.TEXT;
@@ -20,6 +22,7 @@ public interface ActualiteInterface {
     @NotNull
     String ID_ACTUALITE = "id_actualite";
 
+    @Unique(onConflict = ConflictResolutionType.ABORT)
     @DataType(TEXT)
     String ID_FIREBASE = "id_firebase";
 
@@ -35,9 +38,9 @@ public interface ActualiteInterface {
     @DataType(TEXT)
     String CONTENU = "contenu";
 
-    @DataType(TEXT)
+    @DataType(INTEGER)
     String DISMISSABLE = "dismissable";
 
-    @DataType(TEXT)
+    @DataType(INTEGER)
     String DISMISSED = "dismissed";
 }

@@ -28,7 +28,7 @@ import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import static nc.opt.mobile.optmobile.provider.services.ColisService.listFromProvider;
 
 /**
- * Fragment that shows list of followed parcel
+ * Fragment that shows mList of followed parcel
  * -FAB allow to add a parcel
  */
 public class GestionColisFragment extends Fragment implements ProviderObserver.ProviderObserverListener {
@@ -43,6 +43,8 @@ public class GestionColisFragment extends Fragment implements ProviderObserver.P
 
     @BindView(R.id.text_explicatif_suivi_colis)
     TextView textExplicatifSuiviColis;
+
+    private List<ColisEntity> mList;
 
     public static GestionColisFragment newInstance(boolean twoPane) {
         GestionColisFragment fragment = new GestionColisFragment();
@@ -98,15 +100,14 @@ public class GestionColisFragment extends Fragment implements ProviderObserver.P
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mActivity);
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
-        // get the list from the provider
-        List<ColisEntity> list = listFromProvider(mActivity);
-        mColisAdapter = new ColisAdapter(mActivity, list, mTwoPane);
+        // get the mList from the provider
+        mList = listFromProvider(mActivity);
+        mColisAdapter = new ColisAdapter(mActivity, mList, mTwoPane);
         mRecyclerView.setAdapter(mColisAdapter);
         mColisAdapter.notifyDataSetChanged();
 
-        // change visibility depending on the list content
-        textExplicatifSuiviColis.setVisibility(list.isEmpty() ? View.VISIBLE : View.GONE);
-        mRecyclerView.setVisibility(list.isEmpty() ? View.GONE : View.VISIBLE);
+        // change visibility depending on the mList content
+        changeVisibility();
 
         return rootView;
     }
@@ -116,5 +117,11 @@ public class GestionColisFragment extends Fragment implements ProviderObserver.P
         mColisAdapter.getmColisList().clear();
         mColisAdapter.getmColisList().addAll(listFromProvider(mActivity));
         mColisAdapter.notifyDataSetChanged();
+        changeVisibility();
+    }
+
+    private void changeVisibility() {
+        textExplicatifSuiviColis.setVisibility(mList.isEmpty() ? View.VISIBLE : View.GONE);
+        mRecyclerView.setVisibility(mList.isEmpty() ? View.GONE : View.VISIBLE);
     }
 }

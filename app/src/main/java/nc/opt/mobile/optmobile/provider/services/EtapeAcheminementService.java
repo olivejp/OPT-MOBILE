@@ -14,12 +14,12 @@ import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
-import static nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity.EtapeAcheminementInterface.COMMENTAIRE;
-import static nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity.EtapeAcheminementInterface.DATE;
-import static nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity.EtapeAcheminementInterface.DESCRIPTION;
-import static nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity.EtapeAcheminementInterface.ID_COLIS;
-import static nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity.EtapeAcheminementInterface.LOCALISATION;
-import static nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity.EtapeAcheminementInterface.PAYS;
+import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.COMMENTAIRE;
+import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.DATE;
+import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.DESCRIPTION;
+import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.ID_COLIS;
+import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.LOCALISATION;
+import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.PAYS;
 import static nc.opt.mobile.optmobile.utils.DateConverter.convertDateDtoToEntity;
 
 /**

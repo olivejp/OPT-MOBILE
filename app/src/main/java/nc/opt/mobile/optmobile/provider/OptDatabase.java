@@ -5,7 +5,6 @@ import android.database.sqlite.SQLiteDatabase;
 
 import net.simonvt.schematic.annotation.Database;
 import net.simonvt.schematic.annotation.OnCreate;
-import net.simonvt.schematic.annotation.OnUpgrade;
 import net.simonvt.schematic.annotation.Table;
 
 import nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface;
@@ -16,6 +15,8 @@ import nc.opt.mobile.optmobile.utils.DateConverter;
 
 import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.CONTENU;
 import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.DATE;
+import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.DISMISSABLE;
+import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.DISMISSED;
 import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.TITRE;
 import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.TYPE;
 
@@ -25,7 +26,7 @@ import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.TYP
 
 @Database(version = OptDatabase.VERSION, packageName = "nc.opt.mobile.optmobile")
 public class OptDatabase {
-    static final int VERSION = 18;
+    static final int VERSION = 21;
 
     private OptDatabase() {
     }
@@ -44,17 +45,10 @@ public class OptDatabase {
 
     @OnCreate
     public static void onCreate(Context context, SQLiteDatabase db) {
-        String sql = "INSERT INTO " + ACTUALITE + " (" + TITRE + "," + CONTENU + "," + DATE + "," + TYPE + ") ";
+        String sql = "INSERT INTO " + ACTUALITE + " (" + TITRE + "," + CONTENU + "," + DATE + "," + TYPE + "," + DISMISSABLE + ","+DISMISSED+") ";
         sql += "VALUES ('Bienvenue', 'Votre application Colis NC vous permet de suivre vos colis\nCommencez à l''utiliser dès à présent', ";
-        sql += "'" + String.valueOf(DateConverter.getNowEntity()) + "', '1')";
-        db.execSQL(sql);
-    }
+        sql += "'" + String.valueOf(DateConverter.getNowEntity()) + "', '1', 1, 0)";
 
-    @OnUpgrade
-    public static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        String sql = "INSERT INTO " + ACTUALITE + " (" + TITRE + "," + CONTENU + "," + DATE + "," + TYPE + ") ";
-        sql += "VALUES ('Bienvenue', 'Votre application Colis NC vous permet de suivre vos colis\nCommencez à l''utiliser dès à présent', ";
-        sql += "'" + String.valueOf(DateConverter.getNowEntity()) + "', '1')";
         db.execSQL(sql);
     }
 }

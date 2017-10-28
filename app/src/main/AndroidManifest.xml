@@ -106,6 +106,7 @@
             android:name=".service.SyncColisService"
             android:exported="false" />
 
+        <activity android:name=".activity.AddActualiteActivity"></activity>
     </application>
 
 </manifest>

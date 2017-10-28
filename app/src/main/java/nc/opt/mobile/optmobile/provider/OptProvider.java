@@ -12,6 +12,7 @@ import nc.opt.mobile.optmobile.provider.interfaces.AgenceInterface;
 import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
 import nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface;
 
+import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.ID_FIREBASE;
 import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.TYPE;
 
 /**
@@ -127,6 +128,16 @@ public class OptProvider {
                 pathSegment = 1)
         public static Uri withId(int id) {
             return Uri.parse("content://" + AUTHORITY + "/" + ACTUALITE + "/" + id);
+        }
+
+        @InexactContentUri(
+                path = "actualite/id_firebase/*",
+                name = "FIREBASE_ID",
+                type = "vnd.android.cursor.item/item",
+                whereColumn = ActualiteInterface.ID_FIREBASE,
+                pathSegment = 2)
+        public static Uri withFirebaseId(String firebaseId) {
+            return Uri.parse("content://" + AUTHORITY + "/" + ACTUALITE + "/" + ID_FIREBASE + "/" + firebaseId);
         }
 
         @InexactContentUri(
