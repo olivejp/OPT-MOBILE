@@ -58,6 +58,7 @@ public class AddActualiteActivity extends AppCompatActivity {
         actualiteDto.setTitre(editTitre.getText().toString());
         actualiteDto.setContenu(editContenu.getText().toString());
         actualiteDto.setDismissable(check_dismissable.isChecked());
+        actualiteDto.setDismissed(false);
         actualiteDto.setDate(DateConverter.getNowDto());
         return actualiteDto;
     }

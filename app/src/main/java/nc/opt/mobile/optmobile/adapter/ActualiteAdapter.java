@@ -54,6 +54,12 @@ public class ActualiteAdapter extends RecyclerView.Adapter<ActualiteAdapter.View
         holder.mDate.setText(DateConverter.convertDateEntityToUi(holder.mActualite.getDate()));
         holder.mTitre.setText(holder.mActualite.getTitre());
         holder.mContenu.setText(holder.mActualite.getContenu());
+        holder.mImageButtonDismiss.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //todo ecrire nouvelle methode pour passer dissmissed a true dans le service
+            }
+        });
     }
 
     @Override

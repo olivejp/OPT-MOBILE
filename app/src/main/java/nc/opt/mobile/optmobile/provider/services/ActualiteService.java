@@ -70,6 +70,25 @@ public class ActualiteService {
         return context.getContentResolver().delete(OptProvider.ListActualite.LIST_ACTUALITE, where, args);
     }
 
+    public static List<ActualiteEntity> listActiveActualite(Context context) {
+        List<ActualiteEntity> actualiteList = new ArrayList<>();
+
+        // Query the content provider to get a cursor of Etape
+        String sortOrder = ActualiteInterface.DATE + " DESC";
+        String where = DISMISSED + " = ?";
+        String[] args = new String[]{"0"};
+        Cursor cursorListActualite = context.getContentResolver().query(OptProvider.ListActualite.LIST_ACTUALITE, null, where, args, sortOrder);
+
+        if (cursorListActualite != null) {
+            while (cursorListActualite.moveToNext()) {
+                ActualiteEntity actualiteEntity = getFromCursor(cursorListActualite);
+                actualiteList.add(actualiteEntity);
+            }
+            cursorListActualite.close();
+        }
+        return actualiteList;
+    }
+
     public static List<ActualiteEntity> listFromProvider(Context context) {
         List<ActualiteEntity> actualiteList = new ArrayList<>();
 
