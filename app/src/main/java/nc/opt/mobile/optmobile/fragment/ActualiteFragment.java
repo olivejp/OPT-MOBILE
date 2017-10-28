@@ -99,8 +99,8 @@ public class ActualiteFragment extends Fragment implements ProviderObserver.Prov
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     ActualiteDto actualiteDto = dataSnapshot.getValue(ActualiteDto.class);
                     actualiteDto.setIdFirebase(dataSnapshot.getKey());
-                    if (ActualiteService.getByFirebaseId(getContext(), actualiteDto.getIdFirebase()) == null) {
-                        ActualiteService.insertActualite(getContext(), actualiteDto);
+                    if (ActualiteService.existWithFirebaseId(mActivity, actualiteDto.getIdFirebase())) {
+                        ActualiteService.insertActualite(mActivity, actualiteDto);
                     }
                 }
 
@@ -108,8 +108,10 @@ public class ActualiteFragment extends Fragment implements ProviderObserver.Prov
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                     ActualiteDto actualiteDto = dataSnapshot.getValue(ActualiteDto.class);
                     actualiteDto.setIdFirebase(dataSnapshot.getKey());
-                    if (ActualiteService.getByFirebaseId(getContext(), actualiteDto.getIdFirebase()) == null) {
-                        ActualiteService.updateActualite(getContext(), actualiteDto);
+                    ActualiteEntity entity = ActualiteService.getByFirebaseId(mActivity, actualiteDto.getIdFirebase());
+                    if (entity != null) {
+                        actualiteDto.setIdActualite(String.valueOf(entity.getIdActualite()));
+                        ActualiteService.updateActualite(mActivity, actualiteDto);
                     }
                 }
 
@@ -117,8 +119,8 @@ public class ActualiteFragment extends Fragment implements ProviderObserver.Prov
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
                     ActualiteDto actualiteDto = dataSnapshot.getValue(ActualiteDto.class);
                     actualiteDto.setIdFirebase(dataSnapshot.getKey());
-                    if (ActualiteService.getByFirebaseId(getContext(), actualiteDto.getIdFirebase()) != null) {
-                        ActualiteService.deleteByIdFirebase(getContext(), actualiteDto.getIdFirebase());
+                    if (ActualiteService.existWithFirebaseId(mActivity, actualiteDto.getIdFirebase())) {
+                        ActualiteService.deleteByIdFirebase(mActivity, actualiteDto.getIdFirebase());
                     }
                 }
 
@@ -176,7 +178,7 @@ public class ActualiteFragment extends Fragment implements ProviderObserver.Prov
 
         // get the list from the provider
         List<ActualiteEntity> list = ActualiteService.listActiveActualite(mActivity);
-        mActualiteFragment = new ActualiteAdapter(list);
+        mActualiteFragment = new ActualiteAdapter(getContext(), list);
         mRecyclerView.setAdapter(mActualiteFragment);
         mActualiteFragment.notifyDataSetChanged();
 
@@ -190,7 +192,7 @@ public class ActualiteFragment extends Fragment implements ProviderObserver.Prov
     @Override
     public void onProviderChange() {
         mActualiteFragment.getmActualites().clear();
-        mActualiteFragment.getmActualites().addAll(ActualiteService.listFromProvider(mActivity));
+        mActualiteFragment.getmActualites().addAll(ActualiteService.listActiveActualite(mActivity));
         mActualiteFragment.notifyDataSetChanged();
     }
 

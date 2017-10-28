@@ -17,7 +17,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.domain.ActualiteDto;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.entity.ActualiteEntity;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
@@ -95,6 +94,8 @@ public class AddColisFragment extends Fragment {
                 actualiteEntity.setType("1");
                 actualiteEntity.setContenu("Vous avez ajouté " + idColis + " au suivi des colis. Vous serez notifié de son évolution lors de son acheminement.");
                 actualiteEntity.setDate(DateConverter.getNowEntity());
+                actualiteEntity.setDismissed("0");
+                actualiteEntity.setDismissable("1");
                 ActualiteService.insertActualite(mActivity, actualiteEntity);
 
                 mActivity.finish();

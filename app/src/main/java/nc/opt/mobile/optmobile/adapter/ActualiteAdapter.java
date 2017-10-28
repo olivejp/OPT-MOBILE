@@ -1,5 +1,6 @@
 package nc.opt.mobile.optmobile.adapter;
 
+import android.content.Context;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,7 +15,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
+import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.entity.ActualiteEntity;
+import nc.opt.mobile.optmobile.provider.services.ActualiteService;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
 /**
@@ -25,8 +28,11 @@ public class ActualiteAdapter extends RecyclerView.Adapter<ActualiteAdapter.View
 
     private List<ActualiteEntity> mActualites;
 
-    public ActualiteAdapter(List<ActualiteEntity> actualites) {
+    private Context mContext;
+
+    public ActualiteAdapter(Context context, List<ActualiteEntity> actualites) {
         mActualites = actualites;
+        mContext = context;
     }
 
     public ActualiteAdapter() {
@@ -54,12 +60,18 @@ public class ActualiteAdapter extends RecyclerView.Adapter<ActualiteAdapter.View
         holder.mDate.setText(DateConverter.convertDateEntityToUi(holder.mActualite.getDate()));
         holder.mTitre.setText(holder.mActualite.getTitre());
         holder.mContenu.setText(holder.mActualite.getContenu());
-        holder.mImageButtonDismiss.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //todo ecrire nouvelle methode pour passer dissmissed a true dans le service
-            }
-        });
+        if (holder.mActualite.getDismissable().equals("1")) {
+            holder.mImageButtonDismiss.setVisibility(View.VISIBLE);
+            holder.mImageButtonDismiss.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ActualiteService.dismiss(mContext, holder.mActualite.getIdActualite());
+                    mContext.getContentResolver().notifyChange(OptProvider.ListActualite.LIST_ACTUALITE, null);
+                }
+            });
+        } else {
+            holder.mImageButtonDismiss.setVisibility(View.GONE);
+        }
     }
 
     @Override

@@ -64,6 +64,14 @@ public class ActualiteService {
         return context.getContentResolver().delete(OptProvider.ListActualite.LIST_ACTUALITE, where, args);
     }
 
+    public static int dismiss(Context context, int id) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(ActualiteInterface.DISMISSED, "1");
+        String where = ActualiteInterface.ID_ACTUALITE + " = ?";
+        String[] args = new String[]{String.valueOf(id)};
+        return context.getContentResolver().update(OptProvider.ListActualite.LIST_ACTUALITE, contentValues, where, args);
+    }
+
     public static int deleteByIdFirebase(Context context, String firebaseId) {
         String where = ActualiteInterface.ID_FIREBASE + " = ?";
         String[] args = new String[]{firebaseId};
@@ -116,6 +124,16 @@ public class ActualiteService {
             cursor.close();
         }
         return actualiteEntity;
+    }
+
+    public static boolean existWithFirebaseId(Context context, String firebaseId) {
+        boolean exist = false;
+        Cursor cursor = context.getContentResolver().query(OptProvider.ListActualite.withFirebaseId(firebaseId), null, null, null, null);
+        if (cursor != null) {
+            exist = cursor.getCount() > 0;
+            cursor.close();
+        }
+        return exist;
     }
 
     public static ActualiteEntity getByFirebaseId(Context context, String firebaseId) {

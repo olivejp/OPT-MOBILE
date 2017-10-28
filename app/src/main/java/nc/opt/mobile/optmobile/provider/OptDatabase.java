@@ -47,7 +47,7 @@ public class OptDatabase {
     public static void onCreate(Context context, SQLiteDatabase db) {
         String sql = "INSERT INTO " + ACTUALITE + " (" + TITRE + "," + CONTENU + "," + DATE + "," + TYPE + "," + DISMISSABLE + ","+DISMISSED+") ";
         sql += "VALUES ('Bienvenue', 'Votre application Colis NC vous permet de suivre vos colis\nCommencez à l''utiliser dès à présent', ";
-        sql += "'" + String.valueOf(DateConverter.getNowEntity()) + "', '1', 1, 0)";
+        sql += "'" + String.valueOf(DateConverter.getNowEntity()) + "', '1', 0, 0)";
 
         db.execSQL(sql);
     }
