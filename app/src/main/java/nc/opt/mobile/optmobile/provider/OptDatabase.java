@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import net.simonvt.schematic.annotation.Database;
 import net.simonvt.schematic.annotation.OnCreate;
+import net.simonvt.schematic.annotation.OnUpgrade;
 import net.simonvt.schematic.annotation.Table;
 
 import nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface;
@@ -45,10 +46,19 @@ public class OptDatabase {
 
     @OnCreate
     public static void onCreate(Context context, SQLiteDatabase db) {
-        String sql = "INSERT INTO " + ACTUALITE + " (" + TITRE + "," + CONTENU + "," + DATE + "," + TYPE + "," + DISMISSABLE + ","+DISMISSED+") ";
-        sql += "VALUES ('Bienvenue', 'Votre application Colis NC vous permet de suivre vos colis\nCommencez à l''utiliser dès à présent', ";
-        sql += "'" + String.valueOf(DateConverter.getNowEntity()) + "', '1', 0, 0)";
+        String sql = "INSERT INTO " + ACTUALITE + " (" + TITRE + "," + CONTENU + "," + DATE + "," + TYPE + "," + DISMISSED + "," + DISMISSABLE + ") ";
+        sql += "VALUES ('Bienvenue', 'Votre application Colis NC vous permet de suivre l''acheminement de vos colis à destination de Nouvelle Calédonie.\n" +
+                "Commencez à l''utiliser dès à présent en ouvrant le menu latéral droit puis en cliquant sur Suivi des colis.', ";
+        sql += "'" + DateConverter.getNowEntity() + "', '1', 0, 0)";
+        db.execSQL(sql);
+    }
 
+    @OnUpgrade
+    public static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        String sql = "INSERT INTO " + ACTUALITE + " (" + TITRE + "," + CONTENU + "," + DATE + "," + TYPE + "," + DISMISSED + "," + DISMISSABLE + ") ";
+        sql += "VALUES ('Bienvenue', 'Votre application Colis NC vous permet de suivre l''acheminement de vos colis à destination de Nouvelle Calédonie.\n" +
+                "Commencez à l''utiliser dès à présent en ouvrant le menu latéral droit puis en cliquant sur Suivi des colis.', ";
+        sql += "'" + DateConverter.getNowEntity() + "', '1', 0, 0)";
         db.execSQL(sql);
     }
 }

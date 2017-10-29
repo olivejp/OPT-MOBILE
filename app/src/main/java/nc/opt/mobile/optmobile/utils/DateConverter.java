@@ -20,14 +20,17 @@ public class DateConverter {
 
     /**
      * Transformation d'une date de type yyyyMMddHHmmss vers le format dd MMM yy HH:mm
+     *
      * @param dateEntity
      * @return
      */
     public static String convertDateEntityToUi(Long dateEntity) {
-        try {
-            return simpleUiDateFormat.format(simpleEntityDateFormat.parse(String.valueOf(dateEntity)));
-        } catch (ParseException e) {
-            Log.e(TAG, e.getMessage(), e);
+        if (dateEntity != null) {
+            try {
+                return simpleUiDateFormat.format(simpleEntityDateFormat.parse(String.valueOf(dateEntity)));
+            } catch (ParseException e) {
+                Log.e(TAG, e.getMessage(), e);
+            }
         }
         return null;
     }
