@@ -7,8 +7,11 @@ import net.simonvt.schematic.annotation.ContentUri;
 import net.simonvt.schematic.annotation.InexactContentUri;
 import net.simonvt.schematic.annotation.TableEndpoint;
 
+import nc.opt.mobile.optmobile.provider.entity.ActualiteEntity;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
+
+import static nc.opt.mobile.optmobile.provider.entity.ActualiteEntity.ActualiteInterface.TYPE;
 
 /**
  * Created by orlanth23 on 10/08/2017.
@@ -21,6 +24,7 @@ public class OptProvider {
     private static final String AGENCY = "agency";
     private static final String COLIS = "colis";
     private static final String ETAPE_ACHEMINEMENT = "etape_acheminement";
+    private static final String ACTUALITE = "actualite";
 
     private OptProvider() {
     }
@@ -100,6 +104,38 @@ public class OptProvider {
                 pathSegment = 2)
         public static Uri withIdColis(String idColis) {
             return Uri.parse("content://" + AUTHORITY + "/" + ETAPE_ACHEMINEMENT + "/" + ColisEntity.ColisInterface.ID_COLIS + "/" + idColis);
+        }
+    }
+
+    @TableEndpoint(table = OptDatabase.ACTUALITE)
+    public static class ListActualite {
+        private ListActualite() {
+        }
+
+        @ContentUri(
+                path = "actualite",
+                type = "vnd.android.cursor.dir/list",
+                defaultSort = ActualiteEntity.ActualiteInterface.ID_ACTUALITE + " ASC")
+        public static final Uri LIST_ACTUALITE = Uri.parse("content://" + AUTHORITY + "/" + ACTUALITE);
+
+        @InexactContentUri(
+                path = "actualite/#",
+                name = "ACTUALITE_ID",
+                type = "vnd.android.cursor.item/item",
+                whereColumn = ActualiteEntity.ActualiteInterface.ID_ACTUALITE,
+                pathSegment = 1)
+        public static Uri withId(int id) {
+            return Uri.parse("content://" + AUTHORITY + "/" + ACTUALITE + "/" + id);
+        }
+
+        @InexactContentUri(
+                path = "actualite/type/*",
+                name = "TYPE",
+                type = "vnd.android.cursor.dir/list",
+                whereColumn = TYPE,
+                pathSegment = 2)
+        public static Uri withType(String type) {
+            return Uri.parse("content://" + AUTHORITY + "/" + ACTUALITE + "/" + TYPE + "/" + type);
         }
     }
 }

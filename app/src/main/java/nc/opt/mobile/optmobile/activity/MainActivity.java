@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -42,6 +43,7 @@ import java.util.concurrent.ExecutionException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
+import nc.opt.mobile.optmobile.fragment.ActualiteFragment;
 import nc.opt.mobile.optmobile.interfaces.AttachToPermissionActivity;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.ProviderObserver;
@@ -59,6 +61,8 @@ public class MainActivity extends AttachToPermissionActivity
 
     public static final String DIALOG_TAG_EXIT = "DIALOG_TAG_EXIT";
 
+    public static final String SAVED_ACTUALITE_FRAGMENT = "SAVED_ACTUALITE_FRAGMENT";
+
     public static final int RC_PERMISSION_LOCATION = 100;
     public static final int RC_PERMISSION_CALL_PHONE = 200;
     public static final int RC_PERMISSION_INTERNET = 300;
@@ -74,6 +78,8 @@ public class MainActivity extends AttachToPermissionActivity
     private ImageView mImageViewProfile;
     private Button mButtonConnexion;
     private TextView mProfilName;
+
+    private ActualiteFragment mActualiteFragment;
 
     @BindView(R.id.drawer_layout)
     DrawerLayout drawer;
@@ -169,6 +175,16 @@ public class MainActivity extends AttachToPermissionActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(SAVED_ACTUALITE_FRAGMENT)) {
+                mActualiteFragment = (ActualiteFragment) getSupportFragmentManager().getFragment(savedInstanceState, SAVED_ACTUALITE_FRAGMENT);
+            }
+        }
+        if (mActualiteFragment == null) {
+            mActualiteFragment = ActualiteFragment.newInstance();
+        }
+
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
@@ -182,7 +198,9 @@ public class MainActivity extends AttachToPermissionActivity
 
         defineAuthListener();
 
-        mButtonConnexion.setOnClickListener(new View.OnClickListener() {
+        mButtonConnexion.setOnClickListener(new View.OnClickListener()
+
+        {
             @Override
             public void onClick(View v) {
                 if (mFirebaseUser != null) {
@@ -195,20 +213,30 @@ public class MainActivity extends AttachToPermissionActivity
 
         // Define the toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
+
         ActionBar ab = getSupportActionBar();
-        if (ab != null) {
+        if (ab != null)
+
+        {
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
         // Si la permission Internet n'a pas été accordée on va la demander
-        if (!isInternetPermited()) {
+        if (!
+
+                isInternetPermited())
+
+        {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, RC_PERMISSION_INTERNET);
         }
 
         // Populate the contentProvider with assets, only the first time
         SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
-        if (!sharedPreferences.getBoolean(PREF_POPULATED, false)) {
+        if (!sharedPreferences.getBoolean(PREF_POPULATED, false))
+
+        {
             populateContentProviderFromAsset(this);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putBoolean(PREF_POPULATED, true);
@@ -221,16 +249,29 @@ public class MainActivity extends AttachToPermissionActivity
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
+
         updateBadge();
 
         // Appel de la premiere instance
-        RequestQueueSingleton.getInstance(this.getApplicationContext());
+        RequestQueueSingleton.getInstance(this.
+
+                getApplicationContext());
 
         // Enregistrement d'un observer pour écouter les modifications sur le ContentProvider
         ArrayList<Uri> uris = new ArrayList<>();
         uris.add(OptProvider.ListColis.LIST_COLIS);
         ProviderObserver providerObserver = ProviderObserver.getInstance();
         providerObserver.observe(this, this, uris);
+
+        // Création du premier fragment
+        getSupportFragmentManager().
+
+                beginTransaction().
+
+                replace(R.id.frame_main, mActualiteFragment).
+
+                commit();
+
     }
 
     @Override
@@ -303,6 +344,15 @@ public class MainActivity extends AttachToPermissionActivity
                 mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
             }
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mActualiteFragment != null) {
+            getSupportFragmentManager().putFragment(outState, SAVED_ACTUALITE_FRAGMENT, mActualiteFragment);
+        }
+
     }
 
     @Override

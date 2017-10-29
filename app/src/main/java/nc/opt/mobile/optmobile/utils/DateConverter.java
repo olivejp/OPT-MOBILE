@@ -69,8 +69,18 @@ public class DateConverter {
      *
      * @return Long
      */
-    public static Long getNowDto() {
+    public static Long getNowEntity() {
         Calendar cal = Calendar.getInstance();
         return Long.parseLong(simpleEntityDateFormat.format(cal.getTime()));
+    }
+
+    /**
+     * Va renvoyer la date du jour au format dd/MM/yyyy HH:mm:ss en String
+     *
+     * @return String
+     */
+    public static String getNowDto() {
+        Calendar cal = Calendar.getInstance();
+        return simpleDtoDateFormat.format(cal.getTime());
     }
 }
