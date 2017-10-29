@@ -10,11 +10,11 @@ import org.parceler.ParcelConstructor;
 @Parcel
 public class Feature {
     String type;
-    Agency properties;
+    Agence properties;
     Geometry geometry;
 
     @ParcelConstructor
-    public Feature(String type, Agency properties, Geometry geometry) {
+    public Feature(String type, Agence properties, Geometry geometry) {
         this.type = type;
         this.properties = properties;
         this.geometry = geometry;
@@ -28,11 +28,11 @@ public class Feature {
         this.type = type;
     }
 
-    public Agency getProperties() {
+    public Agence getProperties() {
         return properties;
     }
 
-    public void setProperties(Agency properties) {
+    public void setProperties(Agence properties) {
         this.properties = properties;
     }
 

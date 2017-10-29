@@ -44,6 +44,8 @@ public class DateConverter {
             return Long.parseLong(dateConverted);
         } catch (ParseException e) {
             Log.e(TAG, e.getMessage(), e);
+        } catch (NullPointerException e1) {
+            Log.e(TAG, e1.getMessage(), e1);
         }
         return 0L;
     }

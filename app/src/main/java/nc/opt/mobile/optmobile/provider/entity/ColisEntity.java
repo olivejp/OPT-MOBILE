@@ -1,14 +1,10 @@
 package nc.opt.mobile.optmobile.provider.entity;
 
-import net.simonvt.schematic.annotation.DataType;
-import net.simonvt.schematic.annotation.NotNull;
-import net.simonvt.schematic.annotation.PrimaryKey;
-
 import org.chalup.microorm.annotations.Column;
 
 import java.util.List;
 
-import static net.simonvt.schematic.annotation.DataType.Type.TEXT;
+import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
 
 /**
  * Created by 2761oli on 11/10/2017.
@@ -96,20 +92,4 @@ public class ColisEntity {
         this.etapeAcheminementArrayList = etapeAcheminementArrayList;
     }
 
-    public interface ColisInterface {
-
-        @DataType(TEXT)
-        @PrimaryKey
-        @NotNull
-        String ID_COLIS = "id_colis";
-
-        @DataType(TEXT)
-        String DESCRIPTION = "description";
-
-        @DataType(TEXT)
-        String LAST_UPDATE = "last_update";
-
-        @DataType(TEXT)
-        String LAST_UPDATE_SUCCESSFUL = "last_update_successful";
-    }
 }

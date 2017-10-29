@@ -33,8 +33,10 @@
 -keepclasseswithmembers class * {
     @retrofit2.http.* <methods>;
 }
--keep class nc.opt.mobile.** { *; }
+-keep class nc.opt.mobile.optmobile.** { *; }
 -keep class org.jsoup.**
 # -keep class android.support.v7.app.AlertDialog
 # -keep class android.content.DialogInterface.** {*;}
 # -keep class android.app.DialogFragment
+
+-keepclassmembers class nc.opt.mobile.optmobile.domain.** {*;}

@@ -3,6 +3,8 @@ package nc.opt.mobile.optmobile;
 import android.app.Application;
 
 import com.evernote.android.job.JobManager;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
 import nc.opt.mobile.optmobile.broadcast.NetworkReceiver;
 import nc.opt.mobile.optmobile.job.SyncColisJob;
@@ -31,5 +33,12 @@ public class App extends Application {
 
         // Lancement d'une synchro dès le début du programme
         SyncColisJob.launchImmediateJob();
+
+        FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
+                .setDeveloperModeEnabled(BuildConfig.DEBUG)
+                .build();
+        mFirebaseRemoteConfig.setConfigSettings(configSettings);
+        mFirebaseRemoteConfig.setDefaults(R.xml.remote_config_default);
     }
 }

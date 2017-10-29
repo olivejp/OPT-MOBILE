@@ -11,7 +11,7 @@ import org.chalup.microorm.MicroOrm;
 import java.util.ArrayList;
 import java.util.List;
 
-import nc.opt.mobile.optmobile.domain.Agency;
+import nc.opt.mobile.optmobile.domain.Agence;
 import nc.opt.mobile.optmobile.domain.Feature;
 import nc.opt.mobile.optmobile.domain.FeatureCollection;
 import nc.opt.mobile.optmobile.provider.OptProvider;
@@ -21,7 +21,7 @@ import nc.opt.mobile.optmobile.utils.Utilities;
  * Created by 2761oli on 23/10/2017.
  */
 
-public class AgencyService {
+public class AgenceService {
 
     private static final MicroOrm uOrm = new MicroOrm();
 
@@ -34,8 +34,8 @@ public class AgencyService {
         populateProviderFromCollection(context, featureCollection);
     }
 
-    private static Agency getFromCursor(Cursor cursor) {
-        return uOrm.fromCursor(cursor, Agency.class);
+    private static Agence getFromCursor(Cursor cursor) {
+        return uOrm.fromCursor(cursor, Agence.class);
     }
 
     /**
@@ -44,20 +44,20 @@ public class AgencyService {
      * @param context
      * @return List of recipe
      */
-    public static List<Agency> listFromProvider(Context context) {
-        ArrayList<Agency> agencyList = new ArrayList<>();
+    public static List<Agence> listFromProvider(Context context) {
+        ArrayList<Agence> agenceList = new ArrayList<>();
 
-        // Query the content provider to get a cursor of Agency
+        // Query the content provider to get a cursor of Agence
         Cursor cursorListAgency = context.getContentResolver().query(OptProvider.ListAgency.LIST_AGENCY, null, null, null, null);
 
         if (cursorListAgency != null) {
             while (cursorListAgency.moveToNext()) {
-                Agency agency = getFromCursor(cursorListAgency);
-                agencyList.add(agency);
+                Agence agence = getFromCursor(cursorListAgency);
+                agenceList.add(agence);
             }
             cursorListAgency.close();
         }
-        return agencyList;
+        return agenceList;
     }
 
     private static void populateProviderFromCollection(Context context, FeatureCollection featureCollection) {
@@ -66,17 +66,17 @@ public class AgencyService {
         context.getContentResolver().delete(OptProvider.ListAgency.LIST_AGENCY, null, null);
 
         ContentValues contentValues = new ContentValues();
-        Agency agency;
+        Agence agence;
         for (Feature feature : featureCollection.getFeatures()) {
             contentValues.clear();
-            agency = feature.getProperties();
-            agency.setTYPE_GEOMETRY(feature.getType());
+            agence = feature.getProperties();
+            agence.setTYPE_GEOMETRY(feature.getType());
             // Pour le moment seul les points sont gérés.
             if (feature.getGeometry().getType().equals("Point")) {
-                agency.setLONGITUDE(feature.getGeometry().getCoordinates()[0]);
-                agency.setLATITUDE(feature.getGeometry().getCoordinates()[1]);
+                agence.setLONGITUDE(feature.getGeometry().getCoordinates()[0]);
+                agence.setLATITUDE(feature.getGeometry().getCoordinates()[1]);
             }
-            context.getContentResolver().insert(OptProvider.ListAgency.LIST_AGENCY, uOrm.toContentValues(agency));
+            context.getContentResolver().insert(OptProvider.ListAgency.LIST_AGENCY, uOrm.toContentValues(agence));
         }
     }
 

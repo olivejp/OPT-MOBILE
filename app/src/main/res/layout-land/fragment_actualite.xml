@@ -21,4 +21,5 @@
         android:layout_marginTop="40dp"
         android:gravity="center_horizontal|center_vertical"
         android:visibility="gone" />
+
 </android.support.design.widget.CoordinatorLayout>

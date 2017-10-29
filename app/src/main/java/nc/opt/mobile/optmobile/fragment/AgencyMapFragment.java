@@ -55,13 +55,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.domain.Agency;
+import nc.opt.mobile.optmobile.domain.Agence;
 import nc.opt.mobile.optmobile.interfaces.AttachToPermissionActivity;
 import nc.opt.mobile.optmobile.interfaces.ListenerPermissionResult;
 
 import static nc.opt.mobile.optmobile.activity.MainActivity.RC_PERMISSION_CALL_PHONE;
 import static nc.opt.mobile.optmobile.activity.MainActivity.RC_PERMISSION_LOCATION;
-import static nc.opt.mobile.optmobile.provider.services.AgencyService.listFromProvider;
+import static nc.opt.mobile.optmobile.provider.services.AgenceService.listFromProvider;
 
 public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, ListenerPermissionResult {
 
@@ -81,8 +81,8 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     private Marker mMarkerSelected;
     private BitmapDescriptor mIconAgence;
     private BitmapDescriptor mIconAnnexe;
-    private Agency mAgencySelected;
-    private List<Agency> mList;
+    private Agence mAgenceSelected;
+    private List<Agence> mList;
     private AppCompatActivity mActivity;
     private boolean mRequestingLocationUpdates;
     private AttachToPermissionActivity mPermissionActivity;
@@ -147,59 +147,59 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     }
 
     /**
-     * @param agency
+     * @param agence
      */
-    private void setAgencyToLayout(Agency agency) {
+    private void setAgencyToLayout(Agence agence) {
         // Mise à jour des infos de l'agence sélectionnée
-        if (agency != null) {
-            txtAgenceNom.setText(agency.getNOM());
-            txtAgenceType.setText(agency.getTYPE());
-            txtAgenceHoraire.setText(agency.getHORAIRE());
-            txtAgenceNbDabInt.setText(String.valueOf(agency.getDAB_INTERNE()));
-            txtAgenceNbDabExt.setText(String.valueOf(agency.getDAB_EXTERNE()));
+        if (agence != null) {
+            txtAgenceNom.setText(agence.getNOM());
+            txtAgenceType.setText(agence.getTYPE());
+            txtAgenceHoraire.setText(agence.getHORAIRE());
+            txtAgenceNbDabInt.setText(String.valueOf(agence.getDAB_INTERNE()));
+            txtAgenceNbDabExt.setText(String.valueOf(agence.getDAB_EXTERNE()));
         }
     }
 
-    private void populateMap(List<Agency> agencyList) {
-        for (Agency agency : agencyList) {
-            LatLng latLng = new LatLng(agency.getLATITUDE(), agency.getLONGITUDE());
+    private void populateMap(List<Agence> agenceList) {
+        for (Agence agence : agenceList) {
+            LatLng latLng = new LatLng(agence.getLATITUDE(), agence.getLONGITUDE());
 
             BitmapDescriptor bitmapDescriptor;
-            if (agency.equals(mAgencySelected)) {
+            if (agence.equals(mAgenceSelected)) {
                 bitmapDescriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
             } else {
-                bitmapDescriptor = agency.getTYPE().equals("Agence") ? mIconAgence : mIconAnnexe;
+                bitmapDescriptor = agence.getTYPE().equals("Agence") ? mIconAgence : mIconAnnexe;
             }
 
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(latLng)
-                    .title(agency.getNOM())
-                    .snippet(agency.getHORAIRE())
+                    .title(agence.getNOM())
+                    .snippet(agence.getHORAIRE())
                     .icon(bitmapDescriptor));
 
-            marker.setTag(agency);
+            marker.setTag(agence);
         }
 
-        if (mAgencySelected != null) {
-            setAgencyToLayout(mAgencySelected);
+        if (mAgenceSelected != null) {
+            setAgencyToLayout(mAgenceSelected);
         }
     }
 
     /**
      * Create AsyncTask to retrieve Agencies informations
      *
-     * @return AsyncTask<Void, Void, ArrayList<Agency>>
+     * @return AsyncTask<Void, Void, ArrayList<Agence>>
      */
-    private AsyncTask<Void, Void, List<Agency>> createTask() {
-        return new AsyncTask<Void, Void, List<Agency>>() {
+    private AsyncTask<Void, Void, List<Agence>> createTask() {
+        return new AsyncTask<Void, Void, List<Agence>>() {
             @Override
-            protected List<Agency> doInBackground(Void... voids) {
+            protected List<Agence> doInBackground(Void... voids) {
                 // Get the list of agencies from content provider
                 return listFromProvider(getActivity());
             }
 
             @Override
-            protected void onPostExecute(List<Agency> list) {
+            protected void onPostExecute(List<Agence> list) {
                 super.onPostExecute(list);
 
                 // Set the map in New Caledonia
@@ -257,12 +257,12 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     private void callSelectedAgency() {
         Intent intent = new Intent(Intent.ACTION_CALL);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setData(Uri.parse("tel:" + mAgencySelected.getTEL().replaceAll("\\s+", "")));
+        intent.setData(Uri.parse("tel:" + mAgenceSelected.getTEL().replaceAll("\\s+", "")));
         startActivityForResult(intent, RC_SEND_AGENCY_CALL);
     }
 
     private void changeVisibility() {
-        if (mAgencySelected != null) {
+        if (mAgenceSelected != null) {
             linearLayoutAgenceDetail.setVisibility(View.VISIBLE);
         } else {
             linearLayoutAgenceDetail.setVisibility(View.GONE);
@@ -305,7 +305,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(ARG_AGENCY_SELECTED)) {
-                mAgencySelected = savedInstanceState.getParcelable(ARG_AGENCY_SELECTED);
+                mAgenceSelected = savedInstanceState.getParcelable(ARG_AGENCY_SELECTED);
             }
             if (savedInstanceState.containsKey(ARG_LIST_AGENCIES)) {
                 mList = savedInstanceState.getParcelableArrayList(ARG_LIST_AGENCIES);
@@ -338,7 +338,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
         mapFragment.getMapAsync(this);
 
         changeVisibility();
-        setAgencyToLayout(mAgencySelected);
+        setAgencyToLayout(mAgenceSelected);
 
         return rootView;
 
@@ -347,7 +347,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList(ARG_LIST_AGENCIES, (ArrayList<? extends Parcelable>) mList);
-        outState.putParcelable(ARG_AGENCY_SELECTED, mAgencySelected);
+        outState.putParcelable(ARG_AGENCY_SELECTED, mAgenceSelected);
         outState.putBoolean(REQUESTING_LOCATION_UPDATES_KEY, mRequestingLocationUpdates);
         getChildFragmentManager().putFragment(outState, KEY_MAP_FRAGMENT, mapFragment);
         super.onSaveInstanceState(outState);
@@ -394,14 +394,14 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     public boolean onMarkerClick(Marker marker) {
         if (marker != null) {
             if (mMarkerSelected != null && !marker.equals(mMarkerSelected)) {
-                mMarkerSelected.setIcon(mAgencySelected.getTYPE().equals("Agence") ? mIconAgence : mIconAnnexe);
+                mMarkerSelected.setIcon(mAgenceSelected.getTYPE().equals("Agence") ? mIconAgence : mIconAnnexe);
             }
 
             mMarkerSelected = marker;
-            mAgencySelected = (Agency) mMarkerSelected.getTag();
+            mAgenceSelected = (Agence) mMarkerSelected.getTag();
             mMarkerSelected.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
 
-            setAgencyToLayout(mAgencySelected);
+            setAgencyToLayout(mAgenceSelected);
 
             changeVisibility();
 

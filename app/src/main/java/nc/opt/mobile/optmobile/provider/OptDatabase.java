@@ -5,18 +5,20 @@ import android.database.sqlite.SQLiteDatabase;
 
 import net.simonvt.schematic.annotation.Database;
 import net.simonvt.schematic.annotation.OnCreate;
-import net.simonvt.schematic.annotation.OnUpgrade;
 import net.simonvt.schematic.annotation.Table;
 
-import nc.opt.mobile.optmobile.provider.entity.ActualiteEntity;
-import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
-import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
+import nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface;
+import nc.opt.mobile.optmobile.provider.interfaces.AgenceInterface;
+import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
+import nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
-import static nc.opt.mobile.optmobile.provider.entity.ActualiteEntity.ActualiteInterface.CONTENU;
-import static nc.opt.mobile.optmobile.provider.entity.ActualiteEntity.ActualiteInterface.DATE;
-import static nc.opt.mobile.optmobile.provider.entity.ActualiteEntity.ActualiteInterface.TITRE;
-import static nc.opt.mobile.optmobile.provider.entity.ActualiteEntity.ActualiteInterface.TYPE;
+import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.CONTENU;
+import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.DATE;
+import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.DISMISSABLE;
+import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.DISMISSED;
+import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.TITRE;
+import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.TYPE;
 
 /**
  * Created by orlanth23 on 01/07/2017.
@@ -24,36 +26,29 @@ import static nc.opt.mobile.optmobile.provider.entity.ActualiteEntity.ActualiteI
 
 @Database(version = OptDatabase.VERSION, packageName = "nc.opt.mobile.optmobile")
 public class OptDatabase {
-    static final int VERSION = 16;
+    static final int VERSION = 21;
 
     private OptDatabase() {
     }
 
-    @Table(AgencyInterface.class)
+    @Table(AgenceInterface.class)
     static final String AGENCIES = "opt_agencies";
 
-    @Table(ColisEntity.ColisInterface.class)
+    @Table(ColisInterface.class)
     static final String COLIS = "opt_colis";
 
-    @Table(EtapeAcheminementEntity.EtapeAcheminementInterface.class)
+    @Table(EtapeAcheminementInterface.class)
     static final String ETAPE_ACHEMINEMENT = "opt_etape_acheminement";
 
-    @Table(ActualiteEntity.ActualiteInterface.class)
+    @Table(ActualiteInterface.class)
     static final String ACTUALITE = "opt_actualite";
 
     @OnCreate
     public static void onCreate(Context context, SQLiteDatabase db) {
-        String sql = "INSERT INTO " + ACTUALITE + " (" + TITRE + "," + CONTENU + "," + DATE + "," + TYPE + ") ";
+        String sql = "INSERT INTO " + ACTUALITE + " (" + TITRE + "," + CONTENU + "," + DATE + "," + TYPE + "," + DISMISSABLE + ","+DISMISSED+") ";
         sql += "VALUES ('Bienvenue', 'Votre application Colis NC vous permet de suivre vos colis\nCommencez à l''utiliser dès à présent', ";
-        sql += "'" + String.valueOf(DateConverter.getNowEntity()) + "', '1')";
-        db.execSQL(sql);
-    }
+        sql += "'" + String.valueOf(DateConverter.getNowEntity()) + "', '1', 0, 0)";
 
-    @OnUpgrade
-    public static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        String sql = "INSERT INTO " + ACTUALITE + " (" + TITRE + "," + CONTENU + "," + DATE + "," + TYPE + ") ";
-        sql += "VALUES ('Bienvenue', 'Votre application Colis NC vous permet de suivre vos colis\nCommencez à l''utiliser dès à présent', ";
-        sql += "'" + String.valueOf(DateConverter.getNowEntity()) + "', '1')";
         db.execSQL(sql);
     }
 }
