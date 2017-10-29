@@ -1,7 +1,6 @@
 package nc.opt.mobile.optmobile.fragment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -32,9 +31,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.activity.AddActualiteActivity;
 import nc.opt.mobile.optmobile.adapter.ActualiteAdapter;
 import nc.opt.mobile.optmobile.domain.ActualiteDto;
 import nc.opt.mobile.optmobile.provider.OptProvider;
@@ -135,12 +132,6 @@ public class ActualiteFragment extends Fragment implements ProviderObserver.Prov
                 }
             });
         }
-    }
-
-    @OnClick(R.id.fab_add_actualite)
-    public void addActualite() {
-        Intent intent = new Intent(getActivity(), AddActualiteActivity.class);
-        getActivity().startActivity(intent);
     }
 
     @Override

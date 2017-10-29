@@ -47,9 +47,12 @@ public class ActualiteService {
     }
 
     private static Long insertActualite(Context context, ContentValues contentValues) {
-        contentValues.remove(ID_ACTUALITE);
-        Uri uriInserted = context.getContentResolver().insert(OptProvider.ListActualite.LIST_ACTUALITE, contentValues);
-        return ContentUris.parseId(uriInserted);
+        if (!existWithFirebaseId(context, contentValues.getAsString(ID_FIREBASE))) {
+            contentValues.remove(ID_ACTUALITE);
+            Uri uriInserted = context.getContentResolver().insert(OptProvider.ListActualite.LIST_ACTUALITE, contentValues);
+            return ContentUris.parseId(uriInserted);
+        }
+        return 0L;
     }
 
     public static int updateActualite(Context context, ActualiteDto actualiteDto) {
