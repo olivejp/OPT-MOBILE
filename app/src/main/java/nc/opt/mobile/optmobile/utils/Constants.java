@@ -18,6 +18,9 @@ public class Constants {
     public static final String ENCODING_ISO = "iso8859-1";
     public static final String ENCODING_UTF_8 = "UTF-8";
 
+    public static final String FIREBASE_DATABASE = "firebase_database";
+    public static final String CLOUD_FIRESTORE = "cloud_firestore";
+
     /**
      * Minutes we will wait before launch the sync
      */

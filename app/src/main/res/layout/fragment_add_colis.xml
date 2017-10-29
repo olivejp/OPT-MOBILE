@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:layout_marginTop="?attr/actionBarSize"
     android:fitsSystemWindows="true"
-    tools:context="nc.opt.mobile.optmobile.fragment.AddColisFragment">
+    tools:mContext="nc.opt.mobile.optmobile.fragment.AddColisFragment">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/layout_search"

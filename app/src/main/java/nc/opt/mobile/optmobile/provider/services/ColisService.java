@@ -13,8 +13,8 @@ import java.util.List;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
+import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
 
-import static nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity.EtapeAcheminementInterface.ID_COLIS;
 import static nc.opt.mobile.optmobile.utils.DateConverter.getNowEntity;
 
 /**
@@ -56,18 +56,18 @@ public class ColisService {
 
     public static boolean delete(Context context, String idColis) {
         // Suppression des étapes d'acheminement
-        context.getContentResolver().delete(OptProvider.ListEtapeAcheminement.LIST_ETAPE, ID_COLIS.concat("=?"), new String[]{idColis});
+        context.getContentResolver().delete(OptProvider.ListEtapeAcheminement.LIST_ETAPE, ColisInterface.ID_COLIS.concat("=?"), new String[]{idColis});
 
         // Suppression du colis
-        int result = context.getContentResolver().delete(OptProvider.ListColis.LIST_COLIS, ColisEntity.ColisInterface.ID_COLIS.concat("=?"), new String[]{idColis});
+        int result = context.getContentResolver().delete(OptProvider.ListColis.LIST_COLIS, ColisInterface.ID_COLIS.concat("=?"), new String[]{idColis});
 
         return result == 1;
     }
 
     public static ContentValues putToContentValues(ColisEntity colis) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(ColisEntity.ColisInterface.ID_COLIS, colis.getIdColis());
-        contentValues.put(ColisEntity.ColisInterface.DESCRIPTION, colis.getDescription());
+        contentValues.put(ColisInterface.ID_COLIS, colis.getIdColis());
+        contentValues.put(ColisInterface.DESCRIPTION, colis.getDescription());
         return contentValues;
     }
 
@@ -77,12 +77,12 @@ public class ColisService {
 
     public static int updateLastUpdate(Context context, @NonNull String idColis, boolean successful) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(ColisEntity.ColisInterface.LAST_UPDATE, getNowEntity());
+        contentValues.put(ColisInterface.LAST_UPDATE, getNowEntity());
         if (successful) {
-            contentValues.put(ColisEntity.ColisInterface.LAST_UPDATE_SUCCESSFUL, getNowEntity());
+            contentValues.put(ColisInterface.LAST_UPDATE_SUCCESSFUL, getNowEntity());
         }
 
-        String where = ColisEntity.ColisInterface.ID_COLIS.concat("=?");
+        String where = ColisInterface.ID_COLIS.concat("=?");
 
         return context.getContentResolver().update(OptProvider.ListColis.LIST_COLIS, contentValues, where, new String[]{idColis});
     }

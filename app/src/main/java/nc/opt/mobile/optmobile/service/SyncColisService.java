@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -11,6 +12,9 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.List;
 
@@ -43,6 +47,26 @@ public class SyncColisService extends IntentService {
     public SyncColisService() {
         super("SyncColisService");
         mRequestQueueSingleton = RequestQueueSingleton.getInstance(SyncColisService.this);
+    }
+
+    public static void refreshRemoteConfig() {
+        // cacheExpirationSeconds is set to cacheExpiration here, indicating the next fetch request
+        // will use fetch data from the Remote Config service, rather than cached parameter values,
+        // if cached parameter values are more than cacheExpiration seconds old.
+        // See Best Practices in the README for more information.
+        final FirebaseRemoteConfig firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        firebaseRemoteConfig.fetch()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "RefreshRemoteConfig called successfully");
+                            firebaseRemoteConfig.activateFetched();
+                        } else {
+                            Log.d(TAG, "Failed to call RefreshRemoteConfig");
+                        }
+                    }
+                });
     }
 
     // Lancement du service de synchro
@@ -122,6 +146,8 @@ public class SyncColisService extends IntentService {
                         break;
                 }
             }
+            // On va rafraichir les données du RemoteConfig
+            refreshRemoteConfig();
         }
     }
 
