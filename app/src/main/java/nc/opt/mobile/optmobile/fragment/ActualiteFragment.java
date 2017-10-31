@@ -58,6 +58,66 @@ public class ActualiteFragment extends Fragment implements ProviderObserver.Prov
     @BindView(R.id.text_explicatif_actualite)
     TextView textExplicatifActualite;
 
+    private OnCompleteListener<QuerySnapshot> onCompleteListener = new OnCompleteListener<QuerySnapshot>() {
+        @Override
+        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+            if (task.isSuccessful()) {
+                for (DocumentSnapshot document : task.getResult()) {
+                    Log.d(TAG, document.getId() + " => " + document.getData());
+                }
+            } else {
+                Log.w(TAG, "Error getting documents.", task.getException());
+            }
+        }
+    };
+
+    private ChildEventListener childEventListener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            ActualiteDto actualiteDto = dataSnapshot.getValue(ActualiteDto.class);
+            if (actualiteDto != null) {
+                actualiteDto.setIdFirebase(dataSnapshot.getKey());
+                if (ActualiteService.existWithFirebaseId(mActivity, actualiteDto.getIdFirebase())) {
+                    ActualiteService.insertActualite(mActivity, actualiteDto);
+                }
+            }
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            ActualiteDto actualiteDto = dataSnapshot.getValue(ActualiteDto.class);
+            if (actualiteDto != null) {
+                actualiteDto.setIdFirebase(dataSnapshot.getKey());
+                ActualiteEntity entity = ActualiteService.getByFirebaseId(mActivity, actualiteDto.getIdFirebase());
+                if (entity != null) {
+                    actualiteDto.setIdActualite(String.valueOf(entity.getIdActualite()));
+                    ActualiteService.updateActualite(mActivity, actualiteDto);
+                }
+            }
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            ActualiteDto actualiteDto = dataSnapshot.getValue(ActualiteDto.class);
+            if (actualiteDto != null) {
+                actualiteDto.setIdFirebase(dataSnapshot.getKey());
+                if (ActualiteService.existWithFirebaseId(mActivity, actualiteDto.getIdFirebase())) {
+                    ActualiteService.deleteByIdFirebase(mActivity, actualiteDto.getIdFirebase());
+                }
+            }
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
+
     public static ActualiteFragment newInstance() {
         ActualiteFragment fragment = new ActualiteFragment();
         Bundle args = new Bundle();
@@ -75,62 +135,12 @@ public class ActualiteFragment extends Fragment implements ProviderObserver.Prov
             FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
             firebaseFirestore.collection(KEY_ACTUALITE)
                     .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                for (DocumentSnapshot document : task.getResult()) {
-                                    Log.d(TAG, document.getId() + " => " + document.getData());
-                                }
-                            } else {
-                                Log.w(TAG, "Error getting documents.", task.getException());
-                            }
-                        }
-                    });
+                    .addOnCompleteListener(onCompleteListener);
         }
 
         if (mFirebaseRemoteConfig.getBoolean(Constants.FIREBASE_DATABASE)) {
             FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-            firebaseDatabase.getReference().child(KEY_ACTUALITE).addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    ActualiteDto actualiteDto = dataSnapshot.getValue(ActualiteDto.class);
-                    actualiteDto.setIdFirebase(dataSnapshot.getKey());
-                    if (ActualiteService.existWithFirebaseId(mActivity, actualiteDto.getIdFirebase())) {
-                        ActualiteService.insertActualite(mActivity, actualiteDto);
-                    }
-                }
-
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                    ActualiteDto actualiteDto = dataSnapshot.getValue(ActualiteDto.class);
-                    actualiteDto.setIdFirebase(dataSnapshot.getKey());
-                    ActualiteEntity entity = ActualiteService.getByFirebaseId(mActivity, actualiteDto.getIdFirebase());
-                    if (entity != null) {
-                        actualiteDto.setIdActualite(String.valueOf(entity.getIdActualite()));
-                        ActualiteService.updateActualite(mActivity, actualiteDto);
-                    }
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    ActualiteDto actualiteDto = dataSnapshot.getValue(ActualiteDto.class);
-                    actualiteDto.setIdFirebase(dataSnapshot.getKey());
-                    if (ActualiteService.existWithFirebaseId(mActivity, actualiteDto.getIdFirebase())) {
-                        ActualiteService.deleteByIdFirebase(mActivity, actualiteDto.getIdFirebase());
-                    }
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
+            firebaseDatabase.getReference().child(KEY_ACTUALITE).addChildEventListener(childEventListener);
         }
     }
 
