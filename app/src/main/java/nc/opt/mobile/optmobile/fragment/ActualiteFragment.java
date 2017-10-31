@@ -77,7 +77,7 @@ public class ActualiteFragment extends Fragment implements ProviderObserver.Prov
             ActualiteDto actualiteDto = dataSnapshot.getValue(ActualiteDto.class);
             if (actualiteDto != null) {
                 actualiteDto.setIdFirebase(dataSnapshot.getKey());
-                if (ActualiteService.existWithFirebaseId(mActivity, actualiteDto.getIdFirebase())) {
+                if (!ActualiteService.existWithFirebaseId(mActivity, actualiteDto.getIdFirebase())) {
                     ActualiteService.insertActualite(mActivity, actualiteDto);
                 }
             }
