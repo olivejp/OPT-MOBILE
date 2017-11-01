@@ -44,5 +44,7 @@ public class MainActivityInstrumentedTest {
         onView(withId(R.id.frame_main)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
         mainActivityTestRule.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
+
+
 }
 
