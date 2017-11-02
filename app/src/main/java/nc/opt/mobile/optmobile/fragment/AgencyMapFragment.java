@@ -331,6 +331,9 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
 
         ButterKnife.bind(this, rootView);
 
+        // Dans le cas des tablettes, on ne peut pas appeler les agences car pas de téléphonie.
+        fabCallAgency.setVisibility(getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_TELEPHONY) ? View.VISIBLE : View.GONE);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         if (getChildFragmentManager().findFragmentById(R.id.map) != mapFragment) {
             getChildFragmentManager().beginTransaction().replace(R.id.map, mapFragment).commit();
