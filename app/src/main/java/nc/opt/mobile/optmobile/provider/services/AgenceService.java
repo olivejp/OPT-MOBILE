@@ -11,9 +11,9 @@ import org.chalup.microorm.MicroOrm;
 import java.util.ArrayList;
 import java.util.List;
 
-import nc.opt.mobile.optmobile.domain.Agence;
-import nc.opt.mobile.optmobile.domain.Feature;
-import nc.opt.mobile.optmobile.domain.FeatureCollection;
+import nc.opt.mobile.optmobile.domain.localisation.Agence;
+import nc.opt.mobile.optmobile.domain.localisation.Feature;
+import nc.opt.mobile.optmobile.domain.localisation.FeatureCollection;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.utils.Utilities;
 

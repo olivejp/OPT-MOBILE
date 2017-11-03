@@ -33,7 +33,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.adapter.ActualiteAdapter;
-import nc.opt.mobile.optmobile.domain.ActualiteDto;
+import nc.opt.mobile.optmobile.domain.suiviColis.ActualiteDto;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.ProviderObserver;
 import nc.opt.mobile.optmobile.provider.entity.ActualiteEntity;

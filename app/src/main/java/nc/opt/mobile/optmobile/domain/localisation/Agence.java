@@ -1,4 +1,4 @@
-package nc.opt.mobile.optmobile.domain;
+package nc.opt.mobile.optmobile.domain.localisation;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -287,7 +287,7 @@ public class Agence implements Parcelable{
         dest.writeString(this.TYPE_GEOMETRY);
     }
 
-    protected Agence(Parcel in) {
+    private Agence(Parcel in) {
         this.OBJECTID = in.readInt();
         this.TEXTE = in.readString();
         this.TYPE = in.readString();

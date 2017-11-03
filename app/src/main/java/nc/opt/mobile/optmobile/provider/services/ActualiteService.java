@@ -11,7 +11,7 @@ import org.chalup.microorm.MicroOrm;
 import java.util.ArrayList;
 import java.util.List;
 
-import nc.opt.mobile.optmobile.domain.ActualiteDto;
+import nc.opt.mobile.optmobile.domain.suiviColis.ActualiteDto;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.entity.ActualiteEntity;
 import nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface;

@@ -90,13 +90,13 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
     }
 
     @Override
-    public void OnNetworkEnable() {
+    public void onNetworkEnable() {
         invalidateOptionsMenu();
         SyncColisService.launchSynchroForAll(this, true);
     }
 
     @Override
-    public void OnNetworkDisable() {
+    public void onNetworkDisable() {
         invalidateOptionsMenu();
     }
 }

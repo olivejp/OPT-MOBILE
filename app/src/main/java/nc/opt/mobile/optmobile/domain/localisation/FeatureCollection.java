@@ -1,9 +1,9 @@
-package nc.opt.mobile.optmobile.domain;
+package nc.opt.mobile.optmobile.domain.localisation;
 
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by orlanth23 on 10/08/2017.
@@ -12,10 +12,10 @@ import java.util.ArrayList;
 @Parcel
 public class FeatureCollection {
     String type;
-    ArrayList<Feature> features;
+    List<Feature> features;
 
     @ParcelConstructor
-    public FeatureCollection(String type, ArrayList<Feature> features) {
+    public FeatureCollection(String type, List<Feature> features) {
         this.type = type;
         this.features = features;
     }
@@ -28,11 +28,11 @@ public class FeatureCollection {
         this.type = type;
     }
 
-    public ArrayList<Feature> getFeatures() {
+    public List<Feature> getFeatures() {
         return features;
     }
 
-    public void setFeatures(ArrayList<Feature> features) {
+    public void setFeatures(List<Feature> features) {
         this.features = features;
     }
 }

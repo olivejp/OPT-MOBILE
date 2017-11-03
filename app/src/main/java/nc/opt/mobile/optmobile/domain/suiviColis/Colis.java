@@ -1,4 +1,4 @@
-package nc.opt.mobile.optmobile.domain;
+package nc.opt.mobile.optmobile.domain.suiviColis;
 
 import android.os.Parcel;
 import android.os.Parcelable;

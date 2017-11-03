@@ -1,4 +1,4 @@
-package nc.opt.mobile.optmobile.domain;
+package nc.opt.mobile.optmobile.domain.suiviColis;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -12,7 +12,6 @@ import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
 public class ActualiteDto implements Parcelable {
-
 
     @Exclude
     private String idActualite;
@@ -123,7 +122,7 @@ public class ActualiteDto implements Parcelable {
         dest.writeByte(this.dismissed ? (byte) 1 : (byte) 0);
     }
 
-    protected ActualiteDto(Parcel in) {
+    private ActualiteDto(Parcel in) {
         this.idActualite = in.readString();
         this.idFirebase = in.readString();
         this.date = in.readString();

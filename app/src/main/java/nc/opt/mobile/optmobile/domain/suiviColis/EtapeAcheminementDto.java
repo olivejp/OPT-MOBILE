@@ -1,4 +1,4 @@
-package nc.opt.mobile.optmobile.domain;
+package nc.opt.mobile.optmobile.domain.suiviColis;
 
 import android.os.Parcelable;
 
@@ -13,9 +13,6 @@ public class EtapeAcheminementDto implements Parcelable {
     private String localisation;
     private String description;
     private String commentaire;
-
-    public EtapeAcheminementDto() {
-    }
 
     public EtapeAcheminementDto(String date, String pays, String localisation, String description, String commentaire) {
         this.date = date;

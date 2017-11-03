@@ -9,7 +9,7 @@ import org.chalup.microorm.MicroOrm;
 import java.util.ArrayList;
 import java.util.List;
 
-import nc.opt.mobile.optmobile.domain.EtapeAcheminementDto;
+import nc.opt.mobile.optmobile.domain.suiviColis.EtapeAcheminementDto;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
 import nc.opt.mobile.optmobile.utils.DateConverter;

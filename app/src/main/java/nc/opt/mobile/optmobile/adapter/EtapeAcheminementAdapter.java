@@ -23,20 +23,12 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<EtapeAchemine
 
     private List<EtapeAcheminementEntity> mEtapeAcheminements;
 
-    public EtapeAcheminementAdapter(List<EtapeAcheminementEntity> steps) {
-        mEtapeAcheminements = steps;
-    }
-
     public EtapeAcheminementAdapter() {
         mEtapeAcheminements = new ArrayList<>();
     }
 
     public void setmEtapeAcheminements(List<EtapeAcheminementEntity> mEtapeAcheminements) {
         this.mEtapeAcheminements = mEtapeAcheminements;
-    }
-
-    public List<EtapeAcheminementEntity> getmEtapeAcheminements() {
-        return mEtapeAcheminements;
     }
 
     @Override

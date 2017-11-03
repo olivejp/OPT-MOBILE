@@ -12,6 +12,7 @@ import java.util.List;
 
 /**
  * Created by orlanth23 on 09/10/2017.
+ *
  */
 public class NetworkReceiver extends BroadcastReceiver {
 
@@ -31,14 +32,12 @@ public class NetworkReceiver extends BroadcastReceiver {
         return mInstance;
     }
 
-    public int listen(NetworkChangeListener networkChangeListener) {
+    public void listen(NetworkChangeListener networkChangeListener) {
         if (mNetworkChangeListener.contains(networkChangeListener)) {
-            return mNetworkChangeListener.indexOf(networkChangeListener);
+            mNetworkChangeListener.indexOf(networkChangeListener);
         } else {
             if (mNetworkChangeListener.add(networkChangeListener)) {
-                return mNetworkChangeListener.indexOf(networkChangeListener);
-            } else {
-                return -1;
+                mNetworkChangeListener.indexOf(networkChangeListener);
             }
         }
     }
@@ -48,31 +47,29 @@ public class NetworkReceiver extends BroadcastReceiver {
         notifyListener(context);
     }
 
-    public static boolean notifyListener(Context context) {
+    public static void notifyListener(Context context) {
         ConnectivityManager conn = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = conn.getActiveNetworkInfo();
+        NetworkInfo networkInfo = conn != null ? conn.getActiveNetworkInfo() : null;
 
         if (networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected()) {
             for (NetworkChangeListener networkChangeListener :
                     mNetworkChangeListener) {
-                networkChangeListener.OnNetworkEnable();
+                networkChangeListener.onNetworkEnable();
             }
-            return true;
         } else if (networkInfo == null || !networkInfo.isAvailable() || !networkInfo.isConnected()) {
             for (NetworkChangeListener networkChangeListener :
                     mNetworkChangeListener) {
-                networkChangeListener.OnNetworkDisable();
+                networkChangeListener.onNetworkDisable();
             }
-            return false;
         }
-        return false;
     }
 
     public static boolean checkConnection(Context context) {
         ConnectivityManager conn = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = conn.getActiveNetworkInfo();
+
+        NetworkInfo networkInfo = conn != null ? conn.getActiveNetworkInfo() : null;
 
         if (networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected()) {
             return true;
@@ -83,8 +80,8 @@ public class NetworkReceiver extends BroadcastReceiver {
     }
 
     public interface NetworkChangeListener {
-        void OnNetworkEnable();
+        void onNetworkEnable();
 
-        void OnNetworkDisable();
+        void onNetworkDisable();
     }
 }

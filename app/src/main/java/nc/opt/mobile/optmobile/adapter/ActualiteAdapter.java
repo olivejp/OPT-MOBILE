@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -33,14 +32,6 @@ public class ActualiteAdapter extends RecyclerView.Adapter<ActualiteAdapter.View
     public ActualiteAdapter(Context context, List<ActualiteEntity> actualites) {
         mActualites = actualites;
         mContext = context;
-    }
-
-    public ActualiteAdapter() {
-        mActualites = new ArrayList<>();
-    }
-
-    public void setmActualites(List<ActualiteEntity> mActualites) {
-        this.mActualites = mActualites;
     }
 
     public List<ActualiteEntity> getmActualites() {
