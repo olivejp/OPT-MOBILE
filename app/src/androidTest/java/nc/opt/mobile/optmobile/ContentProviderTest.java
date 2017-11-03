@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -19,6 +20,7 @@ import static junit.framework.Assert.assertTrue;
 
 /**
  * Created by orlanth23 on 06/10/2017.
+ *
  */
 
 @RunWith(AndroidJUnit4.class)
@@ -50,7 +52,7 @@ public class ContentProviderTest {
         }
     }
 
-    private void validateUri(Uri uri, ContentValues contentValues, String selection, String[] selectionArgs) {
+    private void validateUri(Uri uri, ContentValues contentValues, @Nullable String selection, @Nullable String[] selectionArgs) {
         // A cursor is your primary interface to the query results.
         Cursor cursor = mContext.getContentResolver().query(
                 uri,
@@ -113,30 +115,30 @@ public class ContentProviderTest {
 
     @Test
     public void testInsertReadEtapeProvider() {
-        ContentValues testValuesStep = ProviderTestUtilities.createEtapeValues("RC123456789NC", 1234);
+        ContentValues testValuesStep = ProviderTestUtilities.createEtapeValues(ProviderTestUtilities.COLIS_ID, 1234);
         testInsertReadUriProvider(OptProvider.ListEtapeAcheminement.LIST_ETAPE, testValuesStep);
     }
 
     @Test
     public void testInsertReadEtapeWithNullIdProvider() {
-        ContentValues testValuesEtapeNull = ProviderTestUtilities.createEtapeValues("RC123456789NC", null);
+        ContentValues testValuesEtapeNull = ProviderTestUtilities.createEtapeValues(ProviderTestUtilities.COLIS_ID, null);
         testInsertReadUriProvider(OptProvider.ListEtapeAcheminement.LIST_ETAPE, testValuesEtapeNull);
     }
 
     @Test
     public void testInsertReadColisProvider() {
-        ContentValues testValuesAnnonce = ProviderTestUtilities.createColisValues("RC123456789NC");
+        ContentValues testValuesAnnonce = ProviderTestUtilities.createColisValues(ProviderTestUtilities.COLIS_ID);
         testInsertReadUriProvider(OptProvider.ListColis.LIST_COLIS, testValuesAnnonce);
     }
 
     @Test
     public void testInsertColisInsertEtapesRead() {
-        ContentValues testValuesColis = ProviderTestUtilities.createColisValues("RC123456789NC");
+        ContentValues testValuesColis = ProviderTestUtilities.createColisValues(ProviderTestUtilities.COLIS_ID);
         Uri uriColis = insertContentValues(OptProvider.ListColis.LIST_COLIS, testValuesColis);
         if (ContentUris.parseId(uriColis) != -1) {
-            ContentValues testValuesEtape = ProviderTestUtilities.createEtapeValues("RC123456789NC", 1234);
+            ContentValues testValuesEtape = ProviderTestUtilities.createEtapeValues(ProviderTestUtilities.COLIS_ID, 1234);
             insertContentValues(OptProvider.ListEtapeAcheminement.LIST_ETAPE, testValuesEtape);
-            validateUri(OptProvider.ListEtapeAcheminement.withIdColis("RC123456789NC"), testValuesEtape, null, null);
+            validateUri(OptProvider.ListEtapeAcheminement.withIdColis(ProviderTestUtilities.COLIS_ID), testValuesEtape, null, null);
         }
     }
 

@@ -42,4 +42,9 @@
     <string name="refresh">Rafraîchir</string>
     <string name="activity_title_actualite">Actualité</string>
     <string name="message_bienvenue">Votre application Colis NC vous permet de suivre l’acheminement de vos colis à destination de Nouvelle Calédonie./n/nCommencez à l’utiliser dès à présent en ouvrant le menu latéral droit puis en cliquant sur Suivi des colis./n/nColis NC récupère les données de vos colis toutes les 30 minutes et vous envoie une notification si leur acheminement a changé./n/n(Colis NC a besoin d\'une connexion Internet WiFi ou Mobile pour fonctionner)</string>
+    <string name="num_suivi">Numéro de suivi</string>
+    <string name="description">Description</string>
+    <string name="suivi_colis_explicatif">Un numéro de colis ou de suivi est nécessaire pour effectuer une recherche. Ce numéro de suivi doit comporter 13 caractères (chiffres et lettres sans espace).</string>
+    <string name="content_description_image_recherche">CD : Image recherche</string>
+    <string name="content_description_image_description">CD : Image description</string>
 </resources>

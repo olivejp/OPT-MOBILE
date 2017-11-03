@@ -14,9 +14,9 @@ import android.view.Display;
 import java.util.Map;
 import java.util.Set;
 
-import nc.opt.mobile.optmobile.provider.entity.ActualiteEntity;
-import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
-import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
+import nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface;
+import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
+import nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -24,7 +24,7 @@ import static junit.framework.Assert.assertTrue;
 
 class ProviderTestUtilities {
 
-    public static final String COLIS_ID = "RC123456789NC";
+    static final String COLIS_ID = "RC123456789NC";
 
     private static final String ETAPE_DATE = "31/12/2017";
     private static final String ETAPE_PAYS = "NOUVELLE-CALEDONIE";
@@ -68,30 +68,30 @@ class ProviderTestUtilities {
 
     static ContentValues createActualiteValues() {
         ContentValues testValues = new ContentValues();
-        testValues.put(ActualiteEntity.ActualiteInterface.DATE, ACTUALITE_DATE);
-        testValues.put(ActualiteEntity.ActualiteInterface.TITRE, ACTUALITE_TITRE);
-        testValues.put(ActualiteEntity.ActualiteInterface.CONTENU, ACTUALITE_CONTENU);
-        testValues.put(ActualiteEntity.ActualiteInterface.TYPE, ACTUALITE_TYPE);
+        testValues.put(ActualiteInterface.DATE, ACTUALITE_DATE);
+        testValues.put(ActualiteInterface.TITRE, ACTUALITE_TITRE);
+        testValues.put(ActualiteInterface.CONTENU, ACTUALITE_CONTENU);
+        testValues.put(ActualiteInterface.TYPE, ACTUALITE_TYPE);
         return testValues;
     }
 
     static ContentValues createEtapeValues(String idColis, @Nullable Integer idEtape) {
         ContentValues testValues = new ContentValues();
         if (idEtape != null) {
-            testValues.put(EtapeAcheminementEntity.EtapeAcheminementInterface.ID_ETAPE_ACHEMINEMENT, idEtape);
+            testValues.put(EtapeAcheminementInterface.ID_ETAPE_ACHEMINEMENT, idEtape);
         }
-        testValues.put(EtapeAcheminementEntity.EtapeAcheminementInterface.DATE, ETAPE_DATE);
-        testValues.put(EtapeAcheminementEntity.EtapeAcheminementInterface.PAYS, ETAPE_PAYS);
-        testValues.put(EtapeAcheminementEntity.EtapeAcheminementInterface.COMMENTAIRE, ETAPE_COMMENTAIRE);
-        testValues.put(EtapeAcheminementEntity.EtapeAcheminementInterface.DESCRIPTION, ETAPE_DESCRIPTION);
-        testValues.put(EtapeAcheminementEntity.EtapeAcheminementInterface.LOCALISATION, ETAPE_LOCALISATION);
-        testValues.put(EtapeAcheminementEntity.EtapeAcheminementInterface.ID_COLIS, idColis);
+        testValues.put(EtapeAcheminementInterface.DATE, ETAPE_DATE);
+        testValues.put(EtapeAcheminementInterface.PAYS, ETAPE_PAYS);
+        testValues.put(EtapeAcheminementInterface.COMMENTAIRE, ETAPE_COMMENTAIRE);
+        testValues.put(EtapeAcheminementInterface.DESCRIPTION, ETAPE_DESCRIPTION);
+        testValues.put(EtapeAcheminementInterface.LOCALISATION, ETAPE_LOCALISATION);
+        testValues.put(EtapeAcheminementInterface.ID_COLIS, idColis);
         return testValues;
     }
 
     static ContentValues createColisValues(String idColis) {
         ContentValues testValues = new ContentValues();
-        testValues.put(ColisEntity.ColisInterface.ID_COLIS, idColis);
+        testValues.put(ColisInterface.ID_COLIS, idColis);
         return testValues;
     }
 

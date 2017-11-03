@@ -9,13 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
+import org.awaitility.Duration;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.concurrent.Callable;
 
 import nc.opt.mobile.optmobile.R;
 
@@ -26,7 +28,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
 
@@ -37,96 +39,89 @@ public class MainActivitySuiviColisTest {
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
+    private Callable<Boolean> openNavigationDrawer() {
+        return new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                ViewInteraction appCompatImageButton = onView(
+                        allOf(
+                                withContentDescription(R.string.navigation_drawer_open),
+                                childAtPosition(allOf(
+                                        withId(R.id.toolbar),
+                                        childAtPosition(withClassName(
+                                                is("android.support.design.widget.AppBarLayout")), 0))
+                                        , 1),
+                                isDisplayed()));
+                appCompatImageButton.perform(click());
+                return null;
+            }
+        };
+    }
+
+    private Callable<Boolean> clickNavigationView() {
+        return new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                ViewInteraction navigationMenuItemView = onView(
+                        allOf(childAtPosition(
+                                allOf(withId(R.id.design_navigation_view),
+                                        childAtPosition(
+                                                withId(R.id.nav_view),
+                                                0)),
+                                5),
+                                isDisplayed()));
+                navigationMenuItemView.perform(click());
+                return null;
+            }
+        };
+    }
+
+    private Callable<Boolean> clickFloatingButton() {
+        return new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                ViewInteraction floatingActionButton = onView(
+                        allOf(withId(R.id.fab_add_parcel),
+                                childAtPosition(
+                                        childAtPosition(
+                                                withId(android.R.id.content),
+                                                0),
+                                        1),
+                                isDisplayed()));
+                floatingActionButton.perform(click());
+                return null;
+            }
+        };
+    }
+
+    private Callable<Boolean> checkEditIdAndDescriptionAreDisplayed() {
+        return new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                ViewInteraction editText = onView(
+                        allOf(withId(R.id.edit_id_parcel),
+                                isDisplayed()));
+                editText.check(matches(isDisplayed()));
+
+                ViewInteraction editText2 = onView(
+                        allOf(withId(R.id.edit_description_parcel),
+                                isDisplayed()));
+                editText2.check(matches(isDisplayed()));
+                return null;
+            }
+        };
+    }
+
     @Test
-    public void mainActivitySuiviCOlisTest() {
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(60000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public void mainActivitySuiviColisTest() {
 
-        ViewInteraction appCompatImageButton = onView(
-                allOf(withContentDescription("Open navigation drawer"),
-                        childAtPosition(
-                                allOf(withId(R.id.toolbar),
-                                        childAtPosition(
-                                                withClassName(is("android.support.design.widget.AppBarLayout")),
-                                                0)),
-                                1),
-                        isDisplayed()));
-        appCompatImageButton.perform(click());
+        await().atMost(Duration.TWO_SECONDS).until(openNavigationDrawer());
 
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(60000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        await().atMost(Duration.TWO_SECONDS).until(clickNavigationView());
 
-        ViewInteraction navigationMenuItemView = onView(
-                allOf(childAtPosition(
-                        allOf(withId(R.id.design_navigation_view),
-                                childAtPosition(
-                                        withId(R.id.nav_view),
-                                        0)),
-                        5),
-                        isDisplayed()));
-        navigationMenuItemView.perform(click());
+        await().atMost(Duration.TWO_SECONDS).until(clickFloatingButton());
 
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(3587142);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        ViewInteraction floatingActionButton = onView(
-                allOf(withId(R.id.fab_add_parcel),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                1),
-                        isDisplayed()));
-        floatingActionButton.perform(click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(3595243);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        ViewInteraction editText = onView(
-                allOf(withId(R.id.edit_id_parcel), withText("Numéro de suivi"),
-                        childAtPosition(
-                                allOf(withId(R.id.layout_search),
-                                        childAtPosition(
-                                                IsInstanceOf.<View>instanceOf(android.view.ViewGroup.class),
-                                                0)),
-                                2),
-                        isDisplayed()));
-        editText.check(matches(isDisplayed()));
-
-        ViewInteraction editText2 = onView(
-                allOf(withId(R.id.edit_description_parcel), withText("Description"),
-                        childAtPosition(
-                                allOf(withId(R.id.layout_search),
-                                        childAtPosition(
-                                                IsInstanceOf.<View>instanceOf(android.view.ViewGroup.class),
-                                                0)),
-                                4),
-                        isDisplayed()));
-        editText2.check(matches(isDisplayed()));
+        await().atMost(Duration.TWO_SECONDS).until(checkEditIdAndDescriptionAreDisplayed());
 
     }
 
