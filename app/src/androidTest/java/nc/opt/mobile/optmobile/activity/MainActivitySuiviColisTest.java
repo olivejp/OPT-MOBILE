@@ -53,7 +53,7 @@ public class MainActivitySuiviColisTest {
                                         , 1),
                                 isDisplayed()));
                 appCompatImageButton.perform(click());
-                return null;
+                return true;
             }
         };
     }
@@ -71,7 +71,7 @@ public class MainActivitySuiviColisTest {
                                 5),
                                 isDisplayed()));
                 navigationMenuItemView.perform(click());
-                return null;
+                return true;
             }
         };
     }
@@ -89,7 +89,7 @@ public class MainActivitySuiviColisTest {
                                         1),
                                 isDisplayed()));
                 floatingActionButton.perform(click());
-                return null;
+                return true;
             }
         };
     }
@@ -107,7 +107,7 @@ public class MainActivitySuiviColisTest {
                         allOf(withId(R.id.edit_description_parcel),
                                 isDisplayed()));
                 editText2.check(matches(isDisplayed()));
-                return null;
+                return true;
             }
         };
     }
@@ -115,13 +115,13 @@ public class MainActivitySuiviColisTest {
     @Test
     public void mainActivitySuiviColisTest() {
 
-        await().atMost(Duration.TWO_SECONDS).until(openNavigationDrawer());
+        await().atMost(Duration.FIVE_SECONDS).until(openNavigationDrawer());
 
-        await().atMost(Duration.TWO_SECONDS).until(clickNavigationView());
+        await().atMost(Duration.FIVE_SECONDS).until(clickNavigationView());
 
-        await().atMost(Duration.TWO_SECONDS).until(clickFloatingButton());
+        await().atMost(Duration.FIVE_SECONDS).until(clickFloatingButton());
 
-        await().atMost(Duration.TWO_SECONDS).until(checkEditIdAndDescriptionAreDisplayed());
+        await().atMost(Duration.FIVE_SECONDS).until(checkEditIdAndDescriptionAreDisplayed());
 
     }
 
