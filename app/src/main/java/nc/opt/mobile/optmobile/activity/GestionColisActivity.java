@@ -81,10 +81,8 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
             } else {
                 return super.onOptionsItemSelected(item);
             }
-        } else if (i == R.id.nav_refresh) {
-            if (NetworkReceiver.checkConnection(this)) {
-                SyncColisService.launchSynchroForAll(this, true);
-            }
+        } else if (i == R.id.nav_refresh && NetworkReceiver.checkConnection(this)) {
+            SyncColisService.launchSynchroForAll(this, true);
         }
         return super.onOptionsItemSelected(item);
     }

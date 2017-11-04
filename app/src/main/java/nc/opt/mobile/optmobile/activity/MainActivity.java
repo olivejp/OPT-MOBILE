@@ -90,7 +90,6 @@ public class MainActivity extends AttachToPermissionActivity
 
     private void signIn() {
         if (NetworkReceiver.checkConnection(this)) {
-            // User is signed out
             signOut();
 
             List<AuthUI.IdpConfig> listProviders = new ArrayList<>();
@@ -181,10 +180,8 @@ public class MainActivity extends AttachToPermissionActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(SAVED_ACTUALITE_FRAGMENT)) {
-                mActualiteFragment = (ActualiteFragment) getSupportFragmentManager().getFragment(savedInstanceState, SAVED_ACTUALITE_FRAGMENT);
-            }
+        if (savedInstanceState != null && savedInstanceState.containsKey(SAVED_ACTUALITE_FRAGMENT)) {
+            mActualiteFragment = (ActualiteFragment) getSupportFragmentManager().getFragment(savedInstanceState, SAVED_ACTUALITE_FRAGMENT);
         }
         if (mActualiteFragment == null) {
             mActualiteFragment = ActualiteFragment.newInstance();
@@ -222,26 +219,18 @@ public class MainActivity extends AttachToPermissionActivity
         setSupportActionBar(toolbar);
 
         ActionBar ab = getSupportActionBar();
-        if (ab != null)
-
-        {
+        if (ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
         // Si la permission Internet n'a pas été accordée on va la demander
-        if (!
-
-                isInternetPermited())
-
-        {
+        if (!isInternetPermited()) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, RC_PERMISSION_INTERNET);
         }
 
         // Populate the contentProvider with assets, only the first time
         SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
-        if (!sharedPreferences.getBoolean(PREF_POPULATED, false))
-
-        {
+        if (!sharedPreferences.getBoolean(PREF_POPULATED, false)) {
             populateContentProviderFromAsset(this);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putBoolean(PREF_POPULATED, true);
@@ -270,18 +259,13 @@ public class MainActivity extends AttachToPermissionActivity
 
         // Création du premier fragment
         getSupportFragmentManager().
-
                 beginTransaction().
-
                 replace(R.id.frame_main, mActualiteFragment).
-
                 commit();
-
     }
 
     @Override
     public void onBackPressed() {
-        // Fermeture du drawer latéral s'il est ouvert
         if (drawer != null) {
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
@@ -289,7 +273,6 @@ public class MainActivity extends AttachToPermissionActivity
                 if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                     getSupportFragmentManager().popBackStack();
                 } else {
-                    // on demande avant de quitter l'application
                     Utilities.SendDialogByActivity(this, getString(R.string.want_you_quit), NoticeDialogFragment.TYPE_BOUTON_YESNO, NoticeDialogFragment.TYPE_IMAGE_INFORMATION, DIALOG_TAG_EXIT);
                 }
             }
@@ -298,7 +281,6 @@ public class MainActivity extends AttachToPermissionActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
@@ -314,7 +296,6 @@ public class MainActivity extends AttachToPermissionActivity
         }
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -344,10 +325,8 @@ public class MainActivity extends AttachToPermissionActivity
     @Override
     protected void onPause() {
         super.onPause();
-        if (mFirebaseAuth != null) {
-            if (mAuthStateListener != null) {
-                mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
-            }
+        if (mFirebaseAuth != null && mAuthStateListener != null) {
+            mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
         }
     }
 
@@ -400,6 +379,7 @@ public class MainActivity extends AttachToPermissionActivity
 
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
+        return;
     }
 
     @Override

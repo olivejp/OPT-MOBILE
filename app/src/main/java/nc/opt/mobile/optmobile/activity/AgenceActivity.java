@@ -1,7 +1,6 @@
 package nc.opt.mobile.optmobile.activity;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
 
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.fragment.AgencyMapFragment;
@@ -19,13 +18,11 @@ public class AgenceActivity extends AttachToPermissionActivity {
 
         setContentView(R.layout.activity_agence);
 
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(SAVED_MAP_FRAGMENT)) {
-                mMapFragment = (AgencyMapFragment) getSupportFragmentManager().getFragment(savedInstanceState, SAVED_MAP_FRAGMENT);
-            }
+        if (savedInstanceState != null && savedInstanceState.containsKey(SAVED_MAP_FRAGMENT)) {
+            mMapFragment = (AgencyMapFragment) getSupportFragmentManager().getFragment(savedInstanceState, SAVED_MAP_FRAGMENT);
         }
 
-        if (mMapFragment == null){
+        if (mMapFragment == null) {
             mMapFragment = AgencyMapFragment.newInstance();
         }
 
