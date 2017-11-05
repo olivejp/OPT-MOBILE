@@ -86,7 +86,7 @@
         android:id="@+id/step_last_update_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Mis à jour le "
+        android:text="Il y a "
         android:textSize="12sp"
         android:textStyle="italic"
         app:layout_constraintBaseline_toBaselineOf="@+id/step_last_update"
