@@ -59,9 +59,13 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
             holder.mStepLastDate.setText(DateConverter.convertDateEntityToUi(etapeAcheminement.getDate()));
             holder.mStepLastPays.setText(etapeAcheminement.getPays());
             holder.mStepLastDescription.setText(etapeAcheminement.getDescription());
+            holder.mStepLastDate.setVisibility(View.VISIBLE);
+            holder.mStepLastPays.setVisibility(View.VISIBLE);
         } else {
             holder.mStepLastDate.setText(null);
             holder.mStepLastPays.setText(null);
+            holder.mStepLastDate.setVisibility(View.GONE);
+            holder.mStepLastPays.setVisibility(View.GONE);
             holder.mStepLastDescription.setText(R.string.no_data_for_parcel);
         }
     }
