@@ -49,7 +49,7 @@ public class ActualiteFragment extends Fragment implements ProviderObserver.Prov
 
     private static final String KEY_ACTUALITE = "actualites";
 
-    private ActualiteAdapter mActualiteFragment;
+    private ActualiteAdapter mActualiteAdapter;
     private AppCompatActivity mActivity;
 
     @BindView(R.id.recycler_actualite)
@@ -156,11 +156,9 @@ public class ActualiteFragment extends Fragment implements ProviderObserver.Prov
 
         attachDatabaseListener();
 
-        // create a ActualiteObserver
         ArrayList<Uri> uris = new ArrayList<>();
         uris.add(OptProvider.ListActualite.LIST_ACTUALITE);
 
-        // create a ProviderObserver to listen updates from the provider
         ProviderObserver providerObserver = ProviderObserver.getInstance();
         providerObserver.observe(mActivity, this, uris);
     }
@@ -179,9 +177,9 @@ public class ActualiteFragment extends Fragment implements ProviderObserver.Prov
 
         // get the list from the provider
         List<ActualiteEntity> list = ActualiteService.listActiveActualite(mActivity);
-        mActualiteFragment = new ActualiteAdapter(getContext(), list);
-        mRecyclerView.setAdapter(mActualiteFragment);
-        mActualiteFragment.notifyDataSetChanged();
+        mActualiteAdapter = new ActualiteAdapter(getContext(), list);
+        mRecyclerView.setAdapter(mActualiteAdapter);
+        mActualiteAdapter.notifyDataSetChanged();
 
         // change visibility depending on the list content
         textExplicatifActualite.setVisibility(list.isEmpty() ? View.VISIBLE : View.GONE);
@@ -192,13 +190,8 @@ public class ActualiteFragment extends Fragment implements ProviderObserver.Prov
 
     @Override
     public void onProviderChange() {
-        mActualiteFragment.getmActualites().clear();
-        mActualiteFragment.getmActualites().addAll(ActualiteService.listActiveActualite(mActivity));
-        mActualiteFragment.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
+        mActualiteAdapter.getmActualites().clear();
+        mActualiteAdapter.getmActualites().addAll(ActualiteService.listActiveActualite(mActivity));
+        mActualiteAdapter.notifyDataSetChanged();
     }
 }
