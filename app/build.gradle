@@ -1,13 +1,6 @@
 //noinspection GradleCompatible
 apply plugin: 'com.android.application'
 
-ext {
-    supportLibrary = "26.1.0"
-    firebaseLibrary = "11.4.2"
-    glideVersion = "4.1.1"
-    icepickVersion = "3.2.0"
-}
-
 android {
 
     packagingOptions {
@@ -20,8 +13,8 @@ android {
         applicationId "nc.opt.mobile.optmobile"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 13
-        versionName "alpha-1.1.1"
+        versionCode 14
+        versionName "alpha-1.14"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
@@ -101,6 +94,5 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     annotationProcessor 'frankiesardo:icepick-processor:3.2.0'
 }
-
 
 apply plugin: 'com.google.gms.google-services'
