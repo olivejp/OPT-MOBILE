@@ -16,6 +16,7 @@ import nc.opt.mobile.optmobile.domain.suiviColis.EtapeAcheminementDto;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
 import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
+import nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
 import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.COMMENTAIRE;
@@ -49,7 +50,7 @@ public class EtapeAcheminementService {
         List<EtapeAcheminementEntity> etapeList = new ArrayList<>();
 
         // Query the content provider to get a cursor of Etape
-        Cursor cursorListEtape = context.getContentResolver().query(OptProvider.ListEtapeAcheminement.withIdColis(idColis), null, null, null, null);
+        Cursor cursorListEtape = context.getContentResolver().query(OptProvider.ListEtapeAcheminement.withIdColis(idColis), null, null, null, EtapeAcheminementInterface.DATE);
 
         if (cursorListEtape != null) {
             while (cursorListEtape.moveToNext()) {

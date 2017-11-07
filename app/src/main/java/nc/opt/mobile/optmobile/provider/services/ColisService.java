@@ -40,6 +40,15 @@ public class ColisService {
         return null;
     }
 
+    public static boolean exist(Context context, String id) {
+        Cursor cursor = context.getContentResolver().query(nc.opt.mobile.optmobile.provider.OptProvider.ListColis.withId(id), null, null, null, null);
+        if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+            cursor.close();
+            return true;
+        }
+        return false;
+    }
+
     public static long insert(Context context, ColisEntity colis) {
         Uri uri = context.getContentResolver().insert(OptProvider.ListColis.LIST_COLIS, putToContentValues(colis));
         return ContentUris.parseId(uri);
@@ -84,7 +93,7 @@ public class ColisService {
         return result == 1;
     }
 
-    public static ContentValues putToContentValues(ColisEntity colis) {
+    private static ContentValues putToContentValues(ColisEntity colis) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(ColisInterface.ID_COLIS, colis.getIdColis());
         contentValues.put(ColisInterface.DESCRIPTION, colis.getDescription());

@@ -2,7 +2,6 @@ package nc.opt.mobile.optmobile.fragment;
 
 
 import android.content.Context;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -17,7 +16,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.entity.ActualiteEntity;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.services.ActualiteService;
@@ -68,16 +66,14 @@ public class AddColisFragment extends Fragment {
             colis.setDescription(editDescriptionParcel.getText().toString());
 
             // Query our ContentProvider to avoid duplicate
-            Cursor cursor = mActivity.getContentResolver().query(OptProvider.ListColis.withId(idColis), null, null, null, null);
-            if (cursor != null && cursor.getCount() > 0) {
+            if (ColisService.exist(mActivity, idColis)) {
                 Snackbar.make(view, R.string.colis_already_added, Snackbar.LENGTH_LONG).show();
-                cursor.close();
             } else {
                 // Add the colis to our ContentProvider
                 ColisService.insert(mActivity, colis);
 
                 // On lance une première fois le service de synchro
-                SyncColisService.launchSynchroByIdColis(mActivity, colis.getIdColis(), false);
+                SyncColisService.launchSynchroByIdColis(mActivity, idColis, false);
 
                 // Hide the keyboard
                 InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -85,7 +81,7 @@ public class AddColisFragment extends Fragment {
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
 
-                Snackbar.make(view, idColis.concat(getString(R.string.colis_added)), Snackbar.LENGTH_LONG).show();
+                Snackbar.make(view, idColis.concat(" " + getString(R.string.colis_added)), Snackbar.LENGTH_LONG).show();
 
                 // Ajout d'une actualité
                 ActualiteEntity actualiteEntity = new ActualiteEntity();

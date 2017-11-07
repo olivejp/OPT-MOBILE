@@ -132,7 +132,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginLeft="26dp"
             android:layout_marginStart="26dp"
-            android:background="@color/fui_transparent"
+            android:background="?attr/selectableItemBackground"
             android:contentDescription="Delete Button"
             android:text="Supprimer"
             android:textColor="@android:color/holo_red_light"
