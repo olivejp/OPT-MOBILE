@@ -9,16 +9,16 @@ import java.util.List;
  * Created by 2761oli on 05/10/2017.
  */
 
-public class Colis implements Parcelable {
+public class ColisDto implements Parcelable {
 
     private String idColis;
 
     private List<EtapeAcheminementDto> etapeAcheminementDtoArrayList;
 
-    public Colis() {
+    public ColisDto() {
     }
 
-    public Colis(String idColis, List<EtapeAcheminementDto> etapeAcheminementDtoArrayList) {
+    public ColisDto(String idColis, List<EtapeAcheminementDto> etapeAcheminementDtoArrayList) {
         this.idColis = idColis;
         this.etapeAcheminementDtoArrayList = etapeAcheminementDtoArrayList;
     }
@@ -50,20 +50,20 @@ public class Colis implements Parcelable {
         dest.writeTypedList(this.etapeAcheminementDtoArrayList);
     }
 
-    private Colis(Parcel in) {
+    private ColisDto(Parcel in) {
         this.idColis = in.readString();
         this.etapeAcheminementDtoArrayList = in.createTypedArrayList(EtapeAcheminementDto.CREATOR);
     }
 
-    public static final Creator<Colis> CREATOR = new Creator<Colis>() {
+    public static final Creator<ColisDto> CREATOR = new Creator<ColisDto>() {
         @Override
-        public Colis createFromParcel(Parcel source) {
-            return new Colis(source);
+        public ColisDto createFromParcel(Parcel source) {
+            return new ColisDto(source);
         }
 
         @Override
-        public Colis[] newArray(int size) {
-            return new Colis[size];
+        public ColisDto[] newArray(int size) {
+            return new ColisDto[size];
         }
     };
 }

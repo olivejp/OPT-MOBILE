@@ -15,12 +15,10 @@ import org.junit.runner.RunWith;
 
 import nc.opt.mobile.optmobile.provider.OptProvider;
 
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
 /**
  * Created by orlanth23 on 06/10/2017.
- *
  */
 
 @RunWith(AndroidJUnit4.class)
@@ -30,27 +28,6 @@ public class ContentProviderTest {
 
     private ProviderTestUtilities.TestContentObserver tco;
 
-    private void deleteRecords(Uri uri) {
-        mContext.getContentResolver().delete(
-                uri,
-                null,
-                null
-        );
-
-        Cursor cursor = mContext.getContentResolver().query(
-                uri,
-                null,
-                null,
-                null,
-                null
-        );
-        if (cursor != null) {
-            assertEquals("Error: Records from URI " + uri.toString() + " not deleted table during delete", 0, cursor.getCount());
-            cursor.close();
-        } else {
-            assertTrue(false);
-        }
-    }
 
     private void validateUri(Uri uri, ContentValues contentValues, @Nullable String selection, @Nullable String[] selectionArgs) {
         // A cursor is your primary interface to the query results.
@@ -74,7 +51,7 @@ public class ContentProviderTest {
     private void testInsertReadUriProvider(Uri uri, ContentValues contentValues) {
 
         /* Suppression des enregistrements précédents */
-        deleteRecords(uri);
+        ProviderTestUtilities.deleteRecords(mContext, uri);
 
         /* add a ContentObserver */
         mContext.getContentResolver().registerContentObserver(uri, true, tco);
@@ -107,10 +84,10 @@ public class ContentProviderTest {
 
     @Test
     public void deleteAllRecordsFromProvider() {
-        deleteRecords(OptProvider.ListAgency.LIST_AGENCY);
-        deleteRecords(OptProvider.ListColis.LIST_COLIS);
-        deleteRecords(OptProvider.ListEtapeAcheminement.LIST_ETAPE);
-        deleteRecords(OptProvider.ListActualite.LIST_ACTUALITE);
+        ProviderTestUtilities.deleteRecords(mContext, OptProvider.ListAgency.LIST_AGENCY);
+        ProviderTestUtilities.deleteRecords(mContext, OptProvider.ListColis.LIST_COLIS);
+        ProviderTestUtilities.deleteRecords(mContext, OptProvider.ListEtapeAcheminement.LIST_ETAPE);
+        ProviderTestUtilities.deleteRecords(mContext, OptProvider.ListActualite.LIST_ACTUALITE);
     }
 
     @Test

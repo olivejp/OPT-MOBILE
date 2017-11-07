@@ -7,7 +7,7 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 
-import nc.opt.mobile.optmobile.domain.suiviColis.Colis;
+import nc.opt.mobile.optmobile.domain.suiviColis.ColisDto;
 import nc.opt.mobile.optmobile.domain.suiviColis.EtapeAcheminementDto;
 
 /**
@@ -29,12 +29,12 @@ public class HtmlTransformer {
      * If we find the keyword "objet introuvable" into a <p> then we send back null
      *
      * @param htmlToTransform
-     * @param colis
+     * @param colisDto
      * @return RESULT_NO_ITEM_FOUND if no object found
      * RESULT_SUCCESS if everything's fine
      * @throws HtmlTransformerException
      */
-    public static int getParcelResultFromHtml(final String htmlToTransform, Colis colis) throws HtmlTransformerException {
+    public static int getColisFromHtml(final String htmlToTransform, ColisDto colisDto) throws HtmlTransformerException {
         Document document = Jsoup.parse(htmlToTransform);
 
         // Si on trouve la chaine "objet introuvable", on renvoie RESULT_NO_ITEM_FOUND
@@ -91,7 +91,7 @@ public class HtmlTransformer {
             }
         }
 
-        colis.setEtapeAcheminementDtoArrayList(listEtapeAcheminementDto);
+        colisDto.setEtapeAcheminementDtoArrayList(listEtapeAcheminementDto);
         return RESULT_SUCCESS;
     }
 

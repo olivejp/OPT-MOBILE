@@ -21,10 +21,9 @@ import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.entity.ActualiteEntity;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.services.ActualiteService;
+import nc.opt.mobile.optmobile.provider.services.ColisService;
 import nc.opt.mobile.optmobile.service.SyncColisService;
 import nc.opt.mobile.optmobile.utils.DateConverter;
-
-import static nc.opt.mobile.optmobile.provider.services.ColisService.putToContentValues;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -70,12 +69,12 @@ public class AddColisFragment extends Fragment {
 
             // Query our ContentProvider to avoid duplicate
             Cursor cursor = mActivity.getContentResolver().query(OptProvider.ListColis.withId(idColis), null, null, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
+            if (cursor != null && cursor.getCount() > 0) {
                 Snackbar.make(view, R.string.colis_already_added, Snackbar.LENGTH_LONG).show();
                 cursor.close();
             } else {
-                // Add the parcel to our ContentProvider
-                mActivity.getContentResolver().insert(OptProvider.ListColis.LIST_COLIS, putToContentValues(colis));
+                // Add the colis to our ContentProvider
+                ColisService.insert(mActivity, colis);
 
                 // On lance une première fois le service de synchro
                 SyncColisService.launchSynchroByIdColis(mActivity, colis.getIdColis(), false);
