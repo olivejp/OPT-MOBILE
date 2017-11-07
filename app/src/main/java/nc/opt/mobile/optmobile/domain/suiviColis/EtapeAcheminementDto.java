@@ -14,6 +14,9 @@ public class EtapeAcheminementDto implements Parcelable {
     private String description;
     private String commentaire;
 
+    public EtapeAcheminementDto() {
+    }
+
     public EtapeAcheminementDto(String date, String pays, String localisation, String description, String commentaire) {
         this.date = date;
         this.pays = pays;

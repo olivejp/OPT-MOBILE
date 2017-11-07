@@ -61,20 +61,21 @@ public class EtapeAcheminementService {
         return etapeList;
     }
 
-    static boolean delete(Context context, String idColis) {
+    public static boolean delete(Context context, String idColis) {
         // Suppression des étapes d'acheminement
         int result = context.getContentResolver().delete(OptProvider.ListEtapeAcheminement.LIST_ETAPE, ColisInterface.ID_COLIS.concat("=?"), new String[]{idColis});
 
         return result >= 1;
     }
 
-    private static long insert(Context context, EtapeAcheminementDto etape, ColisDto colis){
+    public static long insert(Context context, EtapeAcheminementDto etape, ColisDto colis) {
         Uri uri = context.getContentResolver().insert(OptProvider.ListEtapeAcheminement.LIST_ETAPE, putToContentValues(etape, colis.getIdColis()));
         return ContentUris.parseId(uri);
     }
 
     /**
      * Vérification si cette étape était déjà enregistrée, sinon on la créé.
+     *
      * @param context
      * @param colis
      * @return
@@ -91,7 +92,6 @@ public class EtapeAcheminementService {
     }
 
     private static ContentValues putToContentValues(EtapeAcheminementDto etapeAcheminementDto, String idColis) {
-
         ContentValues contentValues = new ContentValues();
         contentValues.put(PAYS, etapeAcheminementDto.getPays());
         contentValues.put(LOCALISATION, etapeAcheminementDto.getLocalisation());
@@ -122,4 +122,15 @@ public class EtapeAcheminementService {
         }
         return false;
     }
+
+    static EtapeAcheminementDto convertToDto(EtapeAcheminementEntity entity) {
+        EtapeAcheminementDto dto = new EtapeAcheminementDto();
+        dto.setDate(DateConverter.convertDateEntityToDto(entity.getDate()));
+        dto.setCommentaire(entity.getCommentaire());
+        dto.setDescription(entity.getDescription());
+        dto.setLocalisation(entity.getLocalisation());
+        dto.setPays(entity.getPays());
+        return dto;
+    }
+
 }

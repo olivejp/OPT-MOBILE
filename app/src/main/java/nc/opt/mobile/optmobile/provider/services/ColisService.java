@@ -12,6 +12,8 @@ import org.chalup.microorm.MicroOrm;
 import java.util.ArrayList;
 import java.util.List;
 
+import nc.opt.mobile.optmobile.domain.suiviColis.ColisDto;
+import nc.opt.mobile.optmobile.domain.suiviColis.EtapeAcheminementDto;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
@@ -30,9 +32,9 @@ public class ColisService {
     private ColisService() {
     }
 
-    public static ColisEntity get(Context context, String id){
+    public static ColisEntity get(Context context, String id) {
         Cursor cursor = context.getContentResolver().query(nc.opt.mobile.optmobile.provider.OptProvider.ListColis.withId(id), null, null, null, null);
-        if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()){
+        if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
             return getFromCursor(cursor);
         }
         return null;
@@ -103,6 +105,19 @@ public class ColisService {
         String where = ColisInterface.ID_COLIS.concat("=?");
 
         return context.getContentResolver().update(OptProvider.ListColis.LIST_COLIS, contentValues, where, new String[]{idColis});
+    }
+
+    public static ColisDto convertToDto(ColisEntity entity) {
+        ColisDto dto = new ColisDto();
+        dto.setIdColis(entity.getIdColis());
+        if (entity.getEtapeAcheminementArrayList() != null) {
+            List<EtapeAcheminementDto> listEtapeDto = new ArrayList<>();
+            for (EtapeAcheminementEntity etapeEntity : entity.getEtapeAcheminementArrayList()) {
+                listEtapeDto.add(EtapeAcheminementService.convertToDto(etapeEntity));
+            }
+            dto.setEtapeAcheminementDtoArrayList(listEtapeDto);
+        }
+        return dto;
     }
 
 }
