@@ -1,8 +1,10 @@
 package nc.opt.mobile.optmobile.provider.services;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import org.chalup.microorm.MicroOrm;
@@ -10,6 +12,8 @@ import org.chalup.microorm.MicroOrm;
 import java.util.ArrayList;
 import java.util.List;
 
+import nc.opt.mobile.optmobile.domain.suiviColis.ColisDto;
+import nc.opt.mobile.optmobile.domain.suiviColis.EtapeAcheminementDto;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
@@ -25,10 +29,35 @@ public class ColisService {
 
     private static final MicroOrm uOrm = new MicroOrm();
 
+    private ColisService() {
+    }
+
+    public static ColisEntity get(Context context, String id) {
+        Cursor cursor = context.getContentResolver().query(nc.opt.mobile.optmobile.provider.OptProvider.ListColis.withId(id), null, null, null, null);
+        if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+            return getFromCursor(cursor);
+        }
+        return null;
+    }
+
+    public static boolean exist(Context context, String id) {
+        Cursor cursor = context.getContentResolver().query(nc.opt.mobile.optmobile.provider.OptProvider.ListColis.withId(id), null, null, null, null);
+        if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+            cursor.close();
+            return true;
+        }
+        return false;
+    }
+
+    public static long insert(Context context, ColisEntity colis) {
+        Uri uri = context.getContentResolver().insert(OptProvider.ListColis.LIST_COLIS, putToContentValues(colis));
+        return ContentUris.parseId(uri);
+    }
+
     public static List<ColisEntity> listFromProvider(Context context) {
         List<ColisEntity> colisList = new ArrayList<>();
 
-        // Query the content provider to get a cursor of Colis
+        // Query the content provider to get a cursor of ColisDto
         Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, null, null, null);
 
         if (cursorListColis != null) {
@@ -44,7 +73,7 @@ public class ColisService {
     }
 
     public static int count(Context context) {
-        // Query the content provider to get a cursor of Colis
+        // Query the content provider to get a cursor of ColisDto
         int count = 0;
         Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, null, null, null);
         if (cursorListColis != null) {
@@ -56,7 +85,7 @@ public class ColisService {
 
     public static boolean delete(Context context, String idColis) {
         // Suppression des étapes d'acheminement
-        context.getContentResolver().delete(OptProvider.ListEtapeAcheminement.LIST_ETAPE, ColisInterface.ID_COLIS.concat("=?"), new String[]{idColis});
+        EtapeAcheminementService.delete(context, idColis);
 
         // Suppression du colis
         int result = context.getContentResolver().delete(OptProvider.ListColis.LIST_COLIS, ColisInterface.ID_COLIS.concat("=?"), new String[]{idColis});
@@ -64,7 +93,7 @@ public class ColisService {
         return result == 1;
     }
 
-    public static ContentValues putToContentValues(ColisEntity colis) {
+    private static ContentValues putToContentValues(ColisEntity colis) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(ColisInterface.ID_COLIS, colis.getIdColis());
         contentValues.put(ColisInterface.DESCRIPTION, colis.getDescription());
@@ -85,6 +114,19 @@ public class ColisService {
         String where = ColisInterface.ID_COLIS.concat("=?");
 
         return context.getContentResolver().update(OptProvider.ListColis.LIST_COLIS, contentValues, where, new String[]{idColis});
+    }
+
+    public static ColisDto convertToDto(ColisEntity entity) {
+        ColisDto dto = new ColisDto();
+        dto.setIdColis(entity.getIdColis());
+        if (entity.getEtapeAcheminementArrayList() != null) {
+            List<EtapeAcheminementDto> listEtapeDto = new ArrayList<>();
+            for (EtapeAcheminementEntity etapeEntity : entity.getEtapeAcheminementArrayList()) {
+                listEtapeDto.add(EtapeAcheminementService.convertToDto(etapeEntity));
+            }
+            dto.setEtapeAcheminementDtoArrayList(listEtapeDto);
+        }
+        return dto;
     }
 
 }

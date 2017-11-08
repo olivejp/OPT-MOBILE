@@ -129,21 +129,23 @@ public class SyncColisService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
         if (intent != null) {
             Bundle bundle = intent.getExtras();
-            if (bundle.containsKey(ARG_ACTION)) {
+            if (bundle != null && bundle.containsKey(ARG_ACTION)) {
                 String s = bundle.getString(ARG_ACTION);
                 boolean sendNotification = (bundle.containsKey(ARG_NOTIFICATION)) && bundle.getBoolean(ARG_NOTIFICATION);
-                switch (s) {
-                    case ARG_ACTION_SYNC_COLIS:
-                        handleActionSyncColis(bundle, sendNotification);
-                        break;
-                    case ARG_ACTION_SYNC_ALL:
-                        handleActionSyncAll(sendNotification);
-                        break;
-                    case ARG_ACTION_SYNC_ALL_FROM_SCHEDULER:
-                        handleActionSyncAll(true);
-                        break;
-                    default:
-                        break;
+                if (s != null) {
+                    switch (s) {
+                        case ARG_ACTION_SYNC_COLIS:
+                            handleActionSyncColis(bundle, sendNotification);
+                            break;
+                        case ARG_ACTION_SYNC_ALL:
+                            handleActionSyncAll(sendNotification);
+                            break;
+                        case ARG_ACTION_SYNC_ALL_FROM_SCHEDULER:
+                            handleActionSyncAll(true);
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
             // On va rafraichir les données du RemoteConfig

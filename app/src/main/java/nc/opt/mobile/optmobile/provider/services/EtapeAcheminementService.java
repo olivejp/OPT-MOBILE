@@ -1,17 +1,22 @@
 package nc.opt.mobile.optmobile.provider.services;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 
 import org.chalup.microorm.MicroOrm;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import nc.opt.mobile.optmobile.domain.suiviColis.ColisDto;
 import nc.opt.mobile.optmobile.domain.suiviColis.EtapeAcheminementDto;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
+import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
+import nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
 import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.COMMENTAIRE;
@@ -28,6 +33,9 @@ import static nc.opt.mobile.optmobile.utils.DateConverter.convertDateDtoToEntity
 
 public class EtapeAcheminementService {
 
+    private EtapeAcheminementService() {
+    }
+
     private static final MicroOrm uOrm = new MicroOrm();
 
     // Check existence
@@ -42,7 +50,7 @@ public class EtapeAcheminementService {
         List<EtapeAcheminementEntity> etapeList = new ArrayList<>();
 
         // Query the content provider to get a cursor of Etape
-        Cursor cursorListEtape = context.getContentResolver().query(OptProvider.ListEtapeAcheminement.withIdColis(idColis), null, null, null, null);
+        Cursor cursorListEtape = context.getContentResolver().query(OptProvider.ListEtapeAcheminement.withIdColis(idColis), null, null, null, EtapeAcheminementInterface.DATE);
 
         if (cursorListEtape != null) {
             while (cursorListEtape.moveToNext()) {
@@ -54,28 +62,37 @@ public class EtapeAcheminementService {
         return etapeList;
     }
 
+    public static boolean delete(Context context, String idColis) {
+        // Suppression des étapes d'acheminement
+        int result = context.getContentResolver().delete(OptProvider.ListEtapeAcheminement.LIST_ETAPE, ColisInterface.ID_COLIS.concat("=?"), new String[]{idColis});
+
+        return result >= 1;
+    }
+
+    public static long insert(Context context, EtapeAcheminementDto etape, ColisDto colis) {
+        Uri uri = context.getContentResolver().insert(OptProvider.ListEtapeAcheminement.LIST_ETAPE, putToContentValues(etape, colis.getIdColis()));
+        return ContentUris.parseId(uri);
+    }
+
     /**
      * Vérification si cette étape était déjà enregistrée, sinon on la créé.
      *
      * @param context
-     * @param idColis
-     * @param listEtape
-     * @return true if at least one etape has been created, false instead.
+     * @param colis
+     * @return
      */
-    public static boolean checkAndInsert(Context context, String idColis, List<EtapeAcheminementDto> listEtape) {
+    public static boolean save(Context context, ColisDto colis) {
         boolean creation = false;
-        for (EtapeAcheminementDto etape : listEtape) {
-            if (!exist(context, idColis, etape)) {
-                // Création
+        for (EtapeAcheminementDto etape : colis.getEtapeAcheminementDtoArrayList()) {
+            if (!exist(context, colis.getIdColis(), etape)) {
                 creation = true;
-                context.getContentResolver().insert(OptProvider.ListEtapeAcheminement.LIST_ETAPE, putToContentValues(etape, idColis));
+                insert(context, etape, colis);
             }
         }
         return creation;
     }
 
     private static ContentValues putToContentValues(EtapeAcheminementDto etapeAcheminementDto, String idColis) {
-
         ContentValues contentValues = new ContentValues();
         contentValues.put(PAYS, etapeAcheminementDto.getPays());
         contentValues.put(LOCALISATION, etapeAcheminementDto.getLocalisation());
@@ -100,10 +117,21 @@ public class EtapeAcheminementService {
 
         Cursor cursor = context.getContentResolver()
                 .query(OptProvider.ListEtapeAcheminement.LIST_ETAPE, null, mWhereEtapeExistenceWhere, args, null);
-        if ((cursor != null) && (cursor.moveToFirst())) {
+        if ((cursor != null) && cursor.getCount() > 0) {
             cursor.close();
             return true;
         }
         return false;
     }
+
+    static EtapeAcheminementDto convertToDto(EtapeAcheminementEntity entity) {
+        EtapeAcheminementDto dto = new EtapeAcheminementDto();
+        dto.setDate(DateConverter.convertDateEntityToDto(entity.getDate()));
+        dto.setCommentaire(entity.getCommentaire());
+        dto.setDescription(entity.getDescription());
+        dto.setLocalisation(entity.getLocalisation());
+        dto.setPays(entity.getPays());
+        return dto;
+    }
+
 }

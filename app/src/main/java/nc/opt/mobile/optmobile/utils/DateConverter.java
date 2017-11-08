@@ -92,9 +92,7 @@ public class DateConverter {
                 return String.valueOf(nbMinute).concat(" min");
             }
             // On est inférieur à la minute, on affiche les secondes
-            if (nbSecond >= 1) {
-                return String.valueOf(nbSecond).concat(" sec");
-            }
+            return String.valueOf(nbSecond).concat(" sec");
         } catch (ParseException e) {
             Log.e(TAG, e.getMessage(), e);
         }

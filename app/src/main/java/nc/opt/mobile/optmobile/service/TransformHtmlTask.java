@@ -9,19 +9,19 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.domain.suiviColis.Colis;
+import nc.opt.mobile.optmobile.domain.suiviColis.ColisDto;
+import nc.opt.mobile.optmobile.provider.services.ColisService;
+import nc.opt.mobile.optmobile.provider.services.EtapeAcheminementService;
 import nc.opt.mobile.optmobile.utils.Constants;
 import nc.opt.mobile.optmobile.utils.HtmlTransformer;
 import nc.opt.mobile.optmobile.utils.NotificationSender;
 
-import static nc.opt.mobile.optmobile.provider.services.ColisService.updateLastUpdate;
-import static nc.opt.mobile.optmobile.provider.services.EtapeAcheminementService.checkAndInsert;
-
 /**
  * Created by 2761oli on 09/10/2017.
+ *
  */
 
-class TransformHtmlTask extends AsyncTask<String, Void, Colis> {
+class TransformHtmlTask extends AsyncTask<String, Void, ColisDto> {
 
     private static final String TAG = TransformHtmlTask.class.getName();
 
@@ -35,21 +35,21 @@ class TransformHtmlTask extends AsyncTask<String, Void, Colis> {
         this.idColis = idColis;
     }
 
-    private Colis transformHtmlToObject(String idColis, String htmlToTransform) {
-        Colis colis = new Colis();
-        colis.setIdColis(idColis);
+    private ColisDto transformHtmlToObject(String idColis, String htmlToTransform) {
+        ColisDto colisDto = new ColisDto();
+        colisDto.setIdColis(idColis);
         try {
-            int transformResult = HtmlTransformer.getParcelResultFromHtml(htmlToTransform, colis);
+            int transformResult = HtmlTransformer.getColisFromHtml(htmlToTransform, colisDto);
             switch (transformResult) {
                 case HtmlTransformer.RESULT_SUCCESS:
-                    updateLastUpdate(context, colis.getIdColis(), true);
-                    if (checkAndInsert(context, colis.getIdColis(), colis.getEtapeAcheminementDtoArrayList()) && sendNotification) {
+                    ColisService.updateLastUpdate(context, colisDto.getIdColis(), true);
+                    if (EtapeAcheminementService.save(context, colisDto) && sendNotification) {
                         // Envoi d'une notification si l'objet a bougé.
                         NotificationSender.sendNotification(context, context.getString(R.string.app_name), idColis + " a été mis à jour.", R.drawable.ic_archive_white_48dp);
                     }
-                    return colis;
+                    return colisDto;
                 case HtmlTransformer.RESULT_NO_ITEM_FOUND:
-                    updateLastUpdate(context, colis.getIdColis(), false);
+                    ColisService.updateLastUpdate(context, colisDto.getIdColis(), false);
                     return null;
                 default:
                     break;
@@ -62,7 +62,7 @@ class TransformHtmlTask extends AsyncTask<String, Void, Colis> {
     }
 
     @Override
-    protected Colis doInBackground(String... params) {
+    protected ColisDto doInBackground(String... params) {
         try {
             String responseEncoded = URLDecoder.decode(URLEncoder.encode(params[0], Constants.ENCODING_ISO), Constants.ENCODING_UTF_8);
             return transformHtmlToObject(idColis, responseEncoded);

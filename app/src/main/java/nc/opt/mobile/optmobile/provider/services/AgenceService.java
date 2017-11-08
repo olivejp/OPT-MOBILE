@@ -29,7 +29,7 @@ public class AgenceService {
         String json = Utilities.loadStringFromAsset(context, "opt_agencies.json");
         Gson gson = new Gson();
 
-        // Okay we 've got the list in a json let's just getParcelResultFromHtml to an arrayList and send it to the content provider.
+        // Okay we 've got the list in a json let's just getColisFromHtml to an arrayList and send it to the content provider.
         FeatureCollection featureCollection = gson.fromJson(json, FeatureCollection.class);
         populateProviderFromCollection(context, featureCollection);
     }

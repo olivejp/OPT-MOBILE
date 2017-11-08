@@ -52,7 +52,14 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         holder.mColis = mColisList.get(position);
         holder.mIdColis.setText(holder.mColis.getIdColis());
         holder.mParcelDescription.setText(holder.mColis.getDescription());
-        holder.mStepLastUpdate.setText(DateConverter.howLongFromNow(holder.mColis.getLastUpdate()));
+
+        if (holder.mColis.getLastUpdate() == null){
+            holder.mStepLastUpdateText.setVisibility(View.GONE);
+        } else {
+            holder.mStepLastUpdateText.setVisibility(View.VISIBLE);
+            holder.mStepLastUpdate.setText(DateConverter.howLongFromNow(holder.mColis.getLastUpdate()));
+        }
+
         if (!holder.mColis.getEtapeAcheminementArrayList().isEmpty()) {
             // On prend la dernière étape
             EtapeAcheminementEntity etapeAcheminement = holder.mColis.getEtapeAcheminementArrayList().get(holder.mColis.getEtapeAcheminementArrayList().size() - 1);
@@ -105,6 +112,9 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
 
         @BindView(R.id.step_last_update)
         TextView mStepLastUpdate;
+
+        @BindView(R.id.step_last_update_text)
+        TextView mStepLastUpdateText;
 
         ColisEntity mColis;
 

@@ -1,6 +1,7 @@
 package nc.opt.mobile.optmobile;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.Point;
@@ -22,7 +23,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
-class ProviderTestUtilities {
+public class ProviderTestUtilities {
 
     static final String COLIS_ID = "RC123456789NC";
 
@@ -36,6 +37,28 @@ class ProviderTestUtilities {
     private static final String ACTUALITE_TITRE = "Mon titre";
     private static final String ACTUALITE_CONTENU = "Contenu de mon actualite";
     private static final String ACTUALITE_TYPE = "1";
+
+    public static void deleteRecords(Context context, Uri uri) {
+        context.getContentResolver().delete(
+                uri,
+                null,
+                null
+        );
+
+        Cursor cursor = context.getContentResolver().query(
+                uri,
+                null,
+                null,
+                null,
+                null
+        );
+        if (cursor != null) {
+            assertEquals("Error: Records from URI " + uri.toString() + " not deleted table during delete", 0, cursor.getCount());
+            cursor.close();
+        } else {
+            assertTrue(false);
+        }
+    }
 
     static boolean isTablet(AppCompatActivity activity) {
         Display display = activity.getWindowManager().getDefaultDisplay();

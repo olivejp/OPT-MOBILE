@@ -53,7 +53,6 @@ public class OptProvider {
         }
     }
 
-
     @TableEndpoint(table = OptDatabase.COLIS)
     public static class ListColis {
         private ListColis() {
@@ -75,7 +74,6 @@ public class OptProvider {
             return Uri.parse("content://" + AUTHORITY + "/" + COLIS + "/" + id);
         }
     }
-
 
     @TableEndpoint(table = OptDatabase.ETAPE_ACHEMINEMENT)
     public static class ListEtapeAcheminement {
