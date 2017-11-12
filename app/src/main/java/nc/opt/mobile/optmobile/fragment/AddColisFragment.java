@@ -64,6 +64,7 @@ public class AddColisFragment extends Fragment {
             ColisEntity colis = new ColisEntity();
             colis.setIdColis(idColis);
             colis.setDescription(editDescriptionParcel.getText().toString());
+            colis.setDeleted(0);
 
             // Query our ContentProvider to avoid duplicate
             if (ColisService.exist(mActivity, idColis)) {

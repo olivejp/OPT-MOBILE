@@ -57,8 +57,11 @@ public class ColisService {
     public static List<ColisEntity> listFromProvider(Context context) {
         List<ColisEntity> colisList = new ArrayList<>();
 
+        String onlyActiveColis = ColisInterface.DELETED.concat("<> ?");
+        String[] onlyActiveColisArgs = new String[]{"O"};
+
         // Query the content provider to get a cursor of ColisDto
-        Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, null, null, null);
+        Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, onlyActiveColis, onlyActiveColisArgs, null);
 
         if (cursorListColis != null) {
             while (cursorListColis.moveToNext()) {
@@ -83,7 +86,16 @@ public class ColisService {
         return count;
     }
 
-    public static boolean delete(Context context, String idColis) {
+    public static int delete(Context context, String idColis) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(ColisInterface.DELETED, 1);
+
+        String where = ColisInterface.ID_COLIS.concat("=?");
+
+        return context.getContentResolver().update(OptProvider.ListColis.LIST_COLIS, contentValues, where, new String[]{idColis});
+    }
+
+    public static boolean realDelete(Context context, String idColis) {
         // Suppression des étapes d'acheminement
         EtapeAcheminementService.delete(context, idColis);
 
@@ -97,6 +109,7 @@ public class ColisService {
         ContentValues contentValues = new ContentValues();
         contentValues.put(ColisInterface.ID_COLIS, colis.getIdColis());
         contentValues.put(ColisInterface.DESCRIPTION, colis.getDescription());
+        contentValues.put(ColisInterface.DELETED, colis.getDeleted());
         return contentValues;
     }
 

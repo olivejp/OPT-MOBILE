@@ -172,7 +172,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
                     // Delete from the memory list
                     mColisList.remove(mColis);
 
-                    // Remove from the content provider
+                    // Just pass the deleted boolean to 1
                     delete(mContext, mColis.getIdColis());
 
                     // Change visibility
