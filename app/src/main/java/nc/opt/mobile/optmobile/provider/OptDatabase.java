@@ -9,9 +9,11 @@ import net.simonvt.schematic.annotation.Database;
 import net.simonvt.schematic.annotation.OnCreate;
 import net.simonvt.schematic.annotation.OnUpgrade;
 import net.simonvt.schematic.annotation.Table;
+import net.simonvt.schematic.compiler.DbDescriptionInterface;
 
 import org.chalup.microorm.MicroOrm;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import nc.opt.mobile.optmobile.provider.entity.ActualiteEntity;
@@ -23,6 +25,7 @@ import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
 import nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
+import static nc.opt.mobile.optmobile.provider.OptDatabase.DESCRIPTION_TABLE_NAME;
 import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.CONTENU;
 import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.DATE;
 import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.DISMISSABLE;
@@ -34,9 +37,11 @@ import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.TYP
  * Created by orlanth23 on 01/07/2017.
  */
 
-@Database(version = OptDatabase.VERSION, packageName = "nc.opt.mobile.optmobile", createDescriptionTable = true)
+@Database(version = OptDatabase.VERSION, packageName = "nc.opt.mobile.optmobile", createDescriptionTable = true, descriptionTableName = DESCRIPTION_TABLE_NAME)
 public class OptDatabase {
-    static final int VERSION = 23;
+    static final int VERSION = 22;
+
+    static final String DESCRIPTION_TABLE_NAME = "opt_description";
 
     private static final MicroOrm uOrm = new MicroOrm();
 
@@ -114,16 +119,44 @@ public class OptDatabase {
         db.execSQL(sql);
     }
 
+    private static List<String> catchDescription(SQLiteDatabase db, int oldVersion, String tableName){
+        List<String> listColumnNames = new ArrayList<>();
+
+        String selection = DbDescriptionInterface.DB_VERSION + " = ? AND " + DbDescriptionInterface.TABLE_NAME + " = ?";
+        String[] args = new String[]{String.valueOf(oldVersion), tableName};
+
+        Cursor cursorDescription = db.query(DESCRIPTION_TABLE_NAME, null, selection, args, null, null, null);
+        while (cursorDescription.moveToNext()) {
+            listColumnNames.add(cursorDescription.getString(cursorDescription.getColumnIndex(DbDescriptionInterface.COLUMN_NAME)));
+        }
+        cursorDescription.close();
+        return listColumnNames;
+    }
+
+    private static <T> List<T> retreiveDataFromVersion(SQLiteDatabase db, int version, String tableName, Class<T> klass) {
+        List<String> columns = catchDescription(db, version, tableName);
+        if (!columns.isEmpty()) {
+            String[] columnsArray = columns.toArray(new String[0]);
+            Cursor cursor = db.query(tableName, columnsArray, null, null, null, null, null);
+            return uOrm.listFromCursor(cursor, klass);
+        }
+        return new ArrayList<>();
+    }
+
+    private static <T> void insertInto(SQLiteDatabase db, String tableName, List<T> list){
+        for (T entity : list) {
+            ContentValues contentValues = uOrm.toContentValues(entity);
+            db.insert(tableName, null, contentValues);
+        }
+    }
+
     @OnUpgrade
     public static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Récupération des anciennes données
-        Cursor cursorColis = db.query(COLIS, null, null, null, null, null, null);
-        Cursor cursorEtape = db.query(ETAPE_ACHEMINEMENT, null, null, null, null, null, null);
-        Cursor cursorActualite = db.query(ACTUALITE, null, null, null, null, null, null);
 
-        List<EtapeAcheminementEntity> listEtape = uOrm.listFromCursor(cursorEtape, EtapeAcheminementEntity.class);
-        List<ColisEntity> listColis = uOrm.listFromCursor(cursorColis, ColisEntity.class);
-        List<ActualiteEntity> listActualite = uOrm.listFromCursor(cursorActualite, ActualiteEntity.class);
+        // Récupération des anciennes données
+        List<ColisEntity> listColis = retreiveDataFromVersion(db, oldVersion, COLIS, ColisEntity.class);
+        List<EtapeAcheminementEntity> listEtape = retreiveDataFromVersion(db, oldVersion, ETAPE_ACHEMINEMENT, EtapeAcheminementEntity.class);
+        List<ActualiteEntity> listActualite = retreiveDataFromVersion(db, oldVersion, ACTUALITE, ActualiteEntity.class);
 
         // Suppression des anciennes tables et insertion des nouvelles
         db.execSQL("DROP TABLE " + ETAPE_ACHEMINEMENT);
@@ -131,23 +164,13 @@ public class OptDatabase {
         db.execSQL("DROP TABLE " + ACTUALITE);
 
         // Création des nouvelles tables
-        db.execSQL(CREATE_COLIS);
         db.execSQL(CREATE_ETAPE_ACHEMINEMENT);
+        db.execSQL(CREATE_COLIS);
         db.execSQL(CREATE_ACTUALITE);
 
         // Réinsertion des données
-        ContentValues contentValues;
-        for (EtapeAcheminementEntity entity : listEtape) {
-            contentValues = uOrm.toContentValues(entity);
-            db.insert(ETAPE_ACHEMINEMENT, null, contentValues);
-        }
-        for (ColisEntity entity : listColis) {
-            contentValues = uOrm.toContentValues(entity);
-            db.insert(COLIS, null, contentValues);
-        }
-        for (ActualiteEntity entity : listActualite) {
-            contentValues = uOrm.toContentValues(entity);
-            db.insert(ACTUALITE, null, contentValues);
-        }
+        insertInto(db, COLIS, listColis);
+        insertInto(db, ETAPE_ACHEMINEMENT, listEtape);
+        insertInto(db, ACTUALITE, listActualite);
     }
 }

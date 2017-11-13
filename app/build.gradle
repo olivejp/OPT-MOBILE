@@ -77,7 +77,7 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.1.0-beta3'
     compile 'com.google.code.gson:gson:2.8.2'
     compile 'com.facebook.android:facebook-android-sdk:4.27.0'
-    compile 'com.github.olivejp:schematic:0.7.2-SNAPSHOT'
+    compile 'com.github.olivejp:schematic:0.7.4'
     compile 'org.parceler:parceler-api:1.1.9'
     compile 'org.chalup.microorm:microorm:0.8.0'
     compile 'com.jakewharton:butterknife:8.8.1'
@@ -95,7 +95,7 @@ dependencies {
     androidTestCompile 'com.android.support.test.espresso:espresso-idling-resource:3.0.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.1.1'
     annotationProcessor 'org.parceler:parceler:1.1.9'
-    annotationProcessor 'com.github.olivejp.schematic:schematic-compiler:0.7.2-SNAPSHOT'
+    annotationProcessor 'com.github.olivejp.schematic:schematic-compiler:0.7.4'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     annotationProcessor 'frankiesardo:icepick-processor:3.2.0'
 }

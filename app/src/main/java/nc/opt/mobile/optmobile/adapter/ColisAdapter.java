@@ -53,7 +53,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         holder.mIdColis.setText(holder.mColis.getIdColis());
         holder.mParcelDescription.setText(holder.mColis.getDescription());
 
-        if (holder.mColis.getLastUpdate() == null){
+        if (holder.mColis.getLastUpdate() == null) {
             holder.mStepLastUpdateText.setVisibility(View.GONE);
         } else {
             holder.mStepLastUpdateText.setVisibility(View.VISIBLE);
@@ -173,14 +173,18 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
                     mColisList.remove(mColis);
 
                     // Just pass the deleted boolean to 1
-                    delete(mContext, mColis.getIdColis());
+                    int nbUpdated = delete(mContext, mColis.getIdColis());
+                    if (nbUpdated == 1) {
+                        // Change visibility
+                        mDeleteMode = false;
+                        changeDeleteVisibility();
 
-                    // Change visibility
-                    mDeleteMode = false;
-                    changeDeleteVisibility();
-
-                    Snackbar snackbar = Snackbar.make(mView, mColis.getIdColis().concat(mContext.getString(R.string.deleted_from_management)), Snackbar.LENGTH_LONG);
-                    snackbar.show();
+                        Snackbar snackbar = Snackbar.make(mView, mColis.getIdColis().concat(mContext.getString(R.string.deleted_from_management)), Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } else {
+                        Snackbar snackbar = Snackbar.make(mView, mColis.getIdColis().concat(" suppression échouée."), Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    }
                 }
             });
         }
