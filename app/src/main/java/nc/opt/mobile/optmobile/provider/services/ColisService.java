@@ -102,6 +102,7 @@ public class ColisService {
         // Suppression du colis
         int result = context.getContentResolver().delete(OptProvider.ListColis.LIST_COLIS, ColisInterface.ID_COLIS.concat("=?"), new String[]{idColis});
 
+        // Return true if we delete the colis
         return result == 1;
     }
 

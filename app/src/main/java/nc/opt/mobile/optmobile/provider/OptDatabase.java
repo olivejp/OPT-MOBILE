@@ -12,10 +12,12 @@ import net.simonvt.schematic.annotation.Table;
 import net.simonvt.schematic.compiler.DbDescriptionInterface;
 
 import org.chalup.microorm.MicroOrm;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.provider.entity.ActualiteEntity;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
@@ -60,8 +62,7 @@ public class OptDatabase {
     @Table(ActualiteInterface.class)
     static final String ACTUALITE = "opt_actualite";
 
-
-    private static final String CREATE_AGENCIES = "CREATE TABLE opt_agencies ("
+    private static final String CREATE_AGENCIES = "CREATE TABLE " + AGENCIES + " ("
             + AgenceInterface.OBJECTID + " INTEGER NOT NULL PRIMARY KEY,"
             + AgenceInterface.TEXTE + " TEXT,"
             + AgenceInterface.TYPE + " TEXT,"
@@ -83,14 +84,14 @@ public class OptDatabase {
             + AgenceInterface.LONGITUDE + " REAL,"
             + AgenceInterface.TYPE_GEOMETRY + " TEXT)";
 
-    private static final String CREATE_COLIS = "CREATE TABLE opt_colis ("
+    private static final String CREATE_COLIS = "CREATE TABLE " + COLIS + " ("
             + ColisInterface.ID_COLIS + " TEXT NOT NULL PRIMARY KEY,"
             + ColisInterface.DESCRIPTION + " TEXT,"
             + ColisInterface.LAST_UPDATE + " TEXT,"
             + ColisInterface.LAST_UPDATE_SUCCESSFUL + " TEXT,"
             + ColisInterface.DELETED + " TEXT)";
 
-    private static final String CREATE_ETAPE_ACHEMINEMENT = "CREATE TABLE opt_etape_acheminement ("
+    private static final String CREATE_ETAPE_ACHEMINEMENT = "CREATE TABLE " + ETAPE_ACHEMINEMENT + " ("
             + EtapeAcheminementInterface.ID_ETAPE_ACHEMINEMENT + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
             + EtapeAcheminementInterface.ID_COLIS + " TEXT,"
             + EtapeAcheminementInterface.DATE + " TEXT,"
@@ -99,7 +100,7 @@ public class OptDatabase {
             + EtapeAcheminementInterface.DESCRIPTION + " TEXT,"
             + EtapeAcheminementInterface.COMMENTAIRE + " TEXT)";
 
-    private static final String CREATE_ACTUALITE = "CREATE TABLE opt_actualite ("
+    private static final String CREATE_ACTUALITE = "CREATE TABLE " + ACTUALITE + " ("
             + ActualiteInterface.ID_ACTUALITE + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
             + ActualiteInterface.ID_FIREBASE + " TEXT UNIQUE ON CONFLICT ABORT,"
             + ActualiteInterface.DATE + " TEXT,"
@@ -109,17 +110,49 @@ public class OptDatabase {
             + ActualiteInterface.DISMISSABLE + " INTEGER,"
             + ActualiteInterface.DISMISSED + " INTEGER)";
 
-
     @OnCreate
     public static void onCreate(Context context, SQLiteDatabase db) {
-        String sql = "INSERT INTO " + ACTUALITE + " (" + TITRE + "," + CONTENU + "," + DATE + "," + TYPE + "," + DISMISSED + "," + DISMISSABLE + ") ";
-        sql += "VALUES ('Bienvenue', 'Votre application Colis NC vous permet de suivre l''acheminement de vos colis à destination de Nouvelle Calédonie.\n" +
-                "Commencez à l''utiliser dès à présent en ouvrant le menu latéral droit puis en cliquant sur Suivi des colis.', ";
-        sql += "'" + DateConverter.getNowEntity() + "', '1', 0, 0)";
-        db.execSQL(sql);
+        String insertInto = "INSERT INTO " + ACTUALITE;
+        String welcome = context.getString(R.string.welcome);
+        String description = context.getString(R.string.message_bienvenue);
+        String columns = " (" + TITRE + "," + CONTENU + "," + DATE + "," + TYPE + "," + DISMISSED + "," + DISMISSABLE + ") ";
+        String values = "VALUES ('" + welcome + "', '" + description + "', '" + DateConverter.getNowEntity() + "', '1', 0, 0)";
+        db.execSQL(insertInto.concat(columns).concat(values));
     }
 
-    private static List<String> catchDescription(SQLiteDatabase db, int oldVersion, String tableName){
+    @OnUpgrade
+    public static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+        // Récupération des anciennes données
+        List<ColisEntity> listColis = retreiveDataFromVersion(db, oldVersion, COLIS, ColisEntity.class);
+        List<EtapeAcheminementEntity> listEtape = retreiveDataFromVersion(db, oldVersion, ETAPE_ACHEMINEMENT, EtapeAcheminementEntity.class);
+        List<ActualiteEntity> listActualite = retreiveDataFromVersion(db, oldVersion, ACTUALITE, ActualiteEntity.class);
+
+        // Suppression des anciennes tables
+        db.execSQL("DROP TABLE " + ETAPE_ACHEMINEMENT);
+        db.execSQL("DROP TABLE " + COLIS);
+        db.execSQL("DROP TABLE " + ACTUALITE);
+
+        // Création des nouvelles tables
+        db.execSQL(CREATE_ETAPE_ACHEMINEMENT);
+        db.execSQL(CREATE_COLIS);
+        db.execSQL(CREATE_ACTUALITE);
+
+        // Réinsertion des données
+        insertDataFromList(db, COLIS, listColis);
+        insertDataFromList(db, ETAPE_ACHEMINEMENT, listEtape);
+        insertDataFromList(db, ACTUALITE, listActualite);
+    }
+
+    /**
+     * Get list of the columns names for the given table name and db version.
+     *
+     * @param db
+     * @param oldVersion
+     * @param tableName
+     * @return List<String> Containing all the columns names, list will be empty if no data.
+     */
+    private static List<String> catchDescription(SQLiteDatabase db, int oldVersion, String tableName) {
         List<String> listColumnNames = new ArrayList<>();
 
         String selection = DbDescriptionInterface.DB_VERSION + " = ? AND " + DbDescriptionInterface.TABLE_NAME + " = ?";
@@ -133,44 +166,38 @@ public class OptDatabase {
         return listColumnNames;
     }
 
-    private static <T> List<T> retreiveDataFromVersion(SQLiteDatabase db, int version, String tableName, Class<T> klass) {
+    /**
+     * Retreive datas from the DB for the version given and the table name.
+     *
+     * @param db
+     * @param version
+     * @param tableName
+     * @param klassEntity
+     * @param <T>
+     * @return
+     */
+    private static <T> List<T> retreiveDataFromVersion(SQLiteDatabase db, int version, String tableName, Class<T> klassEntity) {
         List<String> columns = catchDescription(db, version, tableName);
         if (!columns.isEmpty()) {
             String[] columnsArray = columns.toArray(new String[0]);
             Cursor cursor = db.query(tableName, columnsArray, null, null, null, null, null);
-            return uOrm.listFromCursor(cursor, klass);
+            return uOrm.listFromCursor(cursor, klassEntity);
         }
         return new ArrayList<>();
     }
 
-    private static <T> void insertInto(SQLiteDatabase db, String tableName, List<T> list){
+    /**
+     * Insert datas from the list to the specified table
+     *
+     * @param db
+     * @param tableName
+     * @param list
+     * @param <T>
+     */
+    private static <T> void insertDataFromList(@NotNull SQLiteDatabase db, @NotNull String tableName, @NotNull List<T> list) {
         for (T entity : list) {
             ContentValues contentValues = uOrm.toContentValues(entity);
             db.insert(tableName, null, contentValues);
         }
-    }
-
-    @OnUpgrade
-    public static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-        // Récupération des anciennes données
-        List<ColisEntity> listColis = retreiveDataFromVersion(db, oldVersion, COLIS, ColisEntity.class);
-        List<EtapeAcheminementEntity> listEtape = retreiveDataFromVersion(db, oldVersion, ETAPE_ACHEMINEMENT, EtapeAcheminementEntity.class);
-        List<ActualiteEntity> listActualite = retreiveDataFromVersion(db, oldVersion, ACTUALITE, ActualiteEntity.class);
-
-        // Suppression des anciennes tables et insertion des nouvelles
-        db.execSQL("DROP TABLE " + ETAPE_ACHEMINEMENT);
-        db.execSQL("DROP TABLE " + COLIS);
-        db.execSQL("DROP TABLE " + ACTUALITE);
-
-        // Création des nouvelles tables
-        db.execSQL(CREATE_ETAPE_ACHEMINEMENT);
-        db.execSQL(CREATE_COLIS);
-        db.execSQL(CREATE_ACTUALITE);
-
-        // Réinsertion des données
-        insertInto(db, COLIS, listColis);
-        insertInto(db, ETAPE_ACHEMINEMENT, listEtape);
-        insertInto(db, ACTUALITE, listActualite);
     }
 }

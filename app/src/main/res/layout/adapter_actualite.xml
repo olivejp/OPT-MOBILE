@@ -40,7 +40,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@+id/image_button_dismiss"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="Le forfait M est arrivé !" />
+                tools:text="@string/welcome" />
 
             <TextView
                 android:id="@+id/date_actualite"
@@ -82,7 +82,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraint_titre"
-            tools:text="L'OPT offre un nouveau service appelé forfait M qui permet à ses adhérents de contractualiser sur un contrat mobilis avec plusieurs avantage notamment le fait d'avoir un forfait bloqué." />
+            tools:text="@string/message_bienvenue" />
 
 
     </android.support.constraint.ConstraintLayout>
