@@ -131,7 +131,6 @@ public class MainActivity extends AttachToPermissionActivity
         mFirebaseUser = null;
         mDrawablePhoto = null;
         mImageViewProfile.setImageResource(R.drawable.ic_person_white_48dp);
-        invalidateOptionsMenu();
     }
 
     private void defineAuthListener() {
@@ -185,7 +184,6 @@ public class MainActivity extends AttachToPermissionActivity
             if (drawable != null) {
                 activity.setmDrawablePhoto(drawable);
                 activity.getmImageViewProfile().setImageDrawable(drawable);
-                activity.invalidateOptionsMenu();
             }
         }
     }
@@ -304,23 +302,6 @@ public class MainActivity extends AttachToPermissionActivity
                     Utilities.SendDialogByActivity(this, getString(R.string.want_you_quit), NoticeDialogFragment.TYPE_BOUTON_YESNO, NoticeDialogFragment.TYPE_IMAGE_INFORMATION, DIALOG_TAG_EXIT);
                 }
             }
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int i = item.getItemId();
-        if (i == R.id.action_sign_out) {
-            mFirebaseAuth.signOut();
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
         }
     }
 
