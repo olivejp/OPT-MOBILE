@@ -36,6 +36,7 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -88,6 +89,22 @@ public class MainActivity extends AttachToPermissionActivity
     @BindView(R.id.nav_view)
     NavigationView navigationView;
 
+    public Drawable getmDrawablePhoto() {
+        return mDrawablePhoto;
+    }
+
+    public void setmDrawablePhoto(Drawable mDrawablePhoto) {
+        this.mDrawablePhoto = mDrawablePhoto;
+    }
+
+    public ImageView getmImageViewProfile() {
+        return mImageViewProfile;
+    }
+
+    public void setmImageViewProfile(ImageView mImageViewProfile) {
+        this.mImageViewProfile = mImageViewProfile;
+    }
+
     private void signIn() {
         if (NetworkReceiver.checkConnection(this)) {
             signOut();
@@ -125,7 +142,8 @@ public class MainActivity extends AttachToPermissionActivity
                 if (mFirebaseUser != null) {
                     mButtonConnexion.setText(R.string.logout);
                     mProfilName.setText(mFirebaseUser.getDisplayName());
-                    createAsyncTaskGetPhoto().execute();
+                    Uri[] uris = new Uri[]{mFirebaseUser.getPhotoUrl()};
+                    new CustomTask(MainActivity.this).execute(uris);
                 } else {
                     signOut();
                 }
@@ -133,33 +151,43 @@ public class MainActivity extends AttachToPermissionActivity
         };
     }
 
-    private AsyncTask<Void, Void, Drawable> createAsyncTaskGetPhoto() {
-        // On définit une tache pour recuperer la photo de la personne connectee
-        return new AsyncTask<Void, Void, Drawable>() {
-            @Override
-            protected Drawable doInBackground(Void... voids) {
-                try {
-                    return Glide.with(MainActivity.this)
-                            .asDrawable()
-                            .load(mFirebaseUser.getPhotoUrl())
-                            .apply(RequestOptions.circleCropTransform())
-                            .submit()
-                            .get();
-                } catch (InterruptedException | ExecutionException e) {
-                    Log.e(TAG, e.getMessage(), e);
-                }
-                return null;
-            }
+    private static class CustomTask extends AsyncTask<Uri, Void, Drawable> {
 
-            @Override
-            protected void onPostExecute(Drawable drawable) {
-                if (drawable != null) {
-                    mDrawablePhoto = drawable;
-                    mImageViewProfile.setImageDrawable(mDrawablePhoto);
-                    invalidateOptionsMenu();
-                }
+        private WeakReference<MainActivity> activityReference;
+
+        // only retain a weak reference to the activity
+        CustomTask(MainActivity context) {
+            activityReference = new WeakReference<>(context);
+        }
+
+        @Override
+        protected Drawable doInBackground(Uri... uris) {
+            MainActivity activity = activityReference.get();
+            if (activity == null) return null;
+            if (uris.length < 1) return null;
+            try {
+                return Glide.with(activity)
+                        .asDrawable()
+                        .load(uris[0])
+                        .apply(RequestOptions.circleCropTransform())
+                        .submit()
+                        .get();
+            } catch (InterruptedException | ExecutionException e) {
+                Log.e(TAG, e.getMessage(), e);
             }
-        };
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Drawable drawable) {
+            MainActivity activity = activityReference.get();
+            if (activity == null) return;
+            if (drawable != null) {
+                activity.setmDrawablePhoto(drawable);
+                activity.getmImageViewProfile().setImageDrawable(drawable);
+                activity.invalidateOptionsMenu();
+            }
+        }
     }
 
     private boolean isInternetPermited() {
@@ -348,7 +376,8 @@ public class MainActivity extends AttachToPermissionActivity
                 Toast.makeText(this, R.string.welcome, Toast.LENGTH_LONG).show();
 
                 // On appelle la tache pour aller recuperer la photo
-                createAsyncTaskGetPhoto().execute();
+                Uri[] uris = new Uri[]{mFirebaseUser.getPhotoUrl()};
+                new CustomTask(MainActivity.this).execute(uris);
 
             }
             if (resultCode == RESULT_CANCELED) {
