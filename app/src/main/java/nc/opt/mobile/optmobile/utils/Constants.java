@@ -20,6 +20,7 @@ public class Constants {
 
     public static final String FIREBASE_DATABASE = "firebase_database";
     public static final String CLOUD_FIRESTORE = "cloud_firestore";
+    public static final String DATABASE_USERS_REFERENCE = "users";
 
     /**
      * Minutes we will wait before launch the sync
