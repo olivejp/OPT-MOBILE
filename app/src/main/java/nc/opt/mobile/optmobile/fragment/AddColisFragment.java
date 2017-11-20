@@ -20,6 +20,7 @@ import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.services.ActualiteService;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
+import nc.opt.mobile.optmobile.service.FirebaseService;
 import nc.opt.mobile.optmobile.service.SyncColisService;
 
 /**
@@ -88,6 +89,9 @@ public class AddColisFragment extends Fragment {
                     String titre = String.format(getString(R.string.colis_added), idColis);
                     String contenu = String.format(getString(R.string.insert_contenu_actualite), idColis);
                     ActualiteService.insertActualite(mActivity, titre, contenu, true);
+
+                    // Try to send to the remote DB
+                    FirebaseService.createInRemoteDatabase(ColisService.listFromProvider(getActivity()),null);
                 }
                 mActivity.finish();
             }

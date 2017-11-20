@@ -81,7 +81,6 @@ public class MainActivity extends AttachToPermissionActivity
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
-    private Drawable mDrawablePhoto;
 
     private ImageView mImageViewProfile;
     private Button mButtonConnexion;
@@ -95,20 +94,8 @@ public class MainActivity extends AttachToPermissionActivity
     @BindView(R.id.nav_view)
     NavigationView navigationView;
 
-    public Drawable getmDrawablePhoto() {
-        return mDrawablePhoto;
-    }
-
-    public void setmDrawablePhoto(Drawable mDrawablePhoto) {
-        this.mDrawablePhoto = mDrawablePhoto;
-    }
-
     public ImageView getmImageViewProfile() {
         return mImageViewProfile;
-    }
-
-    public void setmImageViewProfile(ImageView mImageViewProfile) {
-        this.mImageViewProfile = mImageViewProfile;
     }
 
     private void signIn() {
@@ -135,7 +122,6 @@ public class MainActivity extends AttachToPermissionActivity
         mButtonConnexion.setText(R.string.login);
         mProfilName.setText(null);
         mFirebaseUser = null;
-        mDrawablePhoto = null;
         mImageViewProfile.setImageResource(R.drawable.ic_person_white_48dp);
     }
 
@@ -169,7 +155,7 @@ public class MainActivity extends AttachToPermissionActivity
                 if (colisEntity.getDeleted() == 1) {
                     // Colis has been deleted in our local DB.
                     // We update our remote database.
-                    FirebaseService.createInRemoteDatabase(mFirebaseUser.getUid(), ColisService.listFromProvider(this), null);
+                    FirebaseService.createInRemoteDatabase(ColisService.listFromProvider(this), null);
                 }
             }
         }
@@ -224,7 +210,6 @@ public class MainActivity extends AttachToPermissionActivity
             MainActivity activity = activityReference.get();
             if (activity == null) return;
             if (drawable != null) {
-                activity.setmDrawablePhoto(drawable);
                 activity.getmImageViewProfile().setImageDrawable(drawable);
             }
         }
@@ -249,11 +234,10 @@ public class MainActivity extends AttachToPermissionActivity
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild(userId)) {
-                    // User ID found, we retrieve the list of colis
-                    FirebaseService.getFromRemoteDatabase(userId, null, getFromRemoteValueEventListener);
+                    FirebaseService.getFromRemoteDatabase(getFromRemoteValueEventListener);
+                    FirebaseService.createInRemoteDatabase(ColisService.listFromProvider(MainActivity.this), navigationView);
                 } else {
-                    // User never accessed the database
-                    FirebaseService.createInRemoteDatabase(userId, ColisService.listFromProvider(MainActivity.this), navigationView);
+                    FirebaseService.createInRemoteDatabase(ColisService.listFromProvider(MainActivity.this), navigationView);
                 }
             }
 
