@@ -15,6 +15,7 @@ import nc.opt.mobile.optmobile.domain.suiviColis.ActualiteDto;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.entity.ActualiteEntity;
 import nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface;
+import nc.opt.mobile.optmobile.utils.DateConverter;
 
 import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.CONTENU;
 import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.DATE;
@@ -39,6 +40,18 @@ public class ActualiteService {
 
     public static Long insertActualite(Context context, ActualiteDto actualiteDto) {
         return insertActualite(context, putToContentValues(actualiteDto));
+    }
+
+    public static Long insertActualite(Context context, String titre, String contenu, boolean dismissable) {
+        ActualiteEntity actualiteEntity = new ActualiteEntity();
+        actualiteEntity.setTitre(titre);
+        actualiteEntity.setType("1");
+        actualiteEntity.setContenu(contenu);
+        actualiteEntity.setDate(DateConverter.getNowEntity());
+        actualiteEntity.setDismissed("0");
+        actualiteEntity.setDismissable(dismissable ? "1" : "0");
+        ContentValues contentValues = uOrm.toContentValues(actualiteEntity);
+        return insertActualite(context, contentValues);
     }
 
     public static Long insertActualite(Context context, ActualiteEntity actualiteEntity) {

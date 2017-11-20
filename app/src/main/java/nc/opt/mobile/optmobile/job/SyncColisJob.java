@@ -27,7 +27,7 @@ public class SyncColisJob extends Job {
     }
 
     /**
-     * Schedule a periodic job wich will be launch every 30 minutes.
+     * Schedule a periodic job which will be launch every 30 minutes.
      */
     public static void scheduleJob() {
         new JobRequest.Builder(SyncColisJob.TAG)
@@ -40,6 +40,9 @@ public class SyncColisJob extends Job {
                 .schedule();
     }
 
+    /**
+     * Launch immediately the sync job
+     */
     public static void launchImmediateJob() {
         new JobRequest.Builder(SyncColisJob.TAG)
                 .startNow();
