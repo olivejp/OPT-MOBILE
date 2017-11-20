@@ -91,7 +91,7 @@ public class AddColisFragment extends Fragment {
                     ActualiteService.insertActualite(mActivity, titre, contenu, true);
 
                     // Try to send to the remote DB
-                    FirebaseService.createInRemoteDatabase(ColisService.listFromProvider(getActivity()),null);
+                    FirebaseService.createRemoteDatabase(ColisService.listFromProvider(getActivity()),null);
                 }
                 mActivity.finish();
             }

@@ -42,7 +42,7 @@ public class FirebaseService {
      * @param listColis
      * @param view
      */
-    public static void createInRemoteDatabase(@NotNull List<ColisEntity> listColis, @Nullable View view) {
+    public static void createRemoteDatabase(@NotNull List<ColisEntity> listColis, @Nullable View view) {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {
             for (ColisEntity colisEntity : listColis) {
