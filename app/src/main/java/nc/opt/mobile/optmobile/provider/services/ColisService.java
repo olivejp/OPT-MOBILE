@@ -28,6 +28,8 @@ import static nc.opt.mobile.optmobile.utils.DateConverter.getNowEntity;
 public class ColisService {
 
     private static final MicroOrm uOrm = new MicroOrm();
+    private static String onlyActiveColis = ColisInterface.DELETED.concat("<> ?");
+    private static String[] onlyActiveColisArgs = new String[]{"1"};
 
     private ColisService() {
     }
@@ -58,7 +60,7 @@ public class ColisService {
         List<ColisEntity> colisList = new ArrayList<>();
 
         // Query the content provider to get a cursor of ColisDto
-        Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, null, null, null);
+        Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, onlyActiveColis, onlyActiveColisArgs, null);
 
         if (cursorListColis != null) {
             while (cursorListColis.moveToNext()) {
@@ -75,7 +77,8 @@ public class ColisService {
     public static int count(Context context) {
         // Query the content provider to get a cursor of ColisDto
         int count = 0;
-        Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, null, null, null);
+
+        Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, onlyActiveColis, onlyActiveColisArgs, null);
         if (cursorListColis != null) {
             count = cursorListColis.getCount();
             cursorListColis.close();
@@ -83,13 +86,23 @@ public class ColisService {
         return count;
     }
 
-    public static boolean delete(Context context, String idColis) {
+    public static int delete(Context context, String idColis) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(ColisInterface.DELETED, 1);
+
+        String where = ColisInterface.ID_COLIS.concat("=?");
+
+        return context.getContentResolver().update(OptProvider.ListColis.LIST_COLIS, contentValues, where, new String[]{idColis});
+    }
+
+    public static boolean realDelete(Context context, String idColis) {
         // Suppression des étapes d'acheminement
         EtapeAcheminementService.delete(context, idColis);
 
         // Suppression du colis
         int result = context.getContentResolver().delete(OptProvider.ListColis.LIST_COLIS, ColisInterface.ID_COLIS.concat("=?"), new String[]{idColis});
 
+        // Return true if we delete the colis
         return result == 1;
     }
 
@@ -97,6 +110,7 @@ public class ColisService {
         ContentValues contentValues = new ContentValues();
         contentValues.put(ColisInterface.ID_COLIS, colis.getIdColis());
         contentValues.put(ColisInterface.DESCRIPTION, colis.getDescription());
+        contentValues.put(ColisInterface.DELETED, colis.getDeleted());
         return contentValues;
     }
 

@@ -35,7 +35,11 @@ import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -48,6 +52,9 @@ import nc.opt.mobile.optmobile.fragment.ActualiteFragment;
 import nc.opt.mobile.optmobile.interfaces.AttachToPermissionActivity;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.ProviderObserver;
+import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
+import nc.opt.mobile.optmobile.provider.services.ColisService;
+import nc.opt.mobile.optmobile.service.FirebaseService;
 import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
 import nc.opt.mobile.optmobile.utils.RequestQueueSingleton;
 import nc.opt.mobile.optmobile.utils.Utilities;
@@ -74,7 +81,6 @@ public class MainActivity extends AttachToPermissionActivity
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
-    private Drawable mDrawablePhoto;
 
     private ImageView mImageViewProfile;
     private Button mButtonConnexion;
@@ -87,6 +93,10 @@ public class MainActivity extends AttachToPermissionActivity
 
     @BindView(R.id.nav_view)
     NavigationView navigationView;
+
+    public ImageView getmImageViewProfile() {
+        return mImageViewProfile;
+    }
 
     private void signIn() {
         if (NetworkReceiver.checkConnection(this)) {
@@ -112,9 +122,7 @@ public class MainActivity extends AttachToPermissionActivity
         mButtonConnexion.setText(R.string.login);
         mProfilName.setText(null);
         mFirebaseUser = null;
-        mDrawablePhoto = null;
         mImageViewProfile.setImageResource(R.drawable.ic_person_white_48dp);
-        invalidateOptionsMenu();
     }
 
     private void defineAuthListener() {
@@ -125,7 +133,10 @@ public class MainActivity extends AttachToPermissionActivity
                 if (mFirebaseUser != null) {
                     mButtonConnexion.setText(R.string.logout);
                     mProfilName.setText(mFirebaseUser.getDisplayName());
-                    createAsyncTaskGetPhoto().execute();
+                    Uri[] uris = new Uri[]{mFirebaseUser.getPhotoUrl()};
+                    new CatchPhotoFromUrlTask(MainActivity.this).execute(uris);
+
+                    firebaseDatabaseUserExist(mFirebaseUser.getUid());
                 } else {
                     signOut();
                 }
@@ -133,33 +144,76 @@ public class MainActivity extends AttachToPermissionActivity
         };
     }
 
-    private AsyncTask<Void, Void, Drawable> createAsyncTaskGetPhoto() {
-        // On définit une tache pour recuperer la photo de la personne connectee
-        return new AsyncTask<Void, Void, Drawable>() {
-            @Override
-            protected Drawable doInBackground(Void... voids) {
-                try {
-                    return Glide.with(MainActivity.this)
-                            .asDrawable()
-                            .load(mFirebaseUser.getPhotoUrl())
-                            .apply(RequestOptions.circleCropTransform())
-                            .submit()
-                            .get();
-                } catch (InterruptedException | ExecutionException e) {
-                    Log.e(TAG, e.getMessage(), e);
-                }
-                return null;
-            }
+    private List<ColisEntity> mListColisEntity = new ArrayList<>();
 
-            @Override
-            protected void onPostExecute(Drawable drawable) {
-                if (drawable != null) {
-                    mDrawablePhoto = drawable;
-                    mImageViewProfile.setImageDrawable(mDrawablePhoto);
-                    invalidateOptionsMenu();
+    private void checkExistenceAndUpdate(Context context, List<ColisEntity> remoteListColisEntity) {
+        for (ColisEntity remoteColisEntity : remoteListColisEntity) {
+            if (!ColisService.exist(context, remoteColisEntity.getIdColis())) {
+                // Colis don't already exist in our local DB, we insert it.
+                ColisService.insert(context, remoteColisEntity);
+            } else {
+                if (remoteColisEntity.getDeleted() == 1) {
+                    // Colis exist in our local DB but has been deleted.
+                    // We update our remote database.
+                    FirebaseService.deleteRemoteColis(mFirebaseUser, remoteColisEntity);
+                    ColisService.realDelete(this, remoteColisEntity.getIdColis());
                 }
             }
-        };
+        }
+    }
+
+    private ValueEventListener getFromRemoteValueEventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            mListColisEntity.clear();
+            for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                ColisEntity colisEntity = postSnapshot.getValue(ColisEntity.class);
+                mListColisEntity.add(colisEntity);
+            }
+            checkExistenceAndUpdate(MainActivity.this, mListColisEntity);
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
+
+    private static class CatchPhotoFromUrlTask extends AsyncTask<Uri, Void, Drawable> {
+
+        private WeakReference<MainActivity> activityReference;
+
+        // only retain a weak reference to the activity
+        CatchPhotoFromUrlTask(MainActivity context) {
+            activityReference = new WeakReference<>(context);
+        }
+
+        @Override
+        protected Drawable doInBackground(Uri... uris) {
+            MainActivity activity = activityReference.get();
+            if (activity == null) return null;
+            if (uris.length < 1) return null;
+            try {
+                return Glide.with(activity)
+                        .asDrawable()
+                        .load(uris[0])
+                        .apply(RequestOptions.circleCropTransform())
+                        .submit()
+                        .get();
+            } catch (InterruptedException | ExecutionException e) {
+                Log.e(TAG, e.getMessage(), e);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Drawable drawable) {
+            MainActivity activity = activityReference.get();
+            if (activity == null) return;
+            if (drawable != null) {
+                activity.getmImageViewProfile().setImageDrawable(drawable);
+            }
+        }
     }
 
     private boolean isInternetPermited() {
@@ -174,6 +228,25 @@ public class MainActivity extends AttachToPermissionActivity
         suiviColisBadgeCounter.setTypeface(null, Typeface.BOLD);
         suiviColisBadgeCounter.setTextColor(getResources().getColor(R.color.colorPrimary));
         suiviColisBadgeCounter.setText(String.valueOf(count(this)));
+    }
+
+    private void firebaseDatabaseUserExist(final String userId) {
+        FirebaseService.getUsersRef().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild(userId)) {
+                    FirebaseService.getFromRemoteDatabase(getFromRemoteValueEventListener);
+                    FirebaseService.createRemoteDatabase(ColisService.listFromProvider(MainActivity.this), navigationView);
+                } else {
+                    FirebaseService.createRemoteDatabase(ColisService.listFromProvider(MainActivity.this), navigationView);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -280,23 +353,6 @@ public class MainActivity extends AttachToPermissionActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int i = item.getItemId();
-        if (i == R.id.action_sign_out) {
-            mFirebaseAuth.signOut();
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_geo_agence:
@@ -347,9 +403,12 @@ public class MainActivity extends AttachToPermissionActivity
                 mFirebaseUser = mFirebaseAuth.getCurrentUser();
                 Toast.makeText(this, R.string.welcome, Toast.LENGTH_LONG).show();
 
-                // On appelle la tache pour aller recuperer la photo
-                createAsyncTaskGetPhoto().execute();
+                // Call the task to retrieve the photo
+                Uri[] uris = new Uri[]{mFirebaseUser.getPhotoUrl()};
+                new CatchPhotoFromUrlTask(MainActivity.this).execute(uris);
 
+                // Put/Get datas from FirebaseDatabase.
+                firebaseDatabaseUserExist(mFirebaseUser.getUid());
             }
             if (resultCode == RESULT_CANCELED) {
                 // Sign in was canceled by the user, finish the activity

@@ -50,8 +50,17 @@ public class ColisServiceTest {
     public void testInsertAndDeleteColis() {
         ProviderTestUtilities.deleteRecords(mContext, OptProvider.ListColis.LIST_COLIS);
         insertColis();
-        boolean deleted = ColisService.delete(mContext, ID);
-        Assert.assertTrue(deleted);
+
+        int deleted = ColisService.delete(mContext, ID);
+        Assert.assertTrue(deleted > 0);
+
+        int count = ColisService.count(mContext);
+        Assert.assertTrue(count == 1);
+
+        ColisEntity colisEntity = ColisService.get(mContext, ID);
+        Assert.assertNotNull(colisEntity);
+        Assert.assertNotNull(colisEntity.getDeleted());
+        Assert.assertEquals(1, colisEntity.getDeleted());
     }
 
     @Test

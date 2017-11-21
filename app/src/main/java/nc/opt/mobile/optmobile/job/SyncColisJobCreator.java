@@ -14,11 +14,10 @@ public class SyncColisJobCreator implements JobCreator {
     @Override
     @Nullable
     public Job create(@NonNull String tag) {
-        switch (tag) {
-            case SyncColisJob.TAG:
-                return new SyncColisJob();
-            default:
-                return null;
+        if (tag.equals(SyncColisJob.TAG)) {
+            return new SyncColisJob();
+        } else {
+            return null;
         }
     }
 }

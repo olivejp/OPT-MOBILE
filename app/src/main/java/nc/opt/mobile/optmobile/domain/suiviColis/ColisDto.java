@@ -12,7 +12,7 @@ import java.util.List;
 public class ColisDto implements Parcelable {
 
     private String idColis;
-
+    private String description;
     private List<EtapeAcheminementDto> etapeAcheminementDtoArrayList;
 
     public ColisDto() {
@@ -31,6 +31,14 @@ public class ColisDto implements Parcelable {
         this.idColis = idColis;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public List<EtapeAcheminementDto> getEtapeAcheminementDtoArrayList() {
         return etapeAcheminementDtoArrayList;
     }
@@ -38,6 +46,7 @@ public class ColisDto implements Parcelable {
     public void setEtapeAcheminementDtoArrayList(List<EtapeAcheminementDto> etapeAcheminementDtoArrayList) {
         this.etapeAcheminementDtoArrayList = etapeAcheminementDtoArrayList;
     }
+
 
     @Override
     public int describeContents() {
@@ -47,11 +56,13 @@ public class ColisDto implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.idColis);
+        dest.writeString(this.description);
         dest.writeTypedList(this.etapeAcheminementDtoArrayList);
     }
 
-    private ColisDto(Parcel in) {
+    protected ColisDto(Parcel in) {
         this.idColis = in.readString();
+        this.description = in.readString();
         this.etapeAcheminementDtoArrayList = in.createTypedArrayList(EtapeAcheminementDto.CREATOR);
     }
 

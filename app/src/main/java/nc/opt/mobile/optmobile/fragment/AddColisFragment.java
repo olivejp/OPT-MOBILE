@@ -3,6 +3,7 @@ package nc.opt.mobile.optmobile.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -16,12 +17,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.provider.entity.ActualiteEntity;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.services.ActualiteService;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
+import nc.opt.mobile.optmobile.service.FirebaseService;
 import nc.opt.mobile.optmobile.service.SyncColisService;
-import nc.opt.mobile.optmobile.utils.DateConverter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,7 +47,7 @@ public class AddColisFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_add_colis, container, false);
         ButterKnife.bind(this, rootView);
@@ -61,38 +61,38 @@ public class AddColisFragment extends Fragment {
     public void searchParcel(View view) {
         if (!editIdParcel.getText().toString().isEmpty()) {
             String idColis = editIdParcel.getText().toString().toUpperCase();
-            ColisEntity colis = new ColisEntity();
-            colis.setIdColis(idColis);
-            colis.setDescription(editDescriptionParcel.getText().toString());
 
             // Query our ContentProvider to avoid duplicate
             if (ColisService.exist(mActivity, idColis)) {
                 Snackbar.make(view, R.string.colis_already_added, Snackbar.LENGTH_LONG).show();
             } else {
                 // Add the colis to our ContentProvider
-                ColisService.insert(mActivity, colis);
+                ColisEntity colis = new ColisEntity();
+                colis.setIdColis(idColis);
+                colis.setDescription(editDescriptionParcel.getText().toString());
+                colis.setDeleted(0);
+                long insertResult = ColisService.insert(mActivity, colis);
+                if (insertResult != -1) {
 
-                // On lance une première fois le service de synchro
-                SyncColisService.launchSynchroByIdColis(mActivity, idColis, false);
+                    // On lance une première fois le service de synchro
+                    SyncColisService.launchSynchroByIdColis(mActivity, idColis, false);
 
-                // Hide the keyboard
-                InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null) {
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    // Hide the keyboard
+                    InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+
+                    Snackbar.make(view, String.format(getString(R.string.colis_added), idColis), Snackbar.LENGTH_LONG).show();
+
+                    // Ajout d'une actualité
+                    String titre = String.format(getString(R.string.colis_added), idColis);
+                    String contenu = String.format(getString(R.string.insert_contenu_actualite), idColis);
+                    ActualiteService.insertActualite(mActivity, titre, contenu, true);
+
+                    // Try to send to the remote DB
+                    FirebaseService.createRemoteDatabase(ColisService.listFromProvider(getActivity()),null);
                 }
-
-                Snackbar.make(view, idColis.concat(" " + getString(R.string.colis_added)), Snackbar.LENGTH_LONG).show();
-
-                // Ajout d'une actualité
-                ActualiteEntity actualiteEntity = new ActualiteEntity();
-                actualiteEntity.setTitre(idColis + " ajouté au suivi");
-                actualiteEntity.setType("1");
-                actualiteEntity.setContenu("Vous avez ajouté " + idColis + " au suivi des colis. Vous serez notifié de son évolution lors de son acheminement.");
-                actualiteEntity.setDate(DateConverter.getNowEntity());
-                actualiteEntity.setDismissed("0");
-                actualiteEntity.setDismissable("1");
-                ActualiteService.insertActualite(mActivity, actualiteEntity);
-
                 mActivity.finish();
             }
         }

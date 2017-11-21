@@ -16,3 +16,24 @@ Dans le cas des actualites :
 Creation d'un nouveau fragment
 Creation d'une nouvelle table dans la BD
 Creation d'un nouveau service
+
+US quand on se connecte
+-Si on avait des colis sur le serveur distant et qu'ils ne sont pas présents sur la base locale
+ on les récupère en local.
+-Si on a des colis en local qui ne sont pas présents sur le serveur distant on les envoie au serveur.
+
+Quand on supprime un colis en local du suivi :
+-On passe le colis en deleted = true
+-Si on est connecté, on va supprimer sur le serveur distant PUIS sur la base locale.
+-Si on est déconnecté, on attend la prochaine connexion pour supprimer sur le serveur et sur le local.
+
+ToDo :
+Implementer la methode onUpgrade de la Database pour récupérer les anciennes données. ==> OK
+
+Rajouter un champ deleted dans la table Colis + dto + entity ==> OK
+Modifier le service qui liste les colis pour qu'il ne nous renvoie pas les colis Deleted = true ==> OK
+Modifier l'adapter pour qu'il modifie uniquement le booléen deleted à 'O' quand on supprime un colis. ==> OK
+Modifier le job schedulé pour qu'il vérifie si on a des colis supprimé.
+-Si oui et que on a un utilisateur connecté : On supprime sur le serveur distant
+-Au retour de la réponse serveur on va supprimer en local.
+-Si pas d'utilisateur connecté on ne fait rien.
