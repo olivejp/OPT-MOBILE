@@ -146,16 +146,17 @@ public class MainActivity extends AttachToPermissionActivity
 
     private List<ColisEntity> mListColisEntity = new ArrayList<>();
 
-    private void checkExistenceAndUpdate(Context context, List<ColisEntity> mListColisEntity) {
-        for (ColisEntity colisEntity : mListColisEntity) {
-            if (!ColisService.exist(context, colisEntity.getIdColis())) {
+    private void checkExistenceAndUpdate(Context context, List<ColisEntity> remoteListColisEntity) {
+        for (ColisEntity remoteColisEntity : remoteListColisEntity) {
+            if (!ColisService.exist(context, remoteColisEntity.getIdColis())) {
                 // Colis don't already exist in our local DB, we insert it.
-                ColisService.insert(context, colisEntity);
+                ColisService.insert(context, remoteColisEntity);
             } else {
-                if (colisEntity.getDeleted() == 1) {
-                    // Colis has been deleted in our local DB.
+                if (remoteColisEntity.getDeleted() == 1) {
+                    // Colis exist in our local DB but has been deleted.
                     // We update our remote database.
-                    FirebaseService.createRemoteDatabase(ColisService.listFromProvider(this), null);
+                    FirebaseService.deleteRemoteColis(mFirebaseUser, remoteColisEntity);
+                    ColisService.realDelete(this, remoteColisEntity.getIdColis());
                 }
             }
         }
