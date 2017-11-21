@@ -26,6 +26,8 @@
 -dontwarn com.google.common.**
 -dontwarn retrofit2.**
 -dontwarn okhttp3.**
+-dontwarn net.simonvt.schematic.**
+-dontwarn com.squareup.javapoet.**
 
 -keep class retrofit2.** { *; }
 -keepattributes Signature
