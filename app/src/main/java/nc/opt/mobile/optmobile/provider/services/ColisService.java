@@ -28,8 +28,8 @@ import static nc.opt.mobile.optmobile.utils.DateConverter.getNowEntity;
 public class ColisService {
 
     private static final MicroOrm uOrm = new MicroOrm();
-    private static String onlyActiveColis = ColisInterface.DELETED.concat("<> ?");
-    private static String[] onlyActiveColisArgs = new String[]{"1"};
+    private static String selectionOnlyActiveColis = ColisInterface.DELETED.concat("<> ?");
+    private static String[] argsOnlyActiveColisArgs = new String[]{"1"};
 
     private ColisService() {
     }
@@ -42,8 +42,8 @@ public class ColisService {
         return null;
     }
 
-    public static boolean exist(Context context, String id) {
-        Cursor cursor = context.getContentResolver().query(nc.opt.mobile.optmobile.provider.OptProvider.ListColis.withId(id), null, null, null, null);
+    public static boolean exist(Context context, String id, boolean onlyActive) {
+        Cursor cursor = context.getContentResolver().query(nc.opt.mobile.optmobile.provider.OptProvider.ListColis.withId(id), null, onlyActive ? selectionOnlyActiveColis : null, onlyActive ? argsOnlyActiveColisArgs : null, null);
         if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
             cursor.close();
             return true;
@@ -56,11 +56,11 @@ public class ColisService {
         return ContentUris.parseId(uri);
     }
 
-    public static List<ColisEntity> listFromProvider(Context context) {
+    public static List<ColisEntity> listFromProvider(Context context, boolean onlyActive) {
         List<ColisEntity> colisList = new ArrayList<>();
 
         // Query the content provider to get a cursor of ColisDto
-        Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, onlyActiveColis, onlyActiveColisArgs, null);
+        Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, onlyActive ? selectionOnlyActiveColis : null, onlyActive ? argsOnlyActiveColisArgs : null, null);
 
         if (cursorListColis != null) {
             while (cursorListColis.moveToNext()) {
@@ -74,11 +74,11 @@ public class ColisService {
         return colisList;
     }
 
-    public static int count(Context context) {
+    public static int count(Context context, boolean onlyActive) {
         // Query the content provider to get a cursor of ColisDto
         int count = 0;
 
-        Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, onlyActiveColis, onlyActiveColisArgs, null);
+        Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, onlyActive ? selectionOnlyActiveColis : null, onlyActive ? argsOnlyActiveColisArgs : null, null);
         if (cursorListColis != null) {
             count = cursorListColis.getCount();
             cursorListColis.close();
@@ -95,15 +95,12 @@ public class ColisService {
         return context.getContentResolver().update(OptProvider.ListColis.LIST_COLIS, contentValues, where, new String[]{idColis});
     }
 
-    public static boolean realDelete(Context context, String idColis) {
+    public static int realDelete(Context context, String idColis) {
         // Suppression des étapes d'acheminement
         EtapeAcheminementService.delete(context, idColis);
 
         // Suppression du colis
-        int result = context.getContentResolver().delete(OptProvider.ListColis.LIST_COLIS, ColisInterface.ID_COLIS.concat("=?"), new String[]{idColis});
-
-        // Return true if we delete the colis
-        return result == 1;
+        return context.getContentResolver().delete(OptProvider.ListColis.LIST_COLIS, ColisInterface.ID_COLIS.concat("=?"), new String[]{idColis});
     }
 
     private static ContentValues putToContentValues(ColisEntity colis) {

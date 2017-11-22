@@ -1,7 +1,6 @@
 package nc.opt.mobile.optmobile.fragment;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,7 +25,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -156,11 +154,8 @@ public class ActualiteFragment extends Fragment implements ProviderObserver.Prov
 
         attachDatabaseListener();
 
-        ArrayList<Uri> uris = new ArrayList<>();
-        uris.add(OptProvider.ListActualite.LIST_ACTUALITE);
-
         ProviderObserver providerObserver = ProviderObserver.getInstance();
-        providerObserver.observe(mActivity, this, uris);
+        providerObserver.observe(mActivity, this, OptProvider.ListActualite.LIST_ACTUALITE);
     }
 
     @Override

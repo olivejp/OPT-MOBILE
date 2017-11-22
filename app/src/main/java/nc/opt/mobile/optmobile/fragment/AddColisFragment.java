@@ -13,6 +13,9 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -60,12 +63,23 @@ public class AddColisFragment extends Fragment {
     @OnClick(R.id.fab_search_parcel)
     public void searchParcel(View view) {
         if (!editIdParcel.getText().toString().isEmpty()) {
+
+            // Hide the keyboard
+            InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+
             String idColis = editIdParcel.getText().toString().toUpperCase();
 
             // Query our ContentProvider to avoid duplicate
-            if (ColisService.exist(mActivity, idColis)) {
+            if (ColisService.exist(mActivity, idColis, true)) {
                 Snackbar.make(view, R.string.colis_already_added, Snackbar.LENGTH_LONG).show();
             } else {
+                // Colis was already in our local DB but marked as deleted. We call real delete and reinsert it.
+                if (ColisService.exist(mActivity, idColis, false)) {
+                    ColisService.realDelete(mActivity, idColis);
+                }
                 // Add the colis to our ContentProvider
                 ColisEntity colis = new ColisEntity();
                 colis.setIdColis(idColis);
@@ -77,12 +91,6 @@ public class AddColisFragment extends Fragment {
                     // On lance une première fois le service de synchro
                     SyncColisService.launchSynchroByIdColis(mActivity, idColis, false);
 
-                    // Hide the keyboard
-                    InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null) {
-                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    }
-
                     Snackbar.make(view, String.format(getString(R.string.colis_added), idColis), Snackbar.LENGTH_LONG).show();
 
                     // Ajout d'une actualité
@@ -91,7 +99,10 @@ public class AddColisFragment extends Fragment {
                     ActualiteService.insertActualite(mActivity, titre, contenu, true);
 
                     // Try to send to the remote DB
-                    FirebaseService.createRemoteDatabase(ColisService.listFromProvider(getActivity()),null);
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if (user != null) {
+                        FirebaseService.createRemoteDatabase(user.getUid(), ColisService.listFromProvider(getActivity(), true), null);
+                    }
                 }
                 mActivity.finish();
             }

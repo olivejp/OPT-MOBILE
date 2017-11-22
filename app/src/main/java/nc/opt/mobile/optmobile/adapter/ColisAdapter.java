@@ -11,6 +11,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -20,9 +25,11 @@ import nc.opt.mobile.optmobile.activity.GestionColisActivity;
 import nc.opt.mobile.optmobile.fragment.HistoriqueColisFragment;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
+import nc.opt.mobile.optmobile.service.FirebaseService;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
 import static nc.opt.mobile.optmobile.provider.services.ColisService.delete;
+import static nc.opt.mobile.optmobile.provider.services.ColisService.realDelete;
 
 /**
  * Created by orlanth23 on 05/10/2017.
@@ -30,7 +37,7 @@ import static nc.opt.mobile.optmobile.provider.services.ColisService.delete;
 
 public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderStepParcel> {
 
-    private final List<ColisEntity> mColisList;
+    private List<ColisEntity> mColisList;
     private Context mContext;
     private boolean mTwoPane;
 
@@ -84,6 +91,10 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
 
     public List<ColisEntity> getmColisList() {
         return mColisList;
+    }
+
+    public void setmColisList(List<ColisEntity> list){
+        this.mColisList = list;
     }
 
     class ViewHolderStepParcel extends RecyclerView.ViewHolder {
@@ -169,6 +180,8 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
             mDeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    final String idColisToRemove = mColis.getIdColis();
+
                     // Delete from the memory list
                     mColisList.remove(mColis);
 
@@ -176,13 +189,26 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
                     mDeleteMode = false;
 
                     // Just pass the deleted boolean to 1
-                    int nbUpdated = delete(mContext, mColis.getIdColis());
+                    int nbUpdated = delete(mContext, idColisToRemove);
+
+                    // we try to delete the remote
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if (user != null) {
+                        FirebaseService.deleteRemoteColis(user.getUid(), idColisToRemove, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                // If remote has been deleted, we delete local
+                                realDelete(mContext, idColisToRemove);
+                            }
+                        });
+                    }
+
                     Snackbar snackbar;
                     if (nbUpdated == 1) {
                         changeDeleteVisibility();
-                        snackbar = Snackbar.make(mView, mColis.getIdColis().concat(mContext.getString(R.string.deleted_from_management)), Snackbar.LENGTH_LONG);
+                        snackbar = Snackbar.make(mView, idColisToRemove.concat(mContext.getString(R.string.deleted_from_management)), Snackbar.LENGTH_LONG);
                     } else {
-                        snackbar = Snackbar.make(mView, mColis.getIdColis().concat(" suppression échouée."), Snackbar.LENGTH_LONG);
+                        snackbar = Snackbar.make(mView, idColisToRemove.concat(" suppression échouée."), Snackbar.LENGTH_LONG);
                     }
                     snackbar.show();
                 }

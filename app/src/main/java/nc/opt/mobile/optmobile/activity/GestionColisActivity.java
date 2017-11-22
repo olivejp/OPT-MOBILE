@@ -82,7 +82,7 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
                 return super.onOptionsItemSelected(item);
             }
         } else if (i == R.id.nav_refresh && NetworkReceiver.checkConnection(this)) {
-            SyncColisService.launchSynchroForAll(this, true);
+            SyncColisService.launchSynchroForAll(this, false);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -90,7 +90,7 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
     @Override
     public void onNetworkEnable() {
         invalidateOptionsMenu();
-        SyncColisService.launchSynchroForAll(this, true);
+        SyncColisService.launchSynchroForAll(this, false);
     }
 
     @Override

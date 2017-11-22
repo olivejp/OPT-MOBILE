@@ -8,8 +8,6 @@ import android.view.View;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,62 +43,61 @@ public class FirebaseService {
      * @param listColis
      * @param view
      */
-    public static void createRemoteDatabase(@NotNull List<ColisEntity> listColis, @Nullable View view) {
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (firebaseUser != null) {
-            for (ColisEntity colisEntity : listColis) {
-                updateRemoteDatabase(firebaseUser, colisEntity, view);
-            }
+    public static void createRemoteDatabase(@NotNull String userUid, @NotNull List<ColisEntity> listColis, @Nullable View view) {
+        for (ColisEntity colisEntity : listColis) {
+            updateRemoteDatabase(userUid, colisEntity, view);
         }
     }
 
-    public static void deleteRemoteColis(FirebaseUser firebaseUser, @NotNull ColisEntity colis) {
-        if (firebaseUser != null) {
-            getUsersRef().child(firebaseUser.getUid()).child(colis.getIdColis()).removeValue(new DatabaseReference.CompletionListener() {
+    public static void deleteRemoteColis(@NotNull String userUid, @NotNull String idColis, @Nullable DatabaseReference.CompletionListener completionListener) {
+        DatabaseReference.CompletionListener listener;
+        if (completionListener == null) {
+            listener = new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                     Log.d(TAG, "Suppression réussie dans Firebase");
                 }
-            });
+            };
+        } else {
+            listener = completionListener;
         }
+
+        getUsersRef().child(userUid).child(idColis).removeValue(listener);
     }
 
-    public static void updateRemoteDatabase(FirebaseUser firebaseUser, @NotNull ColisEntity colis, @Nullable View view) {
-        if (firebaseUser != null) {
-            if (view != null) weakRefView = new WeakReference<>(view);
-            getUsersRef().child(firebaseUser.getUid()).child(colis.getIdColis()).setValue(colis)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            if (weakRefView.get() != null) {
-                                Snackbar.make(weakRefView.get(), "Insertion dans Firebase réussie.", Snackbar.LENGTH_LONG).show();
-                            }
-                            Log.d(TAG, "Insertion réussie dans Firebase");
+
+    private static void updateRemoteDatabase(@NotNull String userUid, @NotNull ColisEntity colis, @Nullable View view) {
+        if (view != null) weakRefView = new WeakReference<>(view);
+        getUsersRef().child(userUid).child(colis.getIdColis()).setValue(colis)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        if (weakRefView != null && weakRefView.get() != null) {
+                            Snackbar.make(weakRefView.get(), "Insertion dans Firebase réussie.", Snackbar.LENGTH_LONG).show();
                         }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            String message = "Echec de l'insertion dans Firebase.";
-                            FirebaseCrash.log(message.concat(" Exception:").concat(e.getMessage()));
-                            if (weakRefView.get() != null) {
-                                Snackbar.make(weakRefView.get(), message, Snackbar.LENGTH_LONG).show();
-                            }
+                        Log.d(TAG, "Insertion réussie dans Firebase");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        String message = "Echec de l'insertion dans Firebase.";
+                        FirebaseCrash.log(message.concat(" Exception:").concat(e.getMessage()));
+                        if (weakRefView != null && weakRefView.get() != null) {
+                            Snackbar.make(weakRefView.get(), message, Snackbar.LENGTH_LONG).show();
                         }
-                    });
-        }
+                    }
+                });
+
     }
 
     /**
      * @param valueEventListener
      */
-    public static void getFromRemoteDatabase(@Nullable ValueEventListener valueEventListener) {
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (firebaseUser != null) {
-            DatabaseReference userReference = getUsersRef().child(firebaseUser.getUid());
-            if (valueEventListener != null) {
-                userReference.addValueEventListener(valueEventListener);
-            }
+    public static void getFromRemoteDatabase(@NotNull String userUid, @Nullable ValueEventListener valueEventListener) {
+        DatabaseReference userReference = getUsersRef().child(userUid);
+        if (valueEventListener != null) {
+            userReference.addValueEventListener(valueEventListener);
         }
     }
 }
