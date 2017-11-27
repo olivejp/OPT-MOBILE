@@ -13,7 +13,7 @@ android {
         applicationId "nc.opt.mobile.optmobile"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 16
+        versionCode 17
         versionName "beta-1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
