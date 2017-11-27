@@ -18,7 +18,7 @@ public class HtmlTransformer {
 
     public static final int RESULT_NO_ITEM_FOUND = -1;
     public static final int RESULT_SUCCESS = 1;
-    public static final String HTML_TAG_TABLE = "table";
+    private static final String HTML_TAG_TABLE = "table";
 
     private HtmlTransformer() {
     }
