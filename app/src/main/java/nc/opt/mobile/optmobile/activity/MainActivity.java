@@ -61,6 +61,7 @@ import nc.opt.mobile.optmobile.utils.Utilities;
 
 import static nc.opt.mobile.optmobile.provider.services.AgenceService.populateContentProviderFromAsset;
 import static nc.opt.mobile.optmobile.provider.services.ColisService.count;
+import static nc.opt.mobile.optmobile.utils.Constants.PREF_USER;
 
 public class MainActivity extends AttachToPermissionActivity
         implements NavigationView.OnNavigationItemSelectedListener, NoticeDialogFragment.NoticeDialogListener, ProviderObserver.ProviderObserverListener {
@@ -123,6 +124,13 @@ public class MainActivity extends AttachToPermissionActivity
         mProfilName.setText(null);
         mFirebaseUser = null;
         mImageViewProfile.setImageResource(R.drawable.ic_person_white_48dp);
+        FirebaseAuth.getInstance().signOut();
+
+        // We delete the shared Preference containing the UI of the user.
+        SharedPreferences sharedPreferences = getSharedPreferences("PREFS", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(PREF_USER);
+        editor.apply();
     }
 
     private void defineAuthListener() {
@@ -137,6 +145,12 @@ public class MainActivity extends AttachToPermissionActivity
                     new CatchPhotoFromUrlTask(MainActivity.this).execute(uris);
 
                     firebaseDatabaseUserExist(mFirebaseUser.getUid());
+
+                    // Save the UID of the user in the SharedPreference
+                    SharedPreferences sharedPreferences = getSharedPreferences("PREFS",Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString(PREF_USER, mFirebaseUser.getUid());
+                    editor.apply();
                 } else {
                     signOut();
                 }
@@ -144,33 +158,26 @@ public class MainActivity extends AttachToPermissionActivity
         };
     }
 
-    private List<ColisEntity> mListColisEntity = new ArrayList<>();
-
-    private void checkExistenceAndUpdate(Context context, List<ColisEntity> remoteListColisEntity) {
-        for (ColisEntity remoteColisEntity : remoteListColisEntity) {
-            if (!ColisService.exist(context, remoteColisEntity.getIdColis())) {
-                // Colis don't already exist in our local DB, we insert it.
-                ColisService.insert(context, remoteColisEntity);
-            } else {
-                if (remoteColisEntity.getDeleted() == 1) {
-                    // Colis exist in our local DB but has been deleted.
-                    // We update our remote database.
-                    FirebaseService.deleteRemoteColis(mFirebaseUser, remoteColisEntity);
-                    ColisService.realDelete(this, remoteColisEntity.getIdColis());
-                }
-            }
-        }
-    }
-
     private ValueEventListener getFromRemoteValueEventListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
-            mListColisEntity.clear();
             for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                ColisEntity colisEntity = postSnapshot.getValue(ColisEntity.class);
-                mListColisEntity.add(colisEntity);
+                ColisEntity remoteColisEntity = postSnapshot.getValue(ColisEntity.class);
+                if (remoteColisEntity != null) {
+                    if (ColisService.exist(MainActivity.this, remoteColisEntity.getIdColis(), false)) {
+                        ColisEntity colisEntity = ColisService.get(MainActivity.this, remoteColisEntity.getIdColis());
+                        if (colisEntity != null && colisEntity.getDeleted() == 1) {
+                            // Colis exist in our local DB but has been deleted.
+                            // We update our remote database.
+                            FirebaseService.deleteRemoteColis(mFirebaseUser.getUid(), remoteColisEntity.getIdColis(), null);
+                            ColisService.realDelete(MainActivity.this, remoteColisEntity.getIdColis());
+                        }
+                    } else {
+                        // Colis don't already exist in our local DB, we insert it.
+                        ColisService.insert(MainActivity.this, remoteColisEntity);
+                    }
+                }
             }
-            checkExistenceAndUpdate(MainActivity.this, mListColisEntity);
         }
 
         @Override
@@ -179,6 +186,9 @@ public class MainActivity extends AttachToPermissionActivity
         }
     };
 
+    /**
+     * Static class to retrieve photo from an url.
+     */
     private static class CatchPhotoFromUrlTask extends AsyncTask<Uri, Void, Drawable> {
 
         private WeakReference<MainActivity> activityReference;
@@ -216,10 +226,6 @@ public class MainActivity extends AttachToPermissionActivity
         }
     }
 
-    private boolean isInternetPermited() {
-        return ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED;
-    }
-
     private void updateBadge() {
         // Récupération du textView présent dans le menu
         Menu menu = navigationView.getMenu();
@@ -227,18 +233,20 @@ public class MainActivity extends AttachToPermissionActivity
         suiviColisBadgeCounter.setGravity(Gravity.CENTER_VERTICAL);
         suiviColisBadgeCounter.setTypeface(null, Typeface.BOLD);
         suiviColisBadgeCounter.setTextColor(getResources().getColor(R.color.colorPrimary));
-        suiviColisBadgeCounter.setText(String.valueOf(count(this)));
+        suiviColisBadgeCounter.setText(String.valueOf(count(this, true)));
     }
 
     private void firebaseDatabaseUserExist(final String userId) {
         FirebaseService.getUsersRef().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(userId)) {
-                    FirebaseService.getFromRemoteDatabase(getFromRemoteValueEventListener);
-                    FirebaseService.createRemoteDatabase(ColisService.listFromProvider(MainActivity.this), navigationView);
-                } else {
-                    FirebaseService.createRemoteDatabase(ColisService.listFromProvider(MainActivity.this), navigationView);
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null) {
+                    if (dataSnapshot.hasChild(userId)) {
+                        FirebaseService.getFromRemoteDatabase(user.getUid(), getFromRemoteValueEventListener);
+                    } else {
+                        FirebaseService.createRemoteDatabase(user.getUid(), ColisService.listFromProvider(MainActivity.this, true), navigationView);
+                    }
                 }
             }
 
@@ -297,7 +305,7 @@ public class MainActivity extends AttachToPermissionActivity
         }
 
         // Si la permission Internet n'a pas été accordée on va la demander
-        if (!isInternetPermited()) {
+        if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED)) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, RC_PERMISSION_INTERNET);
         }
 
@@ -320,15 +328,11 @@ public class MainActivity extends AttachToPermissionActivity
         updateBadge();
 
         // Appel de la premiere instance
-        RequestQueueSingleton.getInstance(this.
-
-                getApplicationContext());
+        RequestQueueSingleton.getInstance(this.getApplicationContext());
 
         // Enregistrement d'un observer pour écouter les modifications sur le ContentProvider
-        ArrayList<Uri> uris = new ArrayList<>();
-        uris.add(OptProvider.ListColis.LIST_COLIS);
         ProviderObserver providerObserver = ProviderObserver.getInstance();
-        providerObserver.observe(this, this, uris);
+        providerObserver.observe(this, this, OptProvider.ListColis.LIST_COLIS);
 
         // Création du premier fragment
         getSupportFragmentManager().
@@ -438,7 +442,6 @@ public class MainActivity extends AttachToPermissionActivity
 
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
-        return;
     }
 
     @Override

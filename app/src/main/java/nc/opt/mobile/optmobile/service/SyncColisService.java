@@ -3,6 +3,7 @@ package nc.opt.mobile.optmobile.service;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,6 +24,7 @@ import nc.opt.mobile.optmobile.utils.Constants;
 import nc.opt.mobile.optmobile.utils.RequestQueueSingleton;
 
 import static nc.opt.mobile.optmobile.provider.services.ColisService.listFromProvider;
+import static nc.opt.mobile.optmobile.utils.Constants.PREF_USER;
 
 public class SyncColisService extends IntentService {
 
@@ -111,7 +113,7 @@ public class SyncColisService extends IntentService {
     }
 
     private void handleActionSyncAll(boolean sendNotification) {
-        List<ColisEntity> list = listFromProvider(this);
+        List<ColisEntity> list = listFromProvider(this, true);
         if (!list.isEmpty()) {
             for (ColisEntity colis : list) {
                 String url = String.format(mUrl, colis.getIdColis());
@@ -122,6 +124,13 @@ public class SyncColisService extends IntentService {
                 // Add the request to the RequestQueue.
                 mRequestQueueSingleton.addToRequestQueue(stringRequest);
             }
+        }
+
+        // Update Firebase
+        SharedPreferences sharedPreferences = getSharedPreferences("PREFS", Context.MODE_PRIVATE);
+        String uid = sharedPreferences.getString(PREF_USER, null);
+        if (uid != null) {
+            FirebaseService.createRemoteDatabase(uid, list, null);
         }
     }
 

@@ -1,7 +1,6 @@
 package nc.opt.mobile.optmobile.fragment;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -74,14 +72,9 @@ public class GestionColisFragment extends Fragment implements ProviderObserver.P
             mTwoPane = getArguments().getBoolean(ARG_TWO_PANE);
         }
 
-        // create a ColisObserver
-        ArrayList<Uri> uris = new ArrayList<>();
-        uris.add(OptProvider.ListColis.LIST_COLIS);
-        uris.add(OptProvider.ListEtapeAcheminement.LIST_ETAPE);
-
         // create a ProviderObserver to listen updates from the provider
         ProviderObserver providerObserver = ProviderObserver.getInstance();
-        providerObserver.observe(mActivity, this, uris);
+        providerObserver.observe(mActivity, this, OptProvider.ListColis.LIST_COLIS, OptProvider.ListEtapeAcheminement.LIST_ETAPE);
     }
 
     @Override
@@ -102,7 +95,7 @@ public class GestionColisFragment extends Fragment implements ProviderObserver.P
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
         // get the mList from the provider
-        mList = listFromProvider(mActivity);
+        mList = listFromProvider(mActivity, true);
         mColisAdapter = new ColisAdapter(mActivity, mList, mTwoPane);
         mRecyclerView.setAdapter(mColisAdapter);
         mColisAdapter.notifyDataSetChanged();
@@ -115,8 +108,9 @@ public class GestionColisFragment extends Fragment implements ProviderObserver.P
 
     @Override
     public void onProviderChange() {
-        mColisAdapter.getmColisList().clear();
-        mColisAdapter.getmColisList().addAll(listFromProvider(mActivity));
+        mColisAdapter.setmColisList(null);
+        mList = listFromProvider(mActivity, true);
+        mColisAdapter.setmColisList(mList);
         mColisAdapter.notifyDataSetChanged();
         changeVisibility();
     }

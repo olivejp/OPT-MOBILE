@@ -2,7 +2,6 @@ package nc.opt.mobile.optmobile.fragment;
 
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,7 +17,6 @@ import android.widget.TextView;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -78,11 +76,8 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
         mEtapeAcheminementAdapter = new EtapeAcheminementAdapter();
 
         // create a ProviderObserver to listen updates from the provider
-        ArrayList<Uri> uris = new ArrayList<>();
-        uris.add(OptProvider.ListColis.LIST_COLIS);
-        uris.add(OptProvider.ListEtapeAcheminement.LIST_ETAPE);
         ProviderObserver providerObserver = ProviderObserver.getInstance();
-        providerObserver.observe(mAppCompatActivity, this, uris);
+        providerObserver.observe(mAppCompatActivity, this, OptProvider.ListColis.LIST_COLIS, OptProvider.ListEtapeAcheminement.LIST_ETAPE);
     }
 
     @Override

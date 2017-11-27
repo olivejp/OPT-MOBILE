@@ -52,15 +52,36 @@ public class ColisServiceTest {
         insertColis();
 
         int deleted = ColisService.delete(mContext, ID);
-        Assert.assertTrue(deleted > 0);
+        Assert.assertTrue(deleted == 1);
 
-        int count = ColisService.count(mContext);
-        Assert.assertTrue(count == 1);
+        int countNotDeleted = ColisService.count(mContext, false);
+        Assert.assertTrue(countNotDeleted == 1);
+
+        int countReallyDeleted = ColisService.count(mContext, true);
+        Assert.assertTrue(countReallyDeleted == 0);
 
         ColisEntity colisEntity = ColisService.get(mContext, ID);
         Assert.assertNotNull(colisEntity);
         Assert.assertNotNull(colisEntity.getDeleted());
-        Assert.assertEquals(1, colisEntity.getDeleted());
+        Assert.assertEquals(new Integer(1), colisEntity.getDeleted());
+    }
+
+    @Test
+    public void testInsertAndRealDeleteColis() {
+        ProviderTestUtilities.deleteRecords(mContext, OptProvider.ListColis.LIST_COLIS);
+        insertColis();
+
+        int deleted = ColisService.realDelete(mContext, ID);
+        Assert.assertTrue(deleted > 0);
+
+        int countDeleted = ColisService.count(mContext, true);
+        Assert.assertTrue(countDeleted == 0);
+
+        int countRealDeleted = ColisService.count(mContext, false);
+        Assert.assertTrue(countRealDeleted == 0);
+
+        ColisEntity colisEntity = ColisService.get(mContext, ID);
+        Assert.assertNull(colisEntity);
     }
 
     @Test

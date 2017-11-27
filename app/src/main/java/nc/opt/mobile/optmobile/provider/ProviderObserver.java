@@ -29,7 +29,7 @@ public class ProviderObserver extends ContentObserver {
         return mInstance;
     }
 
-    public void observe(Context context, ProviderObserverListener providerObserverListener, List<Uri> uris) {
+    public void observe(Context context, ProviderObserverListener providerObserverListener, Uri ... uris) {
         for (Uri uri : uris) {
             // Recherche si l'uri est présente dans le HashMap
             if (hashMap.containsKey(uri)) {

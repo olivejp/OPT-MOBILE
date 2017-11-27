@@ -31,4 +31,7 @@ public class Constants {
      * How close to the end of the period the job should run
      */
     public static final long INTERVAL_SYNC_JOB_MINS = 5;
+
+
+    public static final String PREF_USER = "POPULATE_USER";
 }

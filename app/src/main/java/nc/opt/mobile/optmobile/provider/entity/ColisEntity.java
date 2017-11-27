@@ -92,7 +92,7 @@ public class ColisEntity {
         this.lastUpdateSuccessful = lastUpdateSuccessful;
     }
 
-    public int getDeleted() {
+    public Integer getDeleted() {
         return deleted;
     }
 

@@ -28,7 +28,6 @@ public class ContentProviderTest {
 
     private ProviderTestUtilities.TestContentObserver tco;
 
-
     private void validateUri(Uri uri, ContentValues contentValues, @Nullable String selection, @Nullable String[] selectionArgs) {
         // A cursor is your primary interface to the query results.
         Cursor cursor = mContext.getContentResolver().query(
