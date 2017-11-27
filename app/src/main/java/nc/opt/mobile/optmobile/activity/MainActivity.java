@@ -124,6 +124,7 @@ public class MainActivity extends AttachToPermissionActivity
         mProfilName.setText(null);
         mFirebaseUser = null;
         mImageViewProfile.setImageResource(R.drawable.ic_person_white_48dp);
+        FirebaseAuth.getInstance().signOut();
 
         // We delete the shared Preference containing the UI of the user.
         SharedPreferences sharedPreferences = getSharedPreferences("PREFS", Context.MODE_PRIVATE);
