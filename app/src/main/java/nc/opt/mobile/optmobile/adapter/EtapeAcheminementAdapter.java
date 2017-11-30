@@ -85,7 +85,15 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public int getItemViewType(int position) {
-        return super.getItemViewType(position);
+        EtapeAcheminementEntity etape = mEtapeAcheminements.get(position);
+        String header_key = etape.getPays().concat(" ").concat(etape.getLocalisation());
+
+        if (header_key.equals(previous_header_key)){
+            return 1;
+        } else {
+            previous_header_key = header_key;
+            return 0;
+        }
     }
 
     class ViewHolderStepParcel extends RecyclerView.ViewHolder {

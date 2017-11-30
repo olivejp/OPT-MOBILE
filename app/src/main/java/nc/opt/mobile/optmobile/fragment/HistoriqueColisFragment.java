@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -91,11 +90,6 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mAppCompatActivity);
         mRecyclerView.setLayoutManager(linearLayoutManager);
-
-        // Ajout d'une barre separatrice entre les elements
-        mRecyclerView.addItemDecoration(new
-                DividerItemDecoration(mAppCompatActivity,
-                DividerItemDecoration.VERTICAL));
 
         // get history from the provider
         mListEtape = listFromProvider(mAppCompatActivity, mIdColis);
