@@ -22,7 +22,7 @@ import nc.opt.mobile.optmobile.utils.DateConverter;
 public class EtapeAcheminementAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<EtapeAcheminementEntity> mEtapeAcheminements;
-    private String previous_header_key = null;
+    private String previousHeaderKey = null;
 
     public EtapeAcheminementAdapter() {
         mEtapeAcheminements = new ArrayList<>();
@@ -44,8 +44,9 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<RecyclerView.
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.adapter_etape, parent, false);
                 return new ViewHolderStepParcel(view);
+            default:
+                return null;
         }
-        return null;
     }
 
     @Override
@@ -75,6 +76,7 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<RecyclerView.
                     viewLine.mStepCommentaire.setText(viewLine.mEtapeEntity.getCommentaire());
                 }
                 break;
+            default:
         }
     }
 
@@ -86,12 +88,12 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<RecyclerView.
     @Override
     public int getItemViewType(int position) {
         EtapeAcheminementEntity etape = mEtapeAcheminements.get(position);
-        String header_key = etape.getPays().concat(" ").concat(etape.getLocalisation());
+        String headerKey = etape.getPays().concat(" ").concat(etape.getLocalisation());
 
-        if (header_key.equals(previous_header_key)){
+        if (headerKey.equals(previousHeaderKey)) {
             return 1;
         } else {
-            previous_header_key = header_key;
+            previousHeaderKey = headerKey;
             return 0;
         }
     }
