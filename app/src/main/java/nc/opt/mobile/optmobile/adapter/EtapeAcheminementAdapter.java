@@ -22,7 +22,7 @@ import nc.opt.mobile.optmobile.utils.DateConverter;
 public class EtapeAcheminementAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<EtapeAcheminementEntity> mEtapeAcheminements;
-    private String previous_header_key = null;
+    private String previousHeaderKey = null;
 
     public EtapeAcheminementAdapter() {
         mEtapeAcheminements = new ArrayList<>();
@@ -44,37 +44,37 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<RecyclerView.
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.adapter_etape, parent, false);
                 return new ViewHolderStepParcel(view);
+            default:
+                return null;
         }
-        return null;
     }
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-        switch (holder.getItemViewType()) {
-            case 0:
-                ViewHolderHeaderStepParcel viewHeader = (ViewHolderHeaderStepParcel) holder;
-                viewHeader.mEtapeEntity = mEtapeAcheminements.get(position);
-                viewHeader.mStepDate.setText(DateConverter.convertDateEntityToUi(viewHeader.mEtapeEntity.getDate()));
-                viewHeader.mStepPays.setText(viewHeader.mEtapeEntity.getPays());
-                viewHeader.mStepLocalisation.setText(viewHeader.mEtapeEntity.getLocalisation());
-                viewHeader.mStepDescription.setText(viewHeader.mEtapeEntity.getDescription());
-                if (viewHeader.mEtapeEntity.getCommentaire().isEmpty()) {
-                    viewHeader.mStepCommentaire.setVisibility(View.GONE);
-                } else {
-                    viewHeader.mStepCommentaire.setText(viewHeader.mEtapeEntity.getCommentaire());
-                }
-                break;
-            case 1:
-                ViewHolderStepParcel viewLine = (ViewHolderStepParcel) holder;
-                viewLine.mEtapeEntity = mEtapeAcheminements.get(position);
-                viewLine.mStepDate.setText(DateConverter.convertDateEntityToUi(viewLine.mEtapeEntity.getDate()));
-                viewLine.mStepDescription.setText(viewLine.mEtapeEntity.getDescription());
-                if (viewLine.mEtapeEntity.getCommentaire().isEmpty()) {
-                    viewLine.mStepCommentaire.setVisibility(View.GONE);
-                } else {
-                    viewLine.mStepCommentaire.setText(viewLine.mEtapeEntity.getCommentaire());
-                }
-                break;
+        int i = holder.getItemViewType();
+        if (i == 0) {
+            ViewHolderHeaderStepParcel viewHeader = (ViewHolderHeaderStepParcel) holder;
+            viewHeader.mEtapeEntity = mEtapeAcheminements.get(position);
+            viewHeader.mStepDate.setText(DateConverter.convertDateEntityToUi(viewHeader.mEtapeEntity.getDate()));
+            viewHeader.mStepPays.setText(viewHeader.mEtapeEntity.getPays());
+            viewHeader.mStepLocalisation.setText(viewHeader.mEtapeEntity.getLocalisation());
+            viewHeader.mStepDescription.setText(viewHeader.mEtapeEntity.getDescription());
+            if (viewHeader.mEtapeEntity.getCommentaire().isEmpty()) {
+                viewHeader.mStepCommentaire.setVisibility(View.GONE);
+            } else {
+                viewHeader.mStepCommentaire.setText(viewHeader.mEtapeEntity.getCommentaire());
+            }
+
+        } else if (i == 1) {
+            ViewHolderStepParcel viewLine = (ViewHolderStepParcel) holder;
+            viewLine.mEtapeEntity = mEtapeAcheminements.get(position);
+            viewLine.mStepDate.setText(DateConverter.convertDateEntityToUi(viewLine.mEtapeEntity.getDate()));
+            viewLine.mStepDescription.setText(viewLine.mEtapeEntity.getDescription());
+            if (viewLine.mEtapeEntity.getCommentaire().isEmpty()) {
+                viewLine.mStepCommentaire.setVisibility(View.GONE);
+            } else {
+                viewLine.mStepCommentaire.setText(viewLine.mEtapeEntity.getCommentaire());
+            }
         }
     }
 
@@ -86,12 +86,12 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<RecyclerView.
     @Override
     public int getItemViewType(int position) {
         EtapeAcheminementEntity etape = mEtapeAcheminements.get(position);
-        String header_key = etape.getPays().concat(" ").concat(etape.getLocalisation());
+        String headerKey = etape.getPays().concat(" ").concat(etape.getLocalisation());
 
-        if (header_key.equals(previous_header_key)){
+        if (headerKey.equals(previousHeaderKey)) {
             return 1;
         } else {
-            previous_header_key = header_key;
+            previousHeaderKey = headerKey;
             return 0;
         }
     }
