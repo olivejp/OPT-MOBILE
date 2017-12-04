@@ -24,7 +24,7 @@ import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.activity.GestionColisActivity;
 import nc.opt.mobile.optmobile.fragment.HistoriqueColisFragment;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
-import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
+import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
 import nc.opt.mobile.optmobile.service.FirebaseService;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
@@ -69,7 +69,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
 
         if (!holder.mColis.getEtapeAcheminementArrayList().isEmpty()) {
             // On prend la dernière étape
-            EtapeAcheminementEntity etapeAcheminement = holder.mColis.getEtapeAcheminementArrayList().get(holder.mColis.getEtapeAcheminementArrayList().size() - 1);
+            EtapeEntity etapeAcheminement = holder.mColis.getEtapeAcheminementArrayList().get(holder.mColis.getEtapeAcheminementArrayList().size() - 1);
             holder.mStepLastDate.setText(DateConverter.convertDateEntityToUi(etapeAcheminement.getDate()));
             holder.mStepLastPays.setText(etapeAcheminement.getPays());
             holder.mStepLastDescription.setText(etapeAcheminement.getDescription());

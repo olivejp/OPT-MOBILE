@@ -14,7 +14,7 @@ import java.util.List;
 import nc.opt.mobile.optmobile.domain.suiviColis.ColisDto;
 import nc.opt.mobile.optmobile.domain.suiviColis.EtapeAcheminementDto;
 import nc.opt.mobile.optmobile.provider.OptProvider;
-import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
+import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
 import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
 import nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface;
 import nc.opt.mobile.optmobile.utils.DateConverter;
@@ -46,15 +46,15 @@ public class EtapeAcheminementService {
             .concat(LOCALISATION).concat("=? AND ")
             .concat(PAYS).concat("=?");
 
-    public static List<EtapeAcheminementEntity> listFromProvider(Context context, String idColis) {
-        List<EtapeAcheminementEntity> etapeList = new ArrayList<>();
+    public static List<EtapeEntity> listFromProvider(Context context, String idColis) {
+        List<EtapeEntity> etapeList = new ArrayList<>();
 
         // Query the content provider to get a cursor of Etape
         Cursor cursorListEtape = context.getContentResolver().query(OptProvider.ListEtapeAcheminement.withIdColis(idColis), null, null, null, EtapeAcheminementInterface.DATE);
 
         if (cursorListEtape != null) {
             while (cursorListEtape.moveToNext()) {
-                EtapeAcheminementEntity etapeEntity = getFromCursor(cursorListEtape);
+                EtapeEntity etapeEntity = getFromCursor(cursorListEtape);
                 etapeList.add(etapeEntity);
             }
             cursorListEtape.close();
@@ -103,8 +103,8 @@ public class EtapeAcheminementService {
         return contentValues;
     }
 
-    private static EtapeAcheminementEntity getFromCursor(Cursor cursor) {
-        return uOrm.fromCursor(cursor, EtapeAcheminementEntity.class);
+    private static EtapeEntity getFromCursor(Cursor cursor) {
+        return uOrm.fromCursor(cursor, EtapeEntity.class);
     }
 
     private static boolean exist(Context context, String idColis, EtapeAcheminementDto etape) {
@@ -124,7 +124,7 @@ public class EtapeAcheminementService {
         return false;
     }
 
-    static EtapeAcheminementDto convertToDto(EtapeAcheminementEntity entity) {
+    static EtapeAcheminementDto convertToDto(EtapeEntity entity) {
         EtapeAcheminementDto dto = new EtapeAcheminementDto();
         dto.setDate(DateConverter.convertDateEntityToDto(entity.getDate()));
         dto.setCommentaire(entity.getCommentaire());

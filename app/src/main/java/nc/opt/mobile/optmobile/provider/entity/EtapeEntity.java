@@ -8,32 +8,32 @@ import nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface;
  * Created by 2761oli on 11/10/2017.
  */
 
-public class EtapeAcheminementEntity {
+public class EtapeEntity {
     @Column(EtapeAcheminementInterface.ID_ETAPE_ACHEMINEMENT)
-    private String idEtapeAcheminement;
+    protected String idEtapeAcheminement;
 
     @Column(EtapeAcheminementInterface.ID_COLIS)
-    private String idColis;
+    protected String idColis;
 
     @Column(EtapeAcheminementInterface.DATE)
-    private Long date;
+    protected Long date;
 
     @Column(EtapeAcheminementInterface.PAYS)
-    private String pays;
+    protected String pays;
 
     @Column(EtapeAcheminementInterface.LOCALISATION)
-    private String localisation;
+    protected String localisation;
 
     @Column(EtapeAcheminementInterface.DESCRIPTION)
-    private String description;
+    protected String description;
 
     @Column(EtapeAcheminementInterface.COMMENTAIRE)
-    private String commentaire;
+    protected String commentaire;
 
-    public EtapeAcheminementEntity() {
+    public EtapeEntity() {
     }
 
-    public EtapeAcheminementEntity(String idEtapeAcheminement, String idColis, Long date, String pays, String localisation, String description, String commentaire) {
+    public EtapeEntity(String idEtapeAcheminement, String idColis, Long date, String pays, String localisation, String description, String commentaire) {
         this.idEtapeAcheminement = idEtapeAcheminement;
         this.idColis = idColis;
         this.date = date;
@@ -48,7 +48,7 @@ public class EtapeAcheminementEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        EtapeAcheminementEntity etapeEntity = (EtapeAcheminementEntity) o;
+        EtapeEntity etapeEntity = (EtapeEntity) o;
 
         if (idEtapeAcheminement != null ? !idEtapeAcheminement.equals(etapeEntity.idEtapeAcheminement) : etapeEntity.idEtapeAcheminement != null)
             return false;

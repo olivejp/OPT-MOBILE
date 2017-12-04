@@ -12,49 +12,82 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
+import nc.opt.mobile.optmobile.domain.suiviColis.EtapeConsolidated;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
 /**
  * Created by orlanth23 on 05/10/2017.
  */
 
-public class EtapeAcheminementAdapter extends RecyclerView.Adapter<EtapeAcheminementAdapter.ViewHolderStepParcel> {
+public class EtapeAcheminementAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<EtapeAcheminementEntity> mEtapeAcheminements;
+
+    private List<EtapeConsolidated> mEtapeConsolidated;
 
     public EtapeAcheminementAdapter() {
-        mEtapeAcheminements = new ArrayList<>();
+        mEtapeConsolidated = new ArrayList<>();
     }
 
-    public void setmEtapeAcheminements(List<EtapeAcheminementEntity> mEtapeAcheminements) {
-        this.mEtapeAcheminements = mEtapeAcheminements;
-    }
 
-    @Override
-    public ViewHolderStepParcel onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.adapter_etape, parent, false);
-        return new ViewHolderStepParcel(view);
+    public void setmEtapeConsolidated(List<EtapeConsolidated> mEtapeConsolidated) {
+        this.mEtapeConsolidated = mEtapeConsolidated;
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolderStepParcel holder, int position) {
-        holder.mEtapeEntity = mEtapeAcheminements.get(position);
-        holder.mStepDate.setText(DateConverter.convertDateEntityToUi(holder.mEtapeEntity.getDate()));
-        holder.mStepPays.setText(holder.mEtapeEntity.getPays());
-        holder.mStepLocalisation.setText(holder.mEtapeEntity.getLocalisation());
-        holder.mStepDescription.setText(holder.mEtapeEntity.getDescription());
-        if (holder.mEtapeEntity.getCommentaire().isEmpty()) {
-            holder.mStepCommentaire.setVisibility(View.GONE);
-        } else {
-            holder.mStepCommentaire.setText(holder.mEtapeEntity.getCommentaire());
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = null;
+        if (viewType == EtapeConsolidated.TypeEtape.HEADER.getTypeValue()) {
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.adapter_header_etape, parent, false);
+            return new ViewHolderHeaderStepParcel(view);
+        }
+
+        if (viewType == EtapeConsolidated.TypeEtape.DETAIL.getTypeValue()) {
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.adapter_etape, parent, false);
+            return new ViewHolderStepParcel(view);
+        }
+        return null;
+    }
+
+    @Override
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+        int i = holder.getItemViewType();
+        if (i == EtapeConsolidated.TypeEtape.HEADER.getTypeValue()) {
+            ViewHolderHeaderStepParcel viewHeader = (ViewHolderHeaderStepParcel) holder;
+            viewHeader.etapeConsolidated = mEtapeConsolidated.get(position);
+            viewHeader.mStepDate.setText(DateConverter.convertDateEntityToUi(viewHeader.etapeConsolidated.getDate()));
+            viewHeader.mStepPays.setText(viewHeader.etapeConsolidated.getPays());
+            viewHeader.mStepLocalisation.setText(viewHeader.etapeConsolidated.getLocalisation());
+            viewHeader.mStepDescription.setText(viewHeader.etapeConsolidated.getDescription());
+            if (viewHeader.etapeConsolidated.getCommentaire().isEmpty()) {
+                viewHeader.mStepCommentaire.setVisibility(View.GONE);
+            } else {
+                viewHeader.mStepCommentaire.setText(viewHeader.etapeConsolidated.getCommentaire());
+            }
+        }
+
+        if (i == EtapeConsolidated.TypeEtape.DETAIL.getTypeValue()) {
+            ViewHolderStepParcel viewLine = (ViewHolderStepParcel) holder;
+            viewLine.etapeConsolidated = mEtapeConsolidated.get(position);
+            viewLine.mStepDate.setText(DateConverter.convertDateEntityToUi(viewLine.etapeConsolidated.getDate()));
+            viewLine.mStepDescription.setText(viewLine.etapeConsolidated.getDescription());
+            if (viewLine.etapeConsolidated.getCommentaire().isEmpty()) {
+                viewLine.mStepCommentaire.setVisibility(View.GONE);
+            } else {
+                viewLine.mStepCommentaire.setText(viewLine.etapeConsolidated.getCommentaire());
+            }
         }
     }
 
     @Override
     public int getItemCount() {
-        return mEtapeAcheminements.size();
+        return mEtapeConsolidated.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return mEtapeConsolidated.get(position).getType().getTypeValue();
     }
 
     class ViewHolderStepParcel extends RecyclerView.ViewHolder {
@@ -63,11 +96,32 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<EtapeAchemine
         @BindView(R.id.step_date)
         TextView mStepDate;
 
+        @BindView(R.id.step_description)
+        TextView mStepDescription;
+
+        @BindView(R.id.step_commentaire)
+        TextView mStepCommentaire;
+
+        EtapeConsolidated etapeConsolidated;
+
+        ViewHolderStepParcel(View view) {
+            super(view);
+            mView = view;
+            ButterKnife.bind(this, mView);
+        }
+    }
+
+    class ViewHolderHeaderStepParcel extends RecyclerView.ViewHolder {
+        final View mView;
+
         @BindView(R.id.step_pays)
         TextView mStepPays;
 
         @BindView(R.id.step_localisation)
         TextView mStepLocalisation;
+
+        @BindView(R.id.step_date)
+        TextView mStepDate;
 
         @BindView(R.id.step_description)
         TextView mStepDescription;
@@ -75,9 +129,9 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<EtapeAchemine
         @BindView(R.id.step_commentaire)
         TextView mStepCommentaire;
 
-        EtapeAcheminementEntity mEtapeEntity;
+        EtapeConsolidated etapeConsolidated;
 
-        ViewHolderStepParcel(View view) {
+        ViewHolderHeaderStepParcel(View view) {
             super(view);
             mView = view;
             ButterKnife.bind(this, mView);

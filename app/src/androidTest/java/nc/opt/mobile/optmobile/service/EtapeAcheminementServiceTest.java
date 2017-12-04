@@ -17,7 +17,7 @@ import nc.opt.mobile.optmobile.domain.suiviColis.ColisDto;
 import nc.opt.mobile.optmobile.domain.suiviColis.EtapeAcheminementDto;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
-import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
+import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
 import nc.opt.mobile.optmobile.provider.services.EtapeAcheminementService;
 
@@ -74,13 +74,13 @@ public class EtapeAcheminementServiceTest {
 
         insertEtape(ID_COLIS);
 
-        List<EtapeAcheminementEntity> listBefore = EtapeAcheminementService.listFromProvider(mContext, ID_COLIS);
+        List<EtapeEntity> listBefore = EtapeAcheminementService.listFromProvider(mContext, ID_COLIS);
         Assert.assertNotNull(listBefore);
         Assert.assertTrue(listBefore.size() == 1);
 
         EtapeAcheminementService.delete(mContext, ID_COLIS);
 
-        List<EtapeAcheminementEntity> listAfter = EtapeAcheminementService.listFromProvider(mContext, ID_COLIS);
+        List<EtapeEntity> listAfter = EtapeAcheminementService.listFromProvider(mContext, ID_COLIS);
         Assert.assertNotNull(listAfter);
         Assert.assertTrue(listAfter.size() == 0);
     }

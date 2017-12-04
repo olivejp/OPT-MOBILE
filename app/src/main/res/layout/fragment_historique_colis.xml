@@ -18,15 +18,18 @@
     <TextView
         android:id="@+id/text_object_not_found"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal|center_vertical"
-        android:padding="20dp"
-        android:text="Aucune étape récupérée pour cet objet."
-        android:textSize="25sp"
+        android:layout_height="0dp"
+        android:gravity="center_horizontal"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="50dp"
+        android:text="@string/no_data_for_the_moment"
+        android:textSize="15sp"
         android:textStyle="bold"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
