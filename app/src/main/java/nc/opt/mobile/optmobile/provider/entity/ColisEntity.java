@@ -26,7 +26,7 @@ public class ColisEntity {
     @Column(value = ColisInterface.DELETED)
     private Integer deleted;
 
-    private List<EtapeAcheminementEntity> etapeAcheminementArrayList;
+    private List<EtapeEntity> etapeAcheminementArrayList;
 
     public ColisEntity() {
     }
@@ -100,11 +100,11 @@ public class ColisEntity {
         this.deleted = deleted;
     }
 
-    public List<EtapeAcheminementEntity> getEtapeAcheminementArrayList() {
+    public List<EtapeEntity> getEtapeAcheminementArrayList() {
         return etapeAcheminementArrayList;
     }
 
-    public void setEtapeAcheminementArrayList(List<EtapeAcheminementEntity> etapeAcheminementArrayList) {
+    public void setEtapeAcheminementArrayList(List<EtapeEntity> etapeAcheminementArrayList) {
         this.etapeAcheminementArrayList = etapeAcheminementArrayList;
     }
 

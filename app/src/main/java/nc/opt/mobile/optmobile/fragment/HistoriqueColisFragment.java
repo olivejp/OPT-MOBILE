@@ -16,15 +16,17 @@ import android.widget.TextView;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.adapter.EtapeAcheminementAdapter;
+import nc.opt.mobile.optmobile.domain.suiviColis.EtapeConsolidated;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.ProviderObserver;
-import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
+import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -39,7 +41,8 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
 
     private AppCompatActivity mAppCompatActivity;
     private String mIdColis;
-    private List<EtapeAcheminementEntity> mListEtape;
+    private List<EtapeEntity> mListEtapeEntity;
+    private List<EtapeConsolidated> mListEtapeConsolidated;
     private EtapeAcheminementAdapter mEtapeAcheminementAdapter;
 
     @BindView(R.id.recycler_parcel_list)
@@ -58,6 +61,34 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
 
     public HistoriqueColisFragment() {
         // Required empty public constructor
+    }
+
+    private List<EtapeConsolidated> updateHeadersList(List<EtapeEntity> listEntity) {
+        List<EtapeConsolidated> listConsolidated = new ArrayList<>();
+        if (!listEntity.isEmpty()) {
+            EtapeEntity previousEtape;
+            EtapeEntity actualEtape;
+            String previousHeader;
+            String actualHeader;
+
+            // Lecture de toute la liste d'entity
+            for (int i = 0; i == listEntity.size() - 1; i++) {
+                actualEtape = listEntity.get(i);
+                if (i == 0) {
+                    listConsolidated.set(i, new EtapeConsolidated(EtapeConsolidated.TypeEtape.HEADER, actualEtape));
+                } else {
+                    previousEtape = listEntity.get(i - 1);
+                    actualHeader = actualEtape.getPays().concat(" ").concat(actualEtape.getLocalisation());
+                    previousHeader = previousEtape.getPays().concat(" ").concat(previousEtape.getLocalisation());
+                    if (actualHeader.equals(previousHeader)) {
+                        listConsolidated.set(i, new EtapeConsolidated(EtapeConsolidated.TypeEtape.DETAIL, actualEtape));
+                    } else {
+                        listConsolidated.set(i, new EtapeConsolidated(EtapeConsolidated.TypeEtape.HEADER, actualEtape));
+                    }
+                }
+            }
+        }
+        return listConsolidated;
     }
 
     @Override
@@ -92,14 +123,15 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
         // get history from the provider
-        mListEtape = listFromProvider(mAppCompatActivity, mIdColis);
-        mEtapeAcheminementAdapter.setmEtapeAcheminements(mListEtape);
+        mListEtapeEntity = listFromProvider(mAppCompatActivity, mIdColis);
+        mListEtapeConsolidated = updateHeadersList(mListEtapeEntity);
+        mEtapeAcheminementAdapter.setmEtapeConsolidated(mListEtapeConsolidated);
         mRecyclerView.setAdapter(mEtapeAcheminementAdapter);
         mEtapeAcheminementAdapter.notifyDataSetChanged();
 
         // Change the visibility of the textView
-        textObjectNotFound.setVisibility(mListEtape.isEmpty() ? VISIBLE : GONE);
-        mRecyclerView.setVisibility(mListEtape.isEmpty() ? View.GONE : VISIBLE);
+        textObjectNotFound.setVisibility(mListEtapeEntity.isEmpty() ? VISIBLE : GONE);
+        mRecyclerView.setVisibility(mListEtapeEntity.isEmpty() ? View.GONE : VISIBLE);
 
         return rootView;
     }
@@ -112,8 +144,9 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
 
     @Override
     public void onProviderChange() {
-        mListEtape = listFromProvider(mAppCompatActivity, mIdColis);
-        mEtapeAcheminementAdapter.setmEtapeAcheminements(mListEtape);
+        mListEtapeEntity = listFromProvider(mAppCompatActivity, mIdColis);
+        mListEtapeConsolidated = updateHeadersList(mListEtapeEntity);
+        mEtapeAcheminementAdapter.setmEtapeConsolidated(mListEtapeConsolidated);
         mEtapeAcheminementAdapter.notifyDataSetChanged();
     }
 }

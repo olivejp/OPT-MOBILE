@@ -12,7 +12,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
+import nc.opt.mobile.optmobile.domain.suiviColis.EtapeConsolidated;
+import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
 /**
@@ -21,15 +22,16 @@ import nc.opt.mobile.optmobile.utils.DateConverter;
 
 public class EtapeAcheminementAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<EtapeAcheminementEntity> mEtapeAcheminements;
-    private String previousHeaderKey = null;
+
+    private List<EtapeConsolidated> mEtapeConsolidated;
 
     public EtapeAcheminementAdapter() {
-        mEtapeAcheminements = new ArrayList<>();
+        mEtapeConsolidated = new ArrayList<>();
     }
 
-    public void setmEtapeAcheminements(List<EtapeAcheminementEntity> mEtapeAcheminements) {
-        this.mEtapeAcheminements = mEtapeAcheminements;
+
+    public void setmEtapeConsolidated(List<EtapeConsolidated> mEtapeConsolidated) {
+        this.mEtapeConsolidated = mEtapeConsolidated;
     }
 
     @Override
@@ -54,7 +56,7 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<RecyclerView.
         int i = holder.getItemViewType();
         if (i == 0) {
             ViewHolderHeaderStepParcel viewHeader = (ViewHolderHeaderStepParcel) holder;
-            viewHeader.mEtapeEntity = mEtapeAcheminements.get(position);
+            viewHeader.mEtapeEntity = mEtapeConsolidated.get(position);
             viewHeader.mStepDate.setText(DateConverter.convertDateEntityToUi(viewHeader.mEtapeEntity.getDate()));
             viewHeader.mStepPays.setText(viewHeader.mEtapeEntity.getPays());
             viewHeader.mStepLocalisation.setText(viewHeader.mEtapeEntity.getLocalisation());
@@ -67,7 +69,7 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<RecyclerView.
 
         } else if (i == 1) {
             ViewHolderStepParcel viewLine = (ViewHolderStepParcel) holder;
-            viewLine.mEtapeEntity = mEtapeAcheminements.get(position);
+            viewLine.mEtapeEntity = mEtapeConsolidated.get(position);
             viewLine.mStepDate.setText(DateConverter.convertDateEntityToUi(viewLine.mEtapeEntity.getDate()));
             viewLine.mStepDescription.setText(viewLine.mEtapeEntity.getDescription());
             if (viewLine.mEtapeEntity.getCommentaire().isEmpty()) {
@@ -80,20 +82,12 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public int getItemCount() {
-        return mEtapeAcheminements.size();
+        return mEtapeConsolidated.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        EtapeAcheminementEntity etape = mEtapeAcheminements.get(position);
-        String headerKey = etape.getPays().concat(" ").concat(etape.getLocalisation());
-
-        if (headerKey.equals(previousHeaderKey)) {
-            return 1;
-        } else {
-            previousHeaderKey = headerKey;
-            return 0;
-        }
+        return (mEtapeConsolidated.get(position).getType().equals(EtapeConsolidated.TypeEtape.HEADER)) ? 1 : 0;
     }
 
     class ViewHolderStepParcel extends RecyclerView.ViewHolder {
@@ -108,7 +102,7 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<RecyclerView.
         @BindView(R.id.step_commentaire)
         TextView mStepCommentaire;
 
-        EtapeAcheminementEntity mEtapeEntity;
+        EtapeEntity mEtapeEntity;
 
         ViewHolderStepParcel(View view) {
             super(view);
@@ -135,7 +129,7 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<RecyclerView.
         @BindView(R.id.step_commentaire)
         TextView mStepCommentaire;
 
-        EtapeAcheminementEntity mEtapeEntity;
+        EtapeEntity mEtapeEntity;
 
         ViewHolderHeaderStepParcel(View view) {
             super(view);

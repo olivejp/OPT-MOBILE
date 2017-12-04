@@ -20,7 +20,7 @@ import java.util.List;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.provider.entity.ActualiteEntity;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
-import nc.opt.mobile.optmobile.provider.entity.EtapeAcheminementEntity;
+import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
 import nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface;
 import nc.opt.mobile.optmobile.provider.interfaces.AgenceInterface;
 import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
@@ -125,7 +125,7 @@ public class OptDatabase {
 
         // Récupération des anciennes données
         List<ColisEntity> listColis = retreiveDataFromVersion(db, oldVersion, COLIS, ColisEntity.class);
-        List<EtapeAcheminementEntity> listEtape = retreiveDataFromVersion(db, oldVersion, ETAPE_ACHEMINEMENT, EtapeAcheminementEntity.class);
+        List<EtapeEntity> listEtape = retreiveDataFromVersion(db, oldVersion, ETAPE_ACHEMINEMENT, EtapeEntity.class);
         List<ActualiteEntity> listActualite = retreiveDataFromVersion(db, oldVersion, ACTUALITE, ActualiteEntity.class);
 
         // Suppression des anciennes tables
