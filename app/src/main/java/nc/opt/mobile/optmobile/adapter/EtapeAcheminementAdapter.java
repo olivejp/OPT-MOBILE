@@ -13,7 +13,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.domain.suiviColis.EtapeConsolidated;
-import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
 /**
@@ -36,46 +35,47 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view;
-        switch (viewType) {
-            case 0:
-                view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.adapter_header_etape, parent, false);
-                return new ViewHolderHeaderStepParcel(view);
-            case 1:
-                view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.adapter_etape, parent, false);
-                return new ViewHolderStepParcel(view);
-            default:
-                return null;
+        View view = null;
+        if (viewType == EtapeConsolidated.TypeEtape.HEADER.getTypeValue()) {
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.adapter_header_etape, parent, false);
+            return new ViewHolderHeaderStepParcel(view);
         }
+
+        if (viewType == EtapeConsolidated.TypeEtape.DETAIL.getTypeValue()) {
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.adapter_etape, parent, false);
+            return new ViewHolderStepParcel(view);
+        }
+        return null;
     }
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         int i = holder.getItemViewType();
-        if (i == 0) {
+        if (i == EtapeConsolidated.TypeEtape.HEADER.getTypeValue()) {
             ViewHolderHeaderStepParcel viewHeader = (ViewHolderHeaderStepParcel) holder;
-            viewHeader.mEtapeEntity = mEtapeConsolidated.get(position);
-            viewHeader.mStepDate.setText(DateConverter.convertDateEntityToUi(viewHeader.mEtapeEntity.getDate()));
-            viewHeader.mStepPays.setText(viewHeader.mEtapeEntity.getPays());
-            viewHeader.mStepLocalisation.setText(viewHeader.mEtapeEntity.getLocalisation());
-            viewHeader.mStepDescription.setText(viewHeader.mEtapeEntity.getDescription());
-            if (viewHeader.mEtapeEntity.getCommentaire().isEmpty()) {
+            viewHeader.etapeConsolidated = mEtapeConsolidated.get(position);
+            viewHeader.mStepDate.setText(DateConverter.convertDateEntityToUi(viewHeader.etapeConsolidated.getDate()));
+            viewHeader.mStepPays.setText(viewHeader.etapeConsolidated.getPays());
+            viewHeader.mStepLocalisation.setText(viewHeader.etapeConsolidated.getLocalisation());
+            viewHeader.mStepDescription.setText(viewHeader.etapeConsolidated.getDescription());
+            if (viewHeader.etapeConsolidated.getCommentaire().isEmpty()) {
                 viewHeader.mStepCommentaire.setVisibility(View.GONE);
             } else {
-                viewHeader.mStepCommentaire.setText(viewHeader.mEtapeEntity.getCommentaire());
+                viewHeader.mStepCommentaire.setText(viewHeader.etapeConsolidated.getCommentaire());
             }
+        }
 
-        } else if (i == 1) {
+        if (i == EtapeConsolidated.TypeEtape.DETAIL.getTypeValue()) {
             ViewHolderStepParcel viewLine = (ViewHolderStepParcel) holder;
-            viewLine.mEtapeEntity = mEtapeConsolidated.get(position);
-            viewLine.mStepDate.setText(DateConverter.convertDateEntityToUi(viewLine.mEtapeEntity.getDate()));
-            viewLine.mStepDescription.setText(viewLine.mEtapeEntity.getDescription());
-            if (viewLine.mEtapeEntity.getCommentaire().isEmpty()) {
+            viewLine.etapeConsolidated = mEtapeConsolidated.get(position);
+            viewLine.mStepDate.setText(DateConverter.convertDateEntityToUi(viewLine.etapeConsolidated.getDate()));
+            viewLine.mStepDescription.setText(viewLine.etapeConsolidated.getDescription());
+            if (viewLine.etapeConsolidated.getCommentaire().isEmpty()) {
                 viewLine.mStepCommentaire.setVisibility(View.GONE);
             } else {
-                viewLine.mStepCommentaire.setText(viewLine.mEtapeEntity.getCommentaire());
+                viewLine.mStepCommentaire.setText(viewLine.etapeConsolidated.getCommentaire());
             }
         }
     }
@@ -87,7 +87,7 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public int getItemViewType(int position) {
-        return (mEtapeConsolidated.get(position).getType().equals(EtapeConsolidated.TypeEtape.HEADER)) ? 1 : 0;
+        return mEtapeConsolidated.get(position).getType().getTypeValue();
     }
 
     class ViewHolderStepParcel extends RecyclerView.ViewHolder {
@@ -102,7 +102,7 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<RecyclerView.
         @BindView(R.id.step_commentaire)
         TextView mStepCommentaire;
 
-        EtapeEntity mEtapeEntity;
+        EtapeConsolidated etapeConsolidated;
 
         ViewHolderStepParcel(View view) {
             super(view);
@@ -129,7 +129,7 @@ public class EtapeAcheminementAdapter extends RecyclerView.Adapter<RecyclerView.
         @BindView(R.id.step_commentaire)
         TextView mStepCommentaire;
 
-        EtapeEntity mEtapeEntity;
+        EtapeConsolidated etapeConsolidated;
 
         ViewHolderHeaderStepParcel(View view) {
             super(view);

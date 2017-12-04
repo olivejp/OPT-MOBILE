@@ -72,18 +72,18 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
             String actualHeader;
 
             // Lecture de toute la liste d'entity
-            for (int i = 0; i == listEntity.size() - 1; i++) {
+            for (int i = 0; i < listEntity.size() ; i++) {
                 actualEtape = listEntity.get(i);
                 if (i == 0) {
-                    listConsolidated.set(i, new EtapeConsolidated(EtapeConsolidated.TypeEtape.HEADER, actualEtape));
+                    listConsolidated.add(new EtapeConsolidated(EtapeConsolidated.TypeEtape.HEADER, actualEtape));
                 } else {
                     previousEtape = listEntity.get(i - 1);
                     actualHeader = actualEtape.getPays().concat(" ").concat(actualEtape.getLocalisation());
                     previousHeader = previousEtape.getPays().concat(" ").concat(previousEtape.getLocalisation());
                     if (actualHeader.equals(previousHeader)) {
-                        listConsolidated.set(i, new EtapeConsolidated(EtapeConsolidated.TypeEtape.DETAIL, actualEtape));
+                        listConsolidated.add(new EtapeConsolidated(EtapeConsolidated.TypeEtape.DETAIL, actualEtape));
                     } else {
-                        listConsolidated.set(i, new EtapeConsolidated(EtapeConsolidated.TypeEtape.HEADER, actualEtape));
+                        listConsolidated.add(new EtapeConsolidated(EtapeConsolidated.TypeEtape.HEADER, actualEtape));
                     }
                 }
             }

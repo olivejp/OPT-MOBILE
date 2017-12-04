@@ -44,6 +44,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/step_date"
+        app:layout_constraintTop_toBottomOf="@id/step_description"
         tools:text="Retention reason : Biens a valeur elevee - Declaration douaniere requise" />
 </android.support.constraint.ConstraintLayout>
