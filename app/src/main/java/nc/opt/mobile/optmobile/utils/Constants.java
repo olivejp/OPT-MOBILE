@@ -20,6 +20,9 @@ public class Constants {
     public static final String CLOUD_FIRESTORE = "cloud_firestore";
     public static final String DATABASE_USERS_REFERENCE = "users";
 
+    // API aftership endpoint
+    public static final String AFTER_SHIP_ENDPOINT = "https://api.aftership.com/v4/";
+
     /**
      * Minutes we will wait before launch the sync
      */
