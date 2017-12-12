@@ -1,4 +1,4 @@
-package nc.opt.mobile.optmobile.domain.suiviColis;
+package nc.opt.mobile.optmobile.domain.suiviColis.after_ship;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -11,6 +11,7 @@ public class AfterShipTrackingResponse {
     @SerializedName("meta")
     @Expose
     public Meta meta;
+
     @SerializedName("data")
     @Expose
     public Data data;

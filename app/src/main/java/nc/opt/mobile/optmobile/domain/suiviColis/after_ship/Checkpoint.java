@@ -1,7 +1,8 @@
-package nc.opt.mobile.optmobile.domain.suiviColis;
+package nc.opt.mobile.optmobile.domain.suiviColis.after_ship;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,39 +14,51 @@ public class Checkpoint {
     @SerializedName("slug")
     @Expose
     public String slug;
+
     @SerializedName("city")
     @Expose
     public Object city;
+
     @SerializedName("created_at")
     @Expose
     public String createdAt;
+
     @SerializedName("location")
     @Expose
     public Object location;
+
     @SerializedName("country_name")
     @Expose
     public Object countryName;
+
     @SerializedName("message")
     @Expose
     public String message;
+
     @SerializedName("country_iso3")
     @Expose
     public Object countryIso3;
+
     @SerializedName("tag")
     @Expose
     public String tag;
+
     @SerializedName("subtag")
     @Expose
     public String subtag;
+
     @SerializedName("checkpoint_time")
     @Expose
     public String checkpointTime;
+
     @SerializedName("coordinates")
     @Expose
-    public List<Object> coordinates = new ArrayList<Object>();
+    public List<Object> coordinates = new ArrayList<>();
+
     @SerializedName("state")
     @Expose
     public Object state;
+
     @SerializedName("zip")
     @Expose
     public Object zip;
