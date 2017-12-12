@@ -14,42 +14,54 @@ public class Data {
     @SerializedName("page")
     @Expose
     public long page;
+
     @SerializedName("limit")
     @Expose
     public long limit;
+
     @SerializedName("count")
     @Expose
     public long count;
+
     @SerializedName("keyword")
     @Expose
     public String keyword;
+
     @SerializedName("slug")
     @Expose
     public String slug;
+
     @SerializedName("origin")
     @Expose
-    public List<Object> origin = new ArrayList<Object>();
+    public List<Object> origin = new ArrayList<>();
+
     @SerializedName("destination")
     @Expose
-    public List<Object> destination = new ArrayList<Object>();
+    public List<Object> destination = new ArrayList<>();
+
     @SerializedName("tag")
     @Expose
     public String tag;
+
     @SerializedName("fields")
     @Expose
     public String fields;
+
     @SerializedName("created_at_min")
     @Expose
     public String createdAtMin;
+
     @SerializedName("created_at_max")
     @Expose
     public String createdAtMax;
+
     @SerializedName("last_updated_at")
     @Expose
     public Object lastUpdatedAt;
+
     @SerializedName("trackings")
     @Expose
-    public List<Tracking> trackings = new ArrayList<Tracking>();
+    public List<Tracking> trackings = new ArrayList<>();
 
     /**
      * No args constructor for use in serialization
