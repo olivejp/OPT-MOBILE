@@ -1,0 +1,34 @@
+Pour retrouver les checkpoints d'un colis :
+
+1 - Faire un Detect du transitaire
+Verbe = GET
+Endpoint = https://api.aftership.com/v4/couriers/detect
+Body =
+{
+    "tracking": {
+        "tracking_number": "UA649306764US"
+	}
+}
+
+Condition de sortie :
+-Si aucun transitaire ramené, on va tenter le service de l'OPT
+
+
+2 - Faire un POST avec l'objet dans le body
+Verbe = POST
+Endpoint = https://api.aftership.com/v4/trackings
+Body =
+{
+    "tracking": {
+        "tracking_number": "UA649306764US"
+    }
+}
+
+3 - Faire un GET de trackings pour récupérer tous les tracking en cours
+Verbe = GET
+Endpoint = https://api.aftership.com/v4/trackings
+-- ICI nous récupérerons les données des checkpoints
+
+4 - Faire un DELETE du tracking qu'on vient de rajouter
+Verbe = DELETE
+Endpoint = https://api.aftership.com/v4/trackings
