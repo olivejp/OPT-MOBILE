@@ -22,4 +22,12 @@ public class Meta {
         super();
         this.code = code;
     }
+
+    public long getCode() {
+        return code;
+    }
+
+    public void setCode(long code) {
+        this.code = code;
+    }
 }

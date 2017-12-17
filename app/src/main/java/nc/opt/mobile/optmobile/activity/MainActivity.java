@@ -46,10 +46,17 @@ import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.broadcast.NetworkReceiver;
+import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.ResponseTrackingData;
+import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.SendTrackingData;
+import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.Tracking;
 import nc.opt.mobile.optmobile.fragment.ActualiteFragment;
 import nc.opt.mobile.optmobile.interfaces.AttachToPermissionActivity;
+import nc.opt.mobile.optmobile.network.RetrofitCall;
+import nc.opt.mobile.optmobile.network.RetrofitClient;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.ProviderObserver;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
@@ -124,7 +131,6 @@ public class MainActivity extends AttachToPermissionActivity
         mProfilName.setText(null);
         mFirebaseUser = null;
         mImageViewProfile.setImageResource(R.drawable.ic_person_white_48dp);
-        FirebaseAuth.getInstance().signOut();
 
         // We delete the shared Preference containing the UI of the user.
         SharedPreferences sharedPreferences = getSharedPreferences("PREFS", Context.MODE_PRIVATE);
@@ -134,26 +140,23 @@ public class MainActivity extends AttachToPermissionActivity
     }
 
     private void defineAuthListener() {
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                mFirebaseUser = firebaseAuth.getCurrentUser();
-                if (mFirebaseUser != null) {
-                    mButtonConnexion.setText(R.string.logout);
-                    mProfilName.setText(mFirebaseUser.getDisplayName());
-                    Uri[] uris = new Uri[]{mFirebaseUser.getPhotoUrl()};
-                    new CatchPhotoFromUrlTask(MainActivity.this).execute(uris);
+        mAuthStateListener = firebaseAuth -> {
+            mFirebaseUser = firebaseAuth.getCurrentUser();
+            if (mFirebaseUser != null) {
+                mButtonConnexion.setText(R.string.logout);
+                mProfilName.setText(mFirebaseUser.getDisplayName());
+                Uri[] uris = new Uri[]{mFirebaseUser.getPhotoUrl()};
+                new CatchPhotoFromUrlTask(MainActivity.this).execute(uris);
 
-                    firebaseDatabaseUserExist(mFirebaseUser.getUid());
+                firebaseDatabaseUserExist(mFirebaseUser.getUid());
 
-                    // Save the UID of the user in the SharedPreference
-                    SharedPreferences sharedPreferences = getSharedPreferences("PREFS",Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString(PREF_USER, mFirebaseUser.getUid());
-                    editor.apply();
-                } else {
-                    signOut();
-                }
+                // Save the UID of the user in the SharedPreference
+                SharedPreferences sharedPreferences = getSharedPreferences("PREFS", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(PREF_USER, mFirebaseUser.getUid());
+                editor.apply();
+            } else {
+                signOut();
             }
         };
     }
@@ -261,6 +264,39 @@ public class MainActivity extends AttachToPermissionActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Test d'appel Retrofit
+        final String trackingNumber = "UA649306764US";
+        final Tracking<SendTrackingData> tracking = new Tracking<>();
+        final SendTrackingData trackingDetect = new SendTrackingData();
+        trackingDetect.setTrackingNumber(trackingNumber);
+        tracking.setTracking(trackingDetect);
+
+        final RetrofitCall retrofitCall = RetrofitClient.getClient().create(RetrofitCall.class);
+
+        retrofitCall.getTrackings()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(a -> {
+                            Log.d(TAG, String.valueOf(a.getMeta().getCode()));
+                            if (a.getData().getTrackings() != null && !a.getData().getTrackings().isEmpty()) {
+                                for (ResponseTrackingData r : a.getData().getTrackings()) {
+                                    if (r.getTrackingNumber().equals(trackingNumber)) {
+                                        Log.d(TAG, "Tracking number already added");
+                                        break;
+                                    }
+                                }
+                            } else {
+                                retrofitCall.postTracking(tracking)
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(b -> Log.d(TAG, "POST TRACKING NUMBER"),
+                                                Throwable::printStackTrace,
+                                                () -> Log.d(TAG, "POST COMPLETED"));
+                            }
+                        },
+                        Throwable::printStackTrace,
+                        () -> Log.d(TAG, "GET TRACKINGS COMPLETED"));
+
         if (savedInstanceState != null && savedInstanceState.containsKey(SAVED_ACTUALITE_FRAGMENT)) {
             mActualiteFragment = (ActualiteFragment) getSupportFragmentManager().getFragment(savedInstanceState, SAVED_ACTUALITE_FRAGMENT);
         }
@@ -281,16 +317,11 @@ public class MainActivity extends AttachToPermissionActivity
 
         defineAuthListener();
 
-        mButtonConnexion.setOnClickListener(new View.OnClickListener()
-
-        {
-            @Override
-            public void onClick(View v) {
-                if (mFirebaseUser != null) {
-                    signOut();
-                } else {
-                    signIn();
-                }
+        mButtonConnexion.setOnClickListener(v -> {
+            if (mFirebaseUser != null) {
+                signOut();
+            } else {
+                signIn();
             }
         });
 
