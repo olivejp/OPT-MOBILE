@@ -44,6 +44,7 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
     private List<EtapeEntity> mListEtapeEntity;
     private List<EtapeConsolidated> mListEtapeConsolidated;
     private EtapeAcheminementAdapter mEtapeAcheminementAdapter;
+    private ListenToSelectedColis mListener;
 
     @BindView(R.id.recycler_parcel_list)
     RecyclerView mRecyclerView;
@@ -72,7 +73,7 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
             String actualHeader;
 
             // Lecture de toute la liste d'entity
-            for (int i = 0; i < listEntity.size() ; i++) {
+            for (int i = 0; i < listEntity.size(); i++) {
                 actualEtape = listEntity.get(i);
                 if (i == 0) {
                     listConsolidated.add(new EtapeConsolidated(EtapeConsolidated.TypeEtape.HEADER, actualEtape));
@@ -95,17 +96,25 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
     public void onAttach(Context context) {
         super.onAttach(context);
         mAppCompatActivity = (AppCompatActivity) context;
+        if (context instanceof ListenToSelectedColis) {
+            mListener = (ListenToSelectedColis) context;
+        }
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mIdColis = getArguments().getString(ARG_ID_PARCEL);
+        if (getArguments() != null) {
+            mIdColis = getArguments().getString(ARG_ID_PARCEL);
+            if (mListener != null) {
+                mListener.subscribe(mIdColis);
+            }
+        }
 
         // create new adapter from the provider mListEtape
         mEtapeAcheminementAdapter = new EtapeAcheminementAdapter();
 
-        // create a ProviderObserver to listen updates from the provider
+        // create a ProviderObserver to subscribe updates from the provider
         ProviderObserver providerObserver = ProviderObserver.getInstance();
         providerObserver.observe(mAppCompatActivity, this, OptProvider.ListColis.LIST_COLIS, OptProvider.ListEtapeAcheminement.LIST_ETAPE);
     }
@@ -148,5 +157,26 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
         mListEtapeConsolidated = updateHeadersList(mListEtapeEntity);
         mEtapeAcheminementAdapter.setmEtapeConsolidated(mListEtapeConsolidated);
         mEtapeAcheminementAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if (mListener != null){
+            mListener.unsubscribe();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mListener != null){
+            mListener.unsubscribe();
+        }
+    }
+
+    public interface ListenToSelectedColis {
+        void subscribe(String idColis);
+        void unsubscribe();
     }
 }

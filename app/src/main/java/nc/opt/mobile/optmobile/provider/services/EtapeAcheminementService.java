@@ -11,9 +11,9 @@ import org.chalup.microorm.MicroOrm;
 import java.util.ArrayList;
 import java.util.List;
 
-import nc.opt.mobile.optmobile.domain.suiviColis.ColisDto;
 import nc.opt.mobile.optmobile.domain.suiviColis.EtapeAcheminementDto;
 import nc.opt.mobile.optmobile.provider.OptProvider;
+import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
 import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
 import nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface;
@@ -25,7 +25,6 @@ import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInter
 import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.ID_COLIS;
 import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.LOCALISATION;
 import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.PAYS;
-import static nc.opt.mobile.optmobile.utils.DateConverter.convertDateDtoToEntity;
 
 /**
  * Created by 2761oli on 23/10/2017.
@@ -69,7 +68,7 @@ public class EtapeAcheminementService {
         return result >= 1;
     }
 
-    public static long insert(Context context, EtapeAcheminementDto etape, ColisDto colis) {
+    public static long insert(Context context, EtapeEntity etape, ColisEntity colis) {
         Uri uri = context.getContentResolver().insert(OptProvider.ListEtapeAcheminement.LIST_ETAPE, putToContentValues(etape, colis.getIdColis()));
         return ContentUris.parseId(uri);
     }
@@ -81,9 +80,9 @@ public class EtapeAcheminementService {
      * @param colis
      * @return
      */
-    public static boolean save(Context context, ColisDto colis) {
+    public static boolean save(Context context, ColisEntity colis) {
         boolean creation = false;
-        for (EtapeAcheminementDto etape : colis.getEtapeAcheminementDtoArrayList()) {
+        for (EtapeEntity etape : colis.getEtapeAcheminementArrayList()) {
             if (!exist(context, colis.getIdColis(), etape)) {
                 creation = true;
                 insert(context, etape, colis);
@@ -92,13 +91,13 @@ public class EtapeAcheminementService {
         return creation;
     }
 
-    private static ContentValues putToContentValues(EtapeAcheminementDto etapeAcheminementDto, String idColis) {
+    private static ContentValues putToContentValues(EtapeEntity etapeEntity, String idColis) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(PAYS, etapeAcheminementDto.getPays());
-        contentValues.put(LOCALISATION, etapeAcheminementDto.getLocalisation());
-        contentValues.put(COMMENTAIRE, etapeAcheminementDto.getCommentaire());
-        contentValues.put(DESCRIPTION, etapeAcheminementDto.getDescription());
-        contentValues.put(DATE, convertDateDtoToEntity(etapeAcheminementDto.getDate()));
+        contentValues.put(PAYS, etapeEntity.getPays());
+        contentValues.put(LOCALISATION, etapeEntity.getLocalisation());
+        contentValues.put(COMMENTAIRE, etapeEntity.getCommentaire());
+        contentValues.put(DESCRIPTION, etapeEntity.getDescription());
+        contentValues.put(DATE, etapeEntity.getDate());
         contentValues.put(ID_COLIS, idColis);
         return contentValues;
     }
@@ -107,9 +106,9 @@ public class EtapeAcheminementService {
         return uOrm.fromCursor(cursor, EtapeEntity.class);
     }
 
-    private static boolean exist(Context context, String idColis, EtapeAcheminementDto etape) {
+    private static boolean exist(Context context, String idColis, EtapeEntity etape) {
         String[] args = new String[]{idColis,
-                String.valueOf(DateConverter.convertDateDtoToEntity(etape.getDate())),
+                String.valueOf(DateConverter.convertDateEntityToDto(etape.getDate())),
                 etape.getDescription(),
                 etape.getCommentaire(),
                 etape.getLocalisation(),
@@ -132,6 +131,16 @@ public class EtapeAcheminementService {
         dto.setLocalisation(entity.getLocalisation());
         dto.setPays(entity.getPays());
         return dto;
+    }
+
+    static EtapeEntity convertToEntity(EtapeAcheminementDto dto) {
+        EtapeEntity entity = new EtapeEntity();
+        entity.setDate(DateConverter.convertDateDtoToEntity(dto.getDate()));
+        entity.setCommentaire(dto.getCommentaire());
+        entity.setDescription(dto.getDescription());
+        entity.setLocalisation(dto.getLocalisation());
+        entity.setPays(dto.getPays());
+        return entity;
     }
 
 }

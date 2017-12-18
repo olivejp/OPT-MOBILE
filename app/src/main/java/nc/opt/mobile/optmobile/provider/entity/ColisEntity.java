@@ -96,6 +96,11 @@ public class ColisEntity {
         return deleted;
     }
 
+    /**
+     * 0 = Active
+     * 1 = Deleted
+     * @param deleted
+     */
     public void setDeleted(int deleted) {
         this.deleted = deleted;
     }

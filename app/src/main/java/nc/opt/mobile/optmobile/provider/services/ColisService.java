@@ -51,9 +51,37 @@ public class ColisService {
         return false;
     }
 
+    /**
+     * Insert colisEntity in the Content Provider
+     * @param context
+     * @param colis
+     * @return the id of the new object inserted or -1 if object has not been inserted.
+     */
     public static long insert(Context context, ColisEntity colis) {
         Uri uri = context.getContentResolver().insert(OptProvider.ListColis.LIST_COLIS, putToContentValues(colis));
-        return ContentUris.parseId(uri);
+        if (uri == null) {
+            return -1;
+        } else {
+            return ContentUris.parseId(uri);
+        }
+    }
+
+    /**
+     * Create or update ColisEntity and on cascade the EtapeEntity related.
+     * @param context
+     * @param colisEntity
+     * @return 0 if no row was updated, otherwise return the number of row updated
+     */
+    public static boolean save(Context context, ColisEntity colisEntity){
+        int nbUpdated = 0;
+        long id = 0;
+        if (exist(context, colisEntity.getIdColis(), false)){
+            nbUpdated = context.getContentResolver().update(OptProvider.ListColis.LIST_COLIS, putToContentValues(colisEntity), ColisInterface.ID_COLIS.concat("=?"), new String[]{colisEntity.getIdColis()});
+        } else {
+            id = insert(context, colisEntity);
+        }
+        EtapeAcheminementService.save(context, colisEntity);
+        return (nbUpdated != 0 || id != -1);
     }
 
     public static List<ColisEntity> listFromProvider(Context context, boolean onlyActive) {
@@ -140,4 +168,16 @@ public class ColisService {
         return dto;
     }
 
+    public static ColisEntity convertToEntity(ColisDto dto) {
+        ColisEntity entity = new ColisEntity();
+        entity.setIdColis(dto.getIdColis());
+        if (dto.getEtapeAcheminementDtoArrayList() != null) {
+            List<EtapeEntity> listEtapeEntity = new ArrayList<>();
+            for (EtapeAcheminementDto etapeDto : dto.getEtapeAcheminementDtoArrayList()) {
+                listEtapeEntity.add(EtapeAcheminementService.convertToEntity(etapeDto));
+            }
+            entity.setEtapeAcheminementArrayList(listEtapeEntity);
+        }
+        return entity;
+    }
 }

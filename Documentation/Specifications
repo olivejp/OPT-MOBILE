@@ -37,3 +37,9 @@ Modifier le job schedulé pour qu'il vérifie si on a des colis supprimé.
 -Si oui et que on a un utilisateur connecté : On supprime sur le serveur distant
 -Au retour de la réponse serveur on va supprimer en local.
 -Si pas d'utilisateur connecté on ne fait rien.
+
+- Nouvelle API Aftership
+1-Rechercher si le numéro est déjà enregistré
+2-Si oui, on va récupérer les checkpoints
+3-Si non, on va poster le nouveau numéro
+4-On va récupérer les checkpoints

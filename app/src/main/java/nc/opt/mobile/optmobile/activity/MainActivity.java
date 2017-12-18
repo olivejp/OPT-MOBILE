@@ -46,10 +46,15 @@ import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.broadcast.NetworkReceiver;
+import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.Checkpoint;
+import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.DataGet;
+import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.ResponseAfterShip;
 import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.ResponseTrackingData;
 import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.SendTrackingData;
 import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.Tracking;
@@ -60,8 +65,10 @@ import nc.opt.mobile.optmobile.network.RetrofitClient;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.ProviderObserver;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
+import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
 import nc.opt.mobile.optmobile.service.FirebaseService;
+import nc.opt.mobile.optmobile.utils.DateConverter;
 import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
 import nc.opt.mobile.optmobile.utils.RequestQueueSingleton;
 import nc.opt.mobile.optmobile.utils.Utilities;
@@ -260,6 +267,61 @@ public class MainActivity extends AttachToPermissionActivity
         });
     }
 
+    private Observer<ResponseAfterShip<DataGet>> mObserverGetTracking = new Observer<ResponseAfterShip<DataGet>>() {
+
+        @Override
+        public void onSubscribe(Disposable d) {
+        }
+
+        @Override
+        public void onNext(ResponseAfterShip<DataGet> responseAfterShip) {
+            if (responseAfterShip.getData().getTrackings() != null && !responseAfterShip.getData().getTrackings().isEmpty()) {
+
+                // On va regarder si on suit déjà ce numéro
+                for (ResponseTrackingData r : responseAfterShip.getData().getTrackings()) {
+                    if (r.getTrackingNumber().equals(trackingNumber)) {
+                        // Ok, on suit déjà ce numéro
+
+                        // S'il n'existe pas encore dans notre db locale, on va le créer
+                        ColisEntity colis = new ColisEntity();
+                        colis.setDeleted(0);
+                        colis.setIdColis(r.getTrackingNumber());
+                        List<EtapeEntity> listEtape = new ArrayList<>();
+                        for (Checkpoint c : r.getCheckpoints()) {
+                            EtapeEntity etape = new EtapeEntity();
+                            etape.setIdColis(colis.getIdColis());
+                            if (c.getCheckpointTime() != null) {
+                                etape.setDate(DateConverter.convertDateAfterShipToEntity(c.getCheckpointTime()));
+                            } else {
+                                etape.setDate(0L);
+                            }
+                            etape.setLocalisation((c.getLocation() != null) ? c.getLocation().toString() : "");
+                            etape.setCommentaire((c.getTag() != null) ? c.getTag() : "");
+                            etape.setDescription((c.getMessage() != null) ? c.getMessage() : "");
+                            etape.setPays((c.getCountryName() != null) ? c.getCountryName().toString() : "");
+                            listEtape.add(etape);
+                        }
+                        colis.setEtapeAcheminementArrayList(listEtape);
+                        if (!ColisService.save(MainActivity.this, colis)) {
+                            Log.e(TAG, "Le colis n'a pas pu être inséré dans la DB locale.");
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            e.printStackTrace();
+        }
+
+        @Override
+        public void onComplete() {
+            Log.d(TAG, "GET TRACKINGS COMPLETED");
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -271,31 +333,8 @@ public class MainActivity extends AttachToPermissionActivity
         trackingDetect.setTrackingNumber(trackingNumber);
         tracking.setTracking(trackingDetect);
 
-        final RetrofitCall retrofitCall = RetrofitClient.getClient().create(RetrofitCall.class);
-
-        retrofitCall.getTrackings()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(a -> {
-                            Log.d(TAG, String.valueOf(a.getMeta().getCode()));
-                            if (a.getData().getTrackings() != null && !a.getData().getTrackings().isEmpty()) {
-                                for (ResponseTrackingData r : a.getData().getTrackings()) {
-                                    if (r.getTrackingNumber().equals(trackingNumber)) {
-                                        Log.d(TAG, "Tracking number already added");
-                                        break;
-                                    }
-                                }
-                            } else {
-                                retrofitCall.postTracking(tracking)
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe(b -> Log.d(TAG, "POST TRACKING NUMBER"),
-                                                Throwable::printStackTrace,
-                                                () -> Log.d(TAG, "POST COMPLETED"));
-                            }
-                        },
-                        Throwable::printStackTrace,
-                        () -> Log.d(TAG, "GET TRACKINGS COMPLETED"));
+        // Test de l'api AfterShip
+        RetrofitClient.callGetTrackings(mObserverGetTracking);
 
         if (savedInstanceState != null && savedInstanceState.containsKey(SAVED_ACTUALITE_FRAGMENT)) {
             mActualiteFragment = (ActualiteFragment) getSupportFragmentManager().getFragment(savedInstanceState, SAVED_ACTUALITE_FRAGMENT);

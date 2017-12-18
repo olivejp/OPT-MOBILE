@@ -1,5 +1,12 @@
 package nc.opt.mobile.optmobile.network;
 
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.DataGet;
+import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.ResponseAfterShip;
+import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.ResponseTrackingData;
+import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.Tracking;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -23,5 +30,21 @@ public class RetrofitClient {
                     .build();
         }
         return retrofit;
+    }
+
+    public static void callGetTrackings(Observer<ResponseAfterShip<DataGet>> getTrackingsObserver){
+        RetrofitCall retrofitCall = RetrofitClient.getClient().create(RetrofitCall.class);
+        retrofitCall.getTrackings()
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(getTrackingsObserver);
+    }
+
+    public static void callPostTracking(Tracking tracking, Observer<ResponseAfterShip<Tracking<ResponseTrackingData>>> postTrackingObserver){
+        RetrofitCall retrofitCall = RetrofitClient.getClient().create(RetrofitCall.class);
+        retrofitCall.postTracking(tracking)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(postTrackingObserver);
     }
 }

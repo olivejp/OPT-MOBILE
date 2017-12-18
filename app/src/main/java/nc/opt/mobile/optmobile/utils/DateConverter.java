@@ -18,10 +18,12 @@ public class DateConverter {
     private static final String PATTERN_DTO = "dd/MM/yyyy HH:mm:ss";
     private static final String PATTERN_ENTITY = "yyyyMMddHHmmss";
     private static final String PATTERN_UI = "dd MMM yyyy à HH:mm";
+    private static final String PATTERN_AFTER_HIP = "yyyy-MM-dd'T'HH:mm:ss";
 
     private static final SimpleDateFormat simpleDtoDateFormat = new SimpleDateFormat(PATTERN_DTO, Locale.FRANCE);
     private static final SimpleDateFormat simpleUiDateFormat = new SimpleDateFormat(PATTERN_UI, Locale.FRANCE);
     private static final SimpleDateFormat simpleEntityDateFormat = new SimpleDateFormat(PATTERN_ENTITY, Locale.FRANCE);
+    private static final SimpleDateFormat simpleAfterShipDateFormat = new SimpleDateFormat(PATTERN_AFTER_HIP);
 
     private DateConverter() {
     }
@@ -108,6 +110,24 @@ public class DateConverter {
     public static Long convertDateDtoToEntity(String dateDto) {
         try {
             String dateConverted = simpleEntityDateFormat.format(simpleDtoDateFormat.parse(dateDto));
+            return Long.parseLong(dateConverted);
+        } catch (ParseException e) {
+            Log.e(TAG, e.getMessage(), e);
+        } catch (NullPointerException e1) {
+            Log.e(TAG, e1.getMessage(), e1);
+        }
+        return 0L;
+    }
+
+    /**
+     * Transformation d'une date de type yyyy-MM-ddTHH:mm:ss vers le format yyyyMMddHHmmss en Long
+     *
+     * @param dateAferShip
+     * @return
+     */
+    public static Long convertDateAfterShipToEntity(String dateAferShip) {
+        try {
+            String dateConverted = simpleEntityDateFormat.format(simpleAfterShipDateFormat.parse(dateAferShip));
             return Long.parseLong(dateConverted);
         } catch (ParseException e) {
             Log.e(TAG, e.getMessage(), e);

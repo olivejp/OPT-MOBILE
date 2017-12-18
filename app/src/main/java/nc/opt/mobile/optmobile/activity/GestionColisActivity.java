@@ -12,11 +12,14 @@ import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.broadcast.NetworkReceiver;
 import nc.opt.mobile.optmobile.fragment.GestionColisFragment;
+import nc.opt.mobile.optmobile.fragment.HistoriqueColisFragment;
 import nc.opt.mobile.optmobile.service.SyncColisService;
 
-public class GestionColisActivity extends AppCompatActivity implements NetworkReceiver.NetworkChangeListener {
+public class GestionColisActivity extends AppCompatActivity implements NetworkReceiver.NetworkChangeListener, HistoriqueColisFragment.ListenToSelectedColis {
 
     public static final String TAG_PARCEL_RESULT_SEARCH_FRAGMENT = "TAG_PARCEL_RESULT_SEARCH_FRAGMENT";
+
+    private String mIdColisSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +85,11 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
                 return super.onOptionsItemSelected(item);
             }
         } else if (i == R.id.nav_refresh && NetworkReceiver.checkConnection(this)) {
-            SyncColisService.launchSynchroForAll(this, false);
+            if (mIdColisSelected != null) {
+                SyncColisService.launchSynchroByIdColis(this, mIdColisSelected, false);
+            } else {
+                SyncColisService.launchSynchroForAll(this, false);
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -96,5 +103,15 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
     @Override
     public void onNetworkDisable() {
         invalidateOptionsMenu();
+    }
+
+    @Override
+    public void subscribe(String idColis) {
+        mIdColisSelected = idColis;
+    }
+
+    @Override
+    public void unsubscribe() {
+        mIdColisSelected = null;
     }
 }

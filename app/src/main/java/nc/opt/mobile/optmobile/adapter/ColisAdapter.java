@@ -13,8 +13,6 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 
 import java.util.List;
 
@@ -89,10 +87,6 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         return mColisList.size();
     }
 
-    public List<ColisEntity> getmColisList() {
-        return mColisList;
-    }
-
     public void setmColisList(List<ColisEntity> list){
         this.mColisList = list;
     }
@@ -141,77 +135,65 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
             mDeleteMode = false;
             ButterKnife.bind(this, mView);
 
-            mConstraintDetailColisLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // If we aren't in delete mode we call the parcel result search fragment
-                    // Otherwise we deactivate the delete mode and make the delete button invisible
-                    if (!mDeleteMode) {
-                        HistoriqueColisFragment historiqueColisFragment = HistoriqueColisFragment.newInstance(mColis.getIdColis());
-                        if (mTwoPane) {
-                            ((AppCompatActivity) mContext).getSupportFragmentManager()
-                                    .beginTransaction()
-                                    .replace(R.id.frame_detail, historiqueColisFragment, GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT)
-                                    .commit();
-                        } else {
-                            ((AppCompatActivity) mContext).getSupportFragmentManager()
-                                    .beginTransaction()
-                                    .replace(R.id.frame_master, historiqueColisFragment, GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT)
-                                    .addToBackStack(null)
-                                    .commit();
-                        }
+            mConstraintDetailColisLayout.setOnClickListener(v -> {
+                // If we aren't in delete mode we call the parcel result search fragment
+                // Otherwise we deactivate the delete mode and make the delete button invisible
+                if (!mDeleteMode) {
+                    HistoriqueColisFragment historiqueColisFragment = HistoriqueColisFragment.newInstance(mColis.getIdColis());
+                    if (mTwoPane) {
+                        ((AppCompatActivity) mContext).getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.frame_detail, historiqueColisFragment, GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT)
+                                .commit();
                     } else {
-                        mDeleteMode = !mDeleteMode;
-                        changeDeleteVisibility();
+                        ((AppCompatActivity) mContext).getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.frame_master, historiqueColisFragment, GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT)
+                                .addToBackStack(null)
+                                .commit();
                     }
+                } else {
+                    mDeleteMode = !mDeleteMode;
+                    changeDeleteVisibility();
                 }
             });
 
             // When we long click on the view, we display Delete button
-            mConstraintDetailColisLayout.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    mDeleteMode = !mDeleteMode;
-                    changeDeleteVisibility();
-                    return true;
-                }
+            mConstraintDetailColisLayout.setOnLongClickListener(v -> {
+                mDeleteMode = !mDeleteMode;
+                changeDeleteVisibility();
+                return true;
             });
 
-            mDeleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    final String idColisToRemove = mColis.getIdColis();
+            mDeleteButton.setOnClickListener(v -> {
+                final String idColisToRemove = mColis.getIdColis();
 
-                    // Delete from the memory list
-                    mColisList.remove(mColis);
+                // Delete from the memory list
+                mColisList.remove(mColis);
 
-                    // We leave the delete mode
-                    mDeleteMode = false;
+                // We leave the delete mode
+                mDeleteMode = false;
 
-                    // Just pass the deleted boolean to 1
-                    int nbUpdated = delete(mContext, idColisToRemove);
+                // Just pass the deleted boolean to 1
+                int nbUpdated = delete(mContext, idColisToRemove);
 
-                    // we try to delete the remote
-                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    if (user != null) {
-                        FirebaseService.deleteRemoteColis(user.getUid(), idColisToRemove, new DatabaseReference.CompletionListener() {
-                            @Override
-                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                // If remote has been deleted, we delete local
-                                realDelete(mContext, idColisToRemove);
-                            }
-                        });
-                    }
-
-                    Snackbar snackbar;
-                    if (nbUpdated == 1) {
-                        changeDeleteVisibility();
-                        snackbar = Snackbar.make(mView, idColisToRemove.concat(mContext.getString(R.string.deleted_from_management)), Snackbar.LENGTH_LONG);
-                    } else {
-                        snackbar = Snackbar.make(mView, idColisToRemove.concat(" suppression échouée."), Snackbar.LENGTH_LONG);
-                    }
-                    snackbar.show();
+                // we try to delete the remote
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null) {
+                    FirebaseService.deleteRemoteColis(user.getUid(), idColisToRemove, (databaseError, databaseReference) -> {
+                        // If remote has been deleted, we delete local
+                        realDelete(mContext, idColisToRemove);
+                    });
                 }
+
+                Snackbar snackbar;
+                if (nbUpdated == 1) {
+                    changeDeleteVisibility();
+                    snackbar = Snackbar.make(mView, idColisToRemove.concat(mContext.getString(R.string.deleted_from_management)), Snackbar.LENGTH_LONG);
+                } else {
+                    snackbar = Snackbar.make(mView, idColisToRemove.concat(" suppression échouée."), Snackbar.LENGTH_LONG);
+                }
+                snackbar.show();
             });
         }
     }

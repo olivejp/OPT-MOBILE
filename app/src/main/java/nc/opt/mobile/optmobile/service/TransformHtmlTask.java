@@ -10,6 +10,7 @@ import java.net.URLEncoder;
 
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.domain.suiviColis.ColisDto;
+import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
 import nc.opt.mobile.optmobile.provider.services.EtapeAcheminementService;
 import nc.opt.mobile.optmobile.utils.Constants;
@@ -18,7 +19,6 @@ import nc.opt.mobile.optmobile.utils.NotificationSender;
 
 /**
  * Created by 2761oli on 09/10/2017.
- *
  */
 
 class TransformHtmlTask extends AsyncTask<String, Void, ColisDto> {
@@ -30,7 +30,7 @@ class TransformHtmlTask extends AsyncTask<String, Void, ColisDto> {
     private boolean sendNotification;
 
     TransformHtmlTask(Context context, String idColis, boolean sendNotification) {
-        this.context = context;
+        this.context = context.getApplicationContext();
         this.sendNotification = sendNotification;
         this.idColis = idColis;
     }
@@ -39,13 +39,17 @@ class TransformHtmlTask extends AsyncTask<String, Void, ColisDto> {
         ColisDto colisDto = new ColisDto();
         colisDto.setIdColis(idColis);
         try {
-            int transformResult = HtmlTransformer.getColisFromHtml(htmlToTransform, colisDto);
-            switch (transformResult) {
+            switch (HtmlTransformer.getColisFromHtml(htmlToTransform, colisDto)) {
                 case HtmlTransformer.RESULT_SUCCESS:
                     ColisService.updateLastUpdate(context, colisDto.getIdColis(), true);
-                    if (EtapeAcheminementService.save(context, colisDto) && sendNotification) {
-                        // Envoi d'une notification si l'objet a bougé.
-                        NotificationSender.sendNotification(context, context.getString(R.string.app_name), idColis + " a été mis à jour.", R.drawable.ic_archive_white_48dp);
+                    ColisEntity colisEntity = ColisService.convertToEntity(colisDto);
+                    if (EtapeAcheminementService.save(context, colisEntity)) {
+                        if (sendNotification) {
+                            // Envoi d'une notification si l'objet a bougé.
+                            NotificationSender.sendNotification(context, context.getString(R.string.app_name), idColis + " a été mis à jour.", R.drawable.ic_archive_white_48dp);
+                        }
+                    } else {
+                        Log.e(TAG, "Echec de la sauvegarde du colis dans le content provider.");
                     }
                     return colisDto;
                 case HtmlTransformer.RESULT_NO_ITEM_FOUND:
@@ -54,7 +58,6 @@ class TransformHtmlTask extends AsyncTask<String, Void, ColisDto> {
                 default:
                     break;
             }
-
         } catch (HtmlTransformer.HtmlTransformerException e) {
             Log.e(TAG, e.getMessage(), e);
         }

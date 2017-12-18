@@ -45,10 +45,16 @@ public class SyncColisService extends IntentService {
             .concat("&Submit=Envoyer");
 
     private RequestQueueSingleton mRequestQueueSingleton;
+    private ActionSyncColisListener mActionSyncColisListener;
 
     public SyncColisService() {
         super("SyncColisService");
         mRequestQueueSingleton = RequestQueueSingleton.getInstance(SyncColisService.this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     public static void refreshRemoteConfig() {
@@ -104,7 +110,8 @@ public class SyncColisService extends IntentService {
                 String url = String.format(mUrl, idColis);
 
                 // Request a string response from the provided URL.
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new ActionSyncColisListener(idColis, sendNotification), new ActionSyncColisErrorListener());
+                mActionSyncColisListener = new ActionSyncColisListener(idColis, sendNotification);
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, url, mActionSyncColisListener, new ActionSyncColisErrorListener());
 
                 // Add the request to the RequestQueue.
                 mRequestQueueSingleton.addToRequestQueue(stringRequest);
@@ -119,7 +126,8 @@ public class SyncColisService extends IntentService {
                 String url = String.format(mUrl, colis.getIdColis());
 
                 // Request a string response from the provided URL.
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new ActionSyncColisListener(colis.getIdColis(), sendNotification), new ActionSyncColisErrorListener());
+                mActionSyncColisListener = new ActionSyncColisListener(colis.getIdColis(), sendNotification);
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, url, mActionSyncColisListener, new ActionSyncColisErrorListener());
 
                 // Add the request to the RequestQueue.
                 mRequestQueueSingleton.addToRequestQueue(stringRequest);
