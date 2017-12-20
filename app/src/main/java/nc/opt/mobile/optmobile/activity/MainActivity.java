@@ -294,7 +294,7 @@ public class MainActivity extends AttachToPermissionActivity
         tracking.setTracking(trackingDetect);
 
         // Test de l'api AfterShip
-        RetrofitClient.callGetTrackings(mObserverGetTracking);
+        RetrofitClient.getTrackings(mObserverGetTracking);
 
         if (savedInstanceState != null && savedInstanceState.containsKey(SAVED_ACTUALITE_FRAGMENT)) {
             mActualiteFragment = (ActualiteFragment) getSupportFragmentManager().getFragment(savedInstanceState, SAVED_ACTUALITE_FRAGMENT);

@@ -1,10 +1,11 @@
 package nc.opt.mobile.optmobile.network;
 
-import org.jetbrains.annotations.NotNull;
+import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.DataGet;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.ResponseAfterShip;
@@ -39,16 +40,23 @@ public class RetrofitClient {
     private RetrofitClient() {
     }
 
-    @SafeVarargs
-    public static void callGetTrackings(@NotNull Observer<ResponseAfterShip<DataGet>>... getTrackingsObservers) {
+    /**
+     * Transform a ResponseAfterShip<DataGet> to List<TrackingData>
+     */
+    private static final Function<ResponseAfterShip<DataGet>, List<TrackingData>> funGetTrackingData = dataGetResponseAfterShip -> dataGetResponseAfterShip.getData().getTrackings();
+
+    /**
+     * Return an Observable of Tracking
+     *
+     * @return
+     */
+    public static Observable<TrackingData> getTrackings() {
         RetrofitCall retrofitCall = RetrofitClient.getClient().create(RetrofitCall.class);
         Observable<ResponseAfterShip<DataGet>> observable = retrofitCall.getTrackings()
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        for (Observer<ResponseAfterShip<DataGet>> observer : getTrackingsObservers) {
-            observable.subscribe(observer);
-        }
+        return observable.map(funGetTrackingData).flatMap(trackingData ->);
     }
 
     @SafeVarargs
