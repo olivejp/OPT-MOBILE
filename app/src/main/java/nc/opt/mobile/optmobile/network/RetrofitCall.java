@@ -1,11 +1,11 @@
 package nc.opt.mobile.optmobile.network;
 
 import io.reactivex.Observable;
-import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.DataGet;
-import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.ResponseTrackingData;
-import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.Tracking;
-import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.ResponseAfterShip;
-import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.ResponseDataDetectCourier;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.DataGet;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.ResponseAfterShip;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.ResponseDataDetectCourier;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.Tracking;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.TrackingData;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
@@ -25,7 +25,7 @@ public interface RetrofitCall {
 
     @Headers({"aftership-api-key: e1bc990c-5652-4c88-8332-f60188329fe0", "Content-Type: application/json"})
     @POST("/v4/trackings")
-    Observable<ResponseAfterShip<Tracking<ResponseTrackingData>>> postTracking(@Body Tracking tracking);
+    Observable<ResponseAfterShip<Tracking<TrackingData>>> postTracking(@Body Tracking tracking);
 
     @Headers({"aftership-api-key: e1bc990c-5652-4c88-8332-f60188329fe0", "Content-Type: application/json"})
     @GET("/v4/trackings/{id_tracking}")
@@ -37,5 +37,5 @@ public interface RetrofitCall {
 
     @Headers({"aftership-api-key: e1bc990c-5652-4c88-8332-f60188329fe0", "Content-Type: application/json"})
     @DELETE("/v4/trackings/{id_tracking}")
-    Observable<ResponseAfterShip<Tracking<ResponseTrackingData>>> deleteTracking(@Path("id_tracking") String idTracking);
+    Observable<ResponseAfterShip<Tracking<TrackingData>>> deleteTracking(@Path("id_tracking") String idTracking);
 }

@@ -9,7 +9,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.domain.suiviColis.ColisDto;
+import nc.opt.mobile.optmobile.domain.suivi.ColisDto;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
 import nc.opt.mobile.optmobile.provider.services.EtapeAcheminementService;

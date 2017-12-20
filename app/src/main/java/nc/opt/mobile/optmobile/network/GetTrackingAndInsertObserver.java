@@ -5,10 +5,10 @@ import android.util.Log;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
-import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.DataGet;
-import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.ResponseAfterShip;
-import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.ResponseTrackingData;
-import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.Tracking;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.DataGet;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.ResponseAfterShip;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.Tracking;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.TrackingData;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
 import nc.opt.mobile.optmobile.utils.AfterShipUtils;
@@ -23,9 +23,9 @@ public class GetTrackingAndInsertObserver implements Observer<ResponseAfterShip<
 
     private Context context;
     private String trackingNumber;
-    private Observer<ResponseAfterShip<Tracking<ResponseTrackingData>>>[] observersPostTracking;
+    private Observer<ResponseAfterShip<Tracking<TrackingData>>>[] observersPostTracking;
 
-    public GetTrackingAndInsertObserver(Context context, String trackingNumber, Observer<ResponseAfterShip<Tracking<ResponseTrackingData>>>... observersPostTracking) {
+    public GetTrackingAndInsertObserver(Context context, String trackingNumber, Observer<ResponseAfterShip<Tracking<TrackingData>>>... observersPostTracking) {
         this.context = context;
         this.trackingNumber = trackingNumber;
         this.observersPostTracking = observersPostTracking;
@@ -41,7 +41,7 @@ public class GetTrackingAndInsertObserver implements Observer<ResponseAfterShip<
         if (responseAfterShip.getData().getTrackings() != null && !responseAfterShip.getData().getTrackings().isEmpty()) {
 
             // On va regarder si on suit déjà ce numéro
-            for (ResponseTrackingData r : responseAfterShip.getData().getTrackings()) {
+            for (TrackingData r : responseAfterShip.getData().getTrackings()) {
                 if (r.getTrackingNumber().equals(trackingNumber)) {
                     ColisEntity colis = AfterShipUtils.createColisFromResponseTrackingData(r);
                     ColisService.save(context, colis);

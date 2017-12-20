@@ -1,7 +1,8 @@
-package nc.opt.mobile.optmobile.domain.suiviColis.after_ship;
+package nc.opt.mobile.optmobile.domain.suivi.aftership;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +62,7 @@ public class DataGet {
 
     @SerializedName("trackings")
     @Expose
-    public List<ResponseTrackingData> trackings = new ArrayList<>();
+    public List<TrackingData> trackings = new ArrayList<>();
 
     /**
      * No args constructor for use in serialization
@@ -84,7 +85,7 @@ public class DataGet {
      * @param slug
      * @param fields
      */
-    public DataGet(long page, long limit, long count, String keyword, String slug, List<Object> origin, List<Object> destination, String tag, String fields, String createdAtMin, String createdAtMax, Object lastUpdatedAt, List<ResponseTrackingData> trackings) {
+    public DataGet(long page, long limit, long count, String keyword, String slug, List<Object> origin, List<Object> destination, String tag, String fields, String createdAtMin, String createdAtMax, Object lastUpdatedAt, List<TrackingData> trackings) {
         super();
         this.page = page;
         this.limit = limit;
@@ -197,11 +198,11 @@ public class DataGet {
         this.lastUpdatedAt = lastUpdatedAt;
     }
 
-    public List<ResponseTrackingData> getTrackings() {
+    public List<TrackingData> getTrackings() {
         return trackings;
     }
 
-    public void setTrackings(List<ResponseTrackingData> trackings) {
+    public void setTrackings(List<TrackingData> trackings) {
         this.trackings = trackings;
     }
 }

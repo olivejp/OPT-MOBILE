@@ -7,8 +7,8 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 
-import nc.opt.mobile.optmobile.domain.suiviColis.ColisDto;
-import nc.opt.mobile.optmobile.domain.suiviColis.EtapeAcheminementDto;
+import nc.opt.mobile.optmobile.domain.suivi.ColisDto;
+import nc.opt.mobile.optmobile.domain.suivi.EtapeAcheminementDto;
 
 /**
  * Created by 2761oli on 05/10/2017.

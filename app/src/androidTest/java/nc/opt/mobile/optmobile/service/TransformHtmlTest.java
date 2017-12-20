@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import nc.opt.mobile.optmobile.domain.suiviColis.ColisDto;
+import nc.opt.mobile.optmobile.domain.suivi.ColisDto;
 import nc.opt.mobile.optmobile.utils.HtmlTransformer;
 import nc.opt.mobile.optmobile.utils.Utilities;
 

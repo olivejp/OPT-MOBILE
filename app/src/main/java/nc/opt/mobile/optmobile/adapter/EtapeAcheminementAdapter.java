@@ -12,7 +12,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.domain.suiviColis.EtapeConsolidated;
+import nc.opt.mobile.optmobile.domain.suivi.EtapeConsolidated;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
 /**

@@ -11,7 +11,7 @@ import org.chalup.microorm.MicroOrm;
 import java.util.ArrayList;
 import java.util.List;
 
-import nc.opt.mobile.optmobile.domain.suiviColis.EtapeAcheminementDto;
+import nc.opt.mobile.optmobile.domain.suivi.EtapeAcheminementDto;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;

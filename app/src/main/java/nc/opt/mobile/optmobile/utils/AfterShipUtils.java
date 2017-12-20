@@ -3,8 +3,8 @@ package nc.opt.mobile.optmobile.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.Checkpoint;
-import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.ResponseTrackingData;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.Checkpoint;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.TrackingData;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
 
@@ -13,6 +13,9 @@ import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
  */
 
 public class AfterShipUtils {
+
+    private AfterShipUtils(){}
+
     /**
      * Va créer une étape à partir d'un checkpoint
      *
@@ -35,7 +38,7 @@ public class AfterShipUtils {
         return etape;
     }
 
-    public static ColisEntity createColisFromResponseTrackingData( ResponseTrackingData r) {
+    public static ColisEntity createColisFromResponseTrackingData( TrackingData r) {
         ColisEntity colis = new ColisEntity();
         colis.setDeleted(0);
         colis.setIdColis(r.getTrackingNumber());

@@ -13,13 +13,12 @@ import org.junit.runner.RunWith;
 import java.util.List;
 
 import nc.opt.mobile.optmobile.ProviderTestUtilities;
-import nc.opt.mobile.optmobile.domain.suiviColis.ColisDto;
-import nc.opt.mobile.optmobile.domain.suiviColis.EtapeAcheminementDto;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
 import nc.opt.mobile.optmobile.provider.services.EtapeAcheminementService;
+import nc.opt.mobile.optmobile.utils.DateConverter;
 
 /**
  * Created by 2761oli on 07/11/2017.
@@ -50,12 +49,12 @@ public class EtapeAcheminementServiceTest {
 
     private long insertEtape(String idColis) {
         insertColis();
-        EtapeAcheminementDto etapeDto = new EtapeAcheminementDto();
-        etapeDto.setDate(DATE_INCORRECTE);
-        etapeDto.setDescription(DESCRIPTION_ETAPE);
-        ColisDto colisDto = ColisService.convertToDto(ColisService.get(mContext, idColis));
+        EtapeEntity etape = new EtapeEntity();
+        etape.setDate(DateConverter.convertDateAfterShipToEntity(DATE_INCORRECTE));
+        etape.setDescription(DESCRIPTION_ETAPE);
+        ColisEntity colis = ColisService.get(mContext, idColis);
 
-        long id = EtapeAcheminementService.insert(mContext, etapeDto, colisDto);
+        long id = EtapeAcheminementService.insert(mContext, etape, colis);
         Assert.assertTrue(id > 0);
         return id;
     }

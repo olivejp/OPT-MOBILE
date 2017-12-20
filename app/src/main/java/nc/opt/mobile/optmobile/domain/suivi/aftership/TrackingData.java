@@ -1,4 +1,4 @@
-package nc.opt.mobile.optmobile.domain.suiviColis.after_ship;
+package nc.opt.mobile.optmobile.domain.suivi.aftership;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResponseTrackingData {
+public class TrackingData {
 
     @SerializedName("id")
     @Expose
@@ -132,7 +132,7 @@ public class ResponseTrackingData {
     /**
      * No args constructor for use in serialization
      */
-    public ResponseTrackingData() {
+    public TrackingData() {
     }
 
     /**
@@ -177,7 +177,7 @@ public class ResponseTrackingData {
      * @param active
      * @param slug
      */
-    public ResponseTrackingData(String id, String createdAt, String updatedAt, String lastUpdatedAt, String trackingNumber, String slug, boolean active, List<Object> android, Object customFields, Object customerName, long deliveryTime, String destinationCountryIso3, List<Object> emails, Object expectedDelivery, List<Object> ios, String note, Object orderId, Object orderIdPath, String originCountryIso3, long shipmentPackageCount, String shipmentPickupDate, String shipmentDeliveryDate, Object shipmentType, Object shipmentWeight, Object shipmentWeightUnit, Object signedBy, List<Object> smses, String source, String tag, String subtag, String title, long trackedCount, Object lastMileTrackingSupported, String uniqueToken, List<Checkpoint> checkpoints, Object trackingAccountNumber, Object trackingDestinationCountry, Object trackingKey, Object trackingPostalCode, Object trackingShipDate) {
+    public TrackingData(String id, String createdAt, String updatedAt, String lastUpdatedAt, String trackingNumber, String slug, boolean active, List<Object> android, Object customFields, Object customerName, long deliveryTime, String destinationCountryIso3, List<Object> emails, Object expectedDelivery, List<Object> ios, String note, Object orderId, Object orderIdPath, String originCountryIso3, long shipmentPackageCount, String shipmentPickupDate, String shipmentDeliveryDate, Object shipmentType, Object shipmentWeight, Object shipmentWeightUnit, Object signedBy, List<Object> smses, String source, String tag, String subtag, String title, long trackedCount, Object lastMileTrackingSupported, String uniqueToken, List<Checkpoint> checkpoints, Object trackingAccountNumber, Object trackingDestinationCountry, Object trackingKey, Object trackingPostalCode, Object trackingShipDate) {
         super();
         this.id = id;
         this.createdAt = createdAt;

@@ -1,4 +1,4 @@
-package nc.opt.mobile.optmobile.domain.suiviColis.after_ship;
+package nc.opt.mobile.optmobile.domain.suivi.aftership;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

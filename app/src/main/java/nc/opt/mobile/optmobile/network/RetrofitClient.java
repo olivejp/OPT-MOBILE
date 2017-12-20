@@ -6,11 +6,11 @@ import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.DataGet;
-import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.ResponseAfterShip;
-import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.ResponseTrackingData;
-import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.SendTrackingData;
-import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.Tracking;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.DataGet;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.ResponseAfterShip;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.SendTrackingData;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.Tracking;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.TrackingData;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -52,7 +52,7 @@ public class RetrofitClient {
     }
 
     @SafeVarargs
-    public static void callPostTracking(String trackingNumber, Observer<ResponseAfterShip<Tracking<ResponseTrackingData>>>... postTrackingObservers) {
+    public static void callPostTracking(String trackingNumber, Observer<ResponseAfterShip<Tracking<TrackingData>>>... postTrackingObservers) {
         // Création d'un tracking
         Tracking<SendTrackingData> tracking = new Tracking<>();
         SendTrackingData trackingDetect = new SendTrackingData();
@@ -60,11 +60,11 @@ public class RetrofitClient {
         tracking.setTracking(trackingDetect);
 
         RetrofitCall retrofitCall = RetrofitClient.getClient().create(RetrofitCall.class);
-        Observable<ResponseAfterShip<Tracking<ResponseTrackingData>>> observable = retrofitCall.postTracking(tracking)
+        Observable<ResponseAfterShip<Tracking<TrackingData>>> observable = retrofitCall.postTracking(tracking)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        for (Observer<ResponseAfterShip<Tracking<ResponseTrackingData>>> observer : postTrackingObservers) {
+        for (Observer<ResponseAfterShip<Tracking<TrackingData>>> observer : postTrackingObservers) {
             observable.subscribe(observer);
         }
     }

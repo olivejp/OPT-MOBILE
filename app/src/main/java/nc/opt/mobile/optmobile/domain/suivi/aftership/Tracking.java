@@ -1,4 +1,4 @@
-package nc.opt.mobile.optmobile.domain.suiviColis.after_ship;
+package nc.opt.mobile.optmobile.domain.suivi.aftership;
 
 /**
  * Created by orlanth23 on 17/12/2017.

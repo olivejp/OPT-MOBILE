@@ -1,4 +1,4 @@
-package nc.opt.mobile.optmobile.domain.suiviColis;
+package nc.opt.mobile.optmobile.domain.suivi;
 
 import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
 
