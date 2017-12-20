@@ -42,6 +42,13 @@ public class ColisService {
         return null;
     }
 
+    /**
+     * Return true if colis with id exist in the content provider
+     * @param context
+     * @param id
+     * @param onlyActive
+     * @return
+     */
     public static boolean exist(Context context, String id, boolean onlyActive) {
         Cursor cursor = context.getContentResolver().query(nc.opt.mobile.optmobile.provider.OptProvider.ListColis.withId(id), null, onlyActive ? selectionOnlyActiveColis : null, onlyActive ? argsOnlyActiveColisArgs : null, null);
         if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {

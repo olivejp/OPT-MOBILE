@@ -1,0 +1,50 @@
+package nc.opt.mobile.optmobile.utils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.Checkpoint;
+import nc.opt.mobile.optmobile.domain.suiviColis.after_ship.ResponseTrackingData;
+import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
+import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
+
+/**
+ * Created by orlanth23 on 18/12/2017.
+ */
+
+public class AfterShipUtils {
+    /**
+     * Va créer une étape à partir d'un checkpoint
+     *
+     * @param idColis
+     * @param checkpoint
+     * @return EtapeEntity
+     */
+    public static EtapeEntity createEtapeFromCheckpoint(String idColis, Checkpoint checkpoint) {
+        EtapeEntity etape = new EtapeEntity();
+        etape.setIdColis(idColis);
+        if (checkpoint.getCheckpointTime() != null) {
+            etape.setDate(DateConverter.convertDateAfterShipToEntity(checkpoint.getCheckpointTime()));
+        } else {
+            etape.setDate(0L);
+        }
+        etape.setLocalisation((checkpoint.getLocation() != null) ? checkpoint.getLocation().toString() : "");
+        etape.setCommentaire((checkpoint.getTag() != null) ? checkpoint.getTag() : "");
+        etape.setDescription((checkpoint.getMessage() != null) ? checkpoint.getMessage() : "");
+        etape.setPays((checkpoint.getCountryName() != null) ? checkpoint.getCountryName().toString() : "");
+        return etape;
+    }
+
+    public static ColisEntity createColisFromResponseTrackingData( ResponseTrackingData r) {
+        ColisEntity colis = new ColisEntity();
+        colis.setDeleted(0);
+        colis.setIdColis(r.getTrackingNumber());
+        List<EtapeEntity> listEtape = new ArrayList<>();
+
+        for (Checkpoint c : r.getCheckpoints()) {
+            listEtape.add(createEtapeFromCheckpoint(colis.getIdColis(), c));
+        }
+        colis.setEtapeAcheminementArrayList(listEtape);
+        return colis;
+    }
+}
