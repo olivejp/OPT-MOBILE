@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nc.opt.mobile.optmobile.domain.suivi.aftership.Checkpoint;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.SendTrackingData;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.Tracking;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.TrackingData;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
@@ -14,7 +16,8 @@ import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
 
 public class AfterShipUtils {
 
-    private AfterShipUtils(){}
+    private AfterShipUtils() {
+    }
 
     /**
      * Va créer une étape à partir d'un checkpoint
@@ -38,7 +41,7 @@ public class AfterShipUtils {
         return etape;
     }
 
-    public static ColisEntity createColisFromResponseTrackingData( TrackingData r) {
+    public static ColisEntity createColisFromResponseTrackingData(TrackingData r) {
         ColisEntity colis = new ColisEntity();
         colis.setDeleted(0);
         colis.setIdColis(r.getTrackingNumber());
@@ -49,5 +52,19 @@ public class AfterShipUtils {
         }
         colis.setEtapeAcheminementArrayList(listEtape);
         return colis;
+    }
+
+    /**
+     *
+     * @param trackingNumber
+     * @return
+     */
+    public static Tracking<SendTrackingData> createTrackingData(String trackingNumber) {
+        // Création d'un tracking
+        Tracking<SendTrackingData> tracking = new Tracking<>();
+        SendTrackingData trackingDetect = new SendTrackingData();
+        trackingDetect.setTrackingNumber(trackingNumber);
+        tracking.setTracking(trackingDetect);
+        return tracking;
     }
 }

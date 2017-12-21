@@ -4,12 +4,12 @@ import io.reactivex.Observable;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.DataGet;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.ResponseAfterShip;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.ResponseDataDetectCourier;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.SendTrackingData;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.Tracking;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.TrackingData;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
-import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
@@ -19,23 +19,18 @@ import retrofit2.http.Path;
 
 public interface RetrofitCall {
 
-    @Headers({"aftership-api-key: e1bc990c-5652-4c88-8332-f60188329fe0", "Content-Type: application/json"})
     @POST("/v4/couriers/detect")
     Observable<ResponseAfterShip<ResponseDataDetectCourier>> detectCourier(@Body Tracking tracking);
 
-    @Headers({"aftership-api-key: e1bc990c-5652-4c88-8332-f60188329fe0", "Content-Type: application/json"})
     @POST("/v4/trackings")
-    Observable<ResponseAfterShip<Tracking<TrackingData>>> postTracking(@Body Tracking tracking);
+    Observable<ResponseAfterShip<Tracking<TrackingData>>> postTracking(@Body Tracking<SendTrackingData> tracking);
 
-    @Headers({"aftership-api-key: e1bc990c-5652-4c88-8332-f60188329fe0", "Content-Type: application/json"})
     @GET("/v4/trackings/{id_tracking}")
     Observable<ResponseAfterShip<DataGet>> getTracking(@Path("id_tracking") String idTracking);
 
-    @Headers({"aftership-api-key: e1bc990c-5652-4c88-8332-f60188329fe0", "Content-Type: application/json"})
     @GET("/v4/trackings")
     Observable<ResponseAfterShip<DataGet>> getTrackings();
 
-    @Headers({"aftership-api-key: e1bc990c-5652-4c88-8332-f60188329fe0", "Content-Type: application/json"})
     @DELETE("/v4/trackings/{id_tracking}")
     Observable<ResponseAfterShip<Tracking<TrackingData>>> deleteTracking(@Path("id_tracking") String idTracking);
 }

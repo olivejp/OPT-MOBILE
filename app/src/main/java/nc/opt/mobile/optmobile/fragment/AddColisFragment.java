@@ -27,7 +27,7 @@ import nc.opt.mobile.optmobile.service.FirebaseService;
 import nc.opt.mobile.optmobile.service.SyncColisService;
 
 /**
- * A simple {@link Fragment} subclass.
+ *
  */
 public class AddColisFragment extends Fragment {
 
@@ -54,9 +54,7 @@ public class AddColisFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_add_colis, container, false);
         ButterKnife.bind(this, rootView);
-
         mActivity.setTitle(getString(R.string.add_colis));
-
         return rootView;
     }
 
@@ -70,6 +68,7 @@ public class AddColisFragment extends Fragment {
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
 
+            // Get the idColis from the view
             String idColis = editIdParcel.getText().toString().toUpperCase();
 
             // Query our ContentProvider to avoid duplicate

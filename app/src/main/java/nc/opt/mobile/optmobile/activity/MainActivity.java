@@ -46,14 +46,8 @@ import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.broadcast.NetworkReceiver;
-import nc.opt.mobile.optmobile.domain.suivi.aftership.DataGet;
-import nc.opt.mobile.optmobile.domain.suivi.aftership.ResponseAfterShip;
-import nc.opt.mobile.optmobile.domain.suivi.aftership.SendTrackingData;
-import nc.opt.mobile.optmobile.domain.suivi.aftership.Tracking;
 import nc.opt.mobile.optmobile.fragment.ActualiteFragment;
 import nc.opt.mobile.optmobile.interfaces.AttachToPermissionActivity;
 import nc.opt.mobile.optmobile.network.RetrofitClient;
@@ -185,7 +179,7 @@ public class MainActivity extends AttachToPermissionActivity
 
         @Override
         public void onCancelled(DatabaseError databaseError) {
-
+            //Do nothing
         }
     };
 
@@ -255,46 +249,14 @@ public class MainActivity extends AttachToPermissionActivity
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                // Do Nothing
             }
         });
     }
 
-    private Observer<ResponseAfterShip<DataGet>> mObserverGetTracking = new Observer<ResponseAfterShip<DataGet>>() {
-
-        @Override
-        public void onSubscribe(Disposable d) {
-        }
-
-        @Override
-        public void onNext(ResponseAfterShip<DataGet> responseAfterShip) {
-
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            Log.e(TAG, e.getMessage(), e);
-        }
-
-        @Override
-        public void onComplete() {
-            Log.d(TAG, "GET TRACKINGS COMPLETED");
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Test d'appel Retrofit
-        final String trackingNumber = "UA649306764US";
-        final Tracking<SendTrackingData> tracking = new Tracking<>();
-        final SendTrackingData trackingDetect = new SendTrackingData();
-        trackingDetect.setTrackingNumber(trackingNumber);
-        tracking.setTracking(trackingDetect);
-
-        // Test de l'api AfterShip
-        RetrofitClient.getTrackings(mObserverGetTracking);
 
         if (savedInstanceState != null && savedInstanceState.containsKey(SAVED_ACTUALITE_FRAGMENT)) {
             mActualiteFragment = (ActualiteFragment) getSupportFragmentManager().getFragment(savedInstanceState, SAVED_ACTUALITE_FRAGMENT);
@@ -306,6 +268,9 @@ public class MainActivity extends AttachToPermissionActivity
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
+
+        // Tests
+        RetrofitClient.getTrackings().subscribe(trackingData -> Log.d(TAG, trackingData.getTrackingNumber()));
 
         View headerLayout = navigationView.getHeaderView(0);
         mImageViewProfile = headerLayout.findViewById(R.id.image_view_profile);
@@ -472,6 +437,7 @@ public class MainActivity extends AttachToPermissionActivity
 
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
+        // Do nothing
     }
 
     @Override
