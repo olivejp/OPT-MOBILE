@@ -9,6 +9,7 @@ import nc.opt.mobile.optmobile.domain.suivi.aftership.ResponseAfterShip;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.SendTrackingData;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.Tracking;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.TrackingData;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.TrackingDelete;
 import nc.opt.mobile.optmobile.utils.AfterShipUtils;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -52,7 +53,33 @@ public class RetrofitClient {
     }
 
     /**
-     * Return an Observable of List<Tracking>
+     * Return an Observable of TrackingDelete
+     *
+     * @return
+     */
+    public static Observable<TrackingDelete> deleteTracking(String trackingId) {
+        RetrofitCall retrofitCall = RetrofitClient.getClient().create(RetrofitCall.class);
+        return retrofitCall.deleteTracking(trackingId)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(dataGetResponseAfterShip -> Observable.just(dataGetResponseAfterShip.getData().getTracking()));
+    }
+
+    /**
+     * Return an Observable of TrackingData
+     *
+     * @return
+     */
+    public static Observable<TrackingData> getTracking(String trackingId) {
+        RetrofitCall retrofitCall = RetrofitClient.getClient().create(RetrofitCall.class);
+        return retrofitCall.getTracking(trackingId)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(dataGetResponseAfterShip -> Observable.just(dataGetResponseAfterShip.getData().getTracking()));
+    }
+
+    /**
+     * Return an Observable TrackingData
      *
      * @return
      */
@@ -70,7 +97,7 @@ public class RetrofitClient {
      * @param trackingNumber
      * @return
      */
-    public static Observable<TrackingData> callPostTracking(String trackingNumber) {
+    public static Observable<TrackingData> postTracking(String trackingNumber) {
         Function<ResponseAfterShip<Tracking<TrackingData>>, TrackingData> funPostTrackingData = trackingResponseAfterShip -> trackingResponseAfterShip.getData().getTracking();
 
         Tracking<SendTrackingData> trackingDataTracking = AfterShipUtils.createTrackingData(trackingNumber);

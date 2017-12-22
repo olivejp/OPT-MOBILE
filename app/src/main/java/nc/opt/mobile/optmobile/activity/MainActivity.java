@@ -50,7 +50,6 @@ import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.broadcast.NetworkReceiver;
 import nc.opt.mobile.optmobile.fragment.ActualiteFragment;
 import nc.opt.mobile.optmobile.interfaces.AttachToPermissionActivity;
-import nc.opt.mobile.optmobile.network.RetrofitClient;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.ProviderObserver;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
@@ -269,9 +268,6 @@ public class MainActivity extends AttachToPermissionActivity
 
         ButterKnife.bind(this);
 
-        // Tests
-        RetrofitClient.getTrackings().subscribe(trackingData -> Log.d(TAG, trackingData.getTrackingNumber()));
-
         View headerLayout = navigationView.getHeaderView(0);
         mImageViewProfile = headerLayout.findViewById(R.id.image_view_profile);
         mButtonConnexion = headerLayout.findViewById(R.id.button_connexion);
@@ -281,7 +277,9 @@ public class MainActivity extends AttachToPermissionActivity
 
         defineAuthListener();
 
-        mButtonConnexion.setOnClickListener(v -> {
+        mButtonConnexion.setOnClickListener(v ->
+
+        {
             if (mFirebaseUser != null) {
                 signOut();
             } else {
@@ -295,18 +293,24 @@ public class MainActivity extends AttachToPermissionActivity
         setSupportActionBar(toolbar);
 
         ActionBar ab = getSupportActionBar();
-        if (ab != null) {
+        if (ab != null)
+
+        {
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
         // Si la permission Internet n'a pas été accordée on va la demander
-        if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED)) {
+        if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED))
+
+        {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, RC_PERMISSION_INTERNET);
         }
 
         // Populate the contentProvider with assets, only the first time
         SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
-        if (!sharedPreferences.getBoolean(PREF_POPULATED, false)) {
+        if (!sharedPreferences.getBoolean(PREF_POPULATED, false))
+
+        {
             populateContentProviderFromAsset(this);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putBoolean(PREF_POPULATED, true);
@@ -323,7 +327,9 @@ public class MainActivity extends AttachToPermissionActivity
         updateBadge();
 
         // Appel de la premiere instance
-        RequestQueueSingleton.getInstance(this.getApplicationContext());
+        RequestQueueSingleton.getInstance(this.
+
+                getApplicationContext());
 
         // Enregistrement d'un observer pour écouter les modifications sur le ContentProvider
         ProviderObserver providerObserver = ProviderObserver.getInstance();
@@ -331,9 +337,13 @@ public class MainActivity extends AttachToPermissionActivity
 
         // Création du premier fragment
         getSupportFragmentManager().
+
                 beginTransaction().
+
                 replace(R.id.frame_main, mActualiteFragment).
+
                 commit();
+
     }
 
     @Override

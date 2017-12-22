@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -13,8 +12,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.List;
@@ -64,15 +61,12 @@ public class SyncColisService extends IntentService {
         // See Best Practices in the README for more information.
         final FirebaseRemoteConfig firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
         firebaseRemoteConfig.fetch()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "RefreshRemoteConfig called successfully");
-                            firebaseRemoteConfig.activateFetched();
-                        } else {
-                            Log.d(TAG, "Failed to call RefreshRemoteConfig");
-                        }
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "RefreshRemoteConfig called successfully");
+                        firebaseRemoteConfig.activateFetched();
+                    } else {
+                        Log.d(TAG, "Failed to call RefreshRemoteConfig");
                     }
                 });
     }
@@ -94,7 +88,7 @@ public class SyncColisService extends IntentService {
         context.startService(syncService);
     }
 
-    // Lancement du service de synchro pour tous les objets
+    // Lancement du service de synchro pour tous les objets mais à partir du scheduler
     public static void launchSynchroFromScheduler(Context context) {
         Intent syncService = new Intent(context, SyncColisService.class);
         syncService.putExtra(SyncColisService.ARG_ACTION, SyncColisService.ARG_ACTION_SYNC_ALL_FROM_SCHEDULER);

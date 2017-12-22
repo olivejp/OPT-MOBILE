@@ -125,6 +125,7 @@ public class EtapeAcheminementService {
 
     static EtapeAcheminementDto convertToDto(EtapeEntity entity) {
         EtapeAcheminementDto dto = new EtapeAcheminementDto();
+        // ToDo vérifier que le bug ne viendrai pas d'ici.
         dto.setDate(DateConverter.convertDateEntityToDto(entity.getDate()));
         dto.setCommentaire(entity.getCommentaire());
         dto.setDescription(entity.getDescription());

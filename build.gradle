@@ -10,6 +10,10 @@ buildscript {
         maven {
             url "https://clojars.org/repo/"
         }
+        maven {
+            url 'https://maven.google.com/'
+            name 'Google'
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
@@ -32,6 +36,7 @@ allprojects {
         maven {
             url 'https://jitpack.io'
         }
+        google()
     }
 }
 

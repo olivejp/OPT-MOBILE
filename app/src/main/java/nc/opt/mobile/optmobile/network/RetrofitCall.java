@@ -7,6 +7,7 @@ import nc.opt.mobile.optmobile.domain.suivi.aftership.ResponseDataDetectCourier;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.SendTrackingData;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.Tracking;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.TrackingData;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.TrackingDelete;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
@@ -26,11 +27,11 @@ public interface RetrofitCall {
     Observable<ResponseAfterShip<Tracking<TrackingData>>> postTracking(@Body Tracking<SendTrackingData> tracking);
 
     @GET("/v4/trackings/{id_tracking}")
-    Observable<ResponseAfterShip<DataGet>> getTracking(@Path("id_tracking") String idTracking);
+    Observable<ResponseAfterShip<Tracking<TrackingData>>> getTracking(@Path("id_tracking") String idTracking);
 
     @GET("/v4/trackings")
     Observable<ResponseAfterShip<DataGet>> getTrackings();
 
     @DELETE("/v4/trackings/{id_tracking}")
-    Observable<ResponseAfterShip<Tracking<TrackingData>>> deleteTracking(@Path("id_tracking") String idTracking);
+    Observable<ResponseAfterShip<Tracking<TrackingDelete>>> deleteTracking(@Path("id_tracking") String idTracking);
 }
