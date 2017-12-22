@@ -42,18 +42,20 @@ public class AfterShipUtils {
     /**
      * Try to post a tracking number
      * -If Ok -> Call getTracking
+     *
      * @param context
      * @param trackingNumber
      */
     public static void getTrackingFromAfterShip(Context context, String trackingNumber) {
         // This consumer only catch the Throwables and log them.
-        Consumer<Throwable> consumerThrowable = throwable -> Log.e(TAG, throwable.getMessage(), throwable);
+        Consumer<Throwable> consumerThrowable = throwable -> Log.e(TAG, "Erreur sur l'API AfterShip : " + throwable.getMessage(), throwable);
 
         // This consumer is only called when deleting colis
         Consumer<TrackingDelete> consumerDeleting = trackingDelete -> Log.d(TAG, "Suppression effective du numéro " + trackingDelete.getId());
 
         // This consumer is only called when getting colis
         Consumer<TrackingData> consumerGetTracking = trackingData -> {
+            Log.d(TAG, "TrackingData récupéré : " + trackingData.toString());
             if (insertTrackingToDb(context, trackingData)) {
                 Log.d(TAG, "Insertion en base réussi");
             }
@@ -65,6 +67,7 @@ public class AfterShipUtils {
 
         // This consumer check if this is the right colis, and then insert it to the DB, then delete it from AftershipApi.
         Consumer<TrackingData> consumerGetTrackings = trackingData -> {
+            Log.d(TAG, "TrackingData récupéré : " + trackingData.toString());
             if (trackingData.getTrackingNumber().equals(trackingNumber)) {
                 Observable.just(trackingData).subscribe(consumerGetTracking);
             }
@@ -72,7 +75,10 @@ public class AfterShipUtils {
 
         // Post d'un numéro
         RetrofitClient.postTracking(trackingNumber)
-                .doOnError(throwable0 -> RetrofitClient.getTrackings().subscribe(consumerGetTrackings, consumerThrowable))
+                .doOnError(throwable0 -> {
+                    Log.d(TAG, "Post tracking fail, try to get it through GetTracking");
+                    RetrofitClient.getTrackings().subscribe(consumerGetTrackings, consumerThrowable);
+                })
                 .subscribe(consumerPostTracking, consumerThrowable);
     }
 

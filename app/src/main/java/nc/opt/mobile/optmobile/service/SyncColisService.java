@@ -17,6 +17,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import java.util.List;
 
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
+import nc.opt.mobile.optmobile.utils.AfterShipUtils;
 import nc.opt.mobile.optmobile.utils.Constants;
 import nc.opt.mobile.optmobile.utils.RequestQueueSingleton;
 
@@ -101,6 +102,10 @@ public class SyncColisService extends IntentService {
             String idColis = bundle.getString(ARG_ID_COLIS);
 
             if (idColis != null) {
+
+                // Test de notre API AfterShip
+                AfterShipUtils.getTrackingFromAfterShip(this, idColis);
+
                 String url = String.format(mUrl, idColis);
 
                 // Request a string response from the provided URL.
