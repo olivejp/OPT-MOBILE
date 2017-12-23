@@ -52,6 +52,7 @@ public class AfterShipUtils {
         };
 
         // This consumer is only called when posting colis
+        // ToDo Implémenter un RepeatUntil pour ne traiter que les cas où il y a des checkpoints
         Consumer<TrackingData> consumerPostTracking = trackingDataPosted -> {
             Log.d(TAG, "Post Tracking Successful, try to get the tracking by get trackings/:id");
             RetrofitClient.getTracking(trackingDataPosted.getId())
