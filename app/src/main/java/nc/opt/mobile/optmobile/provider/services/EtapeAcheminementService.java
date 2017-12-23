@@ -91,6 +91,21 @@ public class EtapeAcheminementService {
         return creation;
     }
 
+    /**
+     * Return true if a new etape is detected in the list
+     * @param context
+     * @param colis
+     * @return
+     */
+    public static boolean shouldInsertNewEtape(Context context, ColisEntity colis) {
+        for (EtapeEntity etape : colis.getEtapeAcheminementArrayList()) {
+            if (!exist(context, colis.getIdColis(), etape)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static ContentValues putToContentValues(EtapeEntity etapeEntity, String idColis) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(PAYS, etapeEntity.getPays());
@@ -108,7 +123,7 @@ public class EtapeAcheminementService {
 
     private static boolean exist(Context context, String idColis, EtapeEntity etape) {
         String[] args = new String[]{idColis,
-                String.valueOf(DateConverter.convertDateEntityToDto(etape.getDate())),
+                String.valueOf(etape.getDate()),
                 etape.getDescription(),
                 etape.getCommentaire(),
                 etape.getLocalisation(),
@@ -125,7 +140,6 @@ public class EtapeAcheminementService {
 
     static EtapeAcheminementDto convertToDto(EtapeEntity entity) {
         EtapeAcheminementDto dto = new EtapeAcheminementDto();
-        // ToDo vérifier que le bug ne viendrai pas d'ici.
         dto.setDate(DateConverter.convertDateEntityToDto(entity.getDate()));
         dto.setCommentaire(entity.getCommentaire());
         dto.setDescription(entity.getDescription());

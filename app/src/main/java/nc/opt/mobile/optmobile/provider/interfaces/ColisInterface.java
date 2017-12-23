@@ -29,4 +29,7 @@ public interface ColisInterface {
 
     @DataType(INTEGER)
     String DELETED = "deleted";
+
+    @DataType(TEXT)
+    String SLUG = "slug";
 }

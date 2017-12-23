@@ -23,7 +23,7 @@ public class DateConverter {
     private static final SimpleDateFormat simpleDtoDateFormat = new SimpleDateFormat(PATTERN_DTO, Locale.FRANCE);
     private static final SimpleDateFormat simpleUiDateFormat = new SimpleDateFormat(PATTERN_UI, Locale.FRANCE);
     private static final SimpleDateFormat simpleEntityDateFormat = new SimpleDateFormat(PATTERN_ENTITY, Locale.FRANCE);
-    private static final SimpleDateFormat simpleAfterShipDateFormat = new SimpleDateFormat(PATTERN_AFTER_HIP);
+    private static final SimpleDateFormat simpleAfterShipDateFormat = new SimpleDateFormat(PATTERN_AFTER_HIP, Locale.FRANCE);
 
     private DateConverter() {
     }

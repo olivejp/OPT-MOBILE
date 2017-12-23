@@ -16,7 +16,9 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.List;
 
+import io.reactivex.functions.Consumer;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
+import nc.opt.mobile.optmobile.provider.services.ColisService;
 import nc.opt.mobile.optmobile.utils.AfterShipUtils;
 import nc.opt.mobile.optmobile.utils.Constants;
 import nc.opt.mobile.optmobile.utils.RequestQueueSingleton;
@@ -103,8 +105,15 @@ public class SyncColisService extends IntentService {
 
             if (idColis != null) {
 
+                // Consumer qui va récupérer notre colisEntity pour le mettre en base.
+                Consumer<ColisEntity> consumerColisEntity = colisEntity -> {
+                    if (ColisService.save(this, colisEntity)) {
+                        Log.d(TAG, "Insertion en base réussie");
+                    }
+                };
+
                 // Test de notre API AfterShip
-                AfterShipUtils.getTrackingFromAfterShip(this, idColis);
+                AfterShipUtils.getTrackingFromAfterShip(idColis, consumerColisEntity);
 
                 String url = String.format(mUrl, idColis);
 

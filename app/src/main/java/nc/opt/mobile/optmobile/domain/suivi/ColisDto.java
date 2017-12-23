@@ -14,13 +14,9 @@ public class ColisDto implements Parcelable {
     private String idColis;
     private String description;
     private List<EtapeAcheminementDto> etapeAcheminementDtoArrayList;
+    private String slug;
 
     public ColisDto() {
-    }
-
-    public ColisDto(String idColis, List<EtapeAcheminementDto> etapeAcheminementDtoArrayList) {
-        this.idColis = idColis;
-        this.etapeAcheminementDtoArrayList = etapeAcheminementDtoArrayList;
     }
 
     public String getIdColis() {
@@ -47,6 +43,14 @@ public class ColisDto implements Parcelable {
         this.etapeAcheminementDtoArrayList = etapeAcheminementDtoArrayList;
     }
 
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
 
     @Override
     public int describeContents() {
@@ -58,12 +62,14 @@ public class ColisDto implements Parcelable {
         dest.writeString(this.idColis);
         dest.writeString(this.description);
         dest.writeTypedList(this.etapeAcheminementDtoArrayList);
+        dest.writeString(this.slug);
     }
 
     protected ColisDto(Parcel in) {
         this.idColis = in.readString();
         this.description = in.readString();
         this.etapeAcheminementDtoArrayList = in.createTypedArrayList(EtapeAcheminementDto.CREATOR);
+        this.slug = in.readString();
     }
 
     public static final Creator<ColisDto> CREATOR = new Creator<ColisDto>() {

@@ -1,7 +1,6 @@
 package nc.opt.mobile.optmobile.network;
 
 import io.reactivex.Observable;
-import nc.opt.mobile.optmobile.domain.suivi.aftership.DataGet;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.ResponseAfterShip;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.ResponseDataDetectCourier;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.SendTrackingData;
@@ -29,8 +28,8 @@ public interface RetrofitCall {
     @GET("/v4/trackings/{id_tracking}")
     Observable<ResponseAfterShip<Tracking<TrackingData>>> getTracking(@Path("id_tracking") String idTracking);
 
-    @GET("/v4/trackings")
-    Observable<ResponseAfterShip<DataGet>> getTrackings();
+    @GET("/v4/trackings/{slug}/{tracking_number}")
+    Observable<ResponseAfterShip<Tracking<TrackingData>>> getTracking(@Path("slug") String slug, @Path("tracking_number") String trackingNumber);
 
     @DELETE("/v4/trackings/{id_tracking}")
     Observable<ResponseAfterShip<Tracking<TrackingDelete>>> deleteTracking(@Path("id_tracking") String idTracking);

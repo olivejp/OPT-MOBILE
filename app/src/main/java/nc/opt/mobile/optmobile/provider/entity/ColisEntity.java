@@ -26,6 +26,9 @@ public class ColisEntity {
     @Column(value = ColisInterface.DELETED)
     private Integer deleted;
 
+    @Column(value = ColisInterface.SLUG)
+    private String slug;
+
     private List<EtapeEntity> etapeAcheminementArrayList;
 
     public ColisEntity() {
@@ -55,7 +58,8 @@ public class ColisEntity {
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (lastUpdate != null ? lastUpdate.hashCode() : 0);
         result = 31 * result + (lastUpdateSuccessful != null ? lastUpdateSuccessful.hashCode() : 0);
-        result = 31 * result + deleted;
+        result = 31 * result + (deleted != null ? deleted.hashCode() : 0);
+        result = 31 * result + (slug != null ? slug.hashCode() : 0);
         result = 31 * result + (etapeAcheminementArrayList != null ? etapeAcheminementArrayList.hashCode() : 0);
         return result;
     }
@@ -113,4 +117,11 @@ public class ColisEntity {
         this.etapeAcheminementArrayList = etapeAcheminementArrayList;
     }
 
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
 }

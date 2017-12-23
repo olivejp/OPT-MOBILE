@@ -87,6 +87,7 @@ public class ColisService {
         } else {
             id = insert(context, colisEntity);
         }
+
         EtapeAcheminementService.save(context, colisEntity);
         return (nbUpdated != 0 || id != -1);
     }

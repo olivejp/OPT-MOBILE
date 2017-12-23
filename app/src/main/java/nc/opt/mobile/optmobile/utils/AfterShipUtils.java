@@ -1,6 +1,5 @@
 package nc.opt.mobile.optmobile.utils;
 
-import android.content.Context;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -9,6 +8,7 @@ import java.util.List;
 import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.Checkpoint;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.ResponseDataDetectCourier;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.SendTrackingData;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.Tracking;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.TrackingData;
@@ -16,7 +16,8 @@ import nc.opt.mobile.optmobile.domain.suivi.aftership.TrackingDelete;
 import nc.opt.mobile.optmobile.network.RetrofitClient;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
-import nc.opt.mobile.optmobile.provider.services.ColisService;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * Created by orlanth23 on 18/12/2017.
@@ -29,57 +30,63 @@ public class AfterShipUtils {
     private AfterShipUtils() {
     }
 
-    /**
-     * @param context
-     * @param trackingData
-     * @return
-     */
-    private static boolean insertTrackingToDb(Context context, TrackingData trackingData) {
-        ColisEntity colisEntity = AfterShipUtils.createColisFromResponseTrackingData(trackingData);
-        return ColisService.save(context, colisEntity);
-    }
+    // This consumer only catch the Throwables and log them.
+    private static Consumer<Throwable> consumerThrowable = throwable -> Log.e(TAG, "Erreur sur l'API AfterShip : " + throwable.getMessage(), throwable);
 
-    /**
-     * Try to post a tracking number
-     * -If Ok -> Call getTracking
-     *
-     * @param context
-     * @param trackingNumber
-     */
-    public static void getTrackingFromAfterShip(Context context, String trackingNumber) {
-        // This consumer only catch the Throwables and log them.
-        Consumer<Throwable> consumerThrowable = throwable -> Log.e(TAG, "Erreur sur l'API AfterShip : " + throwable.getMessage(), throwable);
+    // This consumer is only called when deleting colis
+    private static Consumer<TrackingDelete> consumerDeleting = trackingDelete -> Log.d(TAG, "Suppression effective du tracking " + trackingDelete.getId());
 
-        // This consumer is only called when deleting colis
-        Consumer<TrackingDelete> consumerDeleting = trackingDelete -> Log.d(TAG, "Suppression effective du numéro " + trackingDelete.getId());
+    public static void getTrackingFromAfterShip(String trackingNumber, Consumer<ColisEntity> consumerColisEntity) {
+
+        // Creation of the colisEntity which we will subscribe at the end.
+        ColisEntity colisEntity = new ColisEntity();
+        colisEntity.setIdColis(trackingNumber);
 
         // This consumer is only called when getting colis
         Consumer<TrackingData> consumerGetTracking = trackingData -> {
             Log.d(TAG, "TrackingData récupéré : " + trackingData.toString());
-            if (insertTrackingToDb(context, trackingData)) {
-                Log.d(TAG, "Insertion en base réussi");
-            }
-            RetrofitClient.deleteTracking(trackingData.getId()).subscribe(consumerDeleting, consumerThrowable);
+            RetrofitClient.deleteTracking(trackingData.getId())
+                    .retry(3)
+                    .subscribe(consumerDeleting, consumerThrowable);
+            Observable.just(createColisFromResponseTrackingData(trackingData)).subscribe(consumerColisEntity);
         };
 
         // This consumer is only called when posting colis
-        Consumer<TrackingData> consumerPostTracking = trackingDataPosted -> RetrofitClient.getTracking(trackingDataPosted.getId()).subscribe(consumerGetTracking, consumerThrowable);
+        Consumer<TrackingData> consumerPostTracking = trackingDataPosted -> {
+            Log.d(TAG, "Post Tracking Successful, try to get the tracking by get trackings/:id");
+            RetrofitClient.getTracking(trackingDataPosted.getId())
+                    .retry(3)
+                    .subscribe(consumerGetTracking, consumerThrowable);
+        };
 
-        // This consumer check if this is the right colis, and then insert it to the DB, then delete it from AftershipApi.
-        Consumer<TrackingData> consumerGetTrackings = trackingData -> {
-            Log.d(TAG, "TrackingData récupéré : " + trackingData.toString());
-            if (trackingData.getTrackingNumber().equals(trackingNumber)) {
-                Observable.just(trackingData).subscribe(consumerGetTracking);
+        // Consumer detect courier
+        Consumer<ResponseDataDetectCourier> consumerDetectCourier = responseDataDetectCourier -> {
+            Log.d(TAG, "Essaie de détecter le bon courier.");
+            if (!responseDataDetectCourier.getCouriers().isEmpty()) {
+                String slug = responseDataDetectCourier.getCouriers().get(0).getSlug();
+                colisEntity.setSlug(slug);
+
+                Log.d(TAG, "Slug trouvé pour le colis : " + trackingNumber + ", il s'agit de " + slug);
+
+                // Post d'un numéro
+                RetrofitClient.postTracking(trackingNumber)
+                        .doOnError(throwable0 -> {
+                            Log.d(TAG, "Post tracking fail, try to get it by get trackings/:slug/:trackingNumber");
+                            RetrofitClient.getTracking(slug, trackingNumber)
+                                    .retry(3)
+                                    .subscribe(consumerGetTracking, consumerThrowable);
+                        })
+                        .delay(10, SECONDS)
+                        .subscribe(consumerPostTracking, consumerThrowable);
+            } else {
+                Log.d(TAG, "No courier was found for this tracking number.");
             }
         };
 
-        // Post d'un numéro
-        RetrofitClient.postTracking(trackingNumber)
-                .doOnError(throwable0 -> {
-                    Log.d(TAG, "Post tracking fail, try to get it through GetTracking");
-                    RetrofitClient.getTrackings().subscribe(consumerGetTrackings, consumerThrowable);
-                })
-                .subscribe(consumerPostTracking, consumerThrowable);
+        // Try to detect the courier of the colis
+        RetrofitClient.detectCourier(trackingNumber)
+                .retry(3)
+                .subscribe(consumerDetectCourier, consumerThrowable);
     }
 
     /**
@@ -89,6 +96,7 @@ public class AfterShipUtils {
      * @param checkpoint
      * @return EtapeEntity
      */
+
     public static EtapeEntity createEtapeFromCheckpoint(String idColis, Checkpoint checkpoint) {
         EtapeEntity etape = new EtapeEntity();
         etape.setIdColis(idColis);

@@ -41,7 +41,7 @@ import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.TYP
 
 @Database(version = OptDatabase.VERSION, packageName = "nc.opt.mobile.optmobile", createDescriptionTable = true, descriptionTableName = DESCRIPTION_TABLE_NAME)
 public class OptDatabase {
-    static final int VERSION = 22;
+    static final int VERSION = 23;
 
     static final String DESCRIPTION_TABLE_NAME = "opt_description";
 
@@ -89,6 +89,7 @@ public class OptDatabase {
             + ColisInterface.DESCRIPTION + " TEXT,"
             + ColisInterface.LAST_UPDATE + " TEXT,"
             + ColisInterface.LAST_UPDATE_SUCCESSFUL + " TEXT,"
+            + ColisInterface.SLUG + " TEXT,"
             + ColisInterface.DELETED + " TEXT)";
 
     private static final String CREATE_ETAPE_ACHEMINEMENT = "CREATE TABLE " + ETAPE_ACHEMINEMENT + " ("
@@ -124,9 +125,13 @@ public class OptDatabase {
     public static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
         // Récupération des anciennes données
-        List<ColisEntity> listColis = retreiveDataFromVersion(db, oldVersion, COLIS, ColisEntity.class);
-        List<EtapeEntity> listEtape = retreiveDataFromVersion(db, oldVersion, ETAPE_ACHEMINEMENT, EtapeEntity.class);
-        List<ActualiteEntity> listActualite = retreiveDataFromVersion(db, oldVersion, ACTUALITE, ActualiteEntity.class);
+        List<ColisEntity> listColis = new ArrayList<>();
+        List<EtapeEntity> listEtape = new ArrayList<>();
+        List<ActualiteEntity> listActualite = new ArrayList<>();
+
+        retreiveDataFromVersion(db, oldVersion, COLIS, listColis, ColisEntity.class);
+        retreiveDataFromVersion(db, oldVersion, ETAPE_ACHEMINEMENT, listEtape, EtapeEntity.class);
+        retreiveDataFromVersion(db, oldVersion, ACTUALITE, listActualite, ActualiteEntity.class);
 
         // Suppression des anciennes tables
         db.execSQL("DROP TABLE " + ETAPE_ACHEMINEMENT);
@@ -168,22 +173,23 @@ public class OptDatabase {
 
     /**
      * Retreive datas from the DB for the version given and the table name.
-     *
      * @param db
      * @param version
      * @param tableName
+     * @param list
      * @param klassEntity
      * @param <T>
-     * @return
      */
-    private static <T> List<T> retreiveDataFromVersion(SQLiteDatabase db, int version, String tableName, Class<T> klassEntity) {
+    private static <T> void retreiveDataFromVersion(SQLiteDatabase db, int version, String tableName, List<T> list, Class<T> klassEntity) {
         List<String> columns = catchDescription(db, version, tableName);
         if (!columns.isEmpty()) {
             String[] columnsArray = columns.toArray(new String[0]);
             Cursor cursor = db.query(tableName, columnsArray, null, null, null, null, null);
-            return uOrm.listFromCursor(cursor, klassEntity);
+            while(cursor.moveToNext()) {
+                list.add(uOrm.fromCursor(cursor, klassEntity));
+            }
+            cursor.close();
         }
-        return new ArrayList<>();
     }
 
     /**

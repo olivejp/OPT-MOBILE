@@ -6,6 +6,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.ResponseAfterShip;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.ResponseDataDetectCourier;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.SendTrackingData;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.Tracking;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.TrackingData;
@@ -53,9 +54,25 @@ public class RetrofitClient {
     }
 
     /**
+     * Detect courier for the tracking number passed
+     * @param trackingNumber
+     * @return Observable<ResponseDataDetectCourier>
+     */
+    public static Observable<ResponseDataDetectCourier> detectCourier(String trackingNumber) {
+        RetrofitCall retrofitCall = RetrofitClient.getClient().create(RetrofitCall.class);
+
+        Tracking<SendTrackingData> trackingDataTracking = AfterShipUtils.createTrackingData(trackingNumber);
+
+        return retrofitCall.detectCourier(trackingDataTracking)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(r -> Observable.just(r.getData()));
+    }
+
+    /**
      * Return an Observable of TrackingDelete
      *
-     * @return
+     * @return Observable<TrackingDelete>
      */
     public static Observable<TrackingDelete> deleteTracking(String trackingId) {
         RetrofitCall retrofitCall = RetrofitClient.getClient().create(RetrofitCall.class);
@@ -75,27 +92,27 @@ public class RetrofitClient {
         return retrofitCall.getTracking(trackingId)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(dataGetResponseAfterShip -> Observable.just(dataGetResponseAfterShip.getData().getTracking()));
+                .flatMap(trackingResponseAfterShip -> Observable.just(trackingResponseAfterShip.getData().getTracking()));
     }
 
     /**
-     * Return an Observable TrackingData
+     * Return an Observable of TrackingData
      *
      * @return
      */
-    public static Observable<TrackingData> getTrackings() {
+    public static Observable<TrackingData> getTracking(String slug, String trackingNumber) {
         RetrofitCall retrofitCall = RetrofitClient.getClient().create(RetrofitCall.class);
-        return retrofitCall.getTrackings()
+        return retrofitCall.getTracking(slug, trackingNumber)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(dataGetResponseAfterShip -> Observable.fromIterable(dataGetResponseAfterShip.getData().getTrackings()));
+                .flatMap(trackingResponseAfterShip -> Observable.just(trackingResponseAfterShip.getData().getTracking()));
     }
 
     /**
      * Return an Observable of <TrackingData>
      *
      * @param trackingNumber
-     * @return
+     * @return Observable<TrackingData>
      */
     public static Observable<TrackingData> postTracking(String trackingNumber) {
         Function<ResponseAfterShip<Tracking<TrackingData>>, TrackingData> funPostTrackingData = trackingResponseAfterShip -> trackingResponseAfterShip.getData().getTracking();

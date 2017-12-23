@@ -540,4 +540,50 @@ public class TrackingData {
     public void setTrackingShipDate(Object trackingShipDate) {
         this.trackingShipDate = trackingShipDate;
     }
+
+    @Override
+    public String toString() {
+        return "TrackingData{" +
+                "id='" + id + '\'' +
+                ", createdAt='" + createdAt + '\'' +
+                ", updatedAt='" + updatedAt + '\'' +
+                ", lastUpdatedAt='" + lastUpdatedAt + '\'' +
+                ", trackingNumber='" + trackingNumber + '\'' +
+                ", slug='" + slug + '\'' +
+                ", active=" + active +
+                ", android=" + android +
+                ", customFields=" + customFields +
+                ", customerName=" + customerName +
+                ", deliveryTime=" + deliveryTime +
+                ", destinationCountryIso3='" + destinationCountryIso3 + '\'' +
+                ", emails=" + emails +
+                ", expectedDelivery=" + expectedDelivery +
+                ", ios=" + ios +
+                ", note='" + note + '\'' +
+                ", orderId=" + orderId +
+                ", orderIdPath=" + orderIdPath +
+                ", originCountryIso3='" + originCountryIso3 + '\'' +
+                ", shipmentPackageCount=" + shipmentPackageCount +
+                ", shipmentPickupDate='" + shipmentPickupDate + '\'' +
+                ", shipmentDeliveryDate='" + shipmentDeliveryDate + '\'' +
+                ", shipmentType=" + shipmentType +
+                ", shipmentWeight=" + shipmentWeight +
+                ", shipmentWeightUnit=" + shipmentWeightUnit +
+                ", signedBy=" + signedBy +
+                ", smses=" + smses +
+                ", source='" + source + '\'' +
+                ", tag='" + tag + '\'' +
+                ", subtag='" + subtag + '\'' +
+                ", title='" + title + '\'' +
+                ", trackedCount=" + trackedCount +
+                ", lastMileTrackingSupported=" + lastMileTrackingSupported +
+                ", uniqueToken='" + uniqueToken + '\'' +
+                ", checkpoints=" + checkpoints +
+                ", trackingAccountNumber=" + trackingAccountNumber +
+                ", trackingDestinationCountry=" + trackingDestinationCountry +
+                ", trackingKey=" + trackingKey +
+                ", trackingPostalCode=" + trackingPostalCode +
+                ", trackingShipDate=" + trackingShipDate +
+                '}';
+    }
 }

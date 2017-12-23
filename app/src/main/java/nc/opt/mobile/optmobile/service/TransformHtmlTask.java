@@ -43,13 +43,17 @@ class TransformHtmlTask extends AsyncTask<String, Void, ColisDto> {
                 case HtmlTransformer.RESULT_SUCCESS:
                     ColisService.updateLastUpdate(context, colisDto.getIdColis(), true);
                     ColisEntity colisEntity = ColisService.convertToEntity(colisDto);
-                    if (EtapeAcheminementService.save(context, colisEntity)) {
-                        if (sendNotification) {
-                            // Envoi d'une notification si l'objet a bougé.
-                            NotificationSender.sendNotification(context, context.getString(R.string.app_name), idColis + " a été mis à jour.", R.drawable.ic_archive_white_48dp);
+                    if (EtapeAcheminementService.shouldInsertNewEtape(context, colisEntity)) {
+                        if (EtapeAcheminementService.save(context, colisEntity)) {
+                            if (sendNotification) {
+                                // Envoi d'une notification si l'objet a bougé.
+                                NotificationSender.sendNotification(context, context.getString(R.string.app_name), idColis + " a été mis à jour.", R.drawable.ic_archive_white_48dp);
+                            }
+                        } else {
+                            Log.e(TAG, "Echec de la sauvegarde du colis dans le content provider.");
                         }
                     } else {
-                        Log.e(TAG, "Echec de la sauvegarde du colis dans le content provider.");
+                        Log.d(TAG, "Ce colis n'a pas de nouvelle étape à rajouter.");
                     }
                     return colisDto;
                 case HtmlTransformer.RESULT_NO_ITEM_FOUND:
@@ -58,7 +62,10 @@ class TransformHtmlTask extends AsyncTask<String, Void, ColisDto> {
                 default:
                     break;
             }
-        } catch (HtmlTransformer.HtmlTransformerException e) {
+        } catch (
+                HtmlTransformer.HtmlTransformerException e)
+
+        {
             Log.e(TAG, e.getMessage(), e);
         }
         return null;
