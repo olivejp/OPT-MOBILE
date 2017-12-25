@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -25,6 +26,7 @@ import nc.opt.mobile.optmobile.provider.ProviderObserver;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 
 import static nc.opt.mobile.optmobile.provider.services.ColisService.listFromProvider;
+import static nc.opt.mobile.optmobile.provider.services.ColisService.observableListFromProvider;
 
 /**
  * Fragment that shows mList of followed parcel
@@ -43,7 +45,7 @@ public class GestionColisFragment extends Fragment implements ProviderObserver.P
     @BindView(R.id.text_explicatif_suivi_colis)
     TextView textExplicatifSuiviColis;
 
-    private List<ColisEntity> mList;
+    private List<ColisEntity> mList = new ArrayList<>();
 
     public static GestionColisFragment newInstance(boolean twoPane) {
         GestionColisFragment fragment = new GestionColisFragment();
@@ -72,6 +74,8 @@ public class GestionColisFragment extends Fragment implements ProviderObserver.P
             mTwoPane = getArguments().getBoolean(ARG_TWO_PANE);
         }
 
+        mColisAdapter = new ColisAdapter(mActivity, mList, mTwoPane);
+
         // create a ProviderObserver to subscribe updates from the provider
         ProviderObserver providerObserver = ProviderObserver.getInstance();
         providerObserver.observe(mActivity, this, OptProvider.ListColis.LIST_COLIS, OptProvider.ListEtapeAcheminement.LIST_ETAPE);
@@ -86,19 +90,18 @@ public class GestionColisFragment extends Fragment implements ProviderObserver.P
         // change title
         mActivity.setTitle(getActivity().getString(R.string.suivi_des_colis));
 
-        // add separator between each element
-        mRecyclerView.addItemDecoration(new
-                DividerItemDecoration(mActivity,
-                DividerItemDecoration.VERTICAL));
-
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mActivity);
         mRecyclerView.setLayoutManager(linearLayoutManager);
+        mRecyclerView.setAdapter(mColisAdapter);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(mActivity, DividerItemDecoration.VERTICAL));
 
         // get the mList from the provider
-        mList = listFromProvider(mActivity, true);
-        mColisAdapter = new ColisAdapter(mActivity, mList, mTwoPane);
-        mRecyclerView.setAdapter(mColisAdapter);
-        mColisAdapter.notifyDataSetChanged();
+        mList.clear();
+        observableListFromProvider(mActivity, true).subscribe(colisEntity -> {
+            mList.add(colisEntity);
+            mColisAdapter.notifyDataSetChanged();
+            changeVisibility();
+        });
 
         // change visibility depending on the mList content
         changeVisibility();
@@ -116,7 +119,7 @@ public class GestionColisFragment extends Fragment implements ProviderObserver.P
     }
 
     private void changeVisibility() {
-        textExplicatifSuiviColis.setVisibility(mList.isEmpty() ? View.VISIBLE : View.GONE);
-        mRecyclerView.setVisibility(mList.isEmpty() ? View.GONE : View.VISIBLE);
+        textExplicatifSuiviColis.setVisibility((mList == null || mList.isEmpty()) ? View.VISIBLE : View.GONE);
+        mRecyclerView.setVisibility((mList != null && !mList.isEmpty()) ? View.VISIBLE : View.GONE);
     }
 }

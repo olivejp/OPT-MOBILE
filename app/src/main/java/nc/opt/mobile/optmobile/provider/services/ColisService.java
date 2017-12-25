@@ -12,6 +12,9 @@ import org.chalup.microorm.MicroOrm;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import nc.opt.mobile.optmobile.domain.suivi.ColisDto;
 import nc.opt.mobile.optmobile.domain.suivi.EtapeAcheminementDto;
 import nc.opt.mobile.optmobile.provider.OptProvider;
@@ -44,6 +47,7 @@ public class ColisService {
 
     /**
      * Return true if colis with id exist in the content provider
+     *
      * @param context
      * @param id
      * @param onlyActive
@@ -60,6 +64,7 @@ public class ColisService {
 
     /**
      * Insert colisEntity in the Content Provider
+     *
      * @param context
      * @param colis
      * @return the id of the new object inserted or -1 if object has not been inserted.
@@ -75,14 +80,15 @@ public class ColisService {
 
     /**
      * Create or update ColisEntity and on cascade the EtapeEntity related.
+     *
      * @param context
      * @param colisEntity
      * @return 0 if no row was updated, otherwise return the number of row updated
      */
-    public static boolean save(Context context, ColisEntity colisEntity){
+    public static boolean save(Context context, ColisEntity colisEntity) {
         int nbUpdated = 0;
         long id = 0;
-        if (exist(context, colisEntity.getIdColis(), false)){
+        if (exist(context, colisEntity.getIdColis(), false)) {
             nbUpdated = context.getContentResolver().update(OptProvider.ListColis.LIST_COLIS, putToContentValues(colisEntity), ColisInterface.ID_COLIS.concat("=?"), new String[]{colisEntity.getIdColis()});
         } else {
             id = insert(context, colisEntity);
@@ -108,6 +114,27 @@ public class ColisService {
             cursorListColis.close();
         }
         return colisList;
+    }
+
+    public static Observable<ColisEntity> observableListFromProvider(Context context, boolean onlyActive) {
+        List<ColisEntity> colisList = new ArrayList<>();
+
+        // Query the content provider to get a cursor of ColisDto
+        Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, onlyActive ? selectionOnlyActiveColis : null, onlyActive ? argsOnlyActiveColisArgs : null, null);
+
+        if (cursorListColis != null) {
+            while (cursorListColis.moveToNext()) {
+                ColisEntity colis = getFromCursor(cursorListColis);
+                List<EtapeEntity> listEtape = EtapeAcheminementService.listFromProvider(context, colis.getIdColis());
+                colis.setEtapeAcheminementArrayList(listEtape);
+                colisList.add(colis);
+            }
+            cursorListColis.close();
+        }
+        return Observable.just(colisList)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(Observable::fromIterable);
     }
 
     public static int count(Context context, boolean onlyActive) {

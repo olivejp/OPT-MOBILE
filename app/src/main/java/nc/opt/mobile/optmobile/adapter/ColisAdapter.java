@@ -87,7 +87,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         return mColisList.size();
     }
 
-    public void setmColisList(List<ColisEntity> list){
+    public void setmColisList(List<ColisEntity> list) {
         this.mColisList = list;
     }
 

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableTransformer;
 import io.reactivex.functions.Consumer;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.Checkpoint;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.ResponseDataDetectCourier;
@@ -27,6 +28,9 @@ public class AfterShipUtils {
 
     private static final String TAG = AfterShipUtils.class.getName();
 
+    private static final Integer COUNTER_START = 1;
+    private static final Integer ATTEMPTS = 5;
+
     private AfterShipUtils() {
     }
 
@@ -35,6 +39,13 @@ public class AfterShipUtils {
 
     // This consumer is only called when deleting colis
     private static Consumer<TrackingDelete> consumerDeleting = trackingDelete -> Log.d(TAG, "Suppression effective du tracking " + trackingDelete.getId());
+
+    // Found on : https://medium.com/@v.danylo/server-polling-and-retrying-failed-operations-with-retrofit-and-rxjava-8bcc7e641a5a
+    private static <T> ObservableTransformer<T, Long> zipWithFlatMap() {
+        return observable -> observable.zipWith(
+                Observable.range(COUNTER_START, ATTEMPTS), (t, repeatAttempt) -> repeatAttempt)
+                .flatMap(repeatAttempt -> Observable.timer(repeatAttempt , SECONDS));
+    }
 
     public static void getTrackingFromAfterShip(String trackingNumber, Consumer<ColisEntity> consumerColisEntity) {
 
@@ -52,11 +63,12 @@ public class AfterShipUtils {
         };
 
         // This consumer is only called when posting colis
-        // ToDo Implémenter un RepeatUntil pour ne traiter que les cas où il y a des checkpoints
         Consumer<TrackingData> consumerPostTracking = trackingDataPosted -> {
             Log.d(TAG, "Post Tracking Successful, try to get the tracking by get trackings/:id");
             RetrofitClient.getTracking(trackingDataPosted.getId())
-                    .retry(3)
+                    .takeUntil(trackingData -> !trackingData.getCheckpoints().isEmpty())
+                    .filter(trackingData -> !trackingData.getCheckpoints().isEmpty())
+                    .repeatWhen(objectObservable -> objectObservable.compose(zipWithFlatMap()))
                     .subscribe(consumerGetTracking, consumerThrowable);
         };
 

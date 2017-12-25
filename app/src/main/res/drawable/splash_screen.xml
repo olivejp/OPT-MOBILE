@@ -5,8 +5,14 @@
 
     <item>
         <bitmap
+            android:gravity="bottom"
+            android:src="@mipmap/ic_aftership_logo" />
+    </item>
+
+    <item>
+        <bitmap
             android:gravity="center"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@mipmap/ic_opt_logo" />
     </item>
 
 </layer-list>
