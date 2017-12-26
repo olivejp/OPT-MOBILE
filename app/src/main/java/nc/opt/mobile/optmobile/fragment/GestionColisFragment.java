@@ -76,6 +76,8 @@ public class GestionColisFragment extends Fragment implements ProviderObserver.P
 
         mColisAdapter = new ColisAdapter(mActivity, mList, mTwoPane);
 
+
+
         // create a ProviderObserver to subscribe updates from the provider
         ProviderObserver providerObserver = ProviderObserver.getInstance();
         providerObserver.observe(mActivity, this, OptProvider.ListColis.LIST_COLIS, OptProvider.ListEtapeAcheminement.LIST_ETAPE);

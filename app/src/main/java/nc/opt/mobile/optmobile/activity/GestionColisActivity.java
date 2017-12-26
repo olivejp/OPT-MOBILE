@@ -108,6 +108,7 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
     @Override
     public void subscribe(String idColis) {
         mIdColisSelected = idColis;
+        setTitle(idColis);
     }
 
     @Override

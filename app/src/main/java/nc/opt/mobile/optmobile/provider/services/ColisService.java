@@ -116,6 +116,26 @@ public class ColisService {
         return colisList;
     }
 
+    public static Observable<List<ColisEntity>> observableListColisFromProvider(Context context, boolean onlyActive) {
+        List<ColisEntity> colisList = new ArrayList<>();
+
+        // Query the content provider to get a cursor of ColisDto
+        Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, onlyActive ? selectionOnlyActiveColis : null, onlyActive ? argsOnlyActiveColisArgs : null, null);
+
+        if (cursorListColis != null) {
+            while (cursorListColis.moveToNext()) {
+                ColisEntity colis = getFromCursor(cursorListColis);
+                List<EtapeEntity> listEtape = EtapeAcheminementService.listFromProvider(context, colis.getIdColis());
+                colis.setEtapeAcheminementArrayList(listEtape);
+                colisList.add(colis);
+            }
+            cursorListColis.close();
+        }
+        return Observable.just(colisList)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     public static Observable<ColisEntity> observableListFromProvider(Context context, boolean onlyActive) {
         List<ColisEntity> colisList = new ArrayList<>();
 

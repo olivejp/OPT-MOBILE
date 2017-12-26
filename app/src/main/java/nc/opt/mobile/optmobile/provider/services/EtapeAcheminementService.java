@@ -11,7 +11,9 @@ import org.chalup.microorm.MicroOrm;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
 import nc.opt.mobile.optmobile.domain.suivi.EtapeAcheminementDto;
+import nc.opt.mobile.optmobile.domain.suivi.EtapeConsolidated;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
@@ -19,6 +21,8 @@ import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
 import nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
+import static nc.opt.mobile.optmobile.domain.suivi.EtapeConsolidated.TypeEtape.DETAIL;
+import static nc.opt.mobile.optmobile.domain.suivi.EtapeConsolidated.TypeEtape.HEADER;
 import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.COMMENTAIRE;
 import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.DATE;
 import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.DESCRIPTION;
@@ -45,6 +49,11 @@ public class EtapeAcheminementService {
             .concat(LOCALISATION).concat("=? AND ")
             .concat(PAYS).concat("=?");
 
+    /**
+     * @param context
+     * @param idColis
+     * @return
+     */
     public static List<EtapeEntity> listFromProvider(Context context, String idColis) {
         List<EtapeEntity> etapeList = new ArrayList<>();
 
@@ -61,6 +70,46 @@ public class EtapeAcheminementService {
         return etapeList;
     }
 
+    /**
+     * @param context
+     * @param idColis
+     * @return
+     */
+    public static Observable<List<EtapeConsolidated>> getConsolidatedEtapeList(Context context, String idColis) {
+        // Récupération de la liste d'étapes présentes dans le content provider
+        List<EtapeEntity> listEtapeEntity = listFromProvider(context, idColis);
+        List<EtapeConsolidated> listEtapeConsolidated = new ArrayList<>();
+        if (!listEtapeEntity.isEmpty()) {
+            EtapeEntity previousEtape;
+            EtapeEntity actualEtape;
+            String previousHeader;
+            String actualHeader;
+
+            // Lecture de toute la liste d'entity
+            for (int i = 0; i < listEtapeEntity.size(); i++) {
+                actualEtape = listEtapeEntity.get(i);
+                if (i == 0) {
+                    listEtapeConsolidated.add(new EtapeConsolidated(HEADER, actualEtape));
+                } else {
+                    previousEtape = listEtapeEntity.get(i - 1);
+                    actualHeader = actualEtape.getPays().concat(" ").concat(actualEtape.getLocalisation());
+                    previousHeader = previousEtape.getPays().concat(" ").concat(previousEtape.getLocalisation());
+                    if (actualHeader.equals(previousHeader)) {
+                        listEtapeConsolidated.add(new EtapeConsolidated(DETAIL, actualEtape));
+                    } else {
+                        listEtapeConsolidated.add(new EtapeConsolidated(HEADER, actualEtape));
+                    }
+                }
+            }
+        }
+        return Observable.just(listEtapeConsolidated);
+    }
+
+    /**
+     * @param context
+     * @param idColis
+     * @return
+     */
     public static boolean delete(Context context, String idColis) {
         // Suppression des étapes d'acheminement
         int result = context.getContentResolver().delete(OptProvider.ListEtapeAcheminement.LIST_ETAPE, ColisInterface.ID_COLIS.concat("=?"), new String[]{idColis});
@@ -68,6 +117,12 @@ public class EtapeAcheminementService {
         return result >= 1;
     }
 
+    /**
+     * @param context
+     * @param etape
+     * @param colis
+     * @return
+     */
     public static long insert(Context context, EtapeEntity etape, ColisEntity colis) {
         Uri uri = context.getContentResolver().insert(OptProvider.ListEtapeAcheminement.LIST_ETAPE, putToContentValues(etape, colis.getIdColis()));
         return ContentUris.parseId(uri);
@@ -93,6 +148,7 @@ public class EtapeAcheminementService {
 
     /**
      * Return true if a new etape is detected in the list
+     *
      * @param context
      * @param colis
      * @return

@@ -1,6 +1,6 @@
 package nc.opt.mobile.optmobile.fragment;
 
-
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,82 +16,64 @@ import android.widget.TextView;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.adapter.EtapeAcheminementAdapter;
-import nc.opt.mobile.optmobile.domain.suivi.EtapeConsolidated;
-import nc.opt.mobile.optmobile.provider.OptProvider;
-import nc.opt.mobile.optmobile.provider.ProviderObserver;
-import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
-
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-import static nc.opt.mobile.optmobile.provider.services.EtapeAcheminementService.listFromProvider;
+import nc.opt.mobile.optmobile.fragment.viewmodel.HistoriqueColisFragmentViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HistoriqueColisFragment extends Fragment implements ProviderObserver.ProviderObserverListener {
+public class HistoriqueColisFragment extends Fragment {
 
-    private static final String ARG_ID_PARCEL = "ARG_ID_PARCEL";
+    private static final String ARG_ID_COLIS = "ARG_ID_COLIS";
 
     private AppCompatActivity mAppCompatActivity;
-    private String mIdColis;
-    private List<EtapeEntity> mListEtapeEntity;
-    private List<EtapeConsolidated> mListEtapeConsolidated;
     private EtapeAcheminementAdapter mEtapeAcheminementAdapter;
     private ListenToSelectedColis mListener;
+    private HistoriqueColisFragmentViewModel viewModel;
 
-    @BindView(R.id.recycler_parcel_list)
+    @BindView(R.id.recycler_colis_list)
     RecyclerView mRecyclerView;
 
     @BindView(R.id.text_object_not_found)
     TextView textObjectNotFound;
 
+    /**
+     * Instanciation d'un nouveau fragment
+     * @param idColis
+     * @return
+     */
     public static HistoriqueColisFragment newInstance(@NotNull String idColis) {
         HistoriqueColisFragment fragment = new HistoriqueColisFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_ID_PARCEL, idColis);
+        args.putString(ARG_ID_COLIS, idColis);
         fragment.setArguments(args);
         return fragment;
     }
 
+    /**
+     * Constructor vide
+     */
     public HistoriqueColisFragment() {
         // Required empty public constructor
     }
 
-    private List<EtapeConsolidated> updateHeadersList(List<EtapeEntity> listEntity) {
-        List<EtapeConsolidated> listConsolidated = new ArrayList<>();
-        if (!listEntity.isEmpty()) {
-            EtapeEntity previousEtape;
-            EtapeEntity actualEtape;
-            String previousHeader;
-            String actualHeader;
-
-            // Lecture de toute la liste d'entity
-            for (int i = 0; i < listEntity.size(); i++) {
-                actualEtape = listEntity.get(i);
-                if (i == 0) {
-                    listConsolidated.add(new EtapeConsolidated(EtapeConsolidated.TypeEtape.HEADER, actualEtape));
-                } else {
-                    previousEtape = listEntity.get(i - 1);
-                    actualHeader = actualEtape.getPays().concat(" ").concat(actualEtape.getLocalisation());
-                    previousHeader = previousEtape.getPays().concat(" ").concat(previousEtape.getLocalisation());
-                    if (actualHeader.equals(previousHeader)) {
-                        listConsolidated.add(new EtapeConsolidated(EtapeConsolidated.TypeEtape.DETAIL, actualEtape));
-                    } else {
-                        listConsolidated.add(new EtapeConsolidated(EtapeConsolidated.TypeEtape.HEADER, actualEtape));
-                    }
-                }
-            }
-        }
-        return listConsolidated;
+    /**
+     * On start we retrieve or create the ViewModel
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        viewModel = ViewModelProviders.of(this).get(HistoriqueColisFragmentViewModel.class);
     }
 
+    /**
+     * On attach, if the parent activity implements ListenToSelectedColis,
+     * we record the activity in mListener.
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -101,22 +83,25 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
         }
     }
 
+    /**
+     * We pass the id colis passed through the constructor to the viewModel.
+     * If mListener is not null we will pass the id colis to it.
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mIdColis = getArguments().getString(ARG_ID_PARCEL);
+            viewModel.setIdColis(getArguments().getString(ARG_ID_COLIS));
+
+            // On envoie à notre listener l'id colis avec lequel on est arrivé.
             if (mListener != null) {
-                mListener.subscribe(mIdColis);
+                mListener.subscribe(viewModel.getIdColis());
             }
         }
 
         // create new adapter from the provider mListEtape
         mEtapeAcheminementAdapter = new EtapeAcheminementAdapter();
-
-        // create a ProviderObserver to subscribe updates from the provider
-        ProviderObserver providerObserver = ProviderObserver.getInstance();
-        providerObserver.observe(mAppCompatActivity, this, OptProvider.ListColis.LIST_COLIS, OptProvider.ListEtapeAcheminement.LIST_ETAPE);
     }
 
     @Override
@@ -125,44 +110,48 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
         View rootView = inflater.inflate(R.layout.fragment_historique_colis, container, false);
         ButterKnife.bind(this, rootView);
 
-        // Changement du titre
-        mAppCompatActivity.setTitle(mIdColis);
-
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mAppCompatActivity);
         mRecyclerView.setLayoutManager(linearLayoutManager);
-
-        // get history from the provider
-        mListEtapeEntity = listFromProvider(mAppCompatActivity, mIdColis);
-        mListEtapeConsolidated = updateHeadersList(mListEtapeEntity);
-        mEtapeAcheminementAdapter.setmEtapeConsolidated(mListEtapeConsolidated);
         mRecyclerView.setAdapter(mEtapeAcheminementAdapter);
-        mEtapeAcheminementAdapter.notifyDataSetChanged();
 
-        // Change the visibility of the textView
-        textObjectNotFound.setVisibility(mListEtapeEntity.isEmpty() ? VISIBLE : GONE);
-        mRecyclerView.setVisibility(mListEtapeEntity.isEmpty() ? View.GONE : VISIBLE);
+        updateVisibility();
+        updateViewFromViewModel();
 
         return rootView;
+    }
+
+    /**
+     * Display the recycler view if the list<etapesConsolidated> != null or show a text instead
+     */
+    private void updateVisibility() {
+        textObjectNotFound.setVisibility(viewModel.getTextObjectNotFoundVisibility());
+        mRecyclerView.setVisibility(viewModel.getRecyclerViewVisibility());
+    }
+
+    /**
+     *
+     */
+    private void updateViewFromViewModel() {
+        // get history from the view model
+        viewModel.getEtapesConsolidated(viewModel.getIdColis()).observe(this, etapeConsolidateds -> {
+            mEtapeAcheminementAdapter.setEtapesConsolidated(etapeConsolidateds);
+            mEtapeAcheminementAdapter.notifyDataSetChanged();
+
+            // Change the visibility of the textView
+            updateVisibility();
+        });
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(ARG_ID_PARCEL, mIdColis);
-    }
-
-    @Override
-    public void onProviderChange() {
-        mListEtapeEntity = listFromProvider(mAppCompatActivity, mIdColis);
-        mListEtapeConsolidated = updateHeadersList(mListEtapeEntity);
-        mEtapeAcheminementAdapter.setmEtapeConsolidated(mListEtapeConsolidated);
-        mEtapeAcheminementAdapter.notifyDataSetChanged();
+        outState.putString(ARG_ID_COLIS, viewModel.getIdColis());
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        if (mListener != null){
+        if (mListener != null) {
             mListener.unsubscribe();
         }
     }
@@ -170,13 +159,14 @@ public class HistoriqueColisFragment extends Fragment implements ProviderObserve
     @Override
     public void onStop() {
         super.onStop();
-        if (mListener != null){
+        if (mListener != null) {
             mListener.unsubscribe();
         }
     }
 
     public interface ListenToSelectedColis {
         void subscribe(String idColis);
+
         void unsubscribe();
     }
 }
