@@ -1,5 +1,8 @@
 package nc.opt.mobile.optmobile.provider.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.chalup.microorm.annotations.Column;
 
 import nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface;
@@ -8,7 +11,7 @@ import nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface;
  * Created by 2761oli on 11/10/2017.
  */
 
-public class EtapeEntity {
+public class EtapeEntity implements Parcelable {
     @Column(EtapeAcheminementInterface.ID_ETAPE_ACHEMINEMENT)
     protected String idEtapeAcheminement;
 
@@ -119,4 +122,42 @@ public class EtapeEntity {
     public void setCommentaire(String commentaire) {
         this.commentaire = commentaire;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.idEtapeAcheminement);
+        dest.writeString(this.idColis);
+        dest.writeValue(this.date);
+        dest.writeString(this.pays);
+        dest.writeString(this.localisation);
+        dest.writeString(this.description);
+        dest.writeString(this.commentaire);
+    }
+
+    protected EtapeEntity(Parcel in) {
+        this.idEtapeAcheminement = in.readString();
+        this.idColis = in.readString();
+        this.date = (Long) in.readValue(Long.class.getClassLoader());
+        this.pays = in.readString();
+        this.localisation = in.readString();
+        this.description = in.readString();
+        this.commentaire = in.readString();
+    }
+
+    public static final Parcelable.Creator<EtapeEntity> CREATOR = new Parcelable.Creator<EtapeEntity>() {
+        @Override
+        public EtapeEntity createFromParcel(Parcel source) {
+            return new EtapeEntity(source);
+        }
+
+        @Override
+        public EtapeEntity[] newArray(int size) {
+            return new EtapeEntity[size];
+        }
+    };
 }

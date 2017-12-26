@@ -32,14 +32,8 @@ public class GestionColisFragmentViewModel extends AndroidViewModel implements P
     }
 
     private void retrieveColisEntities() {
-        ColisService.observableListFromProvider(getApplication(), true)
-                .subscribe(colisEntity -> this.mListColis.getValue().add(colisEntity));
-    }
-
-    public void clearList() {
-        if (this.mListColis != null && this.mListColis.getValue() != null && !this.mListColis.getValue().isEmpty()) {
-            this.mListColis.getValue().clear();
-        }
+        ColisService.observableListColisFromProvider(getApplication(), true)
+                .subscribe(colisEntities -> this.mListColis.postValue(colisEntities));
     }
 
     private boolean conditionVisible() {

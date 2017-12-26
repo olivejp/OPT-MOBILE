@@ -20,13 +20,13 @@ import nc.opt.mobile.optmobile.utils.DateConverter;
  * Created by orlanth23 on 05/10/2017.
  */
 
-public class EtapeAcheminementAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class EtapeConsolidatedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final String TAG = EtapeAcheminementAdapter.class.getName();
+    private static final String TAG = EtapeConsolidatedAdapter.class.getName();
 
     private List<EtapeConsolidated> etapesConsolidated;
 
-    public EtapeAcheminementAdapter() {
+    public EtapeConsolidatedAdapter() {
         etapesConsolidated = new ArrayList<>();
     }
 

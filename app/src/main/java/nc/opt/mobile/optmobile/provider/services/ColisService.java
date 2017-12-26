@@ -136,6 +136,12 @@ public class ColisService {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    /**
+     *
+     * @param context
+     * @param onlyActive
+     * @return
+     */
     public static Observable<ColisEntity> observableListFromProvider(Context context, boolean onlyActive) {
         List<ColisEntity> colisList = new ArrayList<>();
 
@@ -157,6 +163,12 @@ public class ColisService {
                 .flatMap(Observable::fromIterable);
     }
 
+    /**
+     *
+     * @param context
+     * @param onlyActive
+     * @return
+     */
     public static int count(Context context, boolean onlyActive) {
         // Query the content provider to get a cursor of ColisDto
         int count = 0;
@@ -169,6 +181,12 @@ public class ColisService {
         return count;
     }
 
+    /**
+     *
+     * @param context
+     * @param idColis
+     * @return
+     */
     public static int delete(Context context, String idColis) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(ColisInterface.DELETED, 1);
@@ -178,6 +196,12 @@ public class ColisService {
         return context.getContentResolver().update(OptProvider.ListColis.LIST_COLIS, contentValues, where, new String[]{idColis});
     }
 
+    /**
+     *
+     * @param context
+     * @param idColis
+     * @return
+     */
     public static int realDelete(Context context, String idColis) {
         // Suppression des étapes d'acheminement
         EtapeAcheminementService.delete(context, idColis);
@@ -186,6 +210,11 @@ public class ColisService {
         return context.getContentResolver().delete(OptProvider.ListColis.LIST_COLIS, ColisInterface.ID_COLIS.concat("=?"), new String[]{idColis});
     }
 
+    /**
+     *
+     * @param colis
+     * @return
+     */
     private static ContentValues putToContentValues(ColisEntity colis) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(ColisInterface.ID_COLIS, colis.getIdColis());
@@ -194,10 +223,22 @@ public class ColisService {
         return contentValues;
     }
 
+    /**
+     *
+     * @param cursor
+     * @return
+     */
     private static ColisEntity getFromCursor(Cursor cursor) {
         return uOrm.fromCursor(cursor, ColisEntity.class);
     }
 
+    /**
+     *
+     * @param context
+     * @param idColis
+     * @param successful
+     * @return
+     */
     public static int updateLastUpdate(Context context, @NonNull String idColis, boolean successful) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(ColisInterface.LAST_UPDATE, getNowEntity());
@@ -210,6 +251,11 @@ public class ColisService {
         return context.getContentResolver().update(OptProvider.ListColis.LIST_COLIS, contentValues, where, new String[]{idColis});
     }
 
+    /**
+     *
+     * @param entity
+     * @return
+     */
     public static ColisDto convertToDto(ColisEntity entity) {
         ColisDto dto = new ColisDto();
         dto.setIdColis(entity.getIdColis());
@@ -223,6 +269,11 @@ public class ColisService {
         return dto;
     }
 
+    /**
+     *
+     * @param dto
+     * @return
+     */
     public static ColisEntity convertToEntity(ColisDto dto) {
         ColisEntity entity = new ColisEntity();
         entity.setIdColis(dto.getIdColis());

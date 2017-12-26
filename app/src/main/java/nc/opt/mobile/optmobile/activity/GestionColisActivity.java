@@ -13,6 +13,8 @@ import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.broadcast.NetworkReceiver;
 import nc.opt.mobile.optmobile.fragment.GestionColisFragment;
 import nc.opt.mobile.optmobile.fragment.HistoriqueColisFragment;
+import nc.opt.mobile.optmobile.job.task.ParamSyncTask;
+import nc.opt.mobile.optmobile.job.task.SyncTask;
 import nc.opt.mobile.optmobile.service.SyncColisService;
 
 public class GestionColisActivity extends AppCompatActivity implements NetworkReceiver.NetworkChangeListener, HistoriqueColisFragment.ListenToSelectedColis {
@@ -86,9 +88,13 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
             }
         } else if (i == R.id.nav_refresh && NetworkReceiver.checkConnection(this)) {
             if (mIdColisSelected != null) {
-                SyncColisService.launchSynchroByIdColis(this, mIdColisSelected, false);
+                ParamSyncTask paramSyncTask = new ParamSyncTask(this, mIdColisSelected);
+                SyncTask syncTask = new SyncTask(SyncTask.TypeTask.SOLO);
+                syncTask.execute(paramSyncTask);
             } else {
-                SyncColisService.launchSynchroForAll(this, false);
+                ParamSyncTask paramSyncTask = new ParamSyncTask(this, null);
+                SyncTask syncTask = new SyncTask(SyncTask.TypeTask.MULTIPLE);
+                syncTask.execute(paramSyncTask);
             }
         }
         return super.onOptionsItemSelected(item);

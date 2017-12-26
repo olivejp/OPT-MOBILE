@@ -16,7 +16,6 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.List;
 
-import io.reactivex.functions.Consumer;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
 import nc.opt.mobile.optmobile.utils.AfterShipUtils;
@@ -99,30 +98,31 @@ public class SyncColisService extends IntentService {
         context.startService(syncService);
     }
 
+    private void requestServer(String idColis, boolean sendNotification) {
+
+        // Test de notre API AfterShip
+        AfterShipUtils.getTrackingFromAfterShip(idColis, colisEntity -> {
+            if (ColisService.save(this, colisEntity)) {
+                Log.d(TAG, "Insertion en base réussie");
+            }
+        });
+
+        String url = String.format(mUrl, idColis);
+
+        // Request a string response from the provided URL.
+        mActionSyncColisListener = new ActionSyncColisListener(idColis, sendNotification);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, mActionSyncColisListener, new ActionSyncColisErrorListener());
+
+        // Add the request to the RequestQueue.
+        mRequestQueueSingleton.addToRequestQueue(stringRequest);
+    }
+
     private void handleActionSyncColis(Bundle bundle, boolean sendNotification) {
         if (bundle.containsKey(ARG_ID_COLIS)) {
             String idColis = bundle.getString(ARG_ID_COLIS);
 
             if (idColis != null) {
-
-                // Consumer qui va récupérer notre colisEntity pour le mettre en base.
-                Consumer<ColisEntity> consumerColisEntity = colisEntity -> {
-                    if (ColisService.save(this, colisEntity)) {
-                        Log.d(TAG, "Insertion en base réussie");
-                    }
-                };
-
-                // Test de notre API AfterShip
-                AfterShipUtils.getTrackingFromAfterShip(idColis, consumerColisEntity);
-
-                String url = String.format(mUrl, idColis);
-
-                // Request a string response from the provided URL.
-                mActionSyncColisListener = new ActionSyncColisListener(idColis, sendNotification);
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, url, mActionSyncColisListener, new ActionSyncColisErrorListener());
-
-                // Add the request to the RequestQueue.
-                mRequestQueueSingleton.addToRequestQueue(stringRequest);
+                requestServer(idColis, sendNotification);
             }
         }
     }
@@ -131,14 +131,7 @@ public class SyncColisService extends IntentService {
         List<ColisEntity> list = listFromProvider(this, true);
         if (!list.isEmpty()) {
             for (ColisEntity colis : list) {
-                String url = String.format(mUrl, colis.getIdColis());
-
-                // Request a string response from the provided URL.
-                mActionSyncColisListener = new ActionSyncColisListener(colis.getIdColis(), sendNotification);
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, url, mActionSyncColisListener, new ActionSyncColisErrorListener());
-
-                // Add the request to the RequestQueue.
-                mRequestQueueSingleton.addToRequestQueue(stringRequest);
+                requestServer(colis.getIdColis(), sendNotification);
             }
         }
 

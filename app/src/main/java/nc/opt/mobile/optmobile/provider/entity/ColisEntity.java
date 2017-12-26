@@ -1,7 +1,11 @@
 package nc.opt.mobile.optmobile.provider.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.chalup.microorm.annotations.Column;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
@@ -10,7 +14,7 @@ import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
  * Created by 2761oli on 11/10/2017.
  */
 
-public class ColisEntity {
+public class ColisEntity implements Parcelable {
     @Column(value = ColisInterface.ID_COLIS, treatNullAsDefault = true)
     private String idColis;
 
@@ -124,4 +128,44 @@ public class ColisEntity {
     public void setSlug(String slug) {
         this.slug = slug;
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.idColis);
+        dest.writeString(this.description);
+        dest.writeValue(this.lastUpdate);
+        dest.writeValue(this.lastUpdateSuccessful);
+        dest.writeValue(this.deleted);
+        dest.writeString(this.slug);
+        dest.writeList(this.etapeAcheminementArrayList);
+    }
+
+    protected ColisEntity(Parcel in) {
+        this.idColis = in.readString();
+        this.description = in.readString();
+        this.lastUpdate = (Long) in.readValue(Long.class.getClassLoader());
+        this.lastUpdateSuccessful = (Long) in.readValue(Long.class.getClassLoader());
+        this.deleted = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.slug = in.readString();
+        this.etapeAcheminementArrayList = new ArrayList<>();
+        in.readList(this.etapeAcheminementArrayList, EtapeEntity.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<ColisEntity> CREATOR = new Parcelable.Creator<ColisEntity>() {
+        @Override
+        public ColisEntity createFromParcel(Parcel source) {
+            return new ColisEntity(source);
+        }
+
+        @Override
+        public ColisEntity[] newArray(int size) {
+            return new ColisEntity[size];
+        }
+    };
 }

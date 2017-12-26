@@ -19,8 +19,9 @@ import org.jetbrains.annotations.NotNull;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.adapter.EtapeAcheminementAdapter;
+import nc.opt.mobile.optmobile.adapter.EtapeAdapter;
 import nc.opt.mobile.optmobile.fragment.viewmodel.HistoriqueColisFragmentViewModel;
+import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,7 +31,7 @@ public class HistoriqueColisFragment extends Fragment {
     private static final String ARG_ID_COLIS = "ARG_ID_COLIS";
 
     private AppCompatActivity mAppCompatActivity;
-    private EtapeAcheminementAdapter mEtapeAcheminementAdapter;
+    private EtapeAdapter mEtapeAdapter;
     private ListenToSelectedColis mListener;
     private HistoriqueColisFragmentViewModel viewModel;
 
@@ -42,13 +43,13 @@ public class HistoriqueColisFragment extends Fragment {
 
     /**
      * Instanciation d'un nouveau fragment
-     * @param idColis
+     * @param colis
      * @return
      */
-    public static HistoriqueColisFragment newInstance(@NotNull String idColis) {
+    public static HistoriqueColisFragment newInstance(@NotNull ColisEntity colis) {
         HistoriqueColisFragment fragment = new HistoriqueColisFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_ID_COLIS, idColis);
+        args.putParcelable(ARG_ID_COLIS, colis);
         fragment.setArguments(args);
         return fragment;
     }
@@ -84,19 +85,19 @@ public class HistoriqueColisFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         viewModel = ViewModelProviders.of(this).get(HistoriqueColisFragmentViewModel.class);
-        viewModel.clearList();
 
         if (getArguments() != null) {
-            viewModel.setIdColis(getArguments().getString(ARG_ID_COLIS));
+            ColisEntity colisEntity = getArguments().getParcelable(ARG_ID_COLIS);
+            viewModel.setColis(colisEntity);
 
             // On envoie à notre listener l'id colis avec lequel on est arrivé.
-            if (mListener != null) {
-                mListener.subscribe(viewModel.getIdColis());
+            if (mListener != null && colisEntity != null) {
+                mListener.subscribe(colisEntity.getIdColis());
             }
         }
 
         // create new adapter from the provider mListEtape
-        mEtapeAcheminementAdapter = new EtapeAcheminementAdapter();
+        mEtapeAdapter = new EtapeAdapter();
     }
 
     @Override
@@ -107,7 +108,7 @@ public class HistoriqueColisFragment extends Fragment {
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mAppCompatActivity);
         mRecyclerView.setLayoutManager(linearLayoutManager);
-        mRecyclerView.setAdapter(mEtapeAcheminementAdapter);
+        mRecyclerView.setAdapter(mEtapeAdapter);
 
         updateVisibility();
         updateViewFromViewModel();
@@ -128,9 +129,9 @@ public class HistoriqueColisFragment extends Fragment {
      */
     private void updateViewFromViewModel() {
         // get history from the view model
-        viewModel.getEtapesConsolidated(viewModel.getIdColis()).observe(this, etapeConsolidateds -> {
-            mEtapeAcheminementAdapter.setEtapesConsolidated(etapeConsolidateds);
-            mEtapeAcheminementAdapter.notifyDataSetChanged();
+        viewModel.getEtapes().observe(this, etapes -> {
+            mEtapeAdapter.setEtapes(etapes);
+            mEtapeAdapter.notifyDataSetChanged();
 
             // Change the visibility of the textView
             updateVisibility();
@@ -140,7 +141,7 @@ public class HistoriqueColisFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(ARG_ID_COLIS, viewModel.getIdColis());
+        outState.putParcelable(ARG_ID_COLIS, viewModel.getColis().getValue());
     }
 
     @Override

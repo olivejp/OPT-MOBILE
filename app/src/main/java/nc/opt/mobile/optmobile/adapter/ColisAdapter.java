@@ -140,7 +140,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
                 // If we aren't in delete mode we call the parcel result search fragment
                 // Otherwise we deactivate the delete mode and make the delete button invisible
                 if (!mDeleteMode) {
-                    HistoriqueColisFragment historiqueColisFragment = HistoriqueColisFragment.newInstance(mColis.getIdColis());
+                    HistoriqueColisFragment historiqueColisFragment = HistoriqueColisFragment.newInstance(mColis);
                     if (mTwoPane) {
                         ((AppCompatActivity) mContext).getSupportFragmentManager()
                                 .beginTransaction()

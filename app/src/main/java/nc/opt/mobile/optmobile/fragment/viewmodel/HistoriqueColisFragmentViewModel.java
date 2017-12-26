@@ -9,19 +9,19 @@ import android.view.View;
 
 import java.util.List;
 
-import nc.opt.mobile.optmobile.domain.suivi.EtapeConsolidated;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.ProviderObserver;
-import nc.opt.mobile.optmobile.provider.services.EtapeAcheminementService;
+import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
+import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
+import nc.opt.mobile.optmobile.provider.services.ColisService;
 
 /**
  * Created by 2761oli on 26/12/2017.
  */
-
 public class HistoriqueColisFragmentViewModel extends AndroidViewModel implements ProviderObserver.ProviderObserverListener {
 
-    private String mIdColis;
-    private MutableLiveData<List<EtapeConsolidated>> mEtapesConsolidated;
+    private MutableLiveData<ColisEntity> mColis;
+    private MutableLiveData<List<EtapeEntity>> mEtapes;
 
     public HistoriqueColisFragmentViewModel(@NonNull Application application) {
         super(application);
@@ -31,35 +31,31 @@ public class HistoriqueColisFragmentViewModel extends AndroidViewModel implement
         providerObserver.observe(application, this, OptProvider.ListColis.LIST_COLIS, OptProvider.ListEtapeAcheminement.LIST_ETAPE);
     }
 
-    private void retrieveEtapeConsolidated(String idColis) {
-        EtapeAcheminementService.getConsolidatedEtapeList(getApplication(), idColis)
-                .subscribe(etapesConsolidated -> this.mEtapesConsolidated.postValue(etapesConsolidated));
-    }
-
-    public void clearList() {
-        if (this.mEtapesConsolidated != null && this.mEtapesConsolidated.getValue() != null && !this.mEtapesConsolidated.getValue().isEmpty()) {
-            this.mEtapesConsolidated.getValue().clear();
-        }
-    }
-
     private boolean conditionVisible() {
-        return (mEtapesConsolidated == null || mEtapesConsolidated.getValue() == null || mEtapesConsolidated.getValue().isEmpty());
+        return (mColis == null || mColis.getValue() == null || mColis.getValue().getEtapeAcheminementArrayList().isEmpty());
     }
 
-    public void setIdColis(String idColis) {
-        this.mIdColis = idColis;
-    }
-
-    public String getIdColis() {
-        return this.mIdColis;
-    }
-
-    public LiveData<List<EtapeConsolidated>> getEtapesConsolidated(String idColis) {
-        if (mEtapesConsolidated == null) {
-            mEtapesConsolidated = new MutableLiveData<>();
-            retrieveEtapeConsolidated(idColis);
+    public void setColis(ColisEntity colis) {
+        if (this.mColis == null) {
+            this.mColis = new MutableLiveData<>();
+            this.mEtapes = new MutableLiveData<>();
         }
-        return mEtapesConsolidated;
+        this.mColis.setValue(colis);
+        this.mEtapes.setValue(colis.getEtapeAcheminementArrayList());
+    }
+
+    public LiveData<ColisEntity> getColis() {
+        if (this.mColis == null) {
+            this.mColis = new MutableLiveData<>();
+        }
+        return this.mColis;
+    }
+
+    public LiveData<List<EtapeEntity>> getEtapes() {
+        if (this.mEtapes == null) {
+            this.mEtapes = new MutableLiveData<>();
+        }
+        return this.mEtapes;
     }
 
     public int getTextObjectNotFoundVisibility() {
@@ -72,6 +68,15 @@ public class HistoriqueColisFragmentViewModel extends AndroidViewModel implement
 
     @Override
     public void onProviderChange() {
-        retrieveEtapeConsolidated(this.mIdColis);
+        if (mColis != null && mColis.getValue() != null) {
+            // Récupération du colis à partir de la BD
+            ColisEntity colisEntity = ColisService.get(getApplication(), mColis.getValue().getIdColis());
+
+            // Récupération des étapes à partir de la BD
+            mColis.postValue(colisEntity);
+            if (colisEntity != null && colisEntity.getEtapeAcheminementArrayList() != null && !colisEntity.getEtapeAcheminementArrayList().isEmpty()) {
+                mEtapes.postValue(colisEntity.getEtapeAcheminementArrayList());
+            }
+        }
     }
 }
