@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -39,10 +40,10 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
     private Context mContext;
     private boolean mTwoPane;
 
-    public ColisAdapter(Context context, List<ColisEntity> colisList, boolean twoPane) {
-        mContext = context;
-        mColisList = colisList;
-        mTwoPane = twoPane;
+    public ColisAdapter(Context context, boolean twoPane) {
+        this.mContext = context;
+        this.mColisList = new ArrayList<>();
+        this.mTwoPane = twoPane;
     }
 
     @Override
@@ -87,7 +88,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         return mColisList.size();
     }
 
-    public void setmColisList(List<ColisEntity> list) {
+    public void setColisList(List<ColisEntity> list) {
         this.mColisList = list;
     }
 

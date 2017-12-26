@@ -61,15 +61,6 @@ public class HistoriqueColisFragment extends Fragment {
     }
 
     /**
-     * On start we retrieve or create the ViewModel
-     */
-    @Override
-    public void onStart() {
-        super.onStart();
-        viewModel = ViewModelProviders.of(this).get(HistoriqueColisFragmentViewModel.class);
-    }
-
-    /**
      * On attach, if the parent activity implements ListenToSelectedColis,
      * we record the activity in mListener.
      * @param context
@@ -91,6 +82,10 @@ public class HistoriqueColisFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        viewModel = ViewModelProviders.of(this).get(HistoriqueColisFragmentViewModel.class);
+        viewModel.clearList();
+
         if (getArguments() != null) {
             viewModel.setIdColis(getArguments().getString(ARG_ID_COLIS));
 

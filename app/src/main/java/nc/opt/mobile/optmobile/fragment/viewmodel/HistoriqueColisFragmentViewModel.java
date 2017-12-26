@@ -36,6 +36,12 @@ public class HistoriqueColisFragmentViewModel extends AndroidViewModel implement
                 .subscribe(etapesConsolidated -> this.mEtapesConsolidated.postValue(etapesConsolidated));
     }
 
+    public void clearList() {
+        if (this.mEtapesConsolidated != null && this.mEtapesConsolidated.getValue() != null && !this.mEtapesConsolidated.getValue().isEmpty()) {
+            this.mEtapesConsolidated.getValue().clear();
+        }
+    }
+
     private boolean conditionVisible() {
         return (mEtapesConsolidated == null || mEtapesConsolidated.getValue() == null || mEtapesConsolidated.getValue().isEmpty());
     }

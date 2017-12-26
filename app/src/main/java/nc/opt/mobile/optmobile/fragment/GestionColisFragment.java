@@ -1,5 +1,6 @@
 package nc.opt.mobile.optmobile.fragment;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,38 +15,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.adapter.ColisAdapter;
-import nc.opt.mobile.optmobile.provider.OptProvider;
-import nc.opt.mobile.optmobile.provider.ProviderObserver;
-import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
-
-import static nc.opt.mobile.optmobile.provider.services.ColisService.listFromProvider;
-import static nc.opt.mobile.optmobile.provider.services.ColisService.observableListFromProvider;
+import nc.opt.mobile.optmobile.fragment.viewmodel.GestionColisFragmentViewModel;
 
 /**
  * Fragment that shows mList of followed parcel
  * -FAB allow to add a parcel
  */
-public class GestionColisFragment extends Fragment implements ProviderObserver.ProviderObserverListener {
+public class GestionColisFragment extends Fragment {
 
     private ColisAdapter mColisAdapter;
     private AppCompatActivity mActivity;
     private boolean mTwoPane;
     private static final String ARG_TWO_PANE = "ARG_TWO_PANE";
+    private GestionColisFragmentViewModel viewModel;
 
     @BindView(R.id.recycler_parcel_list_management)
     RecyclerView mRecyclerView;
 
     @BindView(R.id.text_explicatif_suivi_colis)
     TextView textExplicatifSuiviColis;
-
-    private List<ColisEntity> mList = new ArrayList<>();
 
     public static GestionColisFragment newInstance(boolean twoPane) {
         GestionColisFragment fragment = new GestionColisFragment();
@@ -69,18 +61,14 @@ public class GestionColisFragment extends Fragment implements ProviderObserver.P
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        viewModel = ViewModelProviders.of(this).get(GestionColisFragmentViewModel.class);
+
         mTwoPane = false;
         if (getArguments() != null && getArguments().containsKey(ARG_TWO_PANE)) {
             mTwoPane = getArguments().getBoolean(ARG_TWO_PANE);
         }
 
-        mColisAdapter = new ColisAdapter(mActivity, mList, mTwoPane);
-
-
-
-        // create a ProviderObserver to subscribe updates from the provider
-        ProviderObserver providerObserver = ProviderObserver.getInstance();
-        providerObserver.observe(mActivity, this, OptProvider.ListColis.LIST_COLIS, OptProvider.ListEtapeAcheminement.LIST_ETAPE);
+        mColisAdapter = new ColisAdapter(mActivity, mTwoPane);
     }
 
     @Override
@@ -97,31 +85,31 @@ public class GestionColisFragment extends Fragment implements ProviderObserver.P
         mRecyclerView.setAdapter(mColisAdapter);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mActivity, DividerItemDecoration.VERTICAL));
 
-        // get the mList from the provider
-        mList.clear();
-        observableListFromProvider(mActivity, true).subscribe(colisEntity -> {
-            mList.add(colisEntity);
-            mColisAdapter.notifyDataSetChanged();
-            changeVisibility();
-        });
-
-        // change visibility depending on the mList content
-        changeVisibility();
+        updateVisibility();
+        updateViewFromViewModel();
 
         return rootView;
     }
 
-    @Override
-    public void onProviderChange() {
-        mColisAdapter.setmColisList(null);
-        mList = listFromProvider(mActivity, true);
-        mColisAdapter.setmColisList(mList);
-        mColisAdapter.notifyDataSetChanged();
-        changeVisibility();
+    /**
+     * Display the recycler view if the list<etapesConsolidated> != null or show a text instead
+     */
+    private void updateVisibility() {
+        textExplicatifSuiviColis.setVisibility(viewModel.getTextObjectNotFoundVisibility());
+        mRecyclerView.setVisibility(viewModel.getRecyclerViewVisibility());
     }
 
-    private void changeVisibility() {
-        textExplicatifSuiviColis.setVisibility((mList == null || mList.isEmpty()) ? View.VISIBLE : View.GONE);
-        mRecyclerView.setVisibility((mList != null && !mList.isEmpty()) ? View.VISIBLE : View.GONE);
+    /**
+     * Update the UI from the viewModel
+     */
+    private void updateViewFromViewModel() {
+        // get history from the view model
+        viewModel.getColisEntities().observe(this, colisEntities -> {
+            mColisAdapter.setColisList(colisEntities);
+            mColisAdapter.notifyDataSetChanged();
+
+            // Change the visibility of the textView
+            updateVisibility();
+        });
     }
 }

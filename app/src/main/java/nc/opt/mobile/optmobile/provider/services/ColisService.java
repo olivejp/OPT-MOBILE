@@ -152,8 +152,8 @@ public class ColisService {
             cursorListColis.close();
         }
         return Observable.just(colisList)
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.computation())
                 .flatMap(Observable::fromIterable);
     }
 
