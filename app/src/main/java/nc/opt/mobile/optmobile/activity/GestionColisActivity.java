@@ -114,5 +114,6 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
     @Override
     public void unsubscribe() {
         mIdColisSelected = null;
+        setTitle(getString(R.string.suivi_des_colis));
     }
 }

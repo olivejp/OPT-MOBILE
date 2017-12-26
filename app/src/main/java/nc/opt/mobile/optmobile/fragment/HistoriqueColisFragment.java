@@ -129,7 +129,7 @@ public class HistoriqueColisFragment extends Fragment {
     }
 
     /**
-     *
+     * Update the UI from the viewModel
      */
     private void updateViewFromViewModel() {
         // get history from the view model

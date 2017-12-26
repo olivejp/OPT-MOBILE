@@ -9,12 +9,15 @@ import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
 public class EtapeConsolidated extends EtapeEntity {
 
     public enum TypeEtape {
-        HEADER(0), DETAIL(1);
+        HEADER(0),
+        DETAIL(1);
 
         private final int value;
+
         private TypeEtape(int value){
             this.value = value;
         }
+
         public int getTypeValue(){
             return this.value;
         }
