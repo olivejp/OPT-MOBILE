@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="wrap_content">
 
-    <android.support.constraint.ConstraintLayout
+    <LinearLayout
         android:id="@+id/left_frame"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/right_frame"
@@ -16,118 +17,105 @@
 
         <ImageView
             android:id="@+id/img_step_status"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:layout_marginEnd="10dp"
             android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="5dp"
-            app:layout_constraintHeight_min="20dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_min="20dp" />
+            android:layout_marginTop="5dp" />
 
         <android.support.v7.widget.CardView
             android:id="@+id/img_step_line"
             android:layout_width="5dp"
-            android:layout_height="0dp"
-            android:layout_marginEnd="6dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="6dp"
-            android:layout_marginStart="15dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:layout_marginTop="2dp"
             app:cardBackgroundColor="@color/colorPrimary"
             app:cardCornerRadius="2dp"
-            app:cardElevation="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/img_step_status" />
-    </android.support.constraint.ConstraintLayout>
+            app:cardElevation="0dp" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/right_frame"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="25dp"
+        android:layout_marginBottom="20dp"
         android:layout_marginRight="15dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="20dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/left_frame"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <android.support.constraint.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/step_pays"
-                style="@style/Base.TextAppearance.AppCompat.Body1"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@+id/step_localisation"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="NOUVELLE-CALEDONIE" />
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/step_localisation"
-                style="@style/Base.TextAppearance.AppCompat.Body1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:gravity="end"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintLeft_toRightOf="@+id/step_pays"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="NOUMEA CTC" />
+                <TextView
+                    android:id="@+id/step_pays"
+                    style="@style/Base.TextAppearance.AppCompat.Body1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    tools:text="NOUVELLE-CALEDONIE" />
+
+                <TextView
+                    android:id="@+id/step_localisation"
+                    style="@style/Base.TextAppearance.AppCompat.Body1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    tools:text="NOUMEA CTC" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/step_description"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:gravity="start"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
                 android:textSize="12sp"
-                app:layout_constraintBottom_toTopOf="@+id/step_commentaire"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/step_pays"
                 tools:text="Traitement douanier en cours" />
 
             <TextView
                 android:id="@+id/step_commentaire"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="5dp"
                 android:layout_marginRight="5dp"
                 android:gravity="start"
                 android:textSize="12sp"
                 android:textStyle="italic"
-                app:layout_constraintBottom_toTopOf="@+id/step_date"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/step_description"
                 tools:text="Retention reason : Biens a valeur elevee - Declaration douaniere requise" />
 
             <TextView
                 android:id="@+id/step_date"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
                 android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/step_commentaire"
                 tools:text="21 oct. à 13:45" />
-        </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
