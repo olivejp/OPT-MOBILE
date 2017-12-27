@@ -5,6 +5,9 @@
     android:id="@+id/constraint_detail_colis_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
     android:baselineAligned="false"
     android:orientation="horizontal">
 
@@ -125,7 +128,7 @@
         android:layout_margin="5dp"
         android:contentDescription="Status last step"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <RelativeLayout
         android:id="@+id/relative_delete_layout"
