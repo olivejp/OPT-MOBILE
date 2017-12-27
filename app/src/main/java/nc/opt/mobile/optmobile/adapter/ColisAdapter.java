@@ -1,6 +1,7 @@
 package nc.opt.mobile.optmobile.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.PictureDrawable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,8 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.RequestBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -22,6 +25,7 @@ import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.activity.GestionColisActivity;
 import nc.opt.mobile.optmobile.fragment.HistoriqueColisFragment;
+import nc.opt.mobile.optmobile.glide.GlideRequester;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
 import nc.opt.mobile.optmobile.service.FirebaseService;
@@ -81,6 +85,12 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
             holder.mStepLastPays.setVisibility(View.GONE);
             holder.mStepLastDescription.setText(R.string.no_data_for_parcel);
         }
+
+        if (holder.mColis.getSlug() != null) {
+            RequestBuilder<PictureDrawable> requester = GlideRequester.getSvgRequester(mContext, R.drawable.ic_archive_grey_900_48dp, R.drawable.ic_archive_grey_900_48dp);
+            requester.load("http://assets.aftership.com/couriers/svg/" + holder.mColis.getSlug() + ".svg")
+                    .into(holder.mStepImageColis);
+        }
     }
 
     @Override
@@ -121,6 +131,9 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
 
         @BindView(R.id.step_last_update_text)
         TextView mStepLastUpdateText;
+
+        @BindView(R.id.step_image_colis)
+        ImageView mStepImageColis;
 
         ColisEntity mColis;
 

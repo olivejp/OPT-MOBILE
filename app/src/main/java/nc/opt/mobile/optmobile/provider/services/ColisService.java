@@ -40,7 +40,11 @@ public class ColisService {
     public static ColisEntity get(Context context, String id) {
         Cursor cursor = context.getContentResolver().query(nc.opt.mobile.optmobile.provider.OptProvider.ListColis.withId(id), null, null, null, null);
         if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
-            return getFromCursor(cursor);
+            ColisEntity colisEntity = getFromCursor(cursor);
+            // Récupération des étapes associées.
+            List<EtapeEntity> list = EtapeAcheminementService.listFromProvider(context, id);
+            colisEntity.setEtapeAcheminementArrayList(list);
+            return colisEntity;
         }
         return null;
     }
@@ -137,7 +141,6 @@ public class ColisService {
     }
 
     /**
-     *
      * @param context
      * @param onlyActive
      * @return
@@ -164,7 +167,6 @@ public class ColisService {
     }
 
     /**
-     *
      * @param context
      * @param onlyActive
      * @return
@@ -182,7 +184,6 @@ public class ColisService {
     }
 
     /**
-     *
      * @param context
      * @param idColis
      * @return
@@ -197,7 +198,6 @@ public class ColisService {
     }
 
     /**
-     *
      * @param context
      * @param idColis
      * @return
@@ -211,7 +211,6 @@ public class ColisService {
     }
 
     /**
-     *
      * @param colis
      * @return
      */
@@ -220,11 +219,11 @@ public class ColisService {
         contentValues.put(ColisInterface.ID_COLIS, colis.getIdColis());
         contentValues.put(ColisInterface.DESCRIPTION, colis.getDescription());
         contentValues.put(ColisInterface.DELETED, colis.getDeleted());
+        contentValues.put(ColisInterface.SLUG, colis.getSlug());
         return contentValues;
     }
 
     /**
-     *
      * @param cursor
      * @return
      */
@@ -233,7 +232,6 @@ public class ColisService {
     }
 
     /**
-     *
      * @param context
      * @param idColis
      * @param successful
@@ -252,7 +250,6 @@ public class ColisService {
     }
 
     /**
-     *
      * @param entity
      * @return
      */
@@ -270,7 +267,6 @@ public class ColisService {
     }
 
     /**
-     *
      * @param dto
      * @return
      */

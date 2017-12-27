@@ -1,9 +1,7 @@
 package nc.opt.mobile.optmobile.utils;
 
+import android.content.Context;
 import android.util.Log;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableTransformer;
@@ -17,6 +15,7 @@ import nc.opt.mobile.optmobile.domain.suivi.aftership.TrackingDelete;
 import nc.opt.mobile.optmobile.network.RetrofitClient;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
+import nc.opt.mobile.optmobile.provider.services.ColisService;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -44,22 +43,25 @@ public class AfterShipUtils {
     private static <T> ObservableTransformer<T, Long> zipWithFlatMap() {
         return observable -> observable.zipWith(
                 Observable.range(COUNTER_START, ATTEMPTS), (t, repeatAttempt) -> repeatAttempt)
-                .flatMap(repeatAttempt -> Observable.timer(repeatAttempt , SECONDS));
+                .flatMap(repeatAttempt -> Observable.timer(repeatAttempt, SECONDS));
     }
 
-    public static void getTrackingFromAfterShip(String trackingNumber, Consumer<ColisEntity> consumerColisEntity) {
+    public static void getTrackingFromAfterShip(Context context, String trackingNumber, Consumer<ColisEntity> consumerColisEntity) {
 
-        // Creation of the colisEntity which we will subscribe at the end.
-        ColisEntity colisEntity = new ColisEntity();
-        colisEntity.setIdColis(trackingNumber);
+        // Get the Colis from the content provider and we will send it at the end.
+        ColisEntity colisFromDb = ColisService.get(context, trackingNumber);
+        if (colisFromDb == null) {
+            colisFromDb = new ColisEntity();
+            colisFromDb.setIdColis(trackingNumber);
+        }
+
+        // Ce colis est final pour pouvoir être appelé dans les différents Consumers<>
+        final ColisEntity finalColis = colisFromDb;
 
         // This consumer is only called when getting colis
         Consumer<TrackingData> consumerGetTracking = trackingData -> {
             Log.d(TAG, "TrackingData récupéré : " + trackingData.toString());
-            RetrofitClient.deleteTracking(trackingData.getId())
-                    .retry(3)
-                    .subscribe(consumerDeleting, consumerThrowable);
-            Observable.just(createColisFromResponseTrackingData(trackingData)).subscribe(consumerColisEntity);
+            Observable.just(createColisFromResponseTrackingData(finalColis, trackingData)).subscribe(consumerColisEntity);
         };
 
         // This consumer is only called when posting colis
@@ -77,7 +79,7 @@ public class AfterShipUtils {
             Log.d(TAG, "Essaie de détecter le bon courier.");
             if (!responseDataDetectCourier.getCouriers().isEmpty()) {
                 String slug = responseDataDetectCourier.getCouriers().get(0).getSlug();
-                colisEntity.setSlug(slug);
+                finalColis.setSlug(slug);
 
                 Log.d(TAG, "Slug trouvé pour le colis : " + trackingNumber + ", il s'agit de " + slug);
 
@@ -86,7 +88,9 @@ public class AfterShipUtils {
                         .doOnError(throwable0 -> {
                             Log.d(TAG, "Post tracking fail, try to get it by get trackings/:slug/:trackingNumber");
                             RetrofitClient.getTracking(slug, trackingNumber)
-                                    .retry(3)
+                                    .takeUntil(trackingData -> !trackingData.getCheckpoints().isEmpty())
+                                    .filter(trackingData -> !trackingData.getCheckpoints().isEmpty())
+                                    .repeatWhen(objectObservable -> objectObservable.compose(zipWithFlatMap()))
                                     .subscribe(consumerGetTracking, consumerThrowable);
                         })
                         .delay(10, SECONDS)
@@ -125,16 +129,19 @@ public class AfterShipUtils {
         return etape;
     }
 
-    public static ColisEntity createColisFromResponseTrackingData(TrackingData r) {
-        ColisEntity colis = new ColisEntity();
+    /**
+     * Fill the ColisEntity with the TrackingData informations.
+     *
+     * @param colis
+     * @param trackingData
+     * @return
+     */
+    public static ColisEntity createColisFromResponseTrackingData(ColisEntity colis, TrackingData trackingData) {
         colis.setDeleted(0);
-        colis.setIdColis(r.getTrackingNumber());
-        List<EtapeEntity> listEtape = new ArrayList<>();
-
-        for (Checkpoint c : r.getCheckpoints()) {
-            listEtape.add(createEtapeFromCheckpoint(colis.getIdColis(), c));
+        for (Checkpoint c : trackingData.getCheckpoints()) {
+            EtapeEntity etapeEntity = createEtapeFromCheckpoint(colis.getIdColis(), c);
+            colis.getEtapeAcheminementArrayList().add(etapeEntity);
         }
-        colis.setEtapeAcheminementArrayList(listEtape);
         return colis;
     }
 

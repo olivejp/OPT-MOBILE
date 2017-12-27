@@ -101,7 +101,7 @@ public class SyncColisService extends IntentService {
     private void requestServer(String idColis, boolean sendNotification) {
 
         // Test de notre API AfterShip
-        AfterShipUtils.getTrackingFromAfterShip(idColis, colisEntity -> {
+        AfterShipUtils.getTrackingFromAfterShip(this, idColis, colisEntity -> {
             if (ColisService.save(this, colisEntity)) {
                 Log.d(TAG, "Insertion en base réussie");
             }

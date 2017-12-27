@@ -42,3 +42,6 @@
 # -keep class android.app.DialogFragment
 
 -keepclassmembers class nc.opt.mobile.optmobile.domain.** {*;}
+
+-keep public class * extends com.bumptech.glide.module.AppGlideModule
+-keep class com.bumptech.glide.GeneratedAppGlideModuleImpl
