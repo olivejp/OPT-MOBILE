@@ -72,12 +72,46 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
 
         if (!holder.mColis.getEtapeAcheminementArrayList().isEmpty()) {
             // On prend la dernière étape
-            EtapeEntity etapeAcheminement = holder.mColis.getEtapeAcheminementArrayList().get(holder.mColis.getEtapeAcheminementArrayList().size() - 1);
-            holder.mStepLastDate.setText(DateConverter.convertDateEntityToUi(etapeAcheminement.getDate()));
-            holder.mStepLastPays.setText(etapeAcheminement.getPays());
-            holder.mStepLastDescription.setText(etapeAcheminement.getDescription());
+            EtapeEntity etape = holder.mColis.getEtapeAcheminementArrayList().get(holder.mColis.getEtapeAcheminementArrayList().size() - 1);
+            holder.mStepLastDate.setText(DateConverter.convertDateEntityToUi(etape.getDate()));
+            holder.mStepLastPays.setText(etape.getPays());
+            holder.mStepLastDescription.setText(etape.getDescription());
             holder.mStepLastDate.setVisibility(View.VISIBLE);
             holder.mStepLastPays.setVisibility(View.VISIBLE);
+
+            if (etape.getStatus() != null) {
+                switch (etape.getStatus()) {
+                    case "InfoReceived":
+                        holder.mStepStatus.setImageResource(R.drawable.ic_status_info_receive);
+                        break;
+                    case "AttemptFail":
+                        holder.mStepStatus.setImageResource(R.drawable.ic_status_attemptfail);
+                        break;
+                    case "Delivered":
+                        holder.mStepStatus.setImageResource(R.drawable.ic_status_delivered);
+                        break;
+                    case "Exception":
+                        holder.mStepStatus.setImageResource(R.drawable.ic_status_exception);
+                        break;
+                    case "Expired":
+                        holder.mStepStatus.setImageResource(R.drawable.ic_status_expired);
+                        break;
+                    case "InTransit":
+                        holder.mStepStatus.setImageResource(R.drawable.ic_status_in_transit);
+                        break;
+                    case "OutForDelivery":
+                        holder.mStepStatus.setImageResource(R.drawable.ic_status_out_for_delivery);
+                        break;
+                    case "Pending":
+                        holder.mStepStatus.setImageResource(R.drawable.ic_status_pending);
+                        break;
+                    default:
+                        holder.mStepStatus.setImageResource(R.drawable.ic_status_pending);
+                        break;
+                }
+
+            }
+
         } else {
             holder.mStepLastDate.setText(null);
             holder.mStepLastPays.setText(null);
@@ -91,6 +125,8 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
             requester.load("http://assets.aftership.com/couriers/svg/" + holder.mColis.getSlug() + ".svg")
                     .into(holder.mStepImageColis);
         }
+
+
     }
 
     @Override
@@ -134,6 +170,9 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
 
         @BindView(R.id.step_image_colis)
         ImageView mStepImageColis;
+
+        @BindView(R.id.step_status)
+        ImageView mStepStatus;
 
         ColisEntity mColis;
 

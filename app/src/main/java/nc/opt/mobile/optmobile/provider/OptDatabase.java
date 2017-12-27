@@ -41,7 +41,7 @@ import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.TYP
 
 @Database(version = OptDatabase.VERSION, packageName = "nc.opt.mobile.optmobile", createDescriptionTable = true, descriptionTableName = DESCRIPTION_TABLE_NAME)
 public class OptDatabase {
-    static final int VERSION = 23;
+    static final int VERSION = 24;
 
     static final String DESCRIPTION_TABLE_NAME = "opt_description";
 
@@ -99,6 +99,7 @@ public class OptDatabase {
             + EtapeAcheminementInterface.PAYS + " TEXT,"
             + EtapeAcheminementInterface.LOCALISATION + " TEXT,"
             + EtapeAcheminementInterface.DESCRIPTION + " TEXT,"
+            + EtapeAcheminementInterface.STATUS + " TEXT,"
             + EtapeAcheminementInterface.COMMENTAIRE + " TEXT)";
 
     private static final String CREATE_ACTUALITE = "CREATE TABLE " + ACTUALITE + " ("

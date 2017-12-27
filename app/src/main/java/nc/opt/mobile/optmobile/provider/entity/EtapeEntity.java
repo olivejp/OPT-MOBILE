@@ -33,10 +33,13 @@ public class EtapeEntity implements Parcelable {
     @Column(EtapeAcheminementInterface.COMMENTAIRE)
     protected String commentaire;
 
+    @Column(EtapeAcheminementInterface.STATUS)
+    protected String status;
+
     public EtapeEntity() {
     }
 
-    public EtapeEntity(String idEtapeAcheminement, String idColis, Long date, String pays, String localisation, String description, String commentaire) {
+    public EtapeEntity(String idEtapeAcheminement, String idColis, Long date, String pays, String localisation, String description, String commentaire, String status) {
         this.idEtapeAcheminement = idEtapeAcheminement;
         this.idColis = idColis;
         this.date = date;
@@ -44,6 +47,7 @@ public class EtapeEntity implements Parcelable {
         this.localisation = localisation;
         this.description = description;
         this.commentaire = commentaire;
+        this.status = status;
     }
 
     @Override
@@ -123,6 +127,14 @@ public class EtapeEntity implements Parcelable {
         this.commentaire = commentaire;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -137,6 +149,7 @@ public class EtapeEntity implements Parcelable {
         dest.writeString(this.localisation);
         dest.writeString(this.description);
         dest.writeString(this.commentaire);
+        dest.writeString(this.status);
     }
 
     protected EtapeEntity(Parcel in) {
@@ -147,9 +160,10 @@ public class EtapeEntity implements Parcelable {
         this.localisation = in.readString();
         this.description = in.readString();
         this.commentaire = in.readString();
+        this.status = in.readString();
     }
 
-    public static final Parcelable.Creator<EtapeEntity> CREATOR = new Parcelable.Creator<EtapeEntity>() {
+    public static final Creator<EtapeEntity> CREATOR = new Creator<EtapeEntity>() {
         @Override
         public EtapeEntity createFromParcel(Parcel source) {
             return new EtapeEntity(source);

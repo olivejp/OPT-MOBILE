@@ -37,4 +37,7 @@ public interface EtapeAcheminementInterface {
 
     @DataType(TEXT)
     String COMMENTAIRE = "commentaire";
+
+    @DataType(TEXT)
+    String STATUS = "status";
 }

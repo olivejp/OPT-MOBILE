@@ -20,12 +20,13 @@
             android:id="@+id/step_image_colis"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_margin="5dp"
             android:layout_gravity="center"
+            android:layout_margin="5dp"
             android:contentDescription="Colis image"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_archive_grey_900_48dp" />
+
     </LinearLayout>
 
     <TextView
@@ -35,18 +36,21 @@
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
+        android:textSize="14sp"
+        android:textStyle="bold"
         app:layout_constraintBaseline_toBaselineOf="@+id/parcel_description"
         app:layout_constraintLeft_toRightOf="@+id/linear_image"
         tools:text="RC12345678912" />
 
     <TextView
         android:id="@+id/parcel_description"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         app:layout_constraintLeft_toRightOf="@+id/step_id_colis"
+        app:layout_constraintRight_toRightOf="@+id/step_status"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Colis de maman" />
 
@@ -79,13 +83,14 @@
 
     <TextView
         android:id="@+id/step_last_description"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:textSize="12sp"
         app:layout_constraintBottom_toTopOf="@+id/step_last_update"
         app:layout_constraintLeft_toRightOf="@+id/linear_image"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/step_last_date"
         tools:text="Envoyé mais pas encore reçu" />
 
@@ -111,6 +116,16 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/step_last_description"
         tools:text="30 mins" />
+
+    <ImageView
+        android:id="@+id/step_status"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_gravity="end"
+        android:layout_margin="5dp"
+        android:contentDescription="Status last step"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <RelativeLayout
         android:id="@+id/relative_delete_layout"

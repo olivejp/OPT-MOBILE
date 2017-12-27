@@ -28,7 +28,7 @@ public class AfterShipUtils {
     private static final String TAG = AfterShipUtils.class.getName();
 
     private static final Integer COUNTER_START = 1;
-    private static final Integer ATTEMPTS = 5;
+    private static final Integer ATTEMPTS = 3;
 
     private AfterShipUtils() {
     }
@@ -61,7 +61,7 @@ public class AfterShipUtils {
         // This consumer is only called when getting colis
         Consumer<TrackingData> consumerGetTracking = trackingData -> {
             Log.d(TAG, "TrackingData récupéré : " + trackingData.toString());
-            Observable.just(createColisFromResponseTrackingData(finalColis, trackingData)).subscribe(consumerColisEntity);
+            Observable.just(createColisFromResponseTrackingData(finalColis, trackingData)).subscribe(consumerColisEntity, consumerThrowable);
         };
 
         // This consumer is only called when posting colis
@@ -123,8 +123,9 @@ public class AfterShipUtils {
             etape.setDate(0L);
         }
         etape.setLocalisation((checkpoint.getLocation() != null) ? checkpoint.getLocation().toString() : "");
-        etape.setCommentaire((checkpoint.getTag() != null) ? checkpoint.getTag() : "");
+        etape.setStatus((checkpoint.getTag() != null) ? checkpoint.getTag() : "");
         etape.setDescription((checkpoint.getMessage() != null) ? checkpoint.getMessage() : "");
+        etape.setCommentaire((checkpoint.getSubtag() != null) ? checkpoint.getSubtag() : "");
         etape.setPays((checkpoint.getCountryName() != null) ? checkpoint.getCountryName().toString() : "");
         return etape;
     }

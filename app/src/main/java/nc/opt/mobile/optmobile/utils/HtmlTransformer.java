@@ -86,7 +86,7 @@ public class HtmlTransformer {
                 String description = colonneTd.get(3).text();
                 String commentaire = colonneTd.get(4).text();
 
-                EtapeAcheminementDto etapeAcheminementDto = new EtapeAcheminementDto(date, pays, localisation, description, commentaire);
+                EtapeAcheminementDto etapeAcheminementDto = new EtapeAcheminementDto(date, pays, localisation, description, commentaire, null);
                 listEtapeAcheminementDto.add(etapeAcheminementDto);
             }
         }

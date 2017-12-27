@@ -11,9 +11,7 @@ import org.chalup.microorm.MicroOrm;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Observable;
 import nc.opt.mobile.optmobile.domain.suivi.EtapeAcheminementDto;
-import nc.opt.mobile.optmobile.domain.suivi.EtapeConsolidated;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
@@ -21,14 +19,13 @@ import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
 import nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
-import static nc.opt.mobile.optmobile.domain.suivi.EtapeConsolidated.TypeEtape.DETAIL;
-import static nc.opt.mobile.optmobile.domain.suivi.EtapeConsolidated.TypeEtape.HEADER;
 import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.COMMENTAIRE;
 import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.DATE;
 import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.DESCRIPTION;
 import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.ID_COLIS;
 import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.LOCALISATION;
 import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.PAYS;
+import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.STATUS;
 
 /**
  * Created by 2761oli on 23/10/2017.
@@ -68,41 +65,6 @@ public class EtapeAcheminementService {
             cursorListEtape.close();
         }
         return etapeList;
-    }
-
-    /**
-     * @param context
-     * @param idColis
-     * @return
-     */
-    public static Observable<List<EtapeConsolidated>> getConsolidatedEtapeList(Context context, String idColis) {
-        // Récupération de la liste d'étapes présentes dans le content provider
-        List<EtapeEntity> listEtapeEntity = listFromProvider(context, idColis);
-        List<EtapeConsolidated> listEtapeConsolidated = new ArrayList<>();
-        if (!listEtapeEntity.isEmpty()) {
-            EtapeEntity previousEtape;
-            EtapeEntity actualEtape;
-            String previousHeader;
-            String actualHeader;
-
-            // Lecture de toute la liste d'entity
-            for (int i = 0; i < listEtapeEntity.size(); i++) {
-                actualEtape = listEtapeEntity.get(i);
-                if (i == 0) {
-                    listEtapeConsolidated.add(new EtapeConsolidated(HEADER, actualEtape));
-                } else {
-                    previousEtape = listEtapeEntity.get(i - 1);
-                    actualHeader = actualEtape.getPays().concat(" ").concat(actualEtape.getLocalisation());
-                    previousHeader = previousEtape.getPays().concat(" ").concat(previousEtape.getLocalisation());
-                    if (actualHeader.equals(previousHeader)) {
-                        listEtapeConsolidated.add(new EtapeConsolidated(DETAIL, actualEtape));
-                    } else {
-                        listEtapeConsolidated.add(new EtapeConsolidated(HEADER, actualEtape));
-                    }
-                }
-            }
-        }
-        return Observable.just(listEtapeConsolidated);
     }
 
     /**
@@ -169,6 +131,7 @@ public class EtapeAcheminementService {
         contentValues.put(COMMENTAIRE, etapeEntity.getCommentaire());
         contentValues.put(DESCRIPTION, etapeEntity.getDescription());
         contentValues.put(DATE, etapeEntity.getDate());
+        contentValues.put(STATUS, etapeEntity.getStatus());
         contentValues.put(ID_COLIS, idColis);
         return contentValues;
     }
