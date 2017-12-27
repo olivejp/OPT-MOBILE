@@ -28,6 +28,7 @@ import nc.opt.mobile.optmobile.fragment.HistoriqueColisFragment;
 import nc.opt.mobile.optmobile.glide.GlideRequester;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
+import nc.opt.mobile.optmobile.provider.services.EtapeAcheminementService;
 import nc.opt.mobile.optmobile.service.FirebaseService;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
@@ -78,40 +79,9 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
             holder.mStepLastDescription.setText(etape.getDescription());
             holder.mStepLastDate.setVisibility(View.VISIBLE);
             holder.mStepLastPays.setVisibility(View.VISIBLE);
-
             if (etape.getStatus() != null) {
-                switch (etape.getStatus()) {
-                    case "InfoReceived":
-                        holder.mStepStatus.setImageResource(R.drawable.ic_status_info_receive);
-                        break;
-                    case "AttemptFail":
-                        holder.mStepStatus.setImageResource(R.drawable.ic_status_attemptfail);
-                        break;
-                    case "Delivered":
-                        holder.mStepStatus.setImageResource(R.drawable.ic_status_delivered);
-                        break;
-                    case "Exception":
-                        holder.mStepStatus.setImageResource(R.drawable.ic_status_exception);
-                        break;
-                    case "Expired":
-                        holder.mStepStatus.setImageResource(R.drawable.ic_status_expired);
-                        break;
-                    case "InTransit":
-                        holder.mStepStatus.setImageResource(R.drawable.ic_status_in_transit);
-                        break;
-                    case "OutForDelivery":
-                        holder.mStepStatus.setImageResource(R.drawable.ic_status_out_for_delivery);
-                        break;
-                    case "Pending":
-                        holder.mStepStatus.setImageResource(R.drawable.ic_status_pending);
-                        break;
-                    default:
-                        holder.mStepStatus.setImageResource(R.drawable.ic_status_pending);
-                        break;
-                }
-
+                holder.mStepStatus.setImageResource(EtapeAcheminementService.getStatusDrawable(etape));
             }
-
         } else {
             holder.mStepLastDate.setText(null);
             holder.mStepLastPays.setText(null);

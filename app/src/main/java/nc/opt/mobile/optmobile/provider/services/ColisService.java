@@ -41,6 +41,7 @@ public class ColisService {
         Cursor cursor = context.getContentResolver().query(nc.opt.mobile.optmobile.provider.OptProvider.ListColis.withId(id), null, null, null, null);
         if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
             ColisEntity colisEntity = getFromCursor(cursor);
+
             // Récupération des étapes associées.
             List<EtapeEntity> list = EtapeAcheminementService.listFromProvider(context, id);
             colisEntity.setEtapeAcheminementArrayList(list);

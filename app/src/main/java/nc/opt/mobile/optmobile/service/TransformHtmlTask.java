@@ -62,10 +62,7 @@ class TransformHtmlTask extends AsyncTask<String, Void, ColisDto> {
                 default:
                     break;
             }
-        } catch (
-                HtmlTransformer.HtmlTransformerException e)
-
-        {
+        } catch (HtmlTransformer.HtmlTransformerException e) {
             Log.e(TAG, e.getMessage(), e);
         }
         return null;

@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
+import nc.opt.mobile.optmobile.provider.services.EtapeAcheminementService;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
 /**
@@ -20,8 +22,6 @@ import nc.opt.mobile.optmobile.utils.DateConverter;
  */
 
 public class EtapeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-    private static final String TAG = EtapeAdapter.class.getName();
 
     private List<EtapeEntity> etapes;
 
@@ -54,6 +54,7 @@ public class EtapeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         } else {
             viewHeader.mStepCommentaire.setText(viewHeader.etape.getCommentaire());
         }
+        viewHeader.mStepStatus.setImageResource(EtapeAcheminementService.getStatusDrawable(viewHeader.etape));
     }
 
     @Override
@@ -78,6 +79,9 @@ public class EtapeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         @BindView(R.id.step_commentaire)
         TextView mStepCommentaire;
+
+        @BindView(R.id.img_step_status)
+        ImageView mStepStatus;
 
         EtapeEntity etape;
 

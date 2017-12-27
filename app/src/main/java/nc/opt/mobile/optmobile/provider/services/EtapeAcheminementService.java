@@ -11,6 +11,7 @@ import org.chalup.microorm.MicroOrm;
 import java.util.ArrayList;
 import java.util.List;
 
+import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.domain.suivi.EtapeAcheminementDto;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
@@ -177,4 +178,29 @@ public class EtapeAcheminementService {
         return entity;
     }
 
+    public static int getStatusDrawable(EtapeEntity etapeEntity) {
+        if (etapeEntity != null && etapeEntity.getStatus() != null) {
+            switch (etapeEntity.getStatus()) {
+                case "InfoReceived":
+                    return R.drawable.ic_status_info_receive;
+                case "AttemptFail":
+                    return R.drawable.ic_status_attemptfail;
+                case "Delivered":
+                    return R.drawable.ic_status_delivered;
+                case "Exception":
+                    return R.drawable.ic_status_exception;
+                case "Expired":
+                    return R.drawable.ic_status_expired;
+                case "InTransit":
+                    return R.drawable.ic_status_in_transit;
+                case "OutForDelivery":
+                    return R.drawable.ic_status_out_for_delivery;
+                case "Pending":
+                    return R.drawable.ic_status_pending;
+                default:
+                    return R.drawable.ic_status_pending;
+            }
+        }
+        return R.drawable.ic_status_pending;
+    }
 }

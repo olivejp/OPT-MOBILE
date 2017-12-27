@@ -43,6 +43,7 @@ public class HistoriqueColisFragment extends Fragment {
 
     /**
      * Instanciation d'un nouveau fragment
+     *
      * @param colis
      * @return
      */
@@ -64,6 +65,7 @@ public class HistoriqueColisFragment extends Fragment {
     /**
      * On attach, if the parent activity implements ListenToSelectedColis,
      * we record the activity in mListener.
+     *
      * @param context
      */
     @Override
@@ -78,6 +80,7 @@ public class HistoriqueColisFragment extends Fragment {
     /**
      * We pass the id colis passed through the constructor to the viewModel.
      * If mListener is not null we will pass the id colis to it.
+     *
      * @param savedInstanceState
      */
     @Override
