@@ -43,9 +43,9 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:windowSoftInputMode="adjustResize"
-        app:backgroundTint="@color/colorPrimaryDark"
+        app:backgroundTint="@color/colorAccent"
         app:backgroundTintMode="src_over"
-        app:rippleColor="@color/colorAccent"
+        app:rippleColor="@color/colorAccentDark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:srcCompat="@drawable/ic_add_white_48dp" />

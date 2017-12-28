@@ -58,7 +58,7 @@ public class EtapeAcheminementService {
         List<EtapeEntity> etapeList = new ArrayList<>();
 
         // Query the content provider to get a cursor of Etape
-        Cursor cursorListEtape = context.getContentResolver().query(OptProvider.ListEtapeAcheminement.withIdColis(idColis), null, null, null, EtapeAcheminementInterface.DATE + " DESC");
+        Cursor cursorListEtape = context.getContentResolver().query(OptProvider.ListEtapeAcheminement.withIdColis(idColis), null, null, null, EtapeAcheminementInterface.DATE + " ASC");
 
         if (cursorListEtape != null) {
             while (cursorListEtape.moveToNext()) {

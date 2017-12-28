@@ -20,6 +20,7 @@
         android:layout_marginRight="20dp"
         android:layout_marginTop="40dp"
         android:gravity="center_horizontal|center_vertical"
+        android:textColor="@android:color/white"
         android:text="Commencez à suivre vos colis.\n\nAppuyez sur le bouton + pour ajouter un nouveau colis au suivi.\n\nDès que la situation de vos colis évoluera une notification vous sera envoyée. (ce service nécessite une connexion internet)"
         android:visibility="gone" />
 </android.support.design.widget.CoordinatorLayout>

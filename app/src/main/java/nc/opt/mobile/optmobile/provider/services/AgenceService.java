@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 
 import org.chalup.microorm.MicroOrm;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +27,12 @@ public class AgenceService {
     private static final MicroOrm uOrm = new MicroOrm();
 
     public static void populateContentProviderFromAsset(Context context) {
-        String json = Utilities.loadStringFromAsset(context, "opt_agencies.json");
+        String json = null;
+        try {
+            json = Utilities.loadStringFromAsset(context, "opt_agencies.json");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Gson gson = new Gson();
 
         // Okay we 've got the list in a json let's just getColisFromHtml to an arrayList and send it to the content provider.

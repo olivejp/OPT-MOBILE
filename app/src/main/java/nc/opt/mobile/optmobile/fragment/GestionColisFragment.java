@@ -10,22 +10,27 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.adapter.ColisAdapter;
 import nc.opt.mobile.optmobile.fragment.viewmodel.GestionColisFragmentViewModel;
+import nc.opt.mobile.optmobile.glide.RecyclerItemTouchHelper;
+import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 
 /**
  * Fragment that shows mList of followed parcel
  * -FAB allow to add a parcel
  */
-public class GestionColisFragment extends Fragment {
+public class GestionColisFragment extends Fragment implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
 
     private ColisAdapter mColisAdapter;
     private AppCompatActivity mActivity;
@@ -84,8 +89,14 @@ public class GestionColisFragment extends Fragment {
         mRecyclerView.setAdapter(mColisAdapter);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mActivity, DividerItemDecoration.VERTICAL));
 
+        // Add Swipe to the recycler view
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(mRecyclerView);
+
         updateVisibility();
-        updateViewFromViewModel();
+
+        // get history from the view model
+        viewModel.getColisEntities().observe(this, this::updateViewFromViewModel);
 
         return rootView;
     }
@@ -101,14 +112,18 @@ public class GestionColisFragment extends Fragment {
     /**
      * Update the UI from the viewModel
      */
-    private void updateViewFromViewModel() {
-        // get history from the view model
-        viewModel.getColisEntities().observe(this, colisEntities -> {
-            mColisAdapter.setColisList(colisEntities);
-            mColisAdapter.notifyDataSetChanged();
+    private void updateViewFromViewModel(List<ColisEntity> colisEntities) {
+        mColisAdapter.setColisList(colisEntities);
+        mColisAdapter.notifyDataSetChanged();
+        updateVisibility();
+    }
 
-            // Change the visibility of the textView
-            updateVisibility();
-        });
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
+        // ToDo demander à l'utilisateur s'il veut vraiment supprimer !!
+        if (viewHolder instanceof ColisAdapter.ViewHolderStepParcel) {
+            ColisAdapter.ViewHolderStepParcel r = (ColisAdapter.ViewHolderStepParcel) viewHolder;
+            viewModel.deleteColis(r.getmColis().getIdColis());
+        }
     }
 }
