@@ -54,7 +54,7 @@ public class EtapeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         } else {
             viewHeader.mStepCommentaire.setText(viewHeader.etape.getCommentaire());
         }
-        viewHeader.mStepStatus.setImageResource(EtapeAcheminementService.getStatusDrawable(viewHeader.etape));
+        viewHeader.mStepStatus.setImageResource(EtapeAcheminementService.getStatusDrawable(viewHeader.etape.getStatus()));
     }
 
     @Override

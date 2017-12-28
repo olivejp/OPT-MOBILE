@@ -75,7 +75,9 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
             holder.mStepLastDate.setVisibility(View.VISIBLE);
             holder.mStepLastPays.setVisibility(View.VISIBLE);
             if (etape.getStatus() != null) {
-                holder.mStepStatus.setImageResource(EtapeAcheminementService.getStatusDrawable(etape));
+                holder.mStepStatus.setImageResource(EtapeAcheminementService.getStatusDrawable(etape.getStatus()));
+            } else {
+                holder.mStepStatus.setImageResource(R.drawable.ic_status_pending);
             }
         } else {
             holder.mStepLastDate.setText(null);

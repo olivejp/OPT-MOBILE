@@ -180,9 +180,9 @@ public class EtapeAcheminementService {
         return entity;
     }
 
-    public static int getStatusDrawable(EtapeEntity etapeEntity) {
-        if (etapeEntity != null && etapeEntity.getStatus() != null) {
-            switch (etapeEntity.getStatus()) {
+    public static int getStatusDrawable(String status) {
+        if (status != null) {
+            switch (status) {
                 case "InfoReceived":
                     return R.drawable.ic_status_info_receive;
                 case "AttemptFail":
