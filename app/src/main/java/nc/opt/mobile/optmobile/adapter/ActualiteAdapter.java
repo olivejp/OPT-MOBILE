@@ -53,12 +53,9 @@ public class ActualiteAdapter extends RecyclerView.Adapter<ActualiteAdapter.View
         holder.mContenu.setText(holder.mActualite.getContenu());
         if (holder.mActualite.getDismissable().equals("1")) {
             holder.mImageButtonDismiss.setVisibility(View.VISIBLE);
-            holder.mImageButtonDismiss.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ActualiteService.dismiss(mContext, holder.mActualite.getIdActualite());
-                    mContext.getContentResolver().notifyChange(OptProvider.ListActualite.LIST_ACTUALITE, null);
-                }
+            holder.mImageButtonDismiss.setOnClickListener(v -> {
+                ActualiteService.dismiss(mContext, holder.mActualite.getIdActualite());
+                mContext.getContentResolver().notifyChange(OptProvider.ListActualite.LIST_ACTUALITE, null);
             });
         } else {
             holder.mImageButtonDismiss.setVisibility(View.GONE);

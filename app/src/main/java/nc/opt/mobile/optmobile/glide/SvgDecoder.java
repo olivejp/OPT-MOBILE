@@ -17,7 +17,6 @@ import java.io.InputStream;
 public class SvgDecoder implements ResourceDecoder<InputStream, SVG> {
     @Override
     public boolean handles(InputStream source, Options options) throws IOException {
-        // TODO: Can we tell?
         return true;
     }
 

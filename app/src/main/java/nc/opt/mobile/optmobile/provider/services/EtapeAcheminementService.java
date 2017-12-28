@@ -39,12 +39,14 @@ public class EtapeAcheminementService {
 
     private static final MicroOrm uOrm = new MicroOrm();
 
+    private static final String AND = "=? AND ";
+
     // Check existence
-    private static String mWhereEtapeExistenceWhere = ID_COLIS.concat("=? AND ")
-            .concat(DATE).concat("=? AND ")
-            .concat(DESCRIPTION).concat("=? AND ")
-            .concat(COMMENTAIRE).concat("=? AND ")
-            .concat(LOCALISATION).concat("=? AND ")
+    private static String mWhereEtapeExistenceWhere = ID_COLIS.concat(AND)
+            .concat(DATE).concat(AND)
+            .concat(DESCRIPTION).concat(AND)
+            .concat(COMMENTAIRE).concat(AND)
+            .concat(LOCALISATION).concat(AND)
             .concat(PAYS).concat("=?");
 
     /**
@@ -56,7 +58,7 @@ public class EtapeAcheminementService {
         List<EtapeEntity> etapeList = new ArrayList<>();
 
         // Query the content provider to get a cursor of Etape
-        Cursor cursorListEtape = context.getContentResolver().query(OptProvider.ListEtapeAcheminement.withIdColis(idColis), null, null, null, EtapeAcheminementInterface.DATE);
+        Cursor cursorListEtape = context.getContentResolver().query(OptProvider.ListEtapeAcheminement.withIdColis(idColis), null, null, null, EtapeAcheminementInterface.DATE + " DESC");
 
         if (cursorListEtape != null) {
             while (cursorListEtape.moveToNext()) {

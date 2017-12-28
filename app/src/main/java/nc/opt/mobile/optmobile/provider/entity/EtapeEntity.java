@@ -39,6 +39,7 @@ public class EtapeEntity implements Parcelable {
     public EtapeEntity() {
     }
 
+    @SuppressWarnings("squid:S00107")
     public EtapeEntity(String idEtapeAcheminement, String idColis, Long date, String pays, String localisation, String description, String commentaire, String status) {
         this.idEtapeAcheminement = idEtapeAcheminement;
         this.idColis = idColis;
@@ -69,6 +70,19 @@ public class EtapeEntity implements Parcelable {
             return false;
         return commentaire != null ? commentaire.equals(etapeEntity.commentaire) : etapeEntity.commentaire == null;
 
+    }
+
+    @Override
+    public int hashCode() {
+        int result = idEtapeAcheminement != null ? idEtapeAcheminement.hashCode() : 0;
+        result = 31 * result + (idColis != null ? idColis.hashCode() : 0);
+        result = 31 * result + (date != null ? date.hashCode() : 0);
+        result = 31 * result + (pays != null ? pays.hashCode() : 0);
+        result = 31 * result + (localisation != null ? localisation.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (commentaire != null ? commentaire.hashCode() : 0);
+        result = 31 * result + (status != null ? status.hashCode() : 0);
+        return result;
     }
 
     public String getIdEtapeAcheminement() {

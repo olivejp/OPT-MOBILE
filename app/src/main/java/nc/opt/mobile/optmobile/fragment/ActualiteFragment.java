@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -56,16 +55,13 @@ public class ActualiteFragment extends Fragment implements ProviderObserver.Prov
     @BindView(R.id.text_explicatif_actualite)
     TextView textExplicatifActualite;
 
-    private OnCompleteListener<QuerySnapshot> onCompleteListener = new OnCompleteListener<QuerySnapshot>() {
-        @Override
-        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-            if (task.isSuccessful()) {
-                for (DocumentSnapshot document : task.getResult()) {
-                    Log.d(TAG, document.getId() + " => " + document.getData());
-                }
-            } else {
-                Log.w(TAG, "Error getting documents.", task.getException());
+    private OnCompleteListener<QuerySnapshot> onCompleteListener = task -> {
+        if (task.isSuccessful()) {
+            for (DocumentSnapshot document : task.getResult()) {
+                Log.d(TAG, document.getId() + " => " + document.getData());
             }
+        } else {
+            Log.w(TAG, "Error getting documents.", task.getException());
         }
     };
 
@@ -107,12 +103,12 @@ public class ActualiteFragment extends Fragment implements ProviderObserver.Prov
 
         @Override
         public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
+            // Do nothing
         }
 
         @Override
         public void onCancelled(DatabaseError databaseError) {
-
+            // Do nothing
         }
     };
 

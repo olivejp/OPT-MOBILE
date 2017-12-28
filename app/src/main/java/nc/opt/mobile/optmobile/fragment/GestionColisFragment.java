@@ -29,7 +29,6 @@ public class GestionColisFragment extends Fragment {
 
     private ColisAdapter mColisAdapter;
     private AppCompatActivity mActivity;
-    private boolean mTwoPane;
     private static final String ARG_TWO_PANE = "ARG_TWO_PANE";
     private GestionColisFragmentViewModel viewModel;
 
@@ -63,7 +62,7 @@ public class GestionColisFragment extends Fragment {
 
         viewModel = ViewModelProviders.of(this).get(GestionColisFragmentViewModel.class);
 
-        mTwoPane = false;
+        boolean mTwoPane = false;
         if (getArguments() != null && getArguments().containsKey(ARG_TWO_PANE)) {
             mTwoPane = getArguments().getBoolean(ARG_TWO_PANE);
         }

@@ -122,49 +122,9 @@ public class ColisService {
     }
 
     public static Observable<List<ColisEntity>> observableListColisFromProvider(Context context, boolean onlyActive) {
-        List<ColisEntity> colisList = new ArrayList<>();
-
-        // Query the content provider to get a cursor of ColisDto
-        Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, onlyActive ? selectionOnlyActiveColis : null, onlyActive ? argsOnlyActiveColisArgs : null, null);
-
-        if (cursorListColis != null) {
-            while (cursorListColis.moveToNext()) {
-                ColisEntity colis = getFromCursor(cursorListColis);
-                List<EtapeEntity> listEtape = EtapeAcheminementService.listFromProvider(context, colis.getIdColis());
-                colis.setEtapeAcheminementArrayList(listEtape);
-                colisList.add(colis);
-            }
-            cursorListColis.close();
-        }
-        return Observable.just(colisList)
+        return Observable.just(listFromProvider(context, onlyActive))
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread());
-    }
-
-    /**
-     * @param context
-     * @param onlyActive
-     * @return
-     */
-    public static Observable<ColisEntity> observableListFromProvider(Context context, boolean onlyActive) {
-        List<ColisEntity> colisList = new ArrayList<>();
-
-        // Query the content provider to get a cursor of ColisDto
-        Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, onlyActive ? selectionOnlyActiveColis : null, onlyActive ? argsOnlyActiveColisArgs : null, null);
-
-        if (cursorListColis != null) {
-            while (cursorListColis.moveToNext()) {
-                ColisEntity colis = getFromCursor(cursorListColis);
-                List<EtapeEntity> listEtape = EtapeAcheminementService.listFromProvider(context, colis.getIdColis());
-                colis.setEtapeAcheminementArrayList(listEtape);
-                colisList.add(colis);
-            }
-            cursorListColis.close();
-        }
-        return Observable.just(colisList)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.computation())
-                .flatMap(Observable::fromIterable);
     }
 
     /**
@@ -248,23 +208,6 @@ public class ColisService {
         String where = ColisInterface.ID_COLIS.concat("=?");
 
         return context.getContentResolver().update(OptProvider.ListColis.LIST_COLIS, contentValues, where, new String[]{idColis});
-    }
-
-    /**
-     * @param entity
-     * @return
-     */
-    public static ColisDto convertToDto(ColisEntity entity) {
-        ColisDto dto = new ColisDto();
-        dto.setIdColis(entity.getIdColis());
-        if (entity.getEtapeAcheminementArrayList() != null) {
-            List<EtapeAcheminementDto> listEtapeDto = new ArrayList<>();
-            for (EtapeEntity etapeEntity : entity.getEtapeAcheminementArrayList()) {
-                listEtapeDto.add(EtapeAcheminementService.convertToDto(etapeEntity));
-            }
-            dto.setEtapeAcheminementDtoArrayList(listEtapeDto);
-        }
-        return dto;
     }
 
     /**

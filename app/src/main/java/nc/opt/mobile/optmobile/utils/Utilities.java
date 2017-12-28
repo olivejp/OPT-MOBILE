@@ -23,10 +23,19 @@ public class Utilities {
     private Utilities() {
     }
 
-    public static String loadStringFromAsset(Context context, String fileName) {
+    public static void hideKeyboard(Context context, View view) {
+        // Hide the keyboard
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
+    public static String loadStringFromAsset(Context context, String fileName) throws IOException {
         String json;
+        InputStream is = null;
         try {
-            InputStream is = context.getAssets().open(fileName);
+            is = context.getAssets().open(fileName);
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
@@ -35,6 +44,10 @@ public class Utilities {
         } catch (IOException ex) {
             Log.e(TAG, ex.getMessage(), ex);
             return null;
+        } finally {
+            if (is != null) {
+                is.close();
+            }
         }
         return json;
     }
@@ -46,7 +59,7 @@ public class Utilities {
      * @param img             From NoticeDialogFragment
      * @param tag             A text to be a tag
      */
-    public static void SendDialogByFragmentManager(FragmentManager fragmentManager, String message, int type, int img, @Nullable String tag) {
+    public static void sendDialogByFragmentManager(FragmentManager fragmentManager, String message, int type, int img, @Nullable String tag) {
         NoticeDialogFragment dialogErreur = new NoticeDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putString(NoticeDialogFragment.P_MESSAGE, message);
@@ -57,8 +70,8 @@ public class Utilities {
     }
 
     // Envoi d'un message
-    public static void SendDialogByActivity(Activity activity, String message, int type, int img, String tag) {
-        SendDialogByFragmentManager(activity.getFragmentManager(), message, type, img, tag);
+    public static void sendDialogByActivity(Activity activity, String message, int type, int img, String tag) {
+        sendDialogByFragmentManager(activity.getFragmentManager(), message, type, img, tag);
     }
 
     public static void hideKeyboard(Context ctx) {

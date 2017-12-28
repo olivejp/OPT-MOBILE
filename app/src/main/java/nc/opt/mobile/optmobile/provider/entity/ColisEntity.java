@@ -45,7 +45,7 @@ public class ColisEntity implements Parcelable {
 
         ColisEntity that = (ColisEntity) o;
 
-        if (deleted != that.deleted) return false;
+        if (deleted.equals(that.deleted)) return false;
         if (idColis != null ? !idColis.equals(that.idColis) : that.idColis != null) return false;
         if (description != null ? !description.equals(that.description) : that.description != null)
             return false;

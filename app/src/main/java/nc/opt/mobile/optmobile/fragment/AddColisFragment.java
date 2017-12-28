@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -62,11 +61,7 @@ public class AddColisFragment extends Fragment {
     public void searchParcel(View view) {
         if (!editIdParcel.getText().toString().isEmpty()) {
 
-            // Hide the keyboard
-            InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (imm != null) {
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            }
+
 
             // Get the idColis from the view
             String idColis = editIdParcel.getText().toString().toUpperCase();

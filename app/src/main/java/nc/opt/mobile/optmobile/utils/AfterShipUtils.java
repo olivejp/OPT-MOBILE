@@ -11,7 +11,6 @@ import nc.opt.mobile.optmobile.domain.suivi.aftership.ResponseDataDetectCourier;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.SendTrackingData;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.Tracking;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.TrackingData;
-import nc.opt.mobile.optmobile.domain.suivi.aftership.TrackingDelete;
 import nc.opt.mobile.optmobile.network.RetrofitClient;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
@@ -35,9 +34,6 @@ public class AfterShipUtils {
 
     // This consumer only catch the Throwables and log them.
     private static Consumer<Throwable> consumerThrowable = throwable -> Log.e(TAG, "Erreur sur l'API AfterShip : " + throwable.getMessage(), throwable);
-
-    // This consumer is only called when deleting colis
-    private static Consumer<TrackingDelete> consumerDeleting = trackingDelete -> Log.d(TAG, "Suppression effective du tracking " + trackingDelete.getId());
 
     // Found on : https://medium.com/@v.danylo/server-polling-and-retrying-failed-operations-with-retrofit-and-rxjava-8bcc7e641a5a
     private static <T> ObservableTransformer<T, Long> zipWithFlatMap() {

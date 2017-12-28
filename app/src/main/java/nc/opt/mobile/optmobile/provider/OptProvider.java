@@ -13,7 +13,6 @@ import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
 import nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface;
 
 import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.ID_FIREBASE;
-import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.TYPE;
 
 /**
  * Created by orlanth23 on 10/08/2017.
@@ -41,16 +40,6 @@ public class OptProvider {
                 type = "vnd.android.cursor.dir/list",
                 defaultSort = AgenceInterface.OBJECTID + " ASC")
         public static final Uri LIST_AGENCY = Uri.parse("content://" + AUTHORITY + "/" + AGENCY);
-
-        @InexactContentUri(
-                path = "agency/#",
-                name = "AGENCY_ID",
-                type = "vnd.android.cursor.item/list",
-                whereColumn = AgenceInterface.OBJECTID,
-                pathSegment = 1)
-        public static Uri withId(long id) {
-            return Uri.parse("content://" + AUTHORITY + "/" + AGENCY + "/" + id);
-        }
     }
 
     @TableEndpoint(table = OptDatabase.COLIS)
@@ -85,16 +74,6 @@ public class OptProvider {
                 type = "vnd.android.cursor.dir/list",
                 defaultSort = EtapeAcheminementInterface.ID_ETAPE_ACHEMINEMENT + " ASC")
         public static final Uri LIST_ETAPE = Uri.parse("content://" + AUTHORITY + "/" + ETAPE_ACHEMINEMENT);
-
-        @InexactContentUri(
-                path = "etape_acheminement/#",
-                name = "ETAPE_ACHEMINEMENT_ID",
-                type = "vnd.android.cursor.item/item",
-                whereColumn = EtapeAcheminementInterface.ID_ETAPE_ACHEMINEMENT,
-                pathSegment = 1)
-        public static Uri withId(long id) {
-            return Uri.parse("content://" + AUTHORITY + "/" + ETAPE_ACHEMINEMENT + "/" + id);
-        }
 
         @InexactContentUri(
                 path = "etape_acheminement/id_colis/*",
@@ -136,16 +115,6 @@ public class OptProvider {
                 pathSegment = 2)
         public static Uri withFirebaseId(String firebaseId) {
             return Uri.parse("content://" + AUTHORITY + "/" + ACTUALITE + "/" + ID_FIREBASE + "/" + firebaseId);
-        }
-
-        @InexactContentUri(
-                path = "actualite/type/*",
-                name = "TYPE",
-                type = "vnd.android.cursor.dir/list",
-                whereColumn = TYPE,
-                pathSegment = 2)
-        public static Uri withType(String type) {
-            return Uri.parse("content://" + AUTHORITY + "/" + ACTUALITE + "/" + TYPE + "/" + type);
         }
     }
 }

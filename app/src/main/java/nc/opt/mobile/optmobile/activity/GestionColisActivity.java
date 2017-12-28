@@ -17,6 +17,7 @@ import nc.opt.mobile.optmobile.job.task.ParamSyncTask;
 import nc.opt.mobile.optmobile.job.task.SyncTask;
 import nc.opt.mobile.optmobile.service.SyncColisService;
 
+@SuppressWarnings("squid:MaximumInheritanceDepth")
 public class GestionColisActivity extends AppCompatActivity implements NetworkReceiver.NetworkChangeListener, HistoriqueColisFragment.ListenToSelectedColis {
 
     public static final String TAG_PARCEL_RESULT_SEARCH_FRAGMENT = "TAG_PARCEL_RESULT_SEARCH_FRAGMENT";

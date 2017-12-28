@@ -14,6 +14,9 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
 
 public class GlideRequester {
 
+    private GlideRequester() {
+    }
+
     public static RequestBuilder<PictureDrawable> getSvgRequester(Context context, @DrawableRes int onError, @DrawableRes int placeholder) {
         return GlideApp.with(context)
                 .as(PictureDrawable.class)

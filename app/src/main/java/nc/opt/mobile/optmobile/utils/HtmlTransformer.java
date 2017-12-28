@@ -85,6 +85,7 @@ public class HtmlTransformer {
                 String localisation = colonneTd.get(2).text();
                 String description = colonneTd.get(3).text();
                 String commentaire = colonneTd.get(4).text();
+                // ToDo pourquoi l'icone n'est pas bonne dans le cas d'un rapport OPT ???
                 String status = getCorrespondingStatus(description);
 
                 EtapeAcheminementDto etapeAcheminementDto = new EtapeAcheminementDto(date, pays, localisation, description, commentaire, status);

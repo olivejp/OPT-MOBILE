@@ -45,7 +45,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
@@ -230,25 +229,22 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
             SettingsClient client = LocationServices.getSettingsClient(getActivity());
             Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
 
-            task.addOnFailureListener(getActivity(), new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    int statusCode = ((ApiException) e).getStatusCode();
-                    switch (statusCode) {
-                        case CommonStatusCodes.RESOLUTION_REQUIRED:
-                            try {
-                                ResolvableApiException resolvable = (ResolvableApiException) e;
-                                resolvable.startResolutionForResult(getActivity(),
-                                        REQUEST_CHECK_SETTINGS);
-                            } catch (IntentSender.SendIntentException sendEx) {
-                                // Ignore the error.
-                            }
-                            break;
-                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                            break;
-                        default:
-                            break;
-                    }
+            task.addOnFailureListener(getActivity(), e -> {
+                int statusCode = ((ApiException) e).getStatusCode();
+                switch (statusCode) {
+                    case CommonStatusCodes.RESOLUTION_REQUIRED:
+                        try {
+                            ResolvableApiException resolvable = (ResolvableApiException) e;
+                            resolvable.startResolutionForResult(getActivity(),
+                                    REQUEST_CHECK_SETTINGS);
+                        } catch (IntentSender.SendIntentException sendEx) {
+                            // Ignore the error.
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        break;
+                    default:
+                        break;
                 }
             });
         }
@@ -420,10 +416,8 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED || grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 enableLocation();
             }
-        } else if (requestCode == RC_PERMISSION_CALL_PHONE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                callSelectedAgency();
-            }
+        } else if (requestCode == RC_PERMISSION_CALL_PHONE && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            callSelectedAgency();
         }
     }
 }

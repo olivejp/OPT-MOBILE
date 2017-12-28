@@ -6,6 +6,7 @@ import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.fragment.AgencyMapFragment;
 import nc.opt.mobile.optmobile.interfaces.AttachToPermissionActivity;
 
+@SuppressWarnings("squid:MaximumInheritanceDepth")
 public class AgenceActivity extends AttachToPermissionActivity {
 
     private static final String SAVED_MAP_FRAGMENT = "SAVED_MAP_FRAGMENT";

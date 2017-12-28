@@ -63,6 +63,7 @@ import static nc.opt.mobile.optmobile.provider.services.AgenceService.populateCo
 import static nc.opt.mobile.optmobile.provider.services.ColisService.count;
 import static nc.opt.mobile.optmobile.utils.Constants.PREF_USER;
 
+@SuppressWarnings("squid:MaximumInheritanceDepth")
 public class MainActivity extends AttachToPermissionActivity
         implements NavigationView.OnNavigationItemSelectedListener, NoticeDialogFragment.NoticeDialogListener, ProviderObserver.ProviderObserverListener {
 
@@ -355,7 +356,7 @@ public class MainActivity extends AttachToPermissionActivity
                 if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                     getSupportFragmentManager().popBackStack();
                 } else {
-                    Utilities.SendDialogByActivity(this, getString(R.string.want_you_quit), NoticeDialogFragment.TYPE_BOUTON_YESNO, NoticeDialogFragment.TYPE_IMAGE_INFORMATION, DIALOG_TAG_EXIT);
+                    Utilities.sendDialogByActivity(this, getString(R.string.want_you_quit), NoticeDialogFragment.TYPE_BOUTON_YESNO, NoticeDialogFragment.TYPE_IMAGE_INFORMATION, DIALOG_TAG_EXIT);
                 }
             }
         }

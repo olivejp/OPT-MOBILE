@@ -1,10 +1,11 @@
 package nc.opt.mobile.optmobile.activity;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import nc.opt.mobile.optmobile.R;
 
+@SuppressWarnings("squid:MaximumInheritanceDepth")
 public class AddColisActivity extends AppCompatActivity {
 
     @Override

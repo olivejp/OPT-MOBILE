@@ -203,10 +203,10 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
                 // we try to delete the remote
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null) {
-                    FirebaseService.deleteRemoteColis(user.getUid(), idColisToRemove, (databaseError, databaseReference) -> {
+                    FirebaseService.deleteRemoteColis(user.getUid(), idColisToRemove, (databaseError, databaseReference) ->
                         // If remote has been deleted, we delete local
-                        realDelete(mContext, idColisToRemove);
-                    });
+                        realDelete(mContext, idColisToRemove)
+                    );
                 }
 
                 Snackbar snackbar;

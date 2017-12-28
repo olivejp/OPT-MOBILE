@@ -9,6 +9,7 @@ import java.util.ArrayList;
  * Created by orlanth23 on 03/10/2017.
  */
 
+@SuppressWarnings("squid:MaximumInheritanceDepth")
 public abstract class AttachToPermissionActivity extends AppCompatActivity {
 
     private static ArrayList<ListenerPermissionResult> mListenerPermissionResult = new ArrayList<>();
