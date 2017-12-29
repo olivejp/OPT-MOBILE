@@ -1,6 +1,5 @@
 package nc.opt.mobile.optmobile.fragment;
 
-
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,15 +18,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
+import nc.opt.mobile.optmobile.job.task.ParamSyncTask;
+import nc.opt.mobile.optmobile.job.task.SyncTask;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.services.ActualiteService;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
 import nc.opt.mobile.optmobile.service.FirebaseService;
-import nc.opt.mobile.optmobile.service.SyncColisService;
 
-/**
- *
- */
 public class AddColisFragment extends Fragment {
 
     @BindView(R.id.edit_id_parcel)
@@ -61,8 +58,6 @@ public class AddColisFragment extends Fragment {
     public void searchParcel(View view) {
         if (!editIdParcel.getText().toString().isEmpty()) {
 
-
-
             // Get the idColis from the view
             String idColis = editIdParcel.getText().toString().toUpperCase();
 
@@ -82,8 +77,12 @@ public class AddColisFragment extends Fragment {
                 long insertResult = ColisService.insert(mActivity, colis);
                 if (insertResult != -1) {
 
-                    // On lance une première fois le service de synchro
-                    SyncColisService.launchSynchroByIdColis(mActivity, idColis, false);
+                    // Launch asyncTask to query the server
+                    ParamSyncTask paramSyncTask = new ParamSyncTask();
+                    paramSyncTask.setContext(mActivity);
+                    paramSyncTask.setIdColis(idColis);
+                    SyncTask syncTask = new SyncTask(SyncTask.TypeTask.SOLO);
+                    syncTask.execute(paramSyncTask);
 
                     Snackbar.make(view, String.format(getString(R.string.colis_added), idColis), Snackbar.LENGTH_LONG).show();
 

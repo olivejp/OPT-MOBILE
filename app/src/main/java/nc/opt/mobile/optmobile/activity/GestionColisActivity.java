@@ -92,15 +92,16 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
                 return super.onOptionsItemSelected(item);
             }
         } else if (i == R.id.nav_refresh && NetworkReceiver.checkConnection(this)) {
+            ParamSyncTask paramSyncTask = new ParamSyncTask();
+            paramSyncTask.setContext(this);
+            SyncTask syncTask;
             if (mIdColisSelected != null) {
-                ParamSyncTask paramSyncTask = new ParamSyncTask(this, mIdColisSelected);
-                SyncTask syncTask = new SyncTask(SyncTask.TypeTask.SOLO);
-                syncTask.execute(paramSyncTask);
+                paramSyncTask.setIdColis(mIdColisSelected);
+                syncTask = new SyncTask(SyncTask.TypeTask.SOLO);
             } else {
-                ParamSyncTask paramSyncTask = new ParamSyncTask(this, null);
-                SyncTask syncTask = new SyncTask(SyncTask.TypeTask.MULTIPLE);
-                syncTask.execute(paramSyncTask);
+                syncTask = new SyncTask(SyncTask.TypeTask.MULTIPLE);
             }
+            syncTask.execute(paramSyncTask);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -130,7 +131,6 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
 
     @Override
     public void onDialogPositiveClick(NoticeDialogFragment dialog) {
-
         // Récupération du bundle qu'on a envoyé au NoticeDialogFragment
         if (dialog.getBundle() != null && dialog.getBundle().containsKey(ARG_NOTICE_BUNDLE_COLIS)) {
 
@@ -142,7 +142,6 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
                 ColisService.delete(this, colisEntity.getIdColis());
             }
         }
-
     }
 
     @Override

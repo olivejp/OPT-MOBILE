@@ -2,15 +2,11 @@ package nc.opt.mobile.optmobile.job.task;
 
 import android.content.Context;
 
-import io.reactivex.annotations.Nullable;
-
 public class ParamSyncTask {
     private Context context;
     private String idColis;
 
-    public ParamSyncTask(Context context, @Nullable String idColis) {
-        this.context = context;
-        this.idColis = idColis;
+    public ParamSyncTask() {
     }
 
     public Context getContext() {
