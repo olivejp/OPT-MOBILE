@@ -25,16 +25,22 @@ import nc.opt.mobile.optmobile.adapter.ColisAdapter;
 import nc.opt.mobile.optmobile.fragment.viewmodel.GestionColisFragmentViewModel;
 import nc.opt.mobile.optmobile.glide.RecyclerItemTouchHelper;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
+import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
+import nc.opt.mobile.optmobile.utils.Utilities;
 
 /**
  * Fragment that shows mList of followed parcel
  * -FAB allow to add a parcel
  */
-public class GestionColisFragment extends Fragment implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
+public class GestionColisFragment extends Fragment implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener, NoticeDialogFragment.NoticeDialogListener {
 
     private ColisAdapter mColisAdapter;
     private AppCompatActivity mActivity;
     private static final String ARG_TWO_PANE = "ARG_TWO_PANE";
+    private static final String ARG_NOTICE_BUNDLE_COLIS = "ARG_NOTICE_BUNDLE_COLIS";
+
+    private static final String DIALOG_TAG_DELETE = "DIALOG_TAG_DELETE";
+
     private GestionColisFragmentViewModel viewModel;
 
     @BindView(R.id.recycler_parcel_list_management)
@@ -120,10 +126,37 @@ public class GestionColisFragment extends Fragment implements RecyclerItemTouchH
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
-        // ToDo demander à l'utilisateur s'il veut vraiment supprimer !!
         if (viewHolder instanceof ColisAdapter.ViewHolderStepParcel) {
             ColisAdapter.ViewHolderStepParcel r = (ColisAdapter.ViewHolderStepParcel) viewHolder;
-            viewModel.deleteColis(r.getmColis().getIdColis());
+
+            // Création d'un bundle dans lequel on va passer nos items
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(ARG_NOTICE_BUNDLE_COLIS, r.getmColis());
+
+            // Appel d'un fragment qui va demander à l'utilisateur s'il est sûr de vouloir supprimer le colis.
+            Utilities.sendDialogByFragmentManager(getFragmentManager(), "Etes-vous sûr de vouloir supprimer ce colis ?", NoticeDialogFragment.TYPE_BOUTON_YESNO, NoticeDialogFragment.TYPE_IMAGE_INFORMATION, DIALOG_TAG_DELETE, bundle);
         }
+    }
+
+    @Override
+    public void onDialogPositiveClick(NoticeDialogFragment dialog) {
+
+        // Récupération du bundle qu'on a envoyé au NoticeDialogFragment
+        if (dialog.getBundle() != null && dialog.getBundle().containsKey(ARG_NOTICE_BUNDLE_COLIS)) {
+
+            // Récupération du colis présent dans le bundle
+            ColisEntity colisEntity = dialog.getBundle().getParcelable(ARG_NOTICE_BUNDLE_COLIS);
+            if (colisEntity != null) {
+
+                // Suppression du colis
+                viewModel.deleteColis(colisEntity.getIdColis());
+            }
+        }
+
+    }
+
+    @Override
+    public void onDialogNegativeClick(NoticeDialogFragment dialog) {
+        // Do Nothing
     }
 }

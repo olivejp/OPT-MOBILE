@@ -1,7 +1,6 @@
 package nc.opt.mobile.optmobile.activity;
 
 import android.Manifest;
-import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -356,7 +355,7 @@ public class MainActivity extends AttachToPermissionActivity
                 if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                     getSupportFragmentManager().popBackStack();
                 } else {
-                    Utilities.sendDialogByActivity(this, getString(R.string.want_you_quit), NoticeDialogFragment.TYPE_BOUTON_YESNO, NoticeDialogFragment.TYPE_IMAGE_INFORMATION, DIALOG_TAG_EXIT);
+                    Utilities.sendDialogByActivity(this, getString(R.string.want_you_quit), NoticeDialogFragment.TYPE_BOUTON_YESNO, NoticeDialogFragment.TYPE_IMAGE_INFORMATION, DIALOG_TAG_EXIT, null);
                 }
             }
         }
@@ -439,15 +438,15 @@ public class MainActivity extends AttachToPermissionActivity
     }
 
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
+    public void onDialogPositiveClick(NoticeDialogFragment dialog) {
         String s = dialog.getTag();
-        if (s.equals(DIALOG_TAG_EXIT)) {
+        if (s != null && s.equals(DIALOG_TAG_EXIT)) {
             finish();
         }
     }
 
     @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {
+    public void onDialogNegativeClick(NoticeDialogFragment dialog) {
         // Do nothing
     }
 

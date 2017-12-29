@@ -1,10 +1,11 @@
 package nc.opt.mobile.optmobile.utils;
 
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -21,14 +22,6 @@ public class Utilities {
     private static final String TAG = Utilities.class.getName();
 
     private Utilities() {
-    }
-
-    public static void hideKeyboard(Context context, View view) {
-        // Hide the keyboard
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) {
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
     }
 
     public static String loadStringFromAsset(Context context, String fileName) throws IOException {
@@ -59,19 +52,20 @@ public class Utilities {
      * @param img             From NoticeDialogFragment
      * @param tag             A text to be a tag
      */
-    public static void sendDialogByFragmentManager(FragmentManager fragmentManager, String message, int type, int img, @Nullable String tag) {
+    public static void sendDialogByFragmentManager(FragmentManager fragmentManager, String message, int type, int img, @Nullable String tag, @Nullable Bundle bundlePar) {
         NoticeDialogFragment dialogErreur = new NoticeDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putString(NoticeDialogFragment.P_MESSAGE, message);
         bundle.putInt(NoticeDialogFragment.P_TYPE, type);
         bundle.putInt(NoticeDialogFragment.P_IMG, img);
+        bundle.putBundle(NoticeDialogFragment.P_BUNDLE, bundlePar);
         dialogErreur.setArguments(bundle);
         dialogErreur.show(fragmentManager, tag);
     }
 
     // Envoi d'un message
-    public static void sendDialogByActivity(Activity activity, String message, int type, int img, String tag) {
-        sendDialogByFragmentManager(activity.getFragmentManager(), message, type, img, tag);
+    public static void sendDialogByActivity(AppCompatActivity activity, String message, int type, int img, String tag, @Nullable Bundle bundle) {
+        sendDialogByFragmentManager(activity.getSupportFragmentManager(), message, type, img, tag, bundle);
     }
 
     public static void hideKeyboard(Context ctx) {
@@ -83,5 +77,13 @@ public class Utilities {
             return;
 
         inputManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+    }
+
+    public static void hideKeyboard(Context context, View view) {
+        // Hide the keyboard
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }
