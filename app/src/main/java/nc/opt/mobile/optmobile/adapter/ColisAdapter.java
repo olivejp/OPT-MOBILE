@@ -3,6 +3,7 @@ package nc.opt.mobile.optmobile.adapter;
 import android.content.Context;
 import android.graphics.drawable.PictureDrawable;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -46,6 +47,21 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         this.requester = GlideRequester.getSvgRequester(mContext, R.drawable.ic_archive_grey_900_48dp, R.drawable.ic_archive_grey_900_48dp);
     }
 
+    private View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            ColisEntity colis = (ColisEntity) v.getTag();
+            HistoriqueColisFragment historiqueColisFragment = HistoriqueColisFragment.newInstance(colis);
+            FragmentTransaction ft = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
+            if (mTwoPane) {
+                ft.replace(R.id.frame_detail, historiqueColisFragment, GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT).commit();
+            } else {
+                ft.replace(R.id.frame_master, historiqueColisFragment, GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT).addToBackStack(null).commit();
+            }
+        }
+    };
+
+
     @Override
     public ViewHolderStepParcel onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -58,6 +74,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         holder.mColis = mColisList.get(position);
         holder.mIdColis.setText(holder.mColis.getIdColis());
         holder.mParcelDescription.setText(holder.mColis.getDescription());
+        holder.mConstraintDetailColisLayout.setTag(holder.mColis);
 
         if (holder.mColis.getLastUpdate() == null) {
             holder.mStepLastUpdateText.setVisibility(View.GONE);
@@ -91,8 +108,6 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
             this.requester.load("http://assets.aftership.com/couriers/svg/" + holder.mColis.getSlug() + ".svg")
                     .into(holder.mStepImageColis);
         }
-
-
     }
 
     @Override
@@ -105,7 +120,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
     }
 
     public class ViewHolderStepParcel extends RecyclerView.ViewHolder {
-        final View mView;
+        View mView;
 
         @BindView(R.id.step_id_colis)
         TextView mIdColis;
@@ -154,25 +169,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
             super(view);
             mView = view;
             ButterKnife.bind(this, mView);
-
-            mConstraintDetailColisLayout.setOnClickListener(v -> {
-                // If we aren't in delete mode we call the parcel result search fragment
-                // Otherwise we deactivate the delete mode and make the delete button invisible
-
-                HistoriqueColisFragment historiqueColisFragment = HistoriqueColisFragment.newInstance(mColis);
-                if (mTwoPane) {
-                    ((AppCompatActivity) mContext).getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.frame_detail, historiqueColisFragment, GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT)
-                            .commit();
-                } else {
-                    ((AppCompatActivity) mContext).getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.frame_master, historiqueColisFragment, GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT)
-                            .addToBackStack(null)
-                            .commit();
-                }
-            });
+            mConstraintDetailColisLayout.setOnClickListener(onClickListener);
         }
     }
 }

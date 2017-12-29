@@ -40,8 +40,10 @@ public class HistoriqueColisFragmentViewModel extends AndroidViewModel implement
             this.mColis = new MutableLiveData<>();
             this.mEtapes = new MutableLiveData<>();
         }
-        this.mColis.setValue(colis);
-        this.mEtapes.setValue(colis.getEtapeAcheminementArrayList());
+        if (colis != null) {
+            this.mColis.setValue(colis);
+            this.mEtapes.setValue(colis.getEtapeAcheminementArrayList());
+        }
     }
 
     public LiveData<ColisEntity> getColis() {
