@@ -28,16 +28,17 @@ import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
 import nc.opt.mobile.optmobile.utils.Utilities;
 
+import static nc.opt.mobile.optmobile.activity.GestionColisActivity.ARG_NOTICE_BUNDLE_COLIS;
+
 /**
  * Fragment that shows mList of followed parcel
  * -FAB allow to add a parcel
  */
-public class GestionColisFragment extends Fragment implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener, NoticeDialogFragment.NoticeDialogListener {
+public class GestionColisFragment extends Fragment implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
 
     private ColisAdapter mColisAdapter;
     private AppCompatActivity mActivity;
     private static final String ARG_TWO_PANE = "ARG_TWO_PANE";
-    private static final String ARG_NOTICE_BUNDLE_COLIS = "ARG_NOTICE_BUNDLE_COLIS";
 
     private static final String DIALOG_TAG_DELETE = "DIALOG_TAG_DELETE";
 
@@ -136,27 +137,5 @@ public class GestionColisFragment extends Fragment implements RecyclerItemTouchH
             // Appel d'un fragment qui va demander à l'utilisateur s'il est sûr de vouloir supprimer le colis.
             Utilities.sendDialogByFragmentManager(getFragmentManager(), "Etes-vous sûr de vouloir supprimer ce colis ?", NoticeDialogFragment.TYPE_BOUTON_YESNO, NoticeDialogFragment.TYPE_IMAGE_INFORMATION, DIALOG_TAG_DELETE, bundle);
         }
-    }
-
-    @Override
-    public void onDialogPositiveClick(NoticeDialogFragment dialog) {
-
-        // Récupération du bundle qu'on a envoyé au NoticeDialogFragment
-        if (dialog.getBundle() != null && dialog.getBundle().containsKey(ARG_NOTICE_BUNDLE_COLIS)) {
-
-            // Récupération du colis présent dans le bundle
-            ColisEntity colisEntity = dialog.getBundle().getParcelable(ARG_NOTICE_BUNDLE_COLIS);
-            if (colisEntity != null) {
-
-                // Suppression du colis
-                viewModel.deleteColis(colisEntity.getIdColis());
-            }
-        }
-
-    }
-
-    @Override
-    public void onDialogNegativeClick(NoticeDialogFragment dialog) {
-        // Do Nothing
     }
 }

@@ -15,13 +15,17 @@ import nc.opt.mobile.optmobile.fragment.GestionColisFragment;
 import nc.opt.mobile.optmobile.fragment.HistoriqueColisFragment;
 import nc.opt.mobile.optmobile.job.task.ParamSyncTask;
 import nc.opt.mobile.optmobile.job.task.SyncTask;
+import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
+import nc.opt.mobile.optmobile.provider.services.ColisService;
 import nc.opt.mobile.optmobile.service.SyncColisService;
+import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public class GestionColisActivity extends AppCompatActivity implements NetworkReceiver.NetworkChangeListener, HistoriqueColisFragment.ListenToSelectedColis {
+public class GestionColisActivity extends AppCompatActivity implements NetworkReceiver.NetworkChangeListener, HistoriqueColisFragment.ListenToSelectedColis, NoticeDialogFragment.NoticeDialogListener {
 
     public static final String TAG_PARCEL_RESULT_SEARCH_FRAGMENT = "TAG_PARCEL_RESULT_SEARCH_FRAGMENT";
 
+    public static final String ARG_NOTICE_BUNDLE_COLIS = "ARG_NOTICE_BUNDLE_COLIS";
     private String mIdColisSelected;
 
     @Override
@@ -122,5 +126,27 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
     public void unsubscribe() {
         mIdColisSelected = null;
         setTitle(getString(R.string.suivi_des_colis));
+    }
+
+    @Override
+    public void onDialogPositiveClick(NoticeDialogFragment dialog) {
+
+        // Récupération du bundle qu'on a envoyé au NoticeDialogFragment
+        if (dialog.getBundle() != null && dialog.getBundle().containsKey(ARG_NOTICE_BUNDLE_COLIS)) {
+
+            // Récupération du colis présent dans le bundle
+            ColisEntity colisEntity = dialog.getBundle().getParcelable(ARG_NOTICE_BUNDLE_COLIS);
+            if (colisEntity != null) {
+
+                // Suppression du colis
+                ColisService.delete(this, colisEntity.getIdColis());
+            }
+        }
+
+    }
+
+    @Override
+    public void onDialogNegativeClick(NoticeDialogFragment dialog) {
+        // Do Nothing
     }
 }
