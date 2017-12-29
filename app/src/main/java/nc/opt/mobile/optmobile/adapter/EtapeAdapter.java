@@ -46,7 +46,6 @@ public class EtapeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         ViewHolderEtape viewHeader = (ViewHolderEtape) holder;
         viewHeader.etape = etapes.get(position);
         viewHeader.mStepDate.setText(DateConverter.convertDateEntityToUi(viewHeader.etape.getDate()));
-        viewHeader.mStepPays.setText(viewHeader.etape.getPays());
         viewHeader.mStepLocalisation.setText(viewHeader.etape.getLocalisation());
         viewHeader.mStepDescription.setText(viewHeader.etape.getDescription());
         if (viewHeader.etape.getCommentaire().isEmpty()) {
@@ -64,9 +63,6 @@ public class EtapeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     class ViewHolderEtape extends RecyclerView.ViewHolder {
         final View mView;
-
-        @BindView(R.id.step_pays)
-        TextView mStepPays;
 
         @BindView(R.id.step_localisation)
         TextView mStepLocalisation;

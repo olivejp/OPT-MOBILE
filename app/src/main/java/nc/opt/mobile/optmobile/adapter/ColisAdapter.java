@@ -87,10 +87,10 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
             // On prend la dernière étape
             EtapeEntity etape = holder.mColis.getEtapeAcheminementArrayList().get(holder.mColis.getEtapeAcheminementArrayList().size() - 1);
             holder.mStepLastDate.setText(DateConverter.convertDateEntityToUi(etape.getDate()));
-            holder.mStepLastPays.setText(etape.getPays());
+            holder.mStepLastLocalisation.setText(etape.getLocalisation());
             holder.mStepLastDescription.setText(etape.getDescription());
             holder.mStepLastDate.setVisibility(View.VISIBLE);
-            holder.mStepLastPays.setVisibility(View.VISIBLE);
+            holder.mStepLastLocalisation.setVisibility(View.VISIBLE);
             if (etape.getStatus() != null) {
                 holder.mStepStatus.setImageResource(EtapeAcheminementService.getStatusDrawable(etape.getStatus()));
             } else {
@@ -98,9 +98,9 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
             }
         } else {
             holder.mStepLastDate.setText(null);
-            holder.mStepLastPays.setText(null);
+            holder.mStepLastLocalisation.setText(null);
             holder.mStepLastDate.setVisibility(View.GONE);
-            holder.mStepLastPays.setVisibility(View.GONE);
+            holder.mStepLastLocalisation.setVisibility(View.GONE);
             holder.mStepLastDescription.setText(R.string.no_data_for_parcel);
         }
 
@@ -128,8 +128,8 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         @BindView(R.id.step_last_date)
         TextView mStepLastDate;
 
-        @BindView(R.id.step_last_pays)
-        TextView mStepLastPays;
+        @BindView(R.id.step_last_localisation)
+        TextView mStepLastLocalisation;
 
         @BindView(R.id.step_last_description)
         TextView mStepLastDescription;
