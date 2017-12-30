@@ -16,12 +16,15 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import nc.opt.mobile.optmobile.domain.suivi.ColisDto;
-import nc.opt.mobile.optmobile.domain.suivi.EtapeAcheminementDto;
+import nc.opt.mobile.optmobile.domain.suivi.EtapeDto;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.Checkpoint;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.TrackingData;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
 import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
 
+import static nc.opt.mobile.optmobile.provider.services.EtapeService.createEtapeFromCheckpoint;
 import static nc.opt.mobile.optmobile.utils.DateConverter.getNowEntity;
 
 /**
@@ -43,7 +46,7 @@ public class ColisService {
             ColisEntity colisEntity = getFromCursor(cursor);
 
             // Récupération des étapes associées.
-            List<EtapeEntity> list = EtapeAcheminementService.listFromProvider(context, id);
+            List<EtapeEntity> list = EtapeService.listFromProvider(context, id);
             colisEntity.setEtapeAcheminementArrayList(list);
             return colisEntity;
         }
@@ -99,7 +102,7 @@ public class ColisService {
             id = insert(context, colisEntity);
         }
 
-        EtapeAcheminementService.save(context, colisEntity);
+        EtapeService.save(context, colisEntity);
         return (nbUpdated != 0 || id != -1);
     }
 
@@ -112,7 +115,7 @@ public class ColisService {
         if (cursorListColis != null) {
             while (cursorListColis.moveToNext()) {
                 ColisEntity colis = getFromCursor(cursorListColis);
-                List<EtapeEntity> listEtape = EtapeAcheminementService.listFromProvider(context, colis.getIdColis());
+                List<EtapeEntity> listEtape = EtapeService.listFromProvider(context, colis.getIdColis());
                 colis.setEtapeAcheminementArrayList(listEtape);
                 colisList.add(colis);
             }
@@ -165,7 +168,7 @@ public class ColisService {
      */
     public static int realDelete(Context context, String idColis) {
         // Suppression des étapes d'acheminement
-        EtapeAcheminementService.delete(context, idColis);
+        EtapeService.delete(context, idColis);
 
         // Suppression du colis
         return context.getContentResolver().delete(OptProvider.ListColis.LIST_COLIS, ColisInterface.ID_COLIS.concat("=?"), new String[]{idColis});
@@ -217,13 +220,30 @@ public class ColisService {
     public static ColisEntity convertToEntity(ColisDto dto) {
         ColisEntity entity = new ColisEntity();
         entity.setIdColis(dto.getIdColis());
-        if (dto.getEtapeAcheminementDtoArrayList() != null) {
+        if (dto.getEtapeDtoArrayList() != null && !dto.getEtapeDtoArrayList().isEmpty()) {
             List<EtapeEntity> listEtapeEntity = new ArrayList<>();
-            for (EtapeAcheminementDto etapeDto : dto.getEtapeAcheminementDtoArrayList()) {
-                listEtapeEntity.add(EtapeAcheminementService.convertToEntity(etapeDto));
+            for (EtapeDto etapeDto : dto.getEtapeDtoArrayList()) {
+                listEtapeEntity.add(EtapeService.convertToEntity(etapeDto));
             }
             entity.setEtapeAcheminementArrayList(listEtapeEntity);
         }
         return entity;
+    }
+
+
+    /**
+     * Fill the ColisEntity with the TrackingData informations.
+     *
+     * @param colis
+     * @param trackingData
+     * @return
+     */
+    public static ColisEntity convertTrackingDataToEntity(ColisEntity colis, TrackingData trackingData) {
+        colis.setDeleted(0);
+        for (Checkpoint c : trackingData.getCheckpoints()) {
+            EtapeEntity etapeEntity = createEtapeFromCheckpoint(colis.getIdColis(), c);
+            colis.getEtapeAcheminementArrayList().add(etapeEntity);
+        }
+        return colis;
     }
 }

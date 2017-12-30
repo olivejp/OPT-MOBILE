@@ -1,5 +1,6 @@
 package nc.opt.mobile.optmobile.adapter;
 
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
-import nc.opt.mobile.optmobile.provider.services.EtapeAcheminementService;
+import nc.opt.mobile.optmobile.provider.services.EtapeService;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
 /**
@@ -53,7 +54,13 @@ public class EtapeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         } else {
             viewHeader.mStepCommentaire.setText(viewHeader.etape.getCommentaire());
         }
-        viewHeader.mStepStatus.setImageResource(EtapeAcheminementService.getStatusDrawable(viewHeader.etape.getStatus()));
+
+        // We remove the line if we are on the last element.
+        if (position == etapes.size() - 1) {
+            ((ViewHolderEtape) holder).mStepLine.setVisibility(View.GONE);
+        }
+
+        viewHeader.mStepStatus.setImageResource(EtapeService.getStatusDrawable(viewHeader.etape.getStatus()));
     }
 
     @Override
@@ -78,6 +85,9 @@ public class EtapeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         @BindView(R.id.img_step_status)
         ImageView mStepStatus;
+
+        @BindView(R.id.img_step_line)
+        CardView mStepLine;
 
         EtapeEntity etape;
 

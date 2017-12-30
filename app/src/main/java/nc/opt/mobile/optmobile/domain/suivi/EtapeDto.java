@@ -7,7 +7,7 @@ import android.os.Parcelable;
  * Created by 2761oli on 05/10/2017.
  */
 
-public class EtapeAcheminementDto implements Parcelable {
+public class EtapeDto implements Parcelable {
 
     private String date;
     private String pays;
@@ -16,10 +16,10 @@ public class EtapeAcheminementDto implements Parcelable {
     private String commentaire;
     private String status;
 
-    public EtapeAcheminementDto() {
+    public EtapeDto() {
     }
 
-    public EtapeAcheminementDto(String date, String pays, String localisation, String description, String commentaire, String status) {
+    public EtapeDto(String date, String pays, String localisation, String description, String commentaire, String status) {
         this.date = date;
         this.pays = pays;
         this.localisation = localisation;
@@ -91,7 +91,7 @@ public class EtapeAcheminementDto implements Parcelable {
         dest.writeString(this.status);
     }
 
-    protected EtapeAcheminementDto(Parcel in) {
+    protected EtapeDto(Parcel in) {
         this.date = in.readString();
         this.pays = in.readString();
         this.localisation = in.readString();
@@ -100,15 +100,15 @@ public class EtapeAcheminementDto implements Parcelable {
         this.status = in.readString();
     }
 
-    public static final Creator<EtapeAcheminementDto> CREATOR = new Creator<EtapeAcheminementDto>() {
+    public static final Creator<EtapeDto> CREATOR = new Creator<EtapeDto>() {
         @Override
-        public EtapeAcheminementDto createFromParcel(Parcel source) {
-            return new EtapeAcheminementDto(source);
+        public EtapeDto createFromParcel(Parcel source) {
+            return new EtapeDto(source);
         }
 
         @Override
-        public EtapeAcheminementDto[] newArray(int size) {
-            return new EtapeAcheminementDto[size];
+        public EtapeDto[] newArray(int size) {
+            return new EtapeDto[size];
         }
     };
 }

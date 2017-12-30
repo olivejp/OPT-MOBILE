@@ -23,10 +23,10 @@ import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.activity.GestionColisActivity;
 import nc.opt.mobile.optmobile.fragment.HistoriqueColisFragment;
-import nc.opt.mobile.optmobile.glide.GlideRequester;
+import nc.opt.mobile.optmobile.gfx.GlideRequester;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
-import nc.opt.mobile.optmobile.provider.services.EtapeAcheminementService;
+import nc.opt.mobile.optmobile.provider.services.EtapeService;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
 /**
@@ -92,7 +92,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
             holder.mStepLastDate.setVisibility(View.VISIBLE);
             holder.mStepLastLocalisation.setVisibility(View.VISIBLE);
             if (etape.getStatus() != null) {
-                holder.mStepStatus.setImageResource(EtapeAcheminementService.getStatusDrawable(etape.getStatus()));
+                holder.mStepStatus.setImageResource(EtapeService.getStatusDrawable(etape.getStatus()));
             } else {
                 holder.mStepStatus.setImageResource(R.drawable.ic_status_pending);
             }

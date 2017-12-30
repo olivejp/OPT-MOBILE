@@ -6,17 +6,17 @@ import android.util.Log;
 import io.reactivex.Observable;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.functions.Consumer;
-import nc.opt.mobile.optmobile.domain.suivi.aftership.Checkpoint;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.ResponseDataDetectCourier;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.SendTrackingData;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.Tracking;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.TrackingData;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.TrackingDelete;
 import nc.opt.mobile.optmobile.network.RetrofitClient;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
-import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static nc.opt.mobile.optmobile.provider.services.ColisService.convertTrackingDataToEntity;
 
 /**
  * Created by orlanth23 on 18/12/2017.
@@ -34,6 +34,9 @@ public class AfterShipUtils {
 
     // This consumer only catch the Throwables and log them.
     private static Consumer<Throwable> consumerThrowable = throwable -> Log.e(TAG, "Erreur sur l'API AfterShip : " + throwable.getMessage(), throwable);
+
+    // This consumer is only called when deleting colis
+    private static Consumer<TrackingDelete> consumerDeleting = trackingDelete -> Log.d(TAG, "Suppression effective du tracking " + trackingDelete.getId());
 
     // Found on : https://medium.com/@v.danylo/server-polling-and-retrying-failed-operations-with-retrofit-and-rxjava-8bcc7e641a5a
     private static <T> ObservableTransformer<T, Long> zipWithFlatMap() {
@@ -57,7 +60,7 @@ public class AfterShipUtils {
         // This consumer is only called when getting colis
         Consumer<TrackingData> consumerGetTracking = trackingData -> {
             Log.d(TAG, "TrackingData récupéré : " + trackingData.toString());
-            Observable.just(createColisFromResponseTrackingData(finalColis, trackingData)).subscribe(consumerColisEntity, consumerThrowable);
+            Observable.just(convertTrackingDataToEntity(finalColis, trackingData)).subscribe(consumerColisEntity, consumerThrowable);
         };
 
         // This consumer is only called when posting colis
@@ -103,45 +106,6 @@ public class AfterShipUtils {
     }
 
     /**
-     * Va créer une étape à partir d'un checkpoint
-     *
-     * @param idColis
-     * @param checkpoint
-     * @return EtapeEntity
-     */
-
-    public static EtapeEntity createEtapeFromCheckpoint(String idColis, Checkpoint checkpoint) {
-        EtapeEntity etape = new EtapeEntity();
-        etape.setIdColis(idColis);
-        if (checkpoint.getCheckpointTime() != null) {
-            etape.setDate(DateConverter.convertDateAfterShipToEntity(checkpoint.getCheckpointTime()));
-        } else {
-            etape.setDate(0L);
-        }
-        etape.setLocalisation((checkpoint.getLocation() != null) ? checkpoint.getLocation().toString() : "");
-        etape.setStatus((checkpoint.getTag() != null) ? checkpoint.getTag() : "");
-        etape.setDescription((checkpoint.getMessage() != null) ? checkpoint.getMessage() : "");
-        etape.setPays((checkpoint.getCountryName() != null) ? checkpoint.getCountryName().toString() : "");
-        return etape;
-    }
-
-    /**
-     * Fill the ColisEntity with the TrackingData informations.
-     *
-     * @param colis
-     * @param trackingData
-     * @return
-     */
-    public static ColisEntity createColisFromResponseTrackingData(ColisEntity colis, TrackingData trackingData) {
-        colis.setDeleted(0);
-        for (Checkpoint c : trackingData.getCheckpoints()) {
-            EtapeEntity etapeEntity = createEtapeFromCheckpoint(colis.getIdColis(), c);
-            colis.getEtapeAcheminementArrayList().add(etapeEntity);
-        }
-        return colis;
-    }
-
-    /**
      * @param trackingNumber
      * @return
      */
@@ -152,5 +116,16 @@ public class AfterShipUtils {
         trackingDetect.setTrackingNumber(trackingNumber);
         tracking.setTracking(trackingDetect);
         return tracking;
+    }
+
+    /**
+     * Delete tracking from the AfterShip account.
+     *
+     * @param trackingId
+     */
+    public static void deleteTracking(String trackingId) {
+        RetrofitClient.deleteTracking(trackingId)
+                .retry(3)
+                .subscribe(consumerDeleting, consumerThrowable);
     }
 }

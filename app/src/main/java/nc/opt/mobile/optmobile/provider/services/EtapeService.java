@@ -12,7 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.domain.suivi.EtapeAcheminementDto;
+import nc.opt.mobile.optmobile.domain.suivi.EtapeDto;
+import nc.opt.mobile.optmobile.domain.suivi.aftership.Checkpoint;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
@@ -32,9 +33,9 @@ import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInter
  * Created by 2761oli on 23/10/2017.
  */
 
-public class EtapeAcheminementService {
+public class EtapeService {
 
-    private EtapeAcheminementService() {
+    private EtapeService() {
     }
 
     private static final MicroOrm uOrm = new MicroOrm();
@@ -160,8 +161,8 @@ public class EtapeAcheminementService {
         return false;
     }
 
-    static EtapeAcheminementDto convertToDto(EtapeEntity entity) {
-        EtapeAcheminementDto dto = new EtapeAcheminementDto();
+    static EtapeDto convertToDto(EtapeEntity entity) {
+        EtapeDto dto = new EtapeDto();
         dto.setDate(DateConverter.convertDateEntityToDto(entity.getDate()));
         dto.setCommentaire(entity.getCommentaire());
         dto.setDescription(entity.getDescription());
@@ -170,14 +171,37 @@ public class EtapeAcheminementService {
         return dto;
     }
 
-    static EtapeEntity convertToEntity(EtapeAcheminementDto dto) {
+    static EtapeEntity convertToEntity(EtapeDto dto) {
         EtapeEntity entity = new EtapeEntity();
         entity.setDate(DateConverter.convertDateDtoToEntity(dto.getDate()));
         entity.setCommentaire(dto.getCommentaire());
         entity.setDescription(dto.getDescription());
         entity.setLocalisation(dto.getLocalisation());
+        entity.setStatus(dto.getStatus());
         entity.setPays(dto.getPays());
         return entity;
+    }
+
+    /**
+     * Va créer une étape à partir d'un checkpoint
+     *
+     * @param idColis
+     * @param checkpoint
+     * @return EtapeEntity
+     */
+    public static EtapeEntity createEtapeFromCheckpoint(String idColis, Checkpoint checkpoint) {
+        EtapeEntity etape = new EtapeEntity();
+        etape.setIdColis(idColis);
+        if (checkpoint.getCheckpointTime() != null) {
+            etape.setDate(DateConverter.convertDateAfterShipToEntity(checkpoint.getCheckpointTime()));
+        } else {
+            etape.setDate(0L);
+        }
+        etape.setLocalisation((checkpoint.getLocation() != null) ? checkpoint.getLocation().toString() : "");
+        etape.setStatus((checkpoint.getTag() != null) ? checkpoint.getTag() : "");
+        etape.setDescription((checkpoint.getMessage() != null) ? checkpoint.getMessage() : "");
+        etape.setPays((checkpoint.getCountryName() != null) ? checkpoint.getCountryName().toString() : "");
+        return etape;
     }
 
     public static int getStatusDrawable(String status) {

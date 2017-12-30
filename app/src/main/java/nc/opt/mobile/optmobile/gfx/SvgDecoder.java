@@ -1,4 +1,4 @@
-package nc.opt.mobile.optmobile.glide;
+package nc.opt.mobile.optmobile.gfx;
 
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.ResourceDecoder;

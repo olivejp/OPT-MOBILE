@@ -23,7 +23,7 @@ import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.adapter.ColisAdapter;
 import nc.opt.mobile.optmobile.fragment.viewmodel.GestionColisFragmentViewModel;
-import nc.opt.mobile.optmobile.glide.RecyclerItemTouchHelper;
+import nc.opt.mobile.optmobile.gfx.RecyclerItemTouchHelper;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
 import nc.opt.mobile.optmobile.utils.Utilities;

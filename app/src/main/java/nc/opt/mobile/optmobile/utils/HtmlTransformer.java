@@ -8,7 +8,7 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 
 import nc.opt.mobile.optmobile.domain.suivi.ColisDto;
-import nc.opt.mobile.optmobile.domain.suivi.EtapeAcheminementDto;
+import nc.opt.mobile.optmobile.domain.suivi.EtapeDto;
 
 /**
  * Created by 2761oli on 05/10/2017.
@@ -61,7 +61,7 @@ public class HtmlTransformer {
             throw new HtmlTransformerException("Aucune balise <tr> dans le résultat");
         }
 
-        ArrayList<EtapeAcheminementDto> listEtapeAcheminementDto = new ArrayList<>();
+        ArrayList<EtapeDto> listEtapeDto = new ArrayList<>();
 
         // Parcours de tous les éléments <tr> pour trouver les colonnes <td>
         for (int i = 1, l = tableauTr.size(); i < l; i++) {
@@ -87,12 +87,12 @@ public class HtmlTransformer {
                 String commentaire = colonneTd.get(4).text();
                 String status = getCorrespondingStatus(description);
 
-                EtapeAcheminementDto etapeAcheminementDto = new EtapeAcheminementDto(date, pays, localisation, description, commentaire, status);
-                listEtapeAcheminementDto.add(etapeAcheminementDto);
+                EtapeDto etapeDto = new EtapeDto(date, pays, localisation, description, commentaire, status);
+                listEtapeDto.add(etapeDto);
             }
         }
 
-        colisDto.setEtapeAcheminementDtoArrayList(listEtapeAcheminementDto);
+        colisDto.setEtapeDtoArrayList(listEtapeDto);
         return RESULT_SUCCESS;
     }
 

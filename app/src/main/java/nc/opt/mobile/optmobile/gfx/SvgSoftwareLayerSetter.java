@@ -1,4 +1,4 @@
-package nc.opt.mobile.optmobile.glide;
+package nc.opt.mobile.optmobile.gfx;
 
 import android.graphics.drawable.PictureDrawable;
 import android.widget.ImageView;

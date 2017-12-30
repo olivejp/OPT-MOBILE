@@ -12,7 +12,7 @@ import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.domain.suivi.ColisDto;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
-import nc.opt.mobile.optmobile.provider.services.EtapeAcheminementService;
+import nc.opt.mobile.optmobile.provider.services.EtapeService;
 import nc.opt.mobile.optmobile.utils.Constants;
 import nc.opt.mobile.optmobile.utils.HtmlTransformer;
 import nc.opt.mobile.optmobile.utils.NotificationSender;
@@ -43,8 +43,8 @@ class TransformHtmlTask extends AsyncTask<String, Void, ColisDto> {
                 case HtmlTransformer.RESULT_SUCCESS:
                     ColisService.updateLastUpdate(context, colisDto.getIdColis(), true);
                     ColisEntity colisEntity = ColisService.convertToEntity(colisDto);
-                    if (EtapeAcheminementService.shouldInsertNewEtape(context, colisEntity)) {
-                        if (EtapeAcheminementService.save(context, colisEntity)) {
+                    if (EtapeService.shouldInsertNewEtape(context, colisEntity)) {
+                        if (EtapeService.save(context, colisEntity)) {
                             if (sendNotification) {
                                 // Envoi d'une notification si l'objet a bougé.
                                 NotificationSender.sendNotification(context, context.getString(R.string.app_name), idColis + " a été mis à jour.", R.drawable.ic_archive_white_48dp);

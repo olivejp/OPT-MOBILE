@@ -17,7 +17,7 @@ import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
-import nc.opt.mobile.optmobile.provider.services.EtapeAcheminementService;
+import nc.opt.mobile.optmobile.provider.services.EtapeService;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
 /**
@@ -25,7 +25,7 @@ import nc.opt.mobile.optmobile.utils.DateConverter;
  */
 
 @RunWith(AndroidJUnit4.class)
-public class EtapeAcheminementServiceTest {
+public class EtapeServiceTest {
 
     private Context mContext;
     private String DATE_INCORRECTE = "2342348098kj";
@@ -54,7 +54,7 @@ public class EtapeAcheminementServiceTest {
         etape.setDescription(DESCRIPTION_ETAPE);
         ColisEntity colis = ColisService.get(mContext, idColis);
 
-        long id = EtapeAcheminementService.insert(mContext, etape, colis);
+        long id = EtapeService.insert(mContext, etape, colis);
         Assert.assertTrue(id > 0);
         return id;
     }
@@ -73,13 +73,13 @@ public class EtapeAcheminementServiceTest {
 
         insertEtape(ID_COLIS);
 
-        List<EtapeEntity> listBefore = EtapeAcheminementService.listFromProvider(mContext, ID_COLIS);
+        List<EtapeEntity> listBefore = EtapeService.listFromProvider(mContext, ID_COLIS);
         Assert.assertNotNull(listBefore);
         Assert.assertTrue(listBefore.size() == 1);
 
-        EtapeAcheminementService.delete(mContext, ID_COLIS);
+        EtapeService.delete(mContext, ID_COLIS);
 
-        List<EtapeEntity> listAfter = EtapeAcheminementService.listFromProvider(mContext, ID_COLIS);
+        List<EtapeEntity> listAfter = EtapeService.listFromProvider(mContext, ID_COLIS);
         Assert.assertNotNull(listAfter);
         Assert.assertTrue(listAfter.size() == 0);
     }

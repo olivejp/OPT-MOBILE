@@ -33,6 +33,6 @@ public class TransformHtmlTest {
         int result = HtmlTransformer.getColisFromHtml(file, colisDto);
         Assert.assertEquals(RESULT_SUCCESS, result);
 
-        Assert.assertEquals(12, colisDto.getEtapeAcheminementDtoArrayList().size());
+        Assert.assertEquals(12, colisDto.getEtapeDtoArrayList().size());
     }
 }
