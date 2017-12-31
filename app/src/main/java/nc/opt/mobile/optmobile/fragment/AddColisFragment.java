@@ -24,6 +24,7 @@ import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.services.ActualiteService;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
 import nc.opt.mobile.optmobile.service.FirebaseService;
+import nc.opt.mobile.optmobile.utils.Utilities;
 
 public class AddColisFragment extends Fragment {
 
@@ -57,6 +58,9 @@ public class AddColisFragment extends Fragment {
     @OnClick(R.id.fab_search_parcel)
     public void searchParcel(View view) {
         if (!editIdParcel.getText().toString().isEmpty()) {
+
+            // On cache le clavier.
+            Utilities.hideKeyboard(getActivity());
 
             // Get the idColis from the view
             String idColis = editIdParcel.getText().toString().toUpperCase();

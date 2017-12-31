@@ -35,7 +35,8 @@ public class ColisService {
 
     private static final MicroOrm uOrm = new MicroOrm();
     private static String selectionOnlyActiveColis = ColisInterface.DELETED.concat("<> ?");
-    private static String[] argsOnlyActiveColisArgs = new String[]{"1"};
+    private static String selectionOnlyDeletedColis = ColisInterface.DELETED.concat("= ?");
+    private static String[] argsDeletedColisArgs = new String[]{"1"};
 
     private ColisService() {
     }
@@ -62,7 +63,7 @@ public class ColisService {
      * @return
      */
     public static boolean exist(Context context, String id, boolean onlyActive) {
-        Cursor cursor = context.getContentResolver().query(nc.opt.mobile.optmobile.provider.OptProvider.ListColis.withId(id), null, onlyActive ? selectionOnlyActiveColis : null, onlyActive ? argsOnlyActiveColisArgs : null, null);
+        Cursor cursor = context.getContentResolver().query(nc.opt.mobile.optmobile.provider.OptProvider.ListColis.withId(id), null, onlyActive ? selectionOnlyActiveColis : null, onlyActive ? argsDeletedColisArgs : null, null);
         if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
             cursor.close();
             return true;
@@ -106,11 +107,38 @@ public class ColisService {
         return (nbUpdated != 0 || id != -1);
     }
 
+    /**
+     * @param context
+     * @param onlyActive
+     * @return
+     */
     public static List<ColisEntity> listFromProvider(Context context, boolean onlyActive) {
         List<ColisEntity> colisList = new ArrayList<>();
 
         // Query the content provider to get a cursor of ColisDto
-        Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, onlyActive ? selectionOnlyActiveColis : null, onlyActive ? argsOnlyActiveColisArgs : null, null);
+        Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, onlyActive ? selectionOnlyActiveColis : null, onlyActive ? argsDeletedColisArgs : null, null);
+
+        if (cursorListColis != null) {
+            while (cursorListColis.moveToNext()) {
+                ColisEntity colis = getFromCursor(cursorListColis);
+                List<EtapeEntity> listEtape = EtapeService.listFromProvider(context, colis.getIdColis());
+                colis.setEtapeAcheminementArrayList(listEtape);
+                colisList.add(colis);
+            }
+            cursorListColis.close();
+        }
+        return colisList;
+    }
+
+    /**
+     * @param context
+     * @return
+     */
+    public static List<ColisEntity> listDeletedFromProvider(Context context) {
+        List<ColisEntity> colisList = new ArrayList<>();
+
+        // Query the content provider to get a cursor of ColisDto
+        Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, selectionOnlyDeletedColis, argsDeletedColisArgs, null);
 
         if (cursorListColis != null) {
             while (cursorListColis.moveToNext()) {
@@ -139,7 +167,7 @@ public class ColisService {
         // Query the content provider to get a cursor of ColisDto
         int count = 0;
 
-        Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, onlyActive ? selectionOnlyActiveColis : null, onlyActive ? argsOnlyActiveColisArgs : null, null);
+        Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, onlyActive ? selectionOnlyActiveColis : null, onlyActive ? argsDeletedColisArgs : null, null);
         if (cursorListColis != null) {
             count = cursorListColis.getCount();
             cursorListColis.close();

@@ -10,8 +10,13 @@ public class Constants {
 
     // Careful, JSON is heavy (51 Mb). Don't download this link with DataGet.
     public static final String URL_API_COUVERTURE_MOBILE_REST = "https://opendata.arcgis.com/datasets/37ff8020bb7c4585874c8eae4678e54b_0.geojson";
-    public static final String URL_SUIVI_COLIS = "http://webtrack.opt.nc/ipswebtracking/";
+    public static final String URL_SUIVI_COLIS = "http://webtrack.opt.nc/";
     public static final String URL_SUIVI_SERVICE_OPT = "IPSWeb_item_events.asp";
+    public static final String URL_AFTERSHIP_BASE_URL = "https://api.aftership.com/";
+
+    public static final String URL_AFTERSHIP_COURIER = "http://assets.aftership.com/couriers/svg/";
+    public static final String AFTERSHIP_COURIER_EXTENSION = ".svg";
+
 
     public static final String ENCODING_ISO = "iso8859-1";
     public static final String ENCODING_UTF_8 = "UTF-8";

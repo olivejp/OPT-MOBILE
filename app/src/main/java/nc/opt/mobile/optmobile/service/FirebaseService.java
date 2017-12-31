@@ -1,5 +1,7 @@
 package nc.opt.mobile.optmobile.service;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -21,6 +23,8 @@ import java.util.List;
 
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.utils.Constants;
+
+import static nc.opt.mobile.optmobile.utils.Constants.PREF_USER;
 
 /**
  * Created by orlanth23 on 19/11/2017.
@@ -98,6 +102,19 @@ public class FirebaseService {
         DatabaseReference userReference = getUsersRef().child(userUid);
         if (valueEventListener != null) {
             userReference.addValueEventListener(valueEventListener);
+        }
+    }
+
+    /**
+     * Envoi de la liste des colis à Firebase pour qu'il enregistre nos colis suivis.
+     *
+     * @param list
+     */
+    public static void updateFirebase(Context context, List<ColisEntity> list) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("PREFS", Context.MODE_PRIVATE);
+        String uid = sharedPreferences.getString(PREF_USER, null);
+        if (uid != null) {
+            FirebaseService.createRemoteDatabase(uid, list, null);
         }
     }
 }

@@ -197,6 +197,7 @@ public class EtapeService {
         } else {
             etape.setDate(0L);
         }
+        etape.setCommentaire("");
         etape.setLocalisation((checkpoint.getLocation() != null) ? checkpoint.getLocation().toString() : "");
         etape.setStatus((checkpoint.getTag() != null) ? checkpoint.getTag() : "");
         etape.setDescription((checkpoint.getMessage() != null) ? checkpoint.getMessage() : "");

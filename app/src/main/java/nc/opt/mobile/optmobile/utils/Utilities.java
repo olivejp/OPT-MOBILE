@@ -63,7 +63,15 @@ public class Utilities {
         dialogErreur.show(fragmentManager, tag);
     }
 
-    // Envoi d'un message
+    /**
+     * Affiche un box avec un message  à l'intérieur. Le message peut contenir un objet dans son bundle qui sera reçu .
+     * @param activity
+     * @param message
+     * @param type
+     * @param img
+     * @param tag
+     * @param bundle
+     */
     public static void sendDialogByActivity(AppCompatActivity activity, String message, int type, int img, String tag, @Nullable Bundle bundle) {
         sendDialogByFragmentManager(activity.getSupportFragmentManager(), message, type, img, tag, bundle);
     }

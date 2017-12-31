@@ -29,6 +29,9 @@ import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
 import nc.opt.mobile.optmobile.provider.services.EtapeService;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
+import static nc.opt.mobile.optmobile.utils.Constants.AFTERSHIP_COURIER_EXTENSION;
+import static nc.opt.mobile.optmobile.utils.Constants.URL_AFTERSHIP_COURIER;
+
 /**
  * Created by orlanth23 on 05/10/2017.
  */
@@ -61,7 +64,6 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         }
     };
 
-
     @Override
     public ViewHolderStepParcel onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -75,6 +77,7 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         holder.mIdColis.setText(holder.mColis.getIdColis());
         holder.mParcelDescription.setText(holder.mColis.getDescription());
         holder.mConstraintDetailColisLayout.setTag(holder.mColis);
+        holder.mStepStatus.setImageResource(R.drawable.ic_status_pending);
 
         if (holder.mColis.getLastUpdate() == null) {
             holder.mStepLastUpdateText.setVisibility(View.GONE);
@@ -93,8 +96,6 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
             holder.mStepLastLocalisation.setVisibility(View.VISIBLE);
             if (etape.getStatus() != null) {
                 holder.mStepStatus.setImageResource(EtapeService.getStatusDrawable(etape.getStatus()));
-            } else {
-                holder.mStepStatus.setImageResource(R.drawable.ic_status_pending);
             }
         } else {
             holder.mStepLastDate.setText(null);
@@ -105,8 +106,11 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         }
 
         if (holder.mColis.getSlug() != null) {
-            this.requester.load("http://assets.aftership.com/couriers/svg/" + holder.mColis.getSlug() + ".svg")
-                    .into(holder.mStepImageColis);
+            holder.mStepSlug.setVisibility(View.VISIBLE);
+            this.requester.load(URL_AFTERSHIP_COURIER + holder.mColis.getSlug() + AFTERSHIP_COURIER_EXTENSION)
+                    .into(holder.mStepSlug);
+        } else {
+            holder.mStepSlug.setVisibility(View.GONE);
         }
     }
 
@@ -146,8 +150,8 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         @BindView(R.id.step_last_update_text)
         TextView mStepLastUpdateText;
 
-        @BindView(R.id.step_image_colis)
-        ImageView mStepImageColis;
+        @BindView(R.id.step_slug)
+        ImageView mStepSlug;
 
         @BindView(R.id.step_status)
         ImageView mStepStatus;

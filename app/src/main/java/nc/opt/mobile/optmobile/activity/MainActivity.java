@@ -55,7 +55,6 @@ import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
 import nc.opt.mobile.optmobile.service.FirebaseService;
 import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
-import nc.opt.mobile.optmobile.utils.RequestQueueSingleton;
 import nc.opt.mobile.optmobile.utils.Utilities;
 
 import static nc.opt.mobile.optmobile.provider.services.AgenceService.populateContentProviderFromAsset;
@@ -277,9 +276,7 @@ public class MainActivity extends AttachToPermissionActivity
 
         defineAuthListener();
 
-        mButtonConnexion.setOnClickListener(v ->
-
-        {
+        mButtonConnexion.setOnClickListener(v -> {
             if (mFirebaseUser != null) {
                 signOut();
             } else {
@@ -300,17 +297,13 @@ public class MainActivity extends AttachToPermissionActivity
         }
 
         // Si la permission Internet n'a pas été accordée on va la demander
-        if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED))
-
-        {
+        if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED)) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, RC_PERMISSION_INTERNET);
         }
 
         // Populate the contentProvider with assets, only the first time
         SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
-        if (!sharedPreferences.getBoolean(PREF_POPULATED, false))
-
-        {
+        if (!sharedPreferences.getBoolean(PREF_POPULATED, false)) {
             populateContentProviderFromAsset(this);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putBoolean(PREF_POPULATED, true);
@@ -326,24 +319,15 @@ public class MainActivity extends AttachToPermissionActivity
 
         updateBadge();
 
-        // Appel de la premiere instance
-        RequestQueueSingleton.getInstance(this.
-
-                getApplicationContext());
-
         // Enregistrement d'un observer pour écouter les modifications sur le ContentProvider
         ProviderObserver providerObserver = ProviderObserver.getInstance();
         providerObserver.observe(this, this, OptProvider.ListColis.LIST_COLIS);
 
         // Création du premier fragment
         getSupportFragmentManager().
-
                 beginTransaction().
-
                 replace(R.id.frame_main, mActualiteFragment).
-
                 commit();
-
     }
 
     @Override

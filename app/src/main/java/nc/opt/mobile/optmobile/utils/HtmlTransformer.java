@@ -16,7 +16,7 @@ import nc.opt.mobile.optmobile.domain.suivi.EtapeDto;
 
 public class HtmlTransformer {
 
-    public static final int RESULT_NO_ITEM_FOUND = -1;
+    static final int RESULT_NO_ITEM_FOUND = -1;
     public static final int RESULT_SUCCESS = 1;
     private static final String HTML_TAG_TABLE = "table";
 
@@ -109,7 +109,7 @@ public class HtmlTransformer {
     /**
      * Personal Exception
      */
-    public static class HtmlTransformerException extends Exception {
+    static class HtmlTransformerException extends Exception {
         HtmlTransformerException(String message) {
             super(message);
         }

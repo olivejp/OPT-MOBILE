@@ -18,6 +18,7 @@ import nc.opt.mobile.optmobile.job.task.SyncTask;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
 import nc.opt.mobile.optmobile.service.SyncColisService;
+import nc.opt.mobile.optmobile.utils.CoreSync;
 import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
@@ -138,8 +139,13 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
             ColisEntity colisEntity = dialog.getBundle().getParcelable(ARG_NOTICE_BUNDLE_COLIS);
             if (colisEntity != null) {
 
-                // Suppression du colis
+                // Suppression du colis dans la base de données
                 ColisService.delete(this, colisEntity.getIdColis());
+
+                // Si on a une connexion, on supprime le colis sur le réseau.
+                if (NetworkReceiver.checkConnection(this)){
+                    CoreSync.deleteTracking(this, colisEntity);
+                }
             }
         }
     }
