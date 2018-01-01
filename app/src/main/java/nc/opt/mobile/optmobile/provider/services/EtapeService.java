@@ -89,7 +89,7 @@ public class EtapeService {
      * @param colis
      * @return
      */
-    public static long insert(Context context, EtapeEntity etape, ColisEntity colis) {
+    private static long insert(Context context, EtapeEntity etape, ColisEntity colis) {
         Uri uri = context.getContentResolver().insert(OptProvider.ListEtapeAcheminement.LIST_ETAPE, putToContentValues(etape, colis.getIdColis()));
         return ContentUris.parseId(uri);
     }
@@ -159,16 +159,6 @@ public class EtapeService {
             return true;
         }
         return false;
-    }
-
-    static EtapeDto convertToDto(EtapeEntity entity) {
-        EtapeDto dto = new EtapeDto();
-        dto.setDate(DateConverter.convertDateEntityToDto(entity.getDate()));
-        dto.setCommentaire(entity.getCommentaire());
-        dto.setDescription(entity.getDescription());
-        dto.setLocalisation(entity.getLocalisation());
-        dto.setPays(entity.getPays());
-        return dto;
     }
 
     static EtapeEntity convertToEntity(EtapeDto dto) {
