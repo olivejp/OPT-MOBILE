@@ -93,14 +93,11 @@ public class RetrofitClient {
      * @return Observable<TrackingDelete>
      */
     public static Observable<TrackingDelete> deleteTrackingBySlugAndTrackingNumber(String slug, String trackingNumber) {
-        if (slug != null && slug.length() != 0 && trackingNumber != null && trackingNumber.length() != 0) {
-            RetrofitCall retrofitCall = RetrofitClient.getJsonClient().create(RetrofitCall.class);
-            return retrofitCall.deleteTracking(slug, trackingNumber)
-                    .subscribeOn(Schedulers.computation())
-                    .observeOn(Schedulers.computation())
-                    .flatMap(dataGetResponseAfterShip -> Observable.just(dataGetResponseAfterShip.getData().getTracking()));
-        }
-        return null;
+        RetrofitCall retrofitCall = RetrofitClient.getJsonClient().create(RetrofitCall.class);
+        return retrofitCall.deleteTracking(slug, trackingNumber)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(Schedulers.computation())
+                .flatMap(dataGetResponseAfterShip -> Observable.just(dataGetResponseAfterShip.getData().getTracking()));
     }
 
     /**

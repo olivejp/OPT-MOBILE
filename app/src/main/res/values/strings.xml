@@ -49,4 +49,5 @@
     <string name="content_description_image_description">CD : Image description</string>
     <string name="insert_contenu_actualite">Vous avez ajouté %s au suivi des colis. Vous serez notifié de son évolution lors de son acheminement.</string>
     <string name="no_data_for_the_moment">Aucune données récupérées pour ce colis.Votre colis n\'est peut être pas encore référencé par l\'OPT.\n\nQuoiqu\'il en soit, sous couvert d\'une connexion internet, Colis NC tentera de récupérer ses informations toutes les 30 minutes et vous enverra une notification si le statut de votre colis change.</string>
+    <string name="actualite">Actualités</string>
 </resources>

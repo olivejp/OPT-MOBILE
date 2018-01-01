@@ -78,8 +78,7 @@ public class AddColisFragment extends Fragment {
                 colis.setIdColis(idColis);
                 colis.setDescription(editDescriptionParcel.getText().toString());
                 colis.setDeleted(0);
-                long insertResult = ColisService.insert(mActivity, colis);
-                if (insertResult != -1) {
+                if (ColisService.save(mActivity, colis)) {
 
                     // Launch asyncTask to query the server
                     ParamSyncTask paramSyncTask = new ParamSyncTask();

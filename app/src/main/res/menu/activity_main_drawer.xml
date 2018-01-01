@@ -2,12 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:title="@string/localisation">
+    <item android:title="@string/actualite">
         <menu>
             <item
-                android:id="@+id/nav_geo_agence"
-                android:icon="@drawable/ic_room_grey_900_48dp"
-                android:title="@string/agences_opt" />
+                android:id="@+id/nav_actualite"
+                android:icon="@drawable/ic_archive_grey_900_48dp"
+                app:actionViewClass="android.widget.TextView"
+                android:title="@string/suivi_des_colis" />
         </menu>
     </item>
     <item android:title="@string/courrier">
@@ -19,5 +20,14 @@
                 android:title="@string/suivi_des_colis" />
         </menu>
     </item>
+    <item android:title="@string/localisation">
+        <menu>
+            <item
+                android:id="@+id/nav_geo_agence"
+                android:icon="@drawable/ic_room_grey_900_48dp"
+                android:title="@string/agences_opt" />
+        </menu>
+    </item>
+
 
 </menu>

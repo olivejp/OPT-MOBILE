@@ -169,7 +169,7 @@ public class MainActivity extends AttachToPermissionActivity
                         }
                     } else {
                         // Colis don't already exist in our local DB, we insert it.
-                        ColisService.insert(MainActivity.this, remoteColisEntity);
+                        ColisService.save(MainActivity.this, remoteColisEntity);
                     }
                 }
             }

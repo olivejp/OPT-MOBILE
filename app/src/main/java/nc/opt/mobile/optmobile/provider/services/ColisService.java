@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import org.chalup.microorm.MicroOrm;
 
@@ -32,6 +33,8 @@ import static nc.opt.mobile.optmobile.utils.DateConverter.getNowEntity;
  */
 
 public class ColisService {
+
+    private static final String TAG = ColisService.class.getName();
 
     private static final MicroOrm uOrm = new MicroOrm();
     private static String selectionOnlyActiveColis = ColisInterface.DELETED.concat("<> ?");
@@ -95,6 +98,7 @@ public class ColisService {
      * @return 0 if no row was updated, otherwise return the number of row updated
      */
     public static boolean save(Context context, ColisEntity colisEntity) {
+        Log.d(TAG, "(listFromProvider) List de tous les colis présents dans l'application");
         int nbUpdated = 0;
         long id = 0;
         if (exist(context, colisEntity.getIdColis(), false)) {
@@ -113,6 +117,7 @@ public class ColisService {
      * @return
      */
     public static List<ColisEntity> listFromProvider(Context context, boolean onlyActive) {
+        Log.d(TAG, "(listFromProvider) List de tous les colis présents dans l'application");
         List<ColisEntity> colisList = new ArrayList<>();
 
         // Query the content provider to get a cursor of ColisDto
@@ -135,6 +140,7 @@ public class ColisService {
      * @return
      */
     public static List<ColisEntity> listDeletedFromProvider(Context context) {
+        Log.d(TAG, "(listDeletedFromProvider) List de tous les colis 'SUPPRIMES' présents dans l'application");
         List<ColisEntity> colisList = new ArrayList<>();
 
         // Query the content provider to get a cursor of ColisDto
@@ -181,6 +187,7 @@ public class ColisService {
      * @return
      */
     public static int delete(Context context, String idColis) {
+        Log.d(TAG, "(delete) Suppression effective du colis : " + idColis);
         ContentValues contentValues = new ContentValues();
         contentValues.put(ColisInterface.DELETED, 1);
 
@@ -195,6 +202,8 @@ public class ColisService {
      * @return
      */
     public static int realDelete(Context context, String idColis) {
+        Log.d(TAG, "(realDelete) Suppression réelle du colis : " + idColis);
+
         // Suppression des étapes d'acheminement
         EtapeService.delete(context, idColis);
 
@@ -207,6 +216,7 @@ public class ColisService {
      * @return
      */
     private static ContentValues putToContentValues(ColisEntity colis) {
+        Log.d(TAG, "(putToContentValues)");
         ContentValues contentValues = new ContentValues();
         contentValues.put(ColisInterface.ID_COLIS, colis.getIdColis());
         contentValues.put(ColisInterface.DESCRIPTION, colis.getDescription());
@@ -230,6 +240,7 @@ public class ColisService {
      * @return
      */
     public static int updateLastUpdate(Context context, @NonNull String idColis, boolean successful) {
+        Log.d(TAG, "(updateLastUpdate)");
         ContentValues contentValues = new ContentValues();
         contentValues.put(ColisInterface.LAST_UPDATE, getNowEntity());
         if (successful) {
@@ -246,6 +257,7 @@ public class ColisService {
      * @return
      */
     public static ColisEntity convertToEntity(ColisDto dto) {
+        Log.d(TAG, "(convertToEntity)");
         ColisEntity entity = new ColisEntity();
         entity.setIdColis(dto.getIdColis());
         if (dto.getEtapeDtoArrayList() != null && !dto.getEtapeDtoArrayList().isEmpty()) {
@@ -267,6 +279,7 @@ public class ColisService {
      * @return
      */
     public static ColisEntity convertTrackingDataToEntity(ColisEntity colis, TrackingData trackingData) {
+        Log.d(TAG, "(convertTrackingDataToEntity)");
         colis.setDeleted(0);
         for (Checkpoint c : trackingData.getCheckpoints()) {
             EtapeEntity etapeEntity = createEtapeFromCheckpoint(colis.getIdColis(), c);

@@ -211,11 +211,13 @@ public class CoreSync {
      * @param colis
      */
     public static void deleteTracking(Context context, ColisEntity colis) {
-        RetrofitClient.deleteTrackingBySlugAndTrackingNumber(colis.getSlug(), colis.getIdColis())
-                .retry(3)
-                .subscribe(trackingDelete -> {
-                    Log.d(TAG, "Suppression effective du tracking " + trackingDelete.getId() + " sur l'API AfterShip");
-                    ColisService.realDelete(context, colis.getIdColis());
-                }, consThrowable);
+        if (colis.getSlug() != null && colis.getSlug().length() != 0 && colis.getIdColis() != null && colis.getIdColis().length() != 0) {
+            RetrofitClient.deleteTrackingBySlugAndTrackingNumber(colis.getSlug(), colis.getIdColis())
+                    .retry(3)
+                    .subscribe(trackingDelete -> {
+                        Log.d(TAG, "Suppression effective du tracking " + trackingDelete.getId() + " sur l'API AfterShip");
+                        ColisService.realDelete(context, colis.getIdColis());
+                    }, consThrowable);
+        }
     }
 }
