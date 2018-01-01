@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import org.chalup.microorm.MicroOrm;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +56,7 @@ public class EtapeService {
      * @param idColis
      * @return
      */
-    public static List<EtapeEntity> listFromProvider(Context context, String idColis) {
+    public static List<EtapeEntity> listFromProvider(@NotNull Context context, @NotNull String idColis) {
         List<EtapeEntity> etapeList = new ArrayList<>();
 
         // Query the content provider to get a cursor of Etape
@@ -63,8 +64,7 @@ public class EtapeService {
 
         if (cursorListEtape != null) {
             while (cursorListEtape.moveToNext()) {
-                EtapeEntity etapeEntity = getFromCursor(cursorListEtape);
-                etapeList.add(etapeEntity);
+                etapeList.add(getFromCursor(cursorListEtape));
             }
             cursorListEtape.close();
         }
@@ -76,11 +76,10 @@ public class EtapeService {
      * @param idColis
      * @return
      */
-    public static boolean delete(Context context, String idColis) {
-        // Suppression des étapes d'acheminement
-        int result = context.getContentResolver().delete(OptProvider.ListEtapeAcheminement.LIST_ETAPE, ColisInterface.ID_COLIS.concat("=?"), new String[]{idColis});
-
-        return result >= 1;
+    public static boolean delete(@NotNull Context context, @NotNull String idColis) {
+        return context
+                .getContentResolver()
+                .delete(OptProvider.ListEtapeAcheminement.LIST_ETAPE, ColisInterface.ID_COLIS.concat("=?"), new String[]{idColis}) >= 1;
     }
 
     /**
@@ -89,24 +88,27 @@ public class EtapeService {
      * @param colis
      * @return
      */
-    private static long insert(Context context, EtapeEntity etape, ColisEntity colis) {
+    private static long insert(@NotNull Context context, @NotNull EtapeEntity etape, @NotNull ColisEntity colis) {
         Uri uri = context.getContentResolver().insert(OptProvider.ListEtapeAcheminement.LIST_ETAPE, putToContentValues(etape, colis.getIdColis()));
         return ContentUris.parseId(uri);
     }
 
     /**
      * Vérification si cette étape était déjà enregistrée, sinon on la créé.
+     * On ne fait pas de mise à jour d'étape, soit l'étape existe, soit elle est créée.
      *
      * @param context
      * @param colis
      * @return
      */
-    public static boolean save(Context context, ColisEntity colis) {
+    public static boolean save(@NotNull Context context, @NotNull ColisEntity colis) {
         boolean creation = false;
-        for (EtapeEntity etape : colis.getEtapeAcheminementArrayList()) {
-            if (!exist(context, colis.getIdColis(), etape)) {
-                creation = true;
-                insert(context, etape, colis);
+        if (colis.getEtapeAcheminementArrayList() != null && !colis.getEtapeAcheminementArrayList().isEmpty()) {
+            for (EtapeEntity etape : colis.getEtapeAcheminementArrayList()) {
+                if (!exist(context, colis.getIdColis(), etape)) {
+                    creation = true;
+                    insert(context, etape, colis);
+                }
             }
         }
         return creation;
@@ -119,7 +121,7 @@ public class EtapeService {
      * @param colis
      * @return
      */
-    public static boolean shouldInsertNewEtape(Context context, ColisEntity colis) {
+    public static boolean shouldInsertNewEtape(@NotNull Context context, @NotNull ColisEntity colis) {
         for (EtapeEntity etape : colis.getEtapeAcheminementArrayList()) {
             if (!exist(context, colis.getIdColis(), etape)) {
                 return true;
@@ -128,7 +130,7 @@ public class EtapeService {
         return false;
     }
 
-    private static ContentValues putToContentValues(EtapeEntity etapeEntity, String idColis) {
+    private static ContentValues putToContentValues(@NotNull EtapeEntity etapeEntity, @NotNull String idColis) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(PAYS, etapeEntity.getPays());
         contentValues.put(LOCALISATION, etapeEntity.getLocalisation());
@@ -140,11 +142,11 @@ public class EtapeService {
         return contentValues;
     }
 
-    private static EtapeEntity getFromCursor(Cursor cursor) {
+    private static EtapeEntity getFromCursor(@NotNull Cursor cursor) {
         return uOrm.fromCursor(cursor, EtapeEntity.class);
     }
 
-    private static boolean exist(Context context, String idColis, EtapeEntity etape) {
+    private static boolean exist(@NotNull Context context, @NotNull String idColis, @NotNull EtapeEntity etape) {
         String[] args = new String[]{idColis,
                 String.valueOf(etape.getDate()),
                 etape.getDescription(),
@@ -161,7 +163,7 @@ public class EtapeService {
         return false;
     }
 
-    static EtapeEntity convertToEntity(EtapeDto dto) {
+    static EtapeEntity convertToEntity(@NotNull EtapeDto dto) {
         EtapeEntity entity = new EtapeEntity();
         entity.setDate(DateConverter.convertDateDtoToEntity(dto.getDate()));
         entity.setCommentaire(dto.getCommentaire());
@@ -179,7 +181,7 @@ public class EtapeService {
      * @param checkpoint
      * @return EtapeEntity
      */
-    public static EtapeEntity createEtapeFromCheckpoint(String idColis, Checkpoint checkpoint) {
+    static EtapeEntity createEtapeFromCheckpoint(@NotNull String idColis, @NotNull Checkpoint checkpoint) {
         EtapeEntity etape = new EtapeEntity();
         etape.setIdColis(idColis);
         if (checkpoint.getCheckpointTime() != null) {
@@ -195,7 +197,7 @@ public class EtapeService {
         return etape;
     }
 
-    public static int getStatusDrawable(String status) {
+    public static int getStatusDrawable(@NotNull String status) {
         if (status != null) {
             switch (status) {
                 case "InfoReceived":

@@ -2,14 +2,21 @@
 apply plugin: 'com.android.application'
 
 android {
+    dexOptions{
+        javaMaxHeapSize "2g"
+        preDexLibraries true
+    }
+    aaptOptions {
+        cruncherEnabled = false
+    }
     packagingOptions {
         exclude 'META-INF/LICENSE'
     }
     compileSdkVersion 27
     buildToolsVersion "27.0.3"
     defaultConfig {
+        minSdkVersion hasProperty('minSdk') ? minSdk.toInteger() : 16
         applicationId "nc.opt.mobile.optmobile"
-        minSdkVersion 16
         targetSdkVersion 27
         versionCode 23
         versionName "v1.2"

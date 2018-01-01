@@ -7,9 +7,6 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 import android.view.View;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +14,6 @@ import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.ProviderObserver;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
-import nc.opt.mobile.optmobile.service.FirebaseService;
-
-import static nc.opt.mobile.optmobile.provider.services.ColisService.realDelete;
 
 /**
  * Created by 2761oli on 26/12/2017.
@@ -61,24 +55,6 @@ public class GestionColisFragmentViewModel extends AndroidViewModel implements P
 
     public int getRecyclerViewVisibility() {
         return conditionVisible() ? View.GONE : View.VISIBLE;
-    }
-
-    public void deleteColis(String idColis) {
-        // Suppression dans la DB locale.
-        int result = ColisService.delete(getApplication(), idColis);
-
-        // we try to delete the remote
-        if (result > 0) {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user != null) {
-                FirebaseService.deleteRemoteColis(user.getUid(), idColis, (databaseError, databaseReference) ->
-                        // If remote has been deleted, we delete local
-                        realDelete(getApplication(), idColis)
-                );
-            }
-        }
-
-        retrieveColisEntities();
     }
 
     @Override

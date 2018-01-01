@@ -4,11 +4,9 @@ import android.content.Context;
 import android.util.Log;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableTransformer;
 import io.reactivex.functions.Consumer;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.domain.suivi.ColisDto;
-import nc.opt.mobile.optmobile.domain.suivi.aftership.ResponseDataDetectCourier;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.SendTrackingData;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.Tracking;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.TrackingData;
@@ -16,6 +14,7 @@ import nc.opt.mobile.optmobile.network.RetrofitClient;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
 import nc.opt.mobile.optmobile.provider.services.EtapeService;
+import nc.opt.mobile.optmobile.service.FirebaseService;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static nc.opt.mobile.optmobile.provider.services.ColisService.convertTrackingDataToEntity;
@@ -25,11 +24,7 @@ import static nc.opt.mobile.optmobile.provider.services.ColisService.convertTrac
  */
 
 public class CoreSync {
-
     private static final String TAG = CoreSync.class.getName();
-
-    private static final Integer COUNTER_START = 1;
-    private static final Integer ATTEMPTS = 3;
 
     private CoreSync() {
     }
@@ -37,11 +32,23 @@ public class CoreSync {
     // This consumer only catch the Throwables and log them.
     private static Consumer<Throwable> consThrowable = throwable -> Log.e(TAG, "Erreur sur l'API AfterShip : " + throwable.getMessage(), throwable);
 
-    // Found on : https://medium.com/@v.danylo/server-polling-and-retrying-failed-operations-with-retrofit-and-rxjava-8bcc7e641a5a
-    private static <T> ObservableTransformer<T, Long> zipWithFlatMap() {
-        return observable -> observable.zipWith(
-                Observable.range(COUNTER_START, ATTEMPTS), (t, repeatAttempt) -> repeatAttempt)
-                .flatMap(repeatAttempt -> Observable.timer(repeatAttempt, SECONDS));
+    /**
+     * @param observable
+     * @param resultColis
+     * @param context
+     */
+    private static void callGetTracking(Observable<TrackingData> observable, ColisEntity resultColis, Context context) {
+        observable.retry(2).subscribe(trackingData -> {
+            Log.d(TAG, "TrackingData récupéré : " + trackingData.toString());
+            Observable.just(convertTrackingDataToEntity(resultColis, trackingData))
+                    .subscribe(colisEntity -> {
+                        if (ColisService.save(context, colisEntity)) {
+                            Log.d(TAG, "Insertion en base réussie");
+                        } else {
+                            Log.d(TAG, "Insertion en base échouée");
+                        }
+                    }, consThrowable);
+        }, consThrowable);
     }
 
     /**
@@ -62,84 +69,42 @@ public class CoreSync {
         }
         ColisEntity resultColis = colisFromDb;
 
-        // This consumer is only called when getting colis
-        Consumer<TrackingData> consGetTracking = trackingData -> {
-            Log.d(TAG, "TrackingData récupéré : " + trackingData.toString());
-            Observable.just(convertTrackingDataToEntity(resultColis, trackingData))
-                    .subscribe(colisEntity -> {
-                        if (ColisService.save(context, colisEntity)) {
-                            Log.d(TAG, "Insertion en base réussie");
-                        }
-                    }, consThrowable);
-        };
-
-        // This consumer is only called when posting colis
-        Consumer<TrackingData> consPostTracking = trackingDataPosted -> {
-            Log.d(TAG, "Post Tracking Successful, try to get the tracking by get trackings/:id");
-
-            RetrofitClient.getTracking(trackingDataPosted.getId())
-                    .retry(2)
-                    .subscribe(consGetTracking, consThrowable);
-
-//            RetrofitClient.getTracking(trackingDataPosted.getId())
-//                    .takeUntil(trackingData -> !trackingData.getCheckpoints().isEmpty())
-//                    .filter(trackingData -> !trackingData.getCheckpoints().isEmpty())
-//                    .repeatWhen(objectObservable -> objectObservable.compose(zipWithFlatMap()))
-//                    .subscribe(consGetTracking, consThrowable);
-        };
-
-        // Consumer detect courier
-        Consumer<ResponseDataDetectCourier> consDetectCourier = responseDataDetectCourier -> {
-            Log.d(TAG, "Détection du bon slug.");
-            if (!responseDataDetectCourier.getCouriers().isEmpty()) {
-                String slug = responseDataDetectCourier.getCouriers().get(0).getSlug();
-                resultColis.setSlug(slug);
-
-                Log.d(TAG, "Slug trouvé pour le colis : " + trackingNumber + ", il s'agit de " + slug);
-
-                // Post d'un numéro
-                RetrofitClient.postTracking(trackingNumber)
-                        .doOnError(throwable0 -> {
-                            Log.d(TAG, "Post tracking fail, try to get it by get trackings/:slug/:trackingNumber");
-
-                            RetrofitClient.getTracking(slug, trackingNumber)
-                                    .retry(2)
-                                    .subscribe(consGetTracking, consThrowable);
-
-//                            RetrofitClient.getTracking(slug, trackingNumber)
-//                                    .takeUntil(trackingData -> !trackingData.getCheckpoints().isEmpty())
-//                                    .filter(trackingData -> !trackingData.getCheckpoints().isEmpty())
-//                                    .repeatWhen(objectObservable -> objectObservable.compose(zipWithFlatMap()))
-//                                    .subscribe(consGetTracking, consThrowable);
-                        })
-                        .delay(10, SECONDS)
-                        .subscribe(consPostTracking, consThrowable);
-            } else {
-                Log.d(TAG, "No courier was found for this tracking number.");
-            }
-        };
-
-        // This consumer is only called when getting colis from OPT
-        Consumer<String> consGetTrackingOpt = htmlString -> {
-            Log.d(TAG, "Réponse reçue lors de l'appel service OPT : " + htmlString);
-            if (transformHtmlToColisDto(context, trackingNumber, htmlString, sendNotification)) {
-                Log.d(TAG, "Transformation de la réponse OPT OK");
-            } else {
-                Log.e(TAG, "Echec lors de la réception de l'appel aux services OPT");
-            }
-        };
-
         // Call OPT Service
         RetrofitClient.getTrackingOpt(trackingNumber)
                 .retry(2)
-                .subscribe(consGetTrackingOpt,
+                .subscribe(htmlString -> {
+                            Log.d(TAG, "Réponse reçue lors de l'appel service OPT : " + htmlString);
+                            if (transformHtmlToColisDto(context, trackingNumber, htmlString, sendNotification)) {
+                                Log.d(TAG, "Transformation de la réponse OPT OK");
+                            } else {
+                                Log.e(TAG, "Fail to receive response from OPT service");
+                            }
+                        },
                         consThrowable,
-                        () -> {
-                            // Try to get courrier from AfterShip
-                            RetrofitClient.detectCourier(trackingNumber)
-                                    .retry(2)
-                                    .subscribe(consDetectCourier, consThrowable);
-                        });
+                        // Detect courier
+                        () -> RetrofitClient.detectCourier(trackingNumber).retry(2).subscribe(responseDataDetectCourier -> {
+                            Log.d(TAG, "Détection du bon slug.");
+                            if (!responseDataDetectCourier.getCouriers().isEmpty()) {
+                                String slug = responseDataDetectCourier.getCouriers().get(0).getSlug();
+                                resultColis.setSlug(slug);
+
+                                Log.d(TAG, "Slug found for the tracking : " + trackingNumber + ", it's : " + slug);
+
+                                // Post tracking
+                                RetrofitClient.postTracking(trackingNumber)
+                                        .doOnError(throwable0 -> {
+                                            Log.d(TAG, "Post tracking fail, try to get it by get trackings/:slug/:trackingNumber for the tracking : " + trackingNumber);
+                                            callGetTracking(RetrofitClient.getTracking(slug, trackingNumber), resultColis, context);
+                                        })
+                                        .delay(10, SECONDS)
+                                        .subscribe(trackingData -> {
+                                            Log.d(TAG, "Post Tracking Successful, try to get the tracking by get trackings/:id");
+                                            callGetTracking(RetrofitClient.getTracking(trackingData.getId()), resultColis, context);
+                                        }, consThrowable);
+                            } else {
+                                Log.d(TAG, "No courier was found for this tracking number : " + trackingNumber);
+                            }
+                        }, consThrowable));
     }
 
     /**
@@ -177,9 +142,11 @@ public class CoreSync {
         try {
             switch (HtmlTransformer.getColisFromHtml(htmlToTransform, colisDto)) {
                 case HtmlTransformer.RESULT_SUCCESS:
+                    Log.d(TAG, "HtmlTransformer return SUCCESS");
                     saveColisDto(context, colisDto, sendNotification);
                     return true;
                 case HtmlTransformer.RESULT_NO_ITEM_FOUND:
+                    Log.d(TAG, "HtmlTransformer return NO ITEM FOUND");
                     ColisService.updateLastUpdate(context, colisDto.getIdColis(), false);
                     return false;
                 default:
@@ -196,7 +163,6 @@ public class CoreSync {
      * @return
      */
     public static Tracking<SendTrackingData> createTrackingData(String trackingNumber) {
-        // Création d'un tracking
         Tracking<SendTrackingData> tracking = new Tracking<>();
         SendTrackingData trackingDetect = new SendTrackingData();
         trackingDetect.setTrackingNumber(trackingNumber);
@@ -217,6 +183,7 @@ public class CoreSync {
                     .subscribe(trackingDelete -> {
                         Log.d(TAG, "Suppression effective du tracking " + trackingDelete.getId() + " sur l'API AfterShip");
                         ColisService.realDelete(context, colis.getIdColis());
+                        FirebaseService.deleteRemoteColis(context, colis.getIdColis());
                     }, consThrowable);
         }
     }

@@ -7,6 +7,8 @@ import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -20,6 +22,7 @@ import java.util.List;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.utils.Constants;
 
+import static nc.opt.mobile.optmobile.provider.services.ColisService.realDelete;
 import static nc.opt.mobile.optmobile.utils.Constants.PREF_USER;
 
 /**
@@ -43,40 +46,57 @@ public class FirebaseService {
      * @param listColis
      * @param view
      */
-    public static void createRemoteDatabase(@NotNull String userUid, @NotNull List<ColisEntity> listColis, @Nullable View view) {
+    public static void createRemoteDatabase(@NotNull Context context, @NotNull List<ColisEntity> listColis, @Nullable View view) {
         for (ColisEntity colisEntity : listColis) {
-            updateRemoteDatabase(userUid, colisEntity, view);
+            updateRemoteDatabase(context, colisEntity, view);
         }
     }
 
-    public static void deleteRemoteColis(@NotNull String userUid, @NotNull String idColis, @Nullable DatabaseReference.CompletionListener completionListener) {
-        DatabaseReference.CompletionListener listener;
-        if (completionListener == null) {
-            listener = (databaseError, databaseReference) -> Log.d(TAG, "Suppression réussie dans Firebase");
+    /**
+     * @param context
+     * @param idColis
+     */
+    public static void deleteRemoteColis(@NotNull Context context, @NotNull String idColis) {
+        Log.d(TAG, "(deleteRemoteColis) : Try to remove tracking : " + idColis);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            getUsersRef()
+                    .child(user.getUid())
+                    .child(idColis)
+                    .removeValue((databaseError, databaseReference) -> {
+                        Log.d(TAG, "(deleteRemoteColis) : Delete successful of : " + idColis);
+                        realDelete(context, idColis);
+                    });
+        }
+    }
+
+    /**
+     * @param context
+     * @param colis
+     * @param view
+     */
+    private static void updateRemoteDatabase(@NotNull Context context, @NotNull ColisEntity colis, @Nullable View view) {
+        String uid = getUidOfFirebaseUser(context);
+        if (uid != null) {
+            if (view != null) weakRefView = new WeakReference<>(view);
+            getUsersRef().child(uid).child(colis.getIdColis()).setValue(colis)
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d(TAG, "(updateRemoteDatabase) : Insertion RÉUSSIE dans Firebase : " + colis.getIdColis());
+                        if (weakRefView != null && weakRefView.get() != null) {
+                            Snackbar.make(weakRefView.get(), "Insertion dans Firebase réussie.", Snackbar.LENGTH_LONG).show();
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.d(TAG, "(updateRemoteDatabase) : Insertion ÉCHOUÉE dans Firebase : " + colis.getIdColis());
+                        String message = "Echec de l'insertion dans Firebase.";
+                        FirebaseCrash.log(message.concat(" Exception:").concat(e.getMessage()));
+                        if (weakRefView != null && weakRefView.get() != null) {
+                            Snackbar.make(weakRefView.get(), message, Snackbar.LENGTH_LONG).show();
+                        }
+                    });
         } else {
-            listener = completionListener;
+            Log.d(TAG, "(updateRemoteDatabase) : Firebase User UID is null !");
         }
-
-        getUsersRef().child(userUid).child(idColis).removeValue(listener);
-    }
-
-
-    private static void updateRemoteDatabase(@NotNull String userUid, @NotNull ColisEntity colis, @Nullable View view) {
-        if (view != null) weakRefView = new WeakReference<>(view);
-        getUsersRef().child(userUid).child(colis.getIdColis()).setValue(colis)
-                .addOnSuccessListener(aVoid -> {
-                    if (weakRefView != null && weakRefView.get() != null) {
-                        Snackbar.make(weakRefView.get(), "Insertion dans Firebase réussie.", Snackbar.LENGTH_LONG).show();
-                    }
-                    Log.d(TAG, "Insertion réussie dans Firebase");
-                })
-                .addOnFailureListener(e -> {
-                    String message = "Echec de l'insertion dans Firebase.";
-                    FirebaseCrash.log(message.concat(" Exception:").concat(e.getMessage()));
-                    if (weakRefView != null && weakRefView.get() != null) {
-                        Snackbar.make(weakRefView.get(), message, Snackbar.LENGTH_LONG).show();
-                    }
-                });
     }
 
     /**
@@ -95,10 +115,16 @@ public class FirebaseService {
      * @param list
      */
     static void updateFirebase(Context context, List<ColisEntity> list) {
+        FirebaseService.createRemoteDatabase(context, list, null);
+    }
+
+    /**
+     * @param context
+     * @return
+     */
+    @Nullable
+    public static String getUidOfFirebaseUser(@NotNull Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("PREFS", Context.MODE_PRIVATE);
-        String uid = sharedPreferences.getString(PREF_USER, null);
-        if (uid != null) {
-            FirebaseService.createRemoteDatabase(uid, list, null);
-        }
+        return sharedPreferences.getString(PREF_USER, null);
     }
 }

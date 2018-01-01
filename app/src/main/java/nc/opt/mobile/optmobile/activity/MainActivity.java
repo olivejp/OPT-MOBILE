@@ -164,7 +164,7 @@ public class MainActivity extends AttachToPermissionActivity
                         if (colisEntity != null && colisEntity.getDeleted() == 1) {
                             // Colis exist in our local DB but has been deleted.
                             // We update our remote database.
-                            FirebaseService.deleteRemoteColis(mFirebaseUser.getUid(), remoteColisEntity.getIdColis(), null);
+                            FirebaseService.deleteRemoteColis(MainActivity.this, remoteColisEntity.getIdColis());
                             ColisService.realDelete(MainActivity.this, remoteColisEntity.getIdColis());
                         }
                     } else {
@@ -240,7 +240,8 @@ public class MainActivity extends AttachToPermissionActivity
                     if (dataSnapshot.hasChild(userId)) {
                         FirebaseService.getFromRemoteDatabase(user.getUid(), getFromRemoteValueEventListener);
                     } else {
-                        FirebaseService.createRemoteDatabase(user.getUid(), ColisService.listFromProvider(MainActivity.this, true), navigationView);
+                        List<ColisEntity> listColis = ColisService.listFromProvider(MainActivity.this, true);
+                        FirebaseService.createRemoteDatabase(MainActivity.this, listColis, navigationView);
                     }
                 }
             }

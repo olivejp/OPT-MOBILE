@@ -96,8 +96,8 @@ public class AddColisFragment extends Fragment {
 
                     // Try to send to the remote DB
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    if (user != null) {
-                        FirebaseService.createRemoteDatabase(user.getUid(), ColisService.listFromProvider(getActivity(), true), null);
+                    if (user != null && getContext() != null) {
+                        FirebaseService.createRemoteDatabase(getContext(), ColisService.listFromProvider(getActivity(), true), null);
                     }
                 }
                 mActivity.finish();

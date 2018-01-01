@@ -98,7 +98,7 @@ public class ColisService {
      * @return 0 if no row was updated, otherwise return the number of row updated
      */
     public static boolean save(Context context, ColisEntity colisEntity) {
-        Log.d(TAG, "(listFromProvider) List de tous les colis présents dans l'application");
+        Log.d(TAG, "(save) Sauvegarde en Db du tracking : " + colisEntity.getIdColis());
         int nbUpdated = 0;
         long id = 0;
         if (exist(context, colisEntity.getIdColis(), false)) {
@@ -190,16 +190,14 @@ public class ColisService {
         Log.d(TAG, "(delete) Suppression effective du colis : " + idColis);
         ContentValues contentValues = new ContentValues();
         contentValues.put(ColisInterface.DELETED, 1);
-
         String where = ColisInterface.ID_COLIS.concat("=?");
-
         return context.getContentResolver().update(OptProvider.ListColis.LIST_COLIS, contentValues, where, new String[]{idColis});
     }
 
     /**
      * @param context
      * @param idColis
-     * @return
+     * @return Number of rows really deleted.
      */
     public static int realDelete(Context context, String idColis) {
         Log.d(TAG, "(realDelete) Suppression réelle du colis : " + idColis);
@@ -237,9 +235,8 @@ public class ColisService {
      * @param context
      * @param idColis
      * @param successful
-     * @return
      */
-    public static int updateLastUpdate(Context context, @NonNull String idColis, boolean successful) {
+    public static void updateLastUpdate(Context context, @NonNull String idColis, boolean successful) {
         Log.d(TAG, "(updateLastUpdate)");
         ContentValues contentValues = new ContentValues();
         contentValues.put(ColisInterface.LAST_UPDATE, getNowEntity());
@@ -248,8 +245,7 @@ public class ColisService {
         }
 
         String where = ColisInterface.ID_COLIS.concat("=?");
-
-        return context.getContentResolver().update(OptProvider.ListColis.LIST_COLIS, contentValues, where, new String[]{idColis});
+        context.getContentResolver().update(OptProvider.ListColis.LIST_COLIS, contentValues, where, new String[]{idColis});
     }
 
     /**
