@@ -9,8 +9,6 @@ import android.util.Log;
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
-import java.util.List;
-
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
 import nc.opt.mobile.optmobile.utils.CoreSync;
@@ -60,13 +58,12 @@ public class SyncColisService extends IntentService {
      *
      * @param context
      * @param idColis
-     * @param sendNotification
      */
-    public static void launchSynchroByIdColis(Context context, String idColis, boolean sendNotification) {
+    public static void launchSynchroByIdColis(Context context, String idColis) {
         Intent syncService = new Intent(context, SyncColisService.class);
         syncService.putExtra(SyncColisService.ARG_ACTION, SyncColisService.ARG_ACTION_SYNC_COLIS);
         syncService.putExtra(SyncColisService.ARG_ID_COLIS, idColis);
-        syncService.putExtra(SyncColisService.ARG_NOTIFICATION, sendNotification);
+        syncService.putExtra(SyncColisService.ARG_NOTIFICATION, false);
         context.startService(syncService);
     }
 
@@ -74,12 +71,11 @@ public class SyncColisService extends IntentService {
      * Lancement du service de synchro pour tous les objets
      *
      * @param context
-     * @param sendNotification
      */
-    public static void launchSynchroForAll(Context context, boolean sendNotification) {
+    public static void launchSynchroForAll(Context context) {
         Intent syncService = new Intent(context, SyncColisService.class);
         syncService.putExtra(SyncColisService.ARG_ACTION, SyncColisService.ARG_ACTION_SYNC_ALL);
-        syncService.putExtra(SyncColisService.ARG_NOTIFICATION, sendNotification);
+        syncService.putExtra(SyncColisService.ARG_NOTIFICATION, false);
         context.startService(syncService);
     }
 
@@ -96,7 +92,7 @@ public class SyncColisService extends IntentService {
     }
 
     /**
-     * Lecture de tous les colis inactifs dans la base de données pour suppression de l'API AfterShip.
+     * Lecture de tous les colis deleted dans la base de données pour suppression de l'API AfterShip.
      *
      * @param context
      */
@@ -104,9 +100,6 @@ public class SyncColisService extends IntentService {
         for (ColisEntity colis : ColisService.listDeletedFromProvider(context)) {
             CoreSync.deleteTracking(context, colis);
         }
-
-        // Update Firebase
-        updateFirebase(context, listFromProvider(context, true));
     }
 
     /**
@@ -116,13 +109,7 @@ public class SyncColisService extends IntentService {
     private void handleActionSyncColis(Bundle bundle, boolean sendNotification) {
         if (bundle.containsKey(ARG_ID_COLIS)) {
             String idColis = bundle.getString(ARG_ID_COLIS);
-
-            if (idColis != null) {
-                CoreSync.getTracking(this, idColis, sendNotification);
-            }
-
-            // Suppression du tracking sur l'API AfterShip
-            launchSynchroDelete(this);
+            if (idColis != null) CoreSync.getTracking(this, idColis, sendNotification);
         }
     }
 
@@ -130,27 +117,18 @@ public class SyncColisService extends IntentService {
      * @param sendNotification
      */
     private void handleActionSyncAll(boolean sendNotification) {
-        List<ColisEntity> list = listFromProvider(this, true);
-        if (!list.isEmpty()) {
-            for (ColisEntity colis : list) {
-                CoreSync.getTracking(this, colis.getIdColis(), sendNotification);
-            }
-        }
-
-        // Suppression du tracking sur l'API AfterShip
-        launchSynchroDelete(this);
+        CoreSync.getAllTracking(this, sendNotification);
     }
-
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         if (intent != null) {
             Bundle bundle = intent.getExtras();
             if (bundle != null && bundle.containsKey(ARG_ACTION)) {
-                String s = bundle.getString(ARG_ACTION);
+                String action = bundle.getString(ARG_ACTION);
                 boolean sendNotification = (bundle.containsKey(ARG_NOTIFICATION)) && bundle.getBoolean(ARG_NOTIFICATION);
-                if (s != null) {
-                    switch (s) {
+                if (action != null) {
+                    switch (action) {
                         case ARG_ACTION_SYNC_COLIS:
                             handleActionSyncColis(bundle, sendNotification);
                             break;
@@ -163,6 +141,8 @@ public class SyncColisService extends IntentService {
                         default:
                             break;
                     }
+                    launchSynchroDelete(this);
+                    updateFirebase(this, listFromProvider(this, true));
                 }
             }
             // On va rafraichir les données du RemoteConfig

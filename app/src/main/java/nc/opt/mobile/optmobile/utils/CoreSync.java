@@ -3,6 +3,8 @@ package nc.opt.mobile.optmobile.utils;
 import android.content.Context;
 import android.util.Log;
 
+import java.util.List;
+
 import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
 import nc.opt.mobile.optmobile.R;
@@ -18,6 +20,7 @@ import nc.opt.mobile.optmobile.service.FirebaseService;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static nc.opt.mobile.optmobile.provider.services.ColisService.convertTrackingDataToEntity;
+import static nc.opt.mobile.optmobile.provider.services.ColisService.listFromProvider;
 
 /**
  * Created by orlanth23 on 18/12/2017.
@@ -30,7 +33,7 @@ public class CoreSync {
     }
 
     // This consumer only catch the Throwables and log them.
-    private static Consumer<Throwable> consThrowable = throwable -> Log.e(TAG, "Erreur sur l'API AfterShip : " + throwable.getMessage(), throwable);
+    private static Consumer<Throwable> consThrowable = throwable -> Log.e(TAG, "Erreur sur l'API AfterShip : " + throwable.getMessage() + " Localized message : " + throwable.getLocalizedMessage(), throwable);
 
     /**
      * @param observable
@@ -52,6 +55,19 @@ public class CoreSync {
     }
 
     /**
+     * @param context
+     * @param sendNotification
+     */
+    public static void getAllTracking(Context context, boolean sendNotification) {
+        List<ColisEntity> list = listFromProvider(context, true);
+        if (!list.isEmpty()) {
+            for (ColisEntity colis : list) {
+                CoreSync.getTracking(context, colis.getIdColis(), sendNotification);
+            }
+        }
+    }
+
+    /**
      * Tracking Core
      *
      * @param context
@@ -59,7 +75,6 @@ public class CoreSync {
      * @param sendNotification
      */
     public static void getTracking(Context context, String trackingNumber, boolean sendNotification) {
-
         // Get the Colis from the content provider, if it exists, or create a new one.
         // We will send it at the end.
         ColisEntity colisFromDb = ColisService.get(context, trackingNumber);
@@ -96,6 +111,7 @@ public class CoreSync {
                                             Log.d(TAG, "Post tracking fail, try to get it by get trackings/:slug/:trackingNumber for the tracking : " + trackingNumber);
                                             callGetTracking(RetrofitClient.getTracking(slug, trackingNumber), resultColis, context);
                                         })
+                                        .retry(2)
                                         .delay(10, SECONDS)
                                         .subscribe(trackingData -> {
                                             Log.d(TAG, "Post Tracking Successful, try to get the tracking by get trackings/:id");
@@ -179,11 +195,11 @@ public class CoreSync {
     public static void deleteTracking(Context context, ColisEntity colis) {
         if (colis.getSlug() != null && colis.getSlug().length() != 0 && colis.getIdColis() != null && colis.getIdColis().length() != 0) {
             RetrofitClient.deleteTrackingBySlugAndTrackingNumber(colis.getSlug(), colis.getIdColis())
-                    .retry(3)
+                    .retry(2)
                     .subscribe(trackingDelete -> {
                         Log.d(TAG, "Suppression effective du tracking " + trackingDelete.getId() + " sur l'API AfterShip");
+                        FirebaseService.deleteRemoteColis(colis.getIdColis());
                         ColisService.realDelete(context, colis.getIdColis());
-                        FirebaseService.deleteRemoteColis(context, colis.getIdColis());
                     }, consThrowable);
         }
     }

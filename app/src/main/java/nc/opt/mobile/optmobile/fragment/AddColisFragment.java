@@ -55,6 +55,37 @@ public class AddColisFragment extends Fragment {
         return rootView;
     }
 
+    private void createColisAndSaveIt(String idColis, String description, View view) {
+        // Add the colis to our ContentProvider
+        ColisEntity colis = new ColisEntity();
+        colis.setIdColis(idColis);
+        colis.setDescription(description);
+        colis.setDeleted(0);
+        if (ColisService.save(mActivity, colis)) {
+
+            // Launch asyncTask to query the server
+            ParamSyncTask paramSyncTask = new ParamSyncTask();
+            paramSyncTask.setContext(mActivity);
+            paramSyncTask.setIdColis(idColis);
+            SyncTask syncTask = new SyncTask(SyncTask.TypeTask.SOLO);
+            syncTask.execute(paramSyncTask);
+
+            Snackbar.make(view, String.format(getString(R.string.colis_added), idColis), Snackbar.LENGTH_LONG).show();
+
+            // Ajout d'une actualité
+            ActualiteService.insertActualite(mActivity,
+                    String.format(getString(R.string.colis_added), idColis),
+                    String.format(getString(R.string.insert_contenu_actualite), idColis),
+                    true);
+
+            // Try to send to the remote DB
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user != null && getContext() != null) {
+                FirebaseService.createRemoteDatabase(getContext(), ColisService.listFromProvider(getActivity(), true), null);
+            }
+        }
+    }
+
     @OnClick(R.id.fab_search_parcel)
     public void searchParcel(View view) {
         if (!editIdParcel.getText().toString().isEmpty()) {
@@ -64,6 +95,7 @@ public class AddColisFragment extends Fragment {
 
             // Get the idColis from the view
             String idColis = editIdParcel.getText().toString().toUpperCase();
+            String description = editDescriptionParcel.getText().toString();
 
             // Query our ContentProvider to avoid duplicate
             if (ColisService.exist(mActivity, idColis, true)) {
@@ -73,33 +105,9 @@ public class AddColisFragment extends Fragment {
                 if (ColisService.exist(mActivity, idColis, false)) {
                     ColisService.realDelete(mActivity, idColis);
                 }
-                // Add the colis to our ContentProvider
-                ColisEntity colis = new ColisEntity();
-                colis.setIdColis(idColis);
-                colis.setDescription(editDescriptionParcel.getText().toString());
-                colis.setDeleted(0);
-                if (ColisService.save(mActivity, colis)) {
 
-                    // Launch asyncTask to query the server
-                    ParamSyncTask paramSyncTask = new ParamSyncTask();
-                    paramSyncTask.setContext(mActivity);
-                    paramSyncTask.setIdColis(idColis);
-                    SyncTask syncTask = new SyncTask(SyncTask.TypeTask.SOLO);
-                    syncTask.execute(paramSyncTask);
+                createColisAndSaveIt(idColis, description, view);
 
-                    Snackbar.make(view, String.format(getString(R.string.colis_added), idColis), Snackbar.LENGTH_LONG).show();
-
-                    // Ajout d'une actualité
-                    String titre = String.format(getString(R.string.colis_added), idColis);
-                    String contenu = String.format(getString(R.string.insert_contenu_actualite), idColis);
-                    ActualiteService.insertActualite(mActivity, titre, contenu, true);
-
-                    // Try to send to the remote DB
-                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    if (user != null && getContext() != null) {
-                        FirebaseService.createRemoteDatabase(getContext(), ColisService.listFromProvider(getActivity(), true), null);
-                    }
-                }
                 mActivity.finish();
             }
         }

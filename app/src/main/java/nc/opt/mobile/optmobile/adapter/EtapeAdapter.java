@@ -56,10 +56,12 @@ public class EtapeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
 
         // We remove the line if we are on the last element.
+        viewHeader.mStepLine.setVisibility(View.VISIBLE);
         if (position == etapes.size() - 1) {
-            ((ViewHolderEtape) holder).mStepLine.setVisibility(View.GONE);
+            viewHeader.mStepLine.setVisibility(View.GONE);
         }
 
+        // Change status image.
         viewHeader.mStepStatus.setImageResource(EtapeService.getStatusDrawable(viewHeader.etape.getStatus()));
     }
 

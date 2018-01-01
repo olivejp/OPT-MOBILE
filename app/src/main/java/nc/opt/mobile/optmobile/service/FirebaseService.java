@@ -22,7 +22,6 @@ import java.util.List;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.utils.Constants;
 
-import static nc.opt.mobile.optmobile.provider.services.ColisService.realDelete;
 import static nc.opt.mobile.optmobile.utils.Constants.PREF_USER;
 
 /**
@@ -53,20 +52,16 @@ public class FirebaseService {
     }
 
     /**
-     * @param context
      * @param idColis
      */
-    public static void deleteRemoteColis(@NotNull Context context, @NotNull String idColis) {
+    public static void deleteRemoteColis(@NotNull String idColis) {
         Log.d(TAG, "(deleteRemoteColis) : Try to remove tracking : " + idColis);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             getUsersRef()
                     .child(user.getUid())
                     .child(idColis)
-                    .removeValue((databaseError, databaseReference) -> {
-                        Log.d(TAG, "(deleteRemoteColis) : Delete successful of : " + idColis);
-                        realDelete(context, idColis);
-                    });
+                    .removeValue((databaseError, databaseReference) -> Log.d(TAG, "(deleteRemoteColis) : Delete successful of : " + idColis));
         }
     }
 

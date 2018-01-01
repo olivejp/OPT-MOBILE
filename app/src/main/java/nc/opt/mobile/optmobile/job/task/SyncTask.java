@@ -14,7 +14,7 @@ public class SyncTask extends AsyncTask<ParamSyncTask, Void, Void> {
 
     public enum TypeTask {
         SOLO,
-        MULTIPLE
+        ALL
     }
 
     private TypeTask type;
@@ -29,9 +29,9 @@ public class SyncTask extends AsyncTask<ParamSyncTask, Void, Void> {
             Context context = paramSyncTasks[0].getContext();
             String idColis = paramSyncTasks[0].getIdColis();
             if (type == TypeTask.SOLO) {
-                SyncColisService.launchSynchroByIdColis(context, idColis, false);
-            } else if (type == TypeTask.MULTIPLE) {
-                SyncColisService.launchSynchroForAll(context, false);
+                SyncColisService.launchSynchroByIdColis(context, idColis);
+            } else if (type == TypeTask.ALL) {
+                SyncColisService.launchSynchroForAll(context);
             }
         }
         return null;

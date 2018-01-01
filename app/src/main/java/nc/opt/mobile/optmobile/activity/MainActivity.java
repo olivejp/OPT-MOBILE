@@ -164,7 +164,7 @@ public class MainActivity extends AttachToPermissionActivity
                         if (colisEntity != null && colisEntity.getDeleted() == 1) {
                             // Colis exist in our local DB but has been deleted.
                             // We update our remote database.
-                            FirebaseService.deleteRemoteColis(MainActivity.this, remoteColisEntity.getIdColis());
+                            FirebaseService.deleteRemoteColis(remoteColisEntity.getIdColis());
                             ColisService.realDelete(MainActivity.this, remoteColisEntity.getIdColis());
                         }
                     } else {
