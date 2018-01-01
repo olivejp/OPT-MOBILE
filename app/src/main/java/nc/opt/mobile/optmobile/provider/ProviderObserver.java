@@ -16,7 +16,7 @@ public class ProviderObserver extends ContentObserver {
 
     private static ProviderObserver mInstance;
 
-    private static HashMap<Uri, List<ProviderObserverListener>> hashMap = new HashMap<>();
+    private static HashMap<Uri, List<ProviderObserverListener>> mapUriListeners = new HashMap<>();
 
     private ProviderObserver(Handler handler) {
         super(handler);
@@ -29,18 +29,24 @@ public class ProviderObserver extends ContentObserver {
         return mInstance;
     }
 
+    /**
+     *
+     * @param context
+     * @param providerObserverListener
+     * @param uris
+     */
     public void observe(Context context, ProviderObserverListener providerObserverListener, Uri ... uris) {
         for (Uri uri : uris) {
             // Recherche si l'uri est présente dans le HashMap
-            if (hashMap.containsKey(uri)) {
-                List<ProviderObserverListener> listeners = hashMap.get(uri);
+            if (mapUriListeners.containsKey(uri)) {
+                List<ProviderObserverListener> listeners = mapUriListeners.get(uri);
                 if (!listeners.contains(providerObserverListener)) {
                     listeners.add(providerObserverListener);
                 }
             } else {
                 List<ProviderObserverListener> list = new ArrayList<>();
                 list.add(providerObserverListener);
-                hashMap.put(uri, list);
+                mapUriListeners.put(uri, list);
                 context.getContentResolver().registerContentObserver(uri, false, this);
             }
         }
@@ -53,8 +59,8 @@ public class ProviderObserver extends ContentObserver {
 
     @Override
     public void onChange(boolean selfChange, Uri uri) {
-        if (hashMap.containsKey(uri)) {
-            List<ProviderObserverListener> list = hashMap.get(uri);
+        if (mapUriListeners.containsKey(uri)) {
+            List<ProviderObserverListener> list = mapUriListeners.get(uri);
             for (ProviderObserverListener providerObserverListener : list) {
                 providerObserverListener.onProviderChange();
             }

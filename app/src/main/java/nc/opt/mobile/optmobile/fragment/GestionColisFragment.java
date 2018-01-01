@@ -109,20 +109,20 @@ public class GestionColisFragment extends Fragment implements RecyclerItemTouchH
     }
 
     /**
-     * Display the recycler view if the list<etapesConsolidated> != null or show a text instead
-     */
-    private void updateVisibility() {
-        textExplicatifSuiviColis.setVisibility(viewModel.getTextObjectNotFoundVisibility());
-        mRecyclerView.setVisibility(viewModel.getRecyclerViewVisibility());
-    }
-
-    /**
      * Update the UI from the viewModel
      */
     private void updateViewFromViewModel(List<ColisEntity> colisEntities) {
         mColisAdapter.setColisList(colisEntities);
         mColisAdapter.notifyDataSetChanged();
         updateVisibility();
+    }
+
+    /**
+     * Display the recycler view if the list<etapesConsolidated> != null or show a text instead
+     */
+    private void updateVisibility() {
+        textExplicatifSuiviColis.setVisibility(viewModel.getTextObjectNotFoundVisibility());
+        mRecyclerView.setVisibility(viewModel.getRecyclerViewVisibility());
     }
 
     @Override

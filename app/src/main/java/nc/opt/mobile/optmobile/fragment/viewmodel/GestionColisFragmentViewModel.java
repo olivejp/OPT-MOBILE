@@ -36,10 +36,6 @@ public class GestionColisFragmentViewModel extends AndroidViewModel implements P
                 .subscribe(colisEntities -> this.mListColis.postValue(colisEntities));
     }
 
-    private boolean conditionVisible() {
-        return (mListColis == null || mListColis.getValue() == null || mListColis.getValue().isEmpty());
-    }
-
     public LiveData<List<ColisEntity>> getColisEntities() {
         if (this.mListColis == null) {
             this.mListColis = new MutableLiveData<>();
@@ -47,6 +43,10 @@ public class GestionColisFragmentViewModel extends AndroidViewModel implements P
             retrieveColisEntities();
         }
         return this.mListColis;
+    }
+
+    private boolean conditionVisible() {
+        return (mListColis == null || mListColis.getValue() == null || mListColis.getValue().isEmpty());
     }
 
     public int getTextObjectNotFoundVisibility() {
