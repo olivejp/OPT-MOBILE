@@ -84,6 +84,8 @@ public class CoreSync {
         }
         ColisEntity resultColis = colisFromDb;
 
+        // ToDo , Il faudrait pourvoir espacer les requêtes pour chaque colis pour éviter l'effet entonoir.
+        // Voir le lien suivant : https://stackoverflow.com/questions/33291245/rxjava-delay-for-each-item-of-list-emitted
         // Call OPT Service
         RetrofitClient.getTrackingOpt(trackingNumber)
                 .retry(2)

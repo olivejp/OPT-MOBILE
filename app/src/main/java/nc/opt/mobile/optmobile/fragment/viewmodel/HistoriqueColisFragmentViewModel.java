@@ -26,6 +26,7 @@ public class HistoriqueColisFragmentViewModel extends AndroidViewModel implement
     public HistoriqueColisFragmentViewModel(@NonNull Application application) {
         super(application);
 
+        // ToDo Modifier les retours du content provider pour ne pas qu'il questionne la DB trop souvent lors d'une suppression massive de colis.
         // On va écouter le content provider, dans le cas d'un changement, on va appeler onProviderChange()
         ProviderObserver providerObserver = ProviderObserver.getInstance();
         providerObserver.observe(application, this, OptProvider.ListColis.LIST_COLIS, OptProvider.ListEtapeAcheminement.LIST_ETAPE);
