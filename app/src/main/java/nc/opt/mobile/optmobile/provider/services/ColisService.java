@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import nc.opt.mobile.optmobile.domain.suivi.ColisDto;
 import nc.opt.mobile.optmobile.domain.suivi.EtapeDto;
@@ -158,10 +157,10 @@ public class ColisService {
         return colisList;
     }
 
-    public static Observable<List<ColisEntity>> observableListColisFromProvider(Context context, boolean onlyActive) {
-        return Observable.just(listFromProvider(context, onlyActive))
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread());
+    public static Observable<List<ColisEntity>> observableListColisFromProvider(Context context) {
+        return Observable.just(listFromProvider(context, true))
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io());
     }
 
     /**

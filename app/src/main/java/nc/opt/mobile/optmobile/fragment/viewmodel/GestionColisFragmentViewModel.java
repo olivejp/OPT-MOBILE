@@ -32,7 +32,7 @@ public class GestionColisFragmentViewModel extends AndroidViewModel implements P
     }
 
     private void retrieveColisEntities() {
-        ColisService.observableListColisFromProvider(getApplication(), true)
+        ColisService.observableListColisFromProvider(getApplication())
                 .subscribe(colisEntities -> this.mListColis.postValue(colisEntities));
     }
 

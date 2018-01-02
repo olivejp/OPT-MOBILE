@@ -113,19 +113,14 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
      * Customise the styling of the base map using a JSON object defined
      * in a raw resource file.
      */
-    private boolean changeMapStyle(GoogleMap map, @RawRes int idResource) {
-        boolean success = false;
+    private void changeMapStyle(GoogleMap map, @RawRes int idResource) {
         try {
-            success = map.setMapStyle(
-                    MapStyleOptions.loadRawResourceStyle(
-                            getActivity(), idResource));
-            if (!success) {
+            if (!map.setMapStyle(MapStyleOptions.loadRawResourceStyle(mActivity, idResource))) {
                 Log.e(TAG, getString(R.string.error_map_style_parsing));
             }
         } catch (Resources.NotFoundException e) {
             Log.e(TAG, getString(R.string.error_map_style_not_found), e);
         }
-        return success;
     }
 
     private void centerMap(double latitude, double longitude, float zoom) {
@@ -194,7 +189,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
             @Override
             protected List<Agence> doInBackground(Void... voids) {
                 // Get the list of agencies from content provider
-                return listFromProvider(getActivity());
+                return listFromProvider(mActivity);
             }
 
             @Override
@@ -212,8 +207,8 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     }
 
     private void enableLocation() {
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
 
             // Add settings to the location request
@@ -226,16 +221,16 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
             LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
                     .addLocationRequest(mLocationRequest);
 
-            SettingsClient client = LocationServices.getSettingsClient(getActivity());
+            SettingsClient client = LocationServices.getSettingsClient(mActivity);
             Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
 
-            task.addOnFailureListener(getActivity(), e -> {
+            task.addOnFailureListener(mActivity, e -> {
                 int statusCode = ((ApiException) e).getStatusCode();
                 switch (statusCode) {
                     case CommonStatusCodes.RESOLUTION_REQUIRED:
                         try {
                             ResolvableApiException resolvable = (ResolvableApiException) e;
-                            resolvable.startResolutionForResult(getActivity(),
+                            resolvable.startResolutionForResult(mActivity,
                                     REQUEST_CHECK_SETTINGS);
                         } catch (IntentSender.SendIntentException sendEx) {
                             // Ignore the error.
@@ -321,14 +316,14 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_agency_map, container, false);
 
         ButterKnife.bind(this, rootView);
 
         // Dans le cas des tablettes, on ne peut pas appeler les agences car pas de téléphonie.
-        fabCallAgency.setVisibility(getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_TELEPHONY) ? View.VISIBLE : View.GONE);
+        fabCallAgency.setVisibility(mActivity.getPackageManager().hasSystemFeature(PackageManager.FEATURE_TELEPHONY) ? View.VISIBLE : View.GONE);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         if (getChildFragmentManager().findFragmentById(R.id.map) != mapFragment) {
@@ -344,7 +339,7 @@ public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, G
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putParcelableArrayList(ARG_LIST_AGENCIES, (ArrayList<? extends Parcelable>) mList);
         outState.putParcelable(ARG_AGENCY_SELECTED, mAgenceSelected);
         outState.putBoolean(REQUESTING_LOCATION_UPDATES_KEY, mRequestingLocationUpdates);

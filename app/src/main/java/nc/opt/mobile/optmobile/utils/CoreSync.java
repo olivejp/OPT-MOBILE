@@ -3,7 +3,7 @@ package nc.opt.mobile.optmobile.utils;
 import android.content.Context;
 import android.util.Log;
 
-import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
@@ -20,7 +20,6 @@ import nc.opt.mobile.optmobile.service.FirebaseService;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static nc.opt.mobile.optmobile.provider.services.ColisService.convertTrackingDataToEntity;
-import static nc.opt.mobile.optmobile.provider.services.ColisService.listFromProvider;
 
 /**
  * Created by orlanth23 on 18/12/2017.
@@ -55,16 +54,19 @@ public class CoreSync {
     }
 
     /**
+     * Création d'un Observable interval qui va envoyer un élément toutes les 10 secondes.
+     * Cet élément sera synchronisé avec un élément de la liste de colis présents dans la DB.
+     * Pour ce colis qui sera présent toutes les 10 secondes, on va appeler le service CoreSync.getTracking()
+     * L'interval de temps nous permet de ne pas saturer le réseau avec des requêtes quand on a trop de colis dans la DB.
+     *
      * @param context
      * @param sendNotification
      */
     public static void getAllTracking(Context context, boolean sendNotification) {
-        List<ColisEntity> list = listFromProvider(context, true);
-        if (!list.isEmpty()) {
-            for (ColisEntity colis : list) {
-                CoreSync.getTracking(context, colis.getIdColis(), sendNotification);
-            }
-        }
+        Observable.zip(
+                Observable.interval(10, TimeUnit.SECONDS),
+                ColisService.observableListColisFromProvider(context).flatMapIterable(colisEntities -> colisEntities),
+                (aLong, colisEntity) -> colisEntity).subscribe(colisEntity -> CoreSync.getTracking(context, colisEntity.getIdColis(), sendNotification));
     }
 
     /**
@@ -84,8 +86,6 @@ public class CoreSync {
         }
         ColisEntity resultColis = colisFromDb;
 
-        // ToDo , Il faudrait pourvoir espacer les requêtes pour chaque colis pour éviter l'effet entonoir.
-        // Voir le lien suivant : https://stackoverflow.com/questions/33291245/rxjava-delay-for-each-item-of-list-emitted
         // Call OPT Service
         RetrofitClient.getTrackingOpt(trackingNumber)
                 .retry(2)
