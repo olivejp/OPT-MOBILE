@@ -22,6 +22,7 @@ public class SyncColisJob extends Job {
     @Override
     @NonNull
     protected Result onRunJob(Params params) {
+        // A job run on the background thread, so no need to call SyncTask here
         SyncColisService.launchSynchroFromScheduler(getContext());
         return Result.SUCCESS;
     }

@@ -18,7 +18,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.job.task.ParamSyncTask;
 import nc.opt.mobile.optmobile.job.task.SyncTask;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.services.ActualiteService;
@@ -64,11 +63,7 @@ public class AddColisFragment extends Fragment {
         if (ColisService.save(mActivity, colis)) {
 
             // Launch asyncTask to query the server
-            ParamSyncTask paramSyncTask = new ParamSyncTask();
-            paramSyncTask.setContext(mActivity);
-            paramSyncTask.setIdColis(idColis);
-            SyncTask syncTask = new SyncTask(SyncTask.TypeTask.SOLO);
-            syncTask.execute(paramSyncTask);
+            new SyncTask(SyncTask.TypeTask.SOLO, mActivity, idColis).execute();
 
             Snackbar.make(view, String.format(getString(R.string.colis_added), idColis), Snackbar.LENGTH_LONG).show();
 

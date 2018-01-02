@@ -3,8 +3,8 @@ package nc.opt.mobile.optmobile.activity;
 import android.os.Bundle;
 
 import nc.opt.mobile.optmobile.R;
+import nc.opt.mobile.optmobile.activity.interfaces.AttachToPermissionActivity;
 import nc.opt.mobile.optmobile.fragment.AgencyMapFragment;
-import nc.opt.mobile.optmobile.interfaces.AttachToPermissionActivity;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class AgenceActivity extends AttachToPermissionActivity {

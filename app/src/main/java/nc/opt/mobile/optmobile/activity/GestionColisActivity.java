@@ -13,11 +13,9 @@ import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.broadcast.NetworkReceiver;
 import nc.opt.mobile.optmobile.fragment.GestionColisFragment;
 import nc.opt.mobile.optmobile.fragment.HistoriqueColisFragment;
-import nc.opt.mobile.optmobile.job.task.ParamSyncTask;
 import nc.opt.mobile.optmobile.job.task.SyncTask;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
-import nc.opt.mobile.optmobile.service.SyncColisService;
 import nc.opt.mobile.optmobile.utils.CoreSync;
 import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
 
@@ -93,16 +91,13 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
                 return super.onOptionsItemSelected(item);
             }
         } else if (i == R.id.nav_refresh && NetworkReceiver.checkConnection(this)) {
-            ParamSyncTask paramSyncTask = new ParamSyncTask();
-            paramSyncTask.setContext(this);
             SyncTask syncTask;
             if (mIdColisSelected != null) {
-                paramSyncTask.setIdColis(mIdColisSelected);
-                syncTask = new SyncTask(SyncTask.TypeTask.SOLO);
+                syncTask = new SyncTask(SyncTask.TypeTask.SOLO, this, mIdColisSelected);
             } else {
-                syncTask = new SyncTask(SyncTask.TypeTask.ALL);
+                syncTask = new SyncTask(SyncTask.TypeTask.ALL  , this, null);
             }
-            syncTask.execute(paramSyncTask);
+            syncTask.execute();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -110,7 +105,7 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
     @Override
     public void onNetworkEnable() {
         invalidateOptionsMenu();
-        SyncColisService.launchSynchroForAll(this);
+        new SyncTask(SyncTask.TypeTask.ALL, this, null).execute();
     }
 
     @Override
@@ -143,7 +138,7 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
                 ColisService.delete(this, colisEntity.getIdColis());
 
                 // Si on a une connexion, on supprime le colis sur le réseau.
-                if (NetworkReceiver.checkConnection(this)){
+                if (NetworkReceiver.checkConnection(this)) {
                     CoreSync.deleteTracking(this, colisEntity);
                 }
             }

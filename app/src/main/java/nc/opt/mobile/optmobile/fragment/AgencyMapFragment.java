@@ -54,9 +54,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
+import nc.opt.mobile.optmobile.activity.interfaces.AttachToPermissionActivity;
+import nc.opt.mobile.optmobile.activity.interfaces.ListenerPermissionResult;
 import nc.opt.mobile.optmobile.domain.localisation.Agence;
-import nc.opt.mobile.optmobile.interfaces.AttachToPermissionActivity;
-import nc.opt.mobile.optmobile.interfaces.ListenerPermissionResult;
 
 import static nc.opt.mobile.optmobile.activity.MainActivity.RC_PERMISSION_CALL_PHONE;
 import static nc.opt.mobile.optmobile.activity.MainActivity.RC_PERMISSION_LOCATION;

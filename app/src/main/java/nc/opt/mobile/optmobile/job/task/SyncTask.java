@@ -2,6 +2,9 @@ package nc.opt.mobile.optmobile.job.task;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
+
+import org.jetbrains.annotations.Nullable;
 
 import nc.opt.mobile.optmobile.service.SyncColisService;
 
@@ -9,34 +12,38 @@ import nc.opt.mobile.optmobile.service.SyncColisService;
  * Created by 2761oli on 27/12/2017.
  */
 
+public class SyncTask extends AsyncTask<Void, Void, Void> {
 
-public class SyncTask extends AsyncTask<ParamSyncTask, Void, Void> {
+    private static final String TAG = SyncTask.class.getName();
 
     public enum TypeTask {
         SOLO,
         ALL
     }
 
-    private TypeTask type;
+    private Context context;
+    private String idColis;
+    private TypeTask typeTask;
 
-    public SyncTask(TypeTask type) {
-        this.type = type;
+    public SyncTask(TypeTask typeTask, Context context, @Nullable String idColis) {
+        this.context = context;
+        this.typeTask = typeTask;
+        this.idColis = idColis;
     }
 
     @Override
-    protected Void doInBackground(ParamSyncTask... paramSyncTasks) {
-        if (paramSyncTasks.length > 0) {
-            Context context = paramSyncTasks[0].getContext();
-            String idColis = paramSyncTasks[0].getIdColis();
-            if (type == TypeTask.SOLO) {
-                SyncColisService.launchSynchroByIdColis(context, idColis);
-            } else if (type == TypeTask.ALL) {
-                SyncColisService.launchSynchroForAll(context);
+    protected Void doInBackground(Void... voids) {
+        if (this.typeTask == TypeTask.SOLO) {
+            if (this.idColis != null) {
+                SyncColisService.launchSynchroByIdColis(this.context, this.idColis);
+            } else {
+                Log.e(TAG, "Try to call SyncColisService.launchSynchroByIdColis but don't get the idColis");
             }
+        } else if (this.typeTask == TypeTask.ALL) {
+            SyncColisService.launchSynchroForAll(context);
         }
+
         return null;
     }
-
-
 }
 

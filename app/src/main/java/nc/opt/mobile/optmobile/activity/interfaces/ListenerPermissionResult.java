@@ -1,4 +1,4 @@
-package nc.opt.mobile.optmobile.interfaces;
+package nc.opt.mobile.optmobile.activity.interfaces;
 
 import android.support.annotation.NonNull;
 
