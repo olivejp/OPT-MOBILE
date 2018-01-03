@@ -52,14 +52,14 @@ public class Utilities {
      * @param img             From NoticeDialogFragment
      * @param tag             A text to be a tag
      */
-    public static void sendDialogByFragmentManager(FragmentManager fragmentManager, String message, int type, int img, @Nullable String tag, @Nullable Bundle bundlePar, @Nullable NoticeDialogFragment.NoticeDialogListener listener) {
+    public static void sendDialogByFragmentManager(FragmentManager fragmentManager, String message, int type, int img, @Nullable String tag, @Nullable Bundle bundlePar, NoticeDialogFragment.NoticeDialogListener listener) {
         NoticeDialogFragment dialogErreur = new NoticeDialogFragment();
-        dialogErreur.setListener(listener);
         Bundle bundle = new Bundle();
         bundle.putString(NoticeDialogFragment.P_MESSAGE, message);
         bundle.putInt(NoticeDialogFragment.P_TYPE, type);
         bundle.putInt(NoticeDialogFragment.P_IMG, img);
         bundle.putBundle(NoticeDialogFragment.P_BUNDLE, bundlePar);
+        dialogErreur.setListener(listener);
         dialogErreur.setArguments(bundle);
         dialogErreur.show(fragmentManager, tag);
     }
