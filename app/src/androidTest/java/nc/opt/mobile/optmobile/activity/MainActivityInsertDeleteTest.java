@@ -287,7 +287,7 @@ public class MainActivityInsertDeleteTest {
         ViewInteraction appCompatButton3 = onView(
                 allOf(withId(R.id.fab_delete_colis), withText("Supprimer"), withContentDescription("Delete Button"),
                         childAtPosition(
-                                allOf(withId(R.id.relative_delete_layout),
+                                allOf(withId(R.id.constraint_delete_layout),
                                         childAtPosition(
                                                 withId(R.id.constraint_detail_colis_layout),
                                                 8)),
@@ -359,7 +359,7 @@ public class MainActivityInsertDeleteTest {
         ViewInteraction appCompatButton5 = onView(
                 allOf(withId(R.id.fab_delete_colis), withText("Supprimer"), withContentDescription("Delete Button"),
                         childAtPosition(
-                                allOf(withId(R.id.relative_delete_layout),
+                                allOf(withId(R.id.constraint_delete_layout),
                                         childAtPosition(
                                                 withId(R.id.constraint_detail_colis_layout),
                                                 8)),

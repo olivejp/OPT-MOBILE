@@ -340,7 +340,7 @@ public class MainActivity extends AttachToPermissionActivity
                 if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                     getSupportFragmentManager().popBackStack();
                 } else {
-                    Utilities.sendDialogByActivity(this, getString(R.string.want_you_quit), NoticeDialogFragment.TYPE_BOUTON_YESNO, NoticeDialogFragment.TYPE_IMAGE_INFORMATION, DIALOG_TAG_EXIT, null);
+                    Utilities.sendDialogByActivity(this, getString(R.string.want_you_quit), NoticeDialogFragment.TYPE_BOUTON_YESNO, NoticeDialogFragment.TYPE_IMAGE_INFORMATION, DIALOG_TAG_EXIT, this);
                 }
             }
         }
@@ -349,6 +349,9 @@ public class MainActivity extends AttachToPermissionActivity
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.nav_actualite:
+                getSupportFragmentManager().beginTransaction().replace(R.id.frame_main, mActualiteFragment).commit();
+                break;
             case R.id.nav_geo_agence:
                 startActivity(new Intent(this, AgenceActivity.class));
                 break;

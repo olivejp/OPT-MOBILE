@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.RequestBuilder;
@@ -50,19 +49,21 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
         this.requester = GlideRequester.getSvgRequester(mContext, R.drawable.ic_archive_grey_900_48dp, R.drawable.ic_archive_grey_900_48dp);
     }
 
-    private View.OnClickListener onClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            ColisEntity colis = (ColisEntity) v.getTag();
-            HistoriqueColisFragment historiqueColisFragment = HistoriqueColisFragment.newInstance(colis);
-            FragmentTransaction ft = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
-            if (mTwoPane) {
-                ft.replace(R.id.frame_detail, historiqueColisFragment, GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT).commit();
-            } else {
-                ft.replace(R.id.frame_master, historiqueColisFragment, GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT).addToBackStack(null).commit();
-            }
+    private View.OnClickListener onClickListener = (View v) -> {
+        ColisEntity colis = (ColisEntity) v.getTag();
+        HistoriqueColisFragment historiqueColisFragment = HistoriqueColisFragment.newInstance(colis);
+        FragmentTransaction ft = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
+        if (mTwoPane) {
+            ft.replace(R.id.frame_detail, historiqueColisFragment, GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT).commit();
+        } else {
+            ft.replace(R.id.frame_master, historiqueColisFragment, GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT).addToBackStack(null).commit();
         }
     };
+
+    public void remove(int position){
+        mColisList.remove(position);
+        notifyItemRemoved(position);
+    }
 
     @Override
     public ViewHolderStepParcel onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -155,9 +156,6 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
 
         @BindView(R.id.step_status)
         ImageView mStepStatus;
-
-        @BindView(R.id.relative_delete_layout)
-        RelativeLayout relativeLayout;
 
         ColisEntity mColis;
 

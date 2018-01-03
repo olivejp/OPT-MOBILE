@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,21 +34,41 @@ public class NoticeDialogFragment extends DialogFragment {
     public static final int TYPE_IMAGE_INFORMATION = 120;
 
     private Bundle mBundle;
+    private AppCompatActivity appCompatActivity;
     private NoticeDialogListener mListenerContext;
+
+    public NoticeDialogFragment() {
+        // Empty constructor
+    }
 
     public Bundle getBundle() {
         return mBundle;
+    }
+
+    public void setListener(NoticeDialogListener listener) {
+        mListenerContext = listener;
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            mListenerContext = (NoticeDialogListener) context;
+            if (mListenerContext == null) {
+                mListenerContext = (NoticeDialogListener) context;
+            }
         } catch (ClassCastException e) {
             Log.e("ClassCastException", e.getMessage(), e);
             throw new ClassCastException(getActivity().toString()
                     + " doit implementer l'interface NoticeDialogListener");
+        }
+
+        try {
+            appCompatActivity = (AppCompatActivity) context;
+        } catch (
+                ClassCastException e) {
+            Log.e("ClassCastException", e.getMessage(), e);
+            throw new ClassCastException(getActivity().toString()
+                    + " doit être une AppCompatActivity");
         }
     }
 
@@ -70,7 +91,7 @@ public class NoticeDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        LayoutInflater inflater = appCompatActivity.getLayoutInflater();
 
         View view = inflater.inflate(R.layout.dialog_layout, null);
         builder.setView(view);

@@ -52,8 +52,9 @@ public class Utilities {
      * @param img             From NoticeDialogFragment
      * @param tag             A text to be a tag
      */
-    public static void sendDialogByFragmentManager(FragmentManager fragmentManager, String message, int type, int img, @Nullable String tag, @Nullable Bundle bundlePar) {
+    public static void sendDialogByFragmentManager(FragmentManager fragmentManager, String message, int type, int img, @Nullable String tag, @Nullable Bundle bundlePar, @Nullable NoticeDialogFragment.NoticeDialogListener listener) {
         NoticeDialogFragment dialogErreur = new NoticeDialogFragment();
+        dialogErreur.setListener(listener);
         Bundle bundle = new Bundle();
         bundle.putString(NoticeDialogFragment.P_MESSAGE, message);
         bundle.putInt(NoticeDialogFragment.P_TYPE, type);
@@ -70,12 +71,15 @@ public class Utilities {
      * @param type
      * @param img
      * @param tag
-     * @param bundle
      */
-    public static void sendDialogByActivity(AppCompatActivity activity, String message, int type, int img, String tag, @Nullable Bundle bundle) {
-        sendDialogByFragmentManager(activity.getSupportFragmentManager(), message, type, img, tag, bundle);
+    public static void sendDialogByActivity(AppCompatActivity activity, String message, int type, int img, String tag, @Nullable NoticeDialogFragment.NoticeDialogListener listener) {
+        sendDialogByFragmentManager(activity.getSupportFragmentManager(), message, type, img, tag, null, listener);
     }
 
+    /**
+     * Hide the keyboard
+     * @param ctx
+     */
     public static void hideKeyboard(Context ctx) {
         InputMethodManager inputManager = (InputMethodManager) ctx
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -84,14 +88,8 @@ public class Utilities {
         if (v == null)
             return;
 
-        inputManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
-    }
-
-    public static void hideKeyboard(Context context, View view) {
-        // Hide the keyboard
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) {
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        if (inputManager != null) {
+            inputManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
         }
     }
 }

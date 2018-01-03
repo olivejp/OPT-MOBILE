@@ -5,25 +5,37 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <RelativeLayout
-        android:id="@+id/relative_delete_layout"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraint_delete_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
         android:background="@color/colorAccent"
+        android:clickable="true"
+        android:focusable="true"
         android:padding="10dp">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SUPPRIMER"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/img_delete"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <ImageView
+            android:id="@+id/img_delete"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_centerInParent="true"
             android:layout_marginEnd="20dp"
             android:layout_marginRight="20dp"
             android:contentDescription="Delete Button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_delete_grey_900_24dp" />
-    </RelativeLayout>
+    </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraint_detail_colis_layout"

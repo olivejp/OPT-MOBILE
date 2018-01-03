@@ -22,19 +22,23 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.adapter.ColisAdapter;
+import nc.opt.mobile.optmobile.broadcast.NetworkReceiver;
 import nc.opt.mobile.optmobile.fragment.viewmodel.GestionColisFragmentViewModel;
 import nc.opt.mobile.optmobile.gfx.RecyclerItemTouchHelper;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
+import nc.opt.mobile.optmobile.provider.services.ColisService;
+import nc.opt.mobile.optmobile.utils.CoreSync;
 import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
 import nc.opt.mobile.optmobile.utils.Utilities;
 
 import static nc.opt.mobile.optmobile.activity.GestionColisActivity.ARG_NOTICE_BUNDLE_COLIS;
+import static nc.opt.mobile.optmobile.activity.GestionColisActivity.ARG_NOTICE_BUNDLE_POSITION;
 
 /**
  * Fragment that shows mList of followed parcel
  * -FAB allow to add a parcel
  */
-public class GestionColisFragment extends Fragment implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
+public class GestionColisFragment extends Fragment implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener, NoticeDialogFragment.NoticeDialogListener {
 
     private ColisAdapter mColisAdapter;
     private AppCompatActivity mActivity;
@@ -133,9 +137,35 @@ public class GestionColisFragment extends Fragment implements RecyclerItemTouchH
             // Création d'un bundle dans lequel on va passer nos items
             Bundle bundle = new Bundle();
             bundle.putParcelable(ARG_NOTICE_BUNDLE_COLIS, r.getmColis());
+            bundle.putInt(ARG_NOTICE_BUNDLE_POSITION, position);
 
             // Appel d'un fragment qui va demander à l'utilisateur s'il est sûr de vouloir supprimer le colis.
-            Utilities.sendDialogByFragmentManager(getFragmentManager(), "Etes-vous sûr de vouloir supprimer ce colis ?", NoticeDialogFragment.TYPE_BOUTON_YESNO, NoticeDialogFragment.TYPE_IMAGE_INFORMATION, DIALOG_TAG_DELETE, bundle);
+            Utilities.sendDialogByFragmentManager(getFragmentManager(), "Etes-vous sûr de vouloir supprimer ce colis ?", NoticeDialogFragment.TYPE_BOUTON_YESNO, NoticeDialogFragment.TYPE_IMAGE_INFORMATION, DIALOG_TAG_DELETE, bundle, this);
         }
+    }
+
+    @Override
+    public void onDialogPositiveClick(NoticeDialogFragment dialog) {
+        // Récupération du bundle qu'on a envoyé au NoticeDialogFragment
+        if (dialog.getBundle() != null && dialog.getBundle().containsKey(ARG_NOTICE_BUNDLE_COLIS)) {
+
+            // Récupération du colis présent dans le bundle
+            ColisEntity colisEntity = dialog.getBundle().getParcelable(ARG_NOTICE_BUNDLE_COLIS);
+            if (colisEntity != null) {
+
+                // Suppression du colis dans la base de données
+                ColisService.delete(getActivity(), colisEntity.getIdColis());
+
+                // Si on a une connexion, on supprime le colis sur le réseau.
+                if (NetworkReceiver.checkConnection(getActivity())) {
+                    CoreSync.deleteTracking(getActivity(), colisEntity);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onDialogNegativeClick(NoticeDialogFragment dialog) {
+
     }
 }
