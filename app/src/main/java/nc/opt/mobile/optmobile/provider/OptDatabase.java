@@ -25,6 +25,7 @@ import nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface;
 import nc.opt.mobile.optmobile.provider.interfaces.AgenceInterface;
 import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
 import nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface;
+import nc.opt.mobile.optmobile.provider.interfaces.ShedlockInterface;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
 import static nc.opt.mobile.optmobile.provider.OptDatabase.DESCRIPTION_TABLE_NAME;
@@ -49,6 +50,9 @@ public class OptDatabase {
 
     private OptDatabase() {
     }
+
+    @Table(ShedlockInterface.class)
+    static final String SHEDLOCK = "opt_shedlock";
 
     @Table(AgenceInterface.class)
     static final String AGENCIES = "opt_agencies";
@@ -119,6 +123,11 @@ public class OptDatabase {
         String description = context.getString(R.string.message_bienvenue);
         String columns = " (" + TITRE + "," + CONTENU + "," + DATE + "," + TYPE + "," + DISMISSED + "," + DISMISSABLE + ") ";
         String values = "VALUES ('" + welcome + "', '" + description + "', '" + DateConverter.getNowEntity() + "', '1', 0, 0)";
+        db.execSQL(insertInto.concat(columns).concat(values));
+
+        insertInto = "INSERT INTO " + SHEDLOCK;
+        columns = " (" + ShedlockInterface.ID_SHEDLOCK + "," + ShedlockInterface.LOCKED + "," + ShedlockInterface.DATE + ") ";
+        values = "VALUES ('1', 'false', '0')";
         db.execSQL(insertInto.concat(columns).concat(values));
     }
 

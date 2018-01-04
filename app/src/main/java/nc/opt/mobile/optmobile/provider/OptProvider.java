@@ -11,6 +11,7 @@ import nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface;
 import nc.opt.mobile.optmobile.provider.interfaces.AgenceInterface;
 import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
 import nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface;
+import nc.opt.mobile.optmobile.provider.interfaces.ShedlockInterface;
 
 import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.ID_FIREBASE;
 
@@ -115,6 +116,28 @@ public class OptProvider {
                 pathSegment = 2)
         public static Uri withFirebaseId(String firebaseId) {
             return Uri.parse("content://" + AUTHORITY + "/" + ACTUALITE + "/" + ID_FIREBASE + "/" + firebaseId);
+        }
+    }
+
+    @TableEndpoint(table = OptDatabase.SHEDLOCK)
+    public static class Shedlock {
+        private Shedlock() {
+        }
+
+        @ContentUri(
+                path = "shedlock",
+                type = "vnd.android.cursor.dir/list",
+                defaultSort = ActualiteInterface.ID_ACTUALITE + " ASC")
+        public static final Uri LIST_SHEDLOCK = Uri.parse("content://" + AUTHORITY + "/" + ACTUALITE);
+
+        @InexactContentUri(
+                path = "shedlock/#",
+                name = "SHEDLOCK_ID",
+                type = "vnd.android.cursor.item/item",
+                whereColumn = ShedlockInterface.ID_SHEDLOCK,
+                pathSegment = 1)
+        public static Uri withId(int id) {
+            return Uri.parse("content://" + AUTHORITY + "/" + ACTUALITE + "/" + id);
         }
     }
 }
