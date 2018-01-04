@@ -35,14 +35,12 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
 
     private List<ColisEntity> mColisList;
     private Context mContext;
-    private boolean mTwoPane;
     private RequestBuilder<PictureDrawable> requester;
     private View.OnClickListener onClickListener;
 
-    public ColisAdapter(Context context, boolean twoPane, View.OnClickListener onClickListener) {
+    public ColisAdapter(Context context, View.OnClickListener onClickListener) {
         this.mContext = context;
         this.mColisList = new ArrayList<>();
-        this.mTwoPane = twoPane;
         this.onClickListener = onClickListener;
         this.requester = GlideRequester.getSvgRequester(mContext, R.drawable.ic_archive_grey_900_48dp, R.drawable.ic_archive_grey_900_48dp);
     }

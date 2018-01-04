@@ -439,7 +439,7 @@ public class MainActivity extends AttachToPermissionActivity
     }
 
     @Override
-    public void onProviderChange() {
+    public void onProviderChange(Uri uri) {
         updateBadge();
     }
 }

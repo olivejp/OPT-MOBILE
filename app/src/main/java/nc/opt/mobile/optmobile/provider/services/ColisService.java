@@ -157,12 +157,6 @@ public class ColisService {
         return colisList;
     }
 
-    public static Observable<ColisEntity> observableGetColisFromProvider(Context context, String idColis) {
-        return Observable.just(get(context, idColis))
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io());
-    }
-
     public static Observable<List<ColisEntity>> observableListColisFromProvider(Context context) {
         return Observable.just(listFromProvider(context, true))
                 .subscribeOn(Schedulers.io())

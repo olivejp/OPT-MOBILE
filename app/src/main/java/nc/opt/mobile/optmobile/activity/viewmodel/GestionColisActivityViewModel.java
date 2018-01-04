@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.ProviderObserver;
@@ -24,16 +23,11 @@ public class GestionColisActivityViewModel extends AndroidViewModel implements P
 
     private MutableLiveData<ColisEntity> mSelectedColis;
     private MutableLiveData<List<ColisEntity>> mListColis;
-    private MutableLiveData<AtomicBoolean> mVisibility;
 
     public GestionColisActivityViewModel(@NonNull Application application) {
         super(application);
         ProviderObserver providerObserver = ProviderObserver.getInstance();
         providerObserver.observe(application, this, OptProvider.ListColis.LIST_COLIS, OptProvider.ListEtapeAcheminement.LIST_ETAPE);
-    }
-
-    private void refreshVisibility() {
-        this.mVisibility.postValue(new AtomicBoolean(mListColis == null || mListColis.getValue() == null || mListColis.getValue().isEmpty()));
     }
 
     public LiveData<List<ColisEntity>> getColisEntities() {
@@ -52,7 +46,7 @@ public class GestionColisActivityViewModel extends AndroidViewModel implements P
             this.mSelectedColis = new MutableLiveData<>();
         }
         if (colis != null) {
-            this.mSelectedColis.setValue(colis);
+            this.mSelectedColis.postValue(colis);
         }
     }
 
@@ -63,25 +57,18 @@ public class GestionColisActivityViewModel extends AndroidViewModel implements P
         return this.mSelectedColis;
     }
 
-    public LiveData<AtomicBoolean> getVisibility() {
-        if (this.mVisibility == null) {
-            this.mVisibility = new MutableLiveData<>();
-            this.mVisibility.setValue(new AtomicBoolean(mListColis == null || mListColis.getValue() == null || mListColis.getValue().isEmpty()));
-        }
-        return this.mVisibility;
-    }
-
     @Override
     public void onProviderChange(Uri uri) {
         ColisService
                 .observableListColisFromProvider(getApplication())
-                .subscribe(colisEntities -> this.mListColis.postValue(colisEntities));
+                .subscribe(colisEntities -> {
+                    if (this.mListColis != null) {
+                        this.mListColis.postValue(colisEntities);
+                    }
+                });
 
         if (mSelectedColis != null && mSelectedColis.getValue() != null) {
-            ColisService.observableGetColisFromProvider(getApplication(), mSelectedColis.getValue().getIdColis())
-                    .subscribe(colisEntity -> mSelectedColis.postValue(colisEntity));
+            mSelectedColis.postValue(ColisService.get(getApplication(), mSelectedColis.getValue().getIdColis()));
         }
-
-        refreshVisibility();
     }
 }

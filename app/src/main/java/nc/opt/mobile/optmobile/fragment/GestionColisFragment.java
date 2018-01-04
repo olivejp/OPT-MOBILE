@@ -95,12 +95,11 @@ public class GestionColisFragment extends Fragment implements RecyclerItemTouchH
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = ViewModelProviders.of(this).get(GestionColisActivityViewModel.class);
+        viewModel = ViewModelProviders.of(mActivity).get(GestionColisActivityViewModel.class);
         mTwoPane = false;
         if (getArguments() != null && getArguments().containsKey(ARG_TWO_PANE)) {
             mTwoPane = getArguments().getBoolean(ARG_TWO_PANE);
         }
-        mColisAdapter = new ColisAdapter(mActivity, mTwoPane, mOnClickListener);
     }
 
 
@@ -111,7 +110,9 @@ public class GestionColisFragment extends Fragment implements RecyclerItemTouchH
         ButterKnife.bind(this, rootView);
 
         // change title
-        mActivity.setTitle(getActivity().getString(R.string.suivi_des_colis));
+        mActivity.setTitle(mActivity.getString(R.string.suivi_des_colis));
+
+        mColisAdapter = new ColisAdapter(mActivity, mOnClickListener);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mActivity);
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -122,14 +123,16 @@ public class GestionColisFragment extends Fragment implements RecyclerItemTouchH
         ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(mRecyclerView);
 
-        viewModel.getColisEntities().observe(this, colisEntities -> {
+        viewModel.getColisEntities().observe(mActivity, colisEntities -> {
             mColisAdapter.setColisList(colisEntities);
             mColisAdapter.notifyDataSetChanged();
-        });
-        viewModel.getVisibility().observe(this, atomicBoolean -> {
-            if (atomicBoolean != null) {
-                textExplicatifSuiviColis.setVisibility(atomicBoolean.get() ? View.VISIBLE : View.GONE);
-                mRecyclerView.setVisibility(atomicBoolean.get() ? View.GONE : View.VISIBLE);
+
+            if (colisEntities == null || colisEntities.isEmpty()) {
+                textExplicatifSuiviColis.setVisibility(View.VISIBLE);
+                mRecyclerView.setVisibility(View.GONE);
+            } else {
+                textExplicatifSuiviColis.setVisibility(View.GONE);
+                mRecyclerView.setVisibility(View.VISIBLE);
             }
         });
 

@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:title="@string/courrier">
-        <menu>
-            <item
-                android:id="@+id/nav_suivi_colis"
-                android:icon="@drawable/ic_archive_grey_900_48dp"
-                app:actionViewClass="android.widget.TextView"
-                android:title="@string/suivi_des_colis" />
-            <item
-                android:id="@+id/nav_actualite"
-                android:icon="@drawable/ic_announcement_grey_900_48dp"
-                app:actionViewClass="android.widget.TextView"
-                android:title="@string/actualite" />
-            <item
-                android:id="@+id/nav_geo_agence"
-                android:icon="@drawable/ic_room_grey_900_48dp"
-                android:title="@string/agences_opt" />
-        </menu>
-    </item>
+    <item
+        android:id="@+id/nav_suivi_colis"
+        android:icon="@drawable/ic_archive_grey_900_48dp"
+        android:title="@string/suivi_des_colis"
+        app:actionViewClass="android.widget.TextView" />
+    <item
+        android:id="@+id/nav_actualite"
+        android:icon="@drawable/ic_announcement_grey_900_48dp"
+        android:title="@string/actualite"
+        app:actionViewClass="android.widget.TextView" />
+    <item
+        android:id="@+id/nav_geo_agence"
+        android:icon="@drawable/ic_room_grey_900_48dp"
+        android:title="@string/agences_opt" />
 </menu>

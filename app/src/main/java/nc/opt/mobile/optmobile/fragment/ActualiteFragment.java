@@ -1,6 +1,7 @@
 package nc.opt.mobile.optmobile.fragment;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -180,7 +181,7 @@ public class ActualiteFragment extends Fragment implements ProviderObserver.Prov
     }
 
     @Override
-    public void onProviderChange() {
+    public void onProviderChange(Uri uri) {
         mActualiteAdapter.getmActualites().clear();
         mActualiteAdapter.getmActualites().addAll(ActualiteService.listActiveActualite(mActivity));
         mActualiteAdapter.notifyDataSetChanged();

@@ -48,7 +48,7 @@ public class HistoriqueColisFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = ViewModelProviders.of(this).get(GestionColisActivityViewModel.class);
+        viewModel = ViewModelProviders.of(mAppCompatActivity).get(GestionColisActivityViewModel.class);
         mEtapeAdapter = new EtapeAdapter();
     }
 
@@ -64,12 +64,13 @@ public class HistoriqueColisFragment extends Fragment {
         viewModel.getSelectedColis().observe(this, colisEntity -> {
             mEtapeAdapter.setEtapes(colisEntity != null ? colisEntity.getEtapeAcheminementArrayList() : null);
             mEtapeAdapter.notifyDataSetChanged();
-        });
 
-        viewModel.getVisibility().observe(this, atomicBoolean -> {
-            if (atomicBoolean != null) {
-                textObjectNotFound.setVisibility(atomicBoolean.get() ? View.VISIBLE : View.GONE);
-                mRecyclerView.setVisibility(atomicBoolean.get() ? View.GONE : View.VISIBLE);
+            if (colisEntity == null || colisEntity.getEtapeAcheminementArrayList() == null || colisEntity.getEtapeAcheminementArrayList().isEmpty()) {
+                textObjectNotFound.setVisibility(View.VISIBLE);
+                mRecyclerView.setVisibility(View.GONE);
+            } else {
+                textObjectNotFound.setVisibility(View.GONE);
+                mRecyclerView.setVisibility(View.VISIBLE);
             }
         });
 

@@ -47,16 +47,14 @@ public class EtapeServiceTest {
         return id;
     }
 
-    private long insertEtape(String idColis) {
+    private void insertEtape(String idColis) {
         insertColis();
         EtapeEntity etape = new EtapeEntity();
         etape.setDate(DateConverter.convertDateAfterShipToEntity(DATE_INCORRECTE));
         etape.setDescription(DESCRIPTION_ETAPE);
         ColisEntity colis = ColisService.get(mContext, idColis);
 
-        long id = EtapeService.insert(mContext, etape, colis);
-        Assert.assertTrue(id > 0);
-        return id;
+        Assert.assertTrue(EtapeService.save(mContext, colis));
     }
 
     @Test
