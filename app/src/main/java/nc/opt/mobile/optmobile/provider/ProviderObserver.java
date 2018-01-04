@@ -62,12 +62,12 @@ public class ProviderObserver extends ContentObserver {
         if (mapUriListeners.containsKey(uri)) {
             List<ProviderObserverListener> list = mapUriListeners.get(uri);
             for (ProviderObserverListener providerObserverListener : list) {
-                providerObserverListener.onProviderChange();
+                providerObserverListener.onProviderChange(uri);
             }
         }
     }
 
     public interface ProviderObserverListener {
-        void onProviderChange();
+        void onProviderChange(Uri uri);
     }
 }

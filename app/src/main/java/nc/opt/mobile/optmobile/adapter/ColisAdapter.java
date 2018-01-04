@@ -3,8 +3,6 @@ package nc.opt.mobile.optmobile.adapter;
 import android.content.Context;
 import android.graphics.drawable.PictureDrawable;
 import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,8 +18,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.activity.GestionColisActivity;
-import nc.opt.mobile.optmobile.fragment.HistoriqueColisFragment;
 import nc.opt.mobile.optmobile.gfx.GlideRequester;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
@@ -41,28 +37,14 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
     private Context mContext;
     private boolean mTwoPane;
     private RequestBuilder<PictureDrawable> requester;
+    private View.OnClickListener onClickListener;
 
-    public ColisAdapter(Context context, boolean twoPane) {
+    public ColisAdapter(Context context, boolean twoPane, View.OnClickListener onClickListener) {
         this.mContext = context;
         this.mColisList = new ArrayList<>();
         this.mTwoPane = twoPane;
+        this.onClickListener = onClickListener;
         this.requester = GlideRequester.getSvgRequester(mContext, R.drawable.ic_archive_grey_900_48dp, R.drawable.ic_archive_grey_900_48dp);
-    }
-
-    private View.OnClickListener onClickListener = (View v) -> {
-        ColisEntity colis = (ColisEntity) v.getTag();
-        HistoriqueColisFragment historiqueColisFragment = HistoriqueColisFragment.newInstance(colis);
-        FragmentTransaction ft = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
-        if (mTwoPane) {
-            ft.replace(R.id.frame_detail, historiqueColisFragment, GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT).commit();
-        } else {
-            ft.replace(R.id.frame_master, historiqueColisFragment, GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT).addToBackStack(null).commit();
-        }
-    };
-
-    public void remove(int position){
-        mColisList.remove(position);
-        notifyItemRemoved(position);
     }
 
     @Override

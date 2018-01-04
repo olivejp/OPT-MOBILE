@@ -6,28 +6,26 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
+import nc.opt.mobile.optmobile.activity.GestionColisActivity;
+import nc.opt.mobile.optmobile.activity.viewmodel.GestionColisActivityViewModel;
 import nc.opt.mobile.optmobile.adapter.ColisAdapter;
-import nc.opt.mobile.optmobile.broadcast.NetworkReceiver;
-import nc.opt.mobile.optmobile.fragment.viewmodel.GestionColisFragmentViewModel;
 import nc.opt.mobile.optmobile.gfx.RecyclerItemTouchHelper;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
-import nc.opt.mobile.optmobile.provider.services.ColisService;
-import nc.opt.mobile.optmobile.utils.CoreSync;
 import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
 import nc.opt.mobile.optmobile.utils.Utilities;
 
@@ -38,7 +36,9 @@ import static nc.opt.mobile.optmobile.activity.GestionColisActivity.ARG_NOTICE_B
  * Fragment that shows mList of followed parcel
  * -FAB allow to add a parcel
  */
-public class GestionColisFragment extends Fragment implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener, NoticeDialogFragment.NoticeDialogListener {
+public class GestionColisFragment extends Fragment implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
+
+    private static final String TAG = GestionColisActivity.class.getName();
 
     private ColisAdapter mColisAdapter;
     private AppCompatActivity mActivity;
@@ -46,7 +46,9 @@ public class GestionColisFragment extends Fragment implements RecyclerItemTouchH
 
     private static final String DIALOG_TAG_DELETE = "DIALOG_TAG_DELETE";
 
-    private GestionColisFragmentViewModel viewModel;
+    private GestionColisActivityViewModel viewModel;
+    private NoticeDialogFragment.NoticeDialogListener mDeleteListener;
+    private boolean mTwoPane;
 
     @BindView(R.id.recycler_parcel_list_management)
     RecyclerView mRecyclerView;
@@ -66,25 +68,41 @@ public class GestionColisFragment extends Fragment implements RecyclerItemTouchH
         // Required empty public constructor
     }
 
+    private View.OnClickListener mOnClickListener = (View v) -> {
+        ColisEntity colis = (ColisEntity) v.getTag();
+        viewModel.setSelectedColis(colis);
+        HistoriqueColisFragment historiqueColisFragment = new HistoriqueColisFragment();
+        FragmentTransaction ft = mActivity.getSupportFragmentManager().beginTransaction();
+        if (mTwoPane) {
+            ft.replace(R.id.frame_detail, historiqueColisFragment, GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT).commit();
+        } else {
+            ft.replace(R.id.frame_master, historiqueColisFragment, GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT).addToBackStack(null).commit();
+        }
+    };
+
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mActivity = (AppCompatActivity) context;
+        try {
+            mDeleteListener = (NoticeDialogFragment.NoticeDialogListener) context;
+        } catch (ClassCastException c) {
+            Log.e(TAG, "Activity should implements NoticeDialogFragment.NoticeDialogListener", c);
+        }
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        viewModel = ViewModelProviders.of(this).get(GestionColisFragmentViewModel.class);
-
-        boolean mTwoPane = false;
+        viewModel = ViewModelProviders.of(this).get(GestionColisActivityViewModel.class);
+        mTwoPane = false;
         if (getArguments() != null && getArguments().containsKey(ARG_TWO_PANE)) {
             mTwoPane = getArguments().getBoolean(ARG_TWO_PANE);
         }
-
-        mColisAdapter = new ColisAdapter(mActivity, mTwoPane);
+        mColisAdapter = new ColisAdapter(mActivity, mTwoPane, mOnClickListener);
     }
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -104,29 +122,18 @@ public class GestionColisFragment extends Fragment implements RecyclerItemTouchH
         ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(mRecyclerView);
 
-        updateVisibility();
-
-        // get history from the view model
-        viewModel.getColisEntities().observe(this, this::updateViewFromViewModel);
+        viewModel.getColisEntities().observe(this, colisEntities -> {
+            mColisAdapter.setColisList(colisEntities);
+            mColisAdapter.notifyDataSetChanged();
+        });
+        viewModel.getVisibility().observe(this, atomicBoolean -> {
+            if (atomicBoolean != null) {
+                textExplicatifSuiviColis.setVisibility(atomicBoolean.get() ? View.VISIBLE : View.GONE);
+                mRecyclerView.setVisibility(atomicBoolean.get() ? View.GONE : View.VISIBLE);
+            }
+        });
 
         return rootView;
-    }
-
-    /**
-     * Update the UI from the viewModel
-     */
-    private void updateViewFromViewModel(List<ColisEntity> colisEntities) {
-        mColisAdapter.setColisList(colisEntities);
-        mColisAdapter.notifyDataSetChanged();
-        updateVisibility();
-    }
-
-    /**
-     * Display the recycler view if the list<etapesConsolidated> != null or show a text instead
-     */
-    private void updateVisibility() {
-        textExplicatifSuiviColis.setVisibility(viewModel.getTextObjectNotFoundVisibility());
-        mRecyclerView.setVisibility(viewModel.getRecyclerViewVisibility());
     }
 
     @Override
@@ -140,32 +147,13 @@ public class GestionColisFragment extends Fragment implements RecyclerItemTouchH
             bundle.putInt(ARG_NOTICE_BUNDLE_POSITION, position);
 
             // Appel d'un fragment qui va demander à l'utilisateur s'il est sûr de vouloir supprimer le colis.
-            Utilities.sendDialogByFragmentManager(getFragmentManager(), "Etes-vous sûr de vouloir supprimer ce colis ?", NoticeDialogFragment.TYPE_BOUTON_YESNO, NoticeDialogFragment.TYPE_IMAGE_INFORMATION, DIALOG_TAG_DELETE, bundle, this);
+            Utilities.sendDialogByFragmentManager(getFragmentManager(),
+                    String.format("Etes-vous sûr de vouloir supprimer le colis %s ?", r.getmColis().getIdColis()),
+                    NoticeDialogFragment.TYPE_BOUTON_YESNO,
+                    NoticeDialogFragment.TYPE_IMAGE_INFORMATION,
+                    DIALOG_TAG_DELETE,
+                    bundle,
+                    mDeleteListener);
         }
-    }
-
-    @Override
-    public void onDialogPositiveClick(NoticeDialogFragment dialog) {
-        // Récupération du bundle qu'on a envoyé au NoticeDialogFragment
-        if (dialog.getBundle() != null && dialog.getBundle().containsKey(ARG_NOTICE_BUNDLE_COLIS)) {
-
-            // Récupération du colis présent dans le bundle
-            ColisEntity colisEntity = dialog.getBundle().getParcelable(ARG_NOTICE_BUNDLE_COLIS);
-            if (colisEntity != null) {
-
-                // Suppression du colis dans la base de données
-                ColisService.delete(getActivity(), colisEntity.getIdColis());
-
-                // Si on a une connexion, on supprime le colis sur le réseau.
-                if (NetworkReceiver.checkConnection(getActivity())) {
-                    CoreSync.deleteTracking(getActivity(), colisEntity);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onDialogNegativeClick(NoticeDialogFragment dialog) {
-
     }
 }

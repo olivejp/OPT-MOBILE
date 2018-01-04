@@ -1,5 +1,6 @@
 package nc.opt.mobile.optmobile.activity;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,9 +11,9 @@ import android.view.View;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
+import nc.opt.mobile.optmobile.activity.viewmodel.GestionColisActivityViewModel;
 import nc.opt.mobile.optmobile.broadcast.NetworkReceiver;
 import nc.opt.mobile.optmobile.fragment.GestionColisFragment;
-import nc.opt.mobile.optmobile.fragment.HistoriqueColisFragment;
 import nc.opt.mobile.optmobile.job.task.SyncTask;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
@@ -20,18 +21,26 @@ import nc.opt.mobile.optmobile.utils.CoreSync;
 import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public class GestionColisActivity extends AppCompatActivity implements NetworkReceiver.NetworkChangeListener, HistoriqueColisFragment.ListenToSelectedColis, NoticeDialogFragment.NoticeDialogListener {
+public class GestionColisActivity extends AppCompatActivity implements NetworkReceiver.NetworkChangeListener, NoticeDialogFragment.NoticeDialogListener {
 
     public static final String TAG_PARCEL_RESULT_SEARCH_FRAGMENT = "TAG_PARCEL_RESULT_SEARCH_FRAGMENT";
 
     public static final String ARG_NOTICE_BUNDLE_COLIS = "ARG_NOTICE_BUNDLE_COLIS";
     public static final String ARG_NOTICE_BUNDLE_POSITION = "ARG_NOTICE_BUNDLE_POSITION";
-
-    private String mIdColisSelected;
+    private GestionColisActivityViewModel viewModel;
+    private ColisEntity mColisSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        viewModel = ViewModelProviders.of(this).get(GestionColisActivityViewModel.class);
+        viewModel.getSelectedColis().observe(this, colisEntity -> {
+            if (colisEntity != null) {
+                setTitle(colisEntity.getIdColis());
+            }
+        });
+        viewModel.getSelectedColis().observe(this, colisEntity -> mColisSelected = colisEntity);
+
         setContentView(R.layout.activity_colis_gestion);
 
         ButterKnife.bind(this);
@@ -94,8 +103,8 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
             }
         } else if (i == R.id.nav_refresh && NetworkReceiver.checkConnection(this)) {
             SyncTask syncTask;
-            if (mIdColisSelected != null) {
-                syncTask = new SyncTask(SyncTask.TypeTask.SOLO, this, mIdColisSelected);
+            if (mColisSelected != null) {
+                syncTask = new SyncTask(SyncTask.TypeTask.SOLO, this, mColisSelected.getIdColis());
             } else {
                 syncTask = new SyncTask(SyncTask.TypeTask.ALL, this, null);
             }
@@ -113,18 +122,6 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
     @Override
     public void onNetworkDisable() {
         invalidateOptionsMenu();
-    }
-
-    @Override
-    public void subscribe(String idColis) {
-        mIdColisSelected = idColis;
-        setTitle(idColis);
-    }
-
-    @Override
-    public void unsubscribe() {
-        mIdColisSelected = null;
-        setTitle(getString(R.string.suivi_des_colis));
     }
 
     @Override
