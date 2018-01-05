@@ -25,21 +25,22 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
 
     public static final String TAG_PARCEL_RESULT_SEARCH_FRAGMENT = "TAG_PARCEL_RESULT_SEARCH_FRAGMENT";
 
+    public static final String GESTION_FRAGMENT = "GESTION_FRAGMENT";
     public static final String ARG_NOTICE_BUNDLE_COLIS = "ARG_NOTICE_BUNDLE_COLIS";
     public static final String ARG_NOTICE_BUNDLE_POSITION = "ARG_NOTICE_BUNDLE_POSITION";
-    private GestionColisActivityViewModel viewModel;
     private ColisEntity mColisSelected;
+    private GestionColisFragment gestionColisFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = ViewModelProviders.of(this).get(GestionColisActivityViewModel.class);
+        GestionColisActivityViewModel viewModel = ViewModelProviders.of(this).get(GestionColisActivityViewModel.class);
         viewModel.getSelectedColis().observe(this, colisEntity -> {
+            mColisSelected = colisEntity;
             if (colisEntity != null) {
                 setTitle(colisEntity.getIdColis());
             }
         });
-        viewModel.getSelectedColis().observe(this, colisEntity -> mColisSelected = colisEntity);
 
         setContentView(R.layout.activity_colis_gestion);
 
@@ -47,7 +48,13 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
 
         boolean mTwoPane = findViewById(R.id.frame_detail) != null;
 
-        GestionColisFragment gestionColisFragment = GestionColisFragment.newInstance(mTwoPane);
+        if (savedInstanceState != null) {
+            gestionColisFragment = (GestionColisFragment) getSupportFragmentManager().getFragment(savedInstanceState, GESTION_FRAGMENT);
+            gestionColisFragment.setTwoPane(mTwoPane);
+        } else {
+            gestionColisFragment = GestionColisFragment.newInstance(mTwoPane);
+        }
+
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_master, gestionColisFragment).commit();
 
         // On écoute les changements réseau
@@ -111,6 +118,12 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
             syncTask.execute();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        getSupportFragmentManager().putFragment(outState, GESTION_FRAGMENT, gestionColisFragment);
     }
 
     @Override

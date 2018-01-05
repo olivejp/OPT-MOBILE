@@ -5,6 +5,7 @@ import android.app.Application;
 import com.evernote.android.job.JobManager;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
+import com.squareup.leakcanary.LeakCanary;
 
 import nc.opt.mobile.optmobile.broadcast.NetworkReceiver;
 import nc.opt.mobile.optmobile.job.SyncColisJob;
@@ -18,6 +19,13 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this);
 
         // On attache le receiver à notre application
         registerReceiver(NetworkReceiver.getInstance(), NetworkReceiver.CONNECTIVITY_CHANGE_INTENT_FILTER);

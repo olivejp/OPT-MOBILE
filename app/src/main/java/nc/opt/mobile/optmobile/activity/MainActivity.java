@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -19,7 +18,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,19 +27,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,9 +42,8 @@ import nc.opt.mobile.optmobile.broadcast.NetworkReceiver;
 import nc.opt.mobile.optmobile.fragment.ActualiteFragment;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.ProviderObserver;
-import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
-import nc.opt.mobile.optmobile.provider.services.ColisService;
 import nc.opt.mobile.optmobile.service.FirebaseService;
+import nc.opt.mobile.optmobile.utils.CatchPhotoFromUrlTask;
 import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
 import nc.opt.mobile.optmobile.utils.Utilities;
 
@@ -63,7 +53,7 @@ import static nc.opt.mobile.optmobile.utils.Constants.PREF_USER;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class MainActivity extends AttachToPermissionActivity
-        implements NavigationView.OnNavigationItemSelectedListener, NoticeDialogFragment.NoticeDialogListener, ProviderObserver.ProviderObserverListener {
+        implements NavigationView.OnNavigationItemSelectedListener, NoticeDialogFragment.NoticeDialogListener, ProviderObserver.ProviderObserverListener, CatchPhotoFromUrlTask.PhotoFromUrlListener {
 
     private static final String TAG = MainActivity.class.getName();
 
@@ -93,10 +83,6 @@ public class MainActivity extends AttachToPermissionActivity
 
     @BindView(R.id.nav_view)
     NavigationView navigationView;
-
-    public ImageView getmImageViewProfile() {
-        return mImageViewProfile;
-    }
 
     private void signIn() {
         if (NetworkReceiver.checkConnection(this)) {
@@ -138,9 +124,10 @@ public class MainActivity extends AttachToPermissionActivity
                 mButtonConnexion.setText(R.string.logout);
                 mProfilName.setText(mFirebaseUser.getDisplayName());
                 Uri[] uris = new Uri[]{mFirebaseUser.getPhotoUrl()};
-                new CatchPhotoFromUrlTask(MainActivity.this).execute(uris);
 
-                firebaseDatabaseUserExist(mFirebaseUser.getUid());
+                new CatchPhotoFromUrlTask(MainActivity.this, this).execute(uris);
+
+                FirebaseService.firebaseDatabaseUserExist(this, mFirebaseUser.getUid(), navigationView);
 
                 // Save the UID of the user in the SharedPreference
                 SharedPreferences sharedPreferences = getSharedPreferences("PREFS", Context.MODE_PRIVATE);
@@ -153,74 +140,6 @@ public class MainActivity extends AttachToPermissionActivity
         };
     }
 
-    private ValueEventListener getFromRemoteValueEventListener = new ValueEventListener() {
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
-            for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                ColisEntity remoteColisEntity = postSnapshot.getValue(ColisEntity.class);
-                if (remoteColisEntity != null) {
-                    if (ColisService.exist(MainActivity.this, remoteColisEntity.getIdColis(), false)) {
-                        ColisEntity colisEntity = ColisService.get(MainActivity.this, remoteColisEntity.getIdColis());
-                        if (colisEntity != null && colisEntity.getDeleted() == 1) {
-                            // Colis exist in our local DB but has been deleted.
-                            // We update our remote database.
-                            FirebaseService.deleteRemoteColis(remoteColisEntity.getIdColis());
-                            ColisService.realDelete(MainActivity.this, remoteColisEntity.getIdColis());
-                        }
-                    } else {
-                        // Colis don't already exist in our local DB, we insert it.
-                        ColisService.save(MainActivity.this, remoteColisEntity);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-            //Do nothing
-        }
-    };
-
-    /**
-     * Static class to retrieve photo from an url.
-     */
-    private static class CatchPhotoFromUrlTask extends AsyncTask<Uri, Void, Drawable> {
-
-        private WeakReference<MainActivity> activityReference;
-
-        // only retain a weak reference to the activity
-        CatchPhotoFromUrlTask(MainActivity context) {
-            activityReference = new WeakReference<>(context);
-        }
-
-        @Override
-        protected Drawable doInBackground(Uri... uris) {
-            MainActivity activity = activityReference.get();
-            if (activity == null) return null;
-            if (uris.length < 1) return null;
-            try {
-                return Glide.with(activity)
-                        .asDrawable()
-                        .load(uris[0])
-                        .apply(RequestOptions.circleCropTransform())
-                        .submit()
-                        .get();
-            } catch (InterruptedException | ExecutionException e) {
-                Log.e(TAG, e.getMessage(), e);
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Drawable drawable) {
-            MainActivity activity = activityReference.get();
-            if (activity == null) return;
-            if (drawable != null) {
-                activity.getmImageViewProfile().setImageDrawable(drawable);
-            }
-        }
-    }
-
     private void updateBadge() {
         // Récupération du textView présent dans le menu
         Menu menu = navigationView.getMenu();
@@ -229,28 +148,6 @@ public class MainActivity extends AttachToPermissionActivity
         suiviColisBadgeCounter.setTypeface(null, Typeface.BOLD);
         suiviColisBadgeCounter.setTextColor(getResources().getColor(R.color.colorPrimary));
         suiviColisBadgeCounter.setText(String.valueOf(count(this, true)));
-    }
-
-    private void firebaseDatabaseUserExist(final String userId) {
-        FirebaseService.getUsersRef().addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if (user != null) {
-                    if (dataSnapshot.hasChild(userId)) {
-                        FirebaseService.getFromRemoteDatabase(user.getUid(), getFromRemoteValueEventListener);
-                    } else {
-                        List<ColisEntity> listColis = ColisService.listFromProvider(MainActivity.this, true);
-                        FirebaseService.createRemoteDatabase(MainActivity.this, listColis, navigationView);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Do Nothing
-            }
-        });
     }
 
     @Override
@@ -267,8 +164,8 @@ public class MainActivity extends AttachToPermissionActivity
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
-
         View headerLayout = navigationView.getHeaderView(0);
+
         mImageViewProfile = headerLayout.findViewById(R.id.image_view_profile);
         mButtonConnexion = headerLayout.findViewById(R.id.button_connexion);
         mProfilName = headerLayout.findViewById(R.id.text_profil_name);
@@ -402,10 +299,10 @@ public class MainActivity extends AttachToPermissionActivity
 
                 // Call the task to retrieve the photo
                 Uri[] uris = new Uri[]{mFirebaseUser.getPhotoUrl()};
-                new CatchPhotoFromUrlTask(MainActivity.this).execute(uris);
+                new CatchPhotoFromUrlTask(MainActivity.this, this).execute(uris);
 
                 // Put/Get datas from FirebaseDatabase.
-                firebaseDatabaseUserExist(mFirebaseUser.getUid());
+                FirebaseService.firebaseDatabaseUserExist(this, mFirebaseUser.getUid(), navigationView);
             }
             if (resultCode == RESULT_CANCELED) {
                 // Sign in was canceled by the user, finish the activity
@@ -441,5 +338,10 @@ public class MainActivity extends AttachToPermissionActivity
     @Override
     public void onProviderChange(Uri uri) {
         updateBadge();
+    }
+
+    @Override
+    public void catchPhotoFromUrl(Drawable drawable) {
+        mImageViewProfile.setImageDrawable(drawable);
     }
 }

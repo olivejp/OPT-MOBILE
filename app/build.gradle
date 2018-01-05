@@ -2,7 +2,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    dexOptions{
+    signingConfigs {
+        config {
+            keyAlias "${keyalias}"
+            keyPassword "${keypassword}"
+            storeFile file("${storefile}")
+            storePassword "${storepassword}"
+        }
+    }
+    dexOptions {
         javaMaxHeapSize "2g"
         preDexLibraries true
     }
@@ -30,6 +38,7 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             versionNameSuffix '-release'
+            signingConfig signingConfigs.config
         }
         debug {
             ext.alwaysUpdateBuildId = false
@@ -65,8 +74,11 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-v7'
         exclude module: 'recyclerview-v7'
     }
+    // LeakCanary
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
     // ViewModel and LiveData
-    implementation "android.arch.lifecycle:extensions:1.0.0"
+    implementation 'android.arch.lifecycle:extensions:1.0.0'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'

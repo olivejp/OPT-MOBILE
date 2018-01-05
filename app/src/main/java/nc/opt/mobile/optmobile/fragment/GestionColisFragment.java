@@ -40,7 +40,6 @@ public class GestionColisFragment extends Fragment implements RecyclerItemTouchH
 
     private static final String TAG = GestionColisActivity.class.getName();
 
-    private ColisAdapter mColisAdapter;
     private AppCompatActivity mActivity;
     private static final String ARG_TWO_PANE = "ARG_TWO_PANE";
 
@@ -71,15 +70,17 @@ public class GestionColisFragment extends Fragment implements RecyclerItemTouchH
     private View.OnClickListener mOnClickListener = (View v) -> {
         ColisEntity colis = (ColisEntity) v.getTag();
         viewModel.setSelectedColis(colis);
-        HistoriqueColisFragment historiqueColisFragment = new HistoriqueColisFragment();
         FragmentTransaction ft = mActivity.getSupportFragmentManager().beginTransaction();
         if (mTwoPane) {
-            ft.replace(R.id.frame_detail, historiqueColisFragment, GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT).commit();
+            ft.replace(R.id.frame_detail, new HistoriqueColisFragment(), GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT).commit();
         } else {
-            ft.replace(R.id.frame_master, historiqueColisFragment, GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT).addToBackStack(null).commit();
+            ft.replace(R.id.frame_master, new HistoriqueColisFragment(), GestionColisActivity.TAG_PARCEL_RESULT_SEARCH_FRAGMENT).addToBackStack(null).commit();
         }
     };
 
+    public void setTwoPane(boolean twopane) {
+        this.mTwoPane = twopane;
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -112,20 +113,20 @@ public class GestionColisFragment extends Fragment implements RecyclerItemTouchH
         // change title
         mActivity.setTitle(mActivity.getString(R.string.suivi_des_colis));
 
-        mColisAdapter = new ColisAdapter(mActivity, mOnClickListener);
+        ColisAdapter colisAdapter = new ColisAdapter(mActivity, mOnClickListener);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mActivity);
         mRecyclerView.setLayoutManager(linearLayoutManager);
-        mRecyclerView.setAdapter(mColisAdapter);
+        mRecyclerView.setAdapter(colisAdapter);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mActivity, DividerItemDecoration.VERTICAL));
 
         // Add Swipe to the recycler view
         ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(mRecyclerView);
 
-        viewModel.getColisEntities().observe(mActivity, colisEntities -> {
-            mColisAdapter.setColisList(colisEntities);
-            mColisAdapter.notifyDataSetChanged();
+        viewModel.getColisEntities().observe(this, colisEntities -> {
+            colisAdapter.setColisList(colisEntities);
+            colisAdapter.notifyDataSetChanged();
 
             if (colisEntities == null || colisEntities.isEmpty()) {
                 textExplicatifSuiviColis.setVisibility(View.VISIBLE);
@@ -159,4 +160,5 @@ public class GestionColisFragment extends Fragment implements RecyclerItemTouchH
                     mDeleteListener);
         }
     }
+
 }
