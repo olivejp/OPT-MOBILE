@@ -127,7 +127,6 @@ public class FirebaseService {
     }
 
     public static void  firebaseDatabaseUserExist(Context context, final String userId, View view) {
-
         ValueEventListener getFromRemoteValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

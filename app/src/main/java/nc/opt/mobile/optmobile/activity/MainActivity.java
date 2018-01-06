@@ -55,8 +55,6 @@ import static nc.opt.mobile.optmobile.utils.Constants.PREF_USER;
 public class MainActivity extends AttachToPermissionActivity
         implements NavigationView.OnNavigationItemSelectedListener, NoticeDialogFragment.NoticeDialogListener, ProviderObserver.ProviderObserverListener, CatchPhotoFromUrlTask.PhotoFromUrlListener {
 
-    private static final String TAG = MainActivity.class.getName();
-
     public static final String DIALOG_TAG_EXIT = "DIALOG_TAG_EXIT";
 
     public static final String SAVED_ACTUALITE_FRAGMENT = "SAVED_ACTUALITE_FRAGMENT";
@@ -217,10 +215,6 @@ public class MainActivity extends AttachToPermissionActivity
 
         updateBadge();
 
-        // Enregistrement d'un observer pour écouter les modifications sur le ContentProvider
-        ProviderObserver providerObserver = ProviderObserver.getInstance();
-        providerObserver.observe(this, this, OptProvider.ListColis.LIST_COLIS);
-
         // Création du premier fragment
         getSupportFragmentManager().
                 beginTransaction().
@@ -270,6 +264,11 @@ public class MainActivity extends AttachToPermissionActivity
         if (mFirebaseAuth != null) {
             mFirebaseAuth.addAuthStateListener(mAuthStateListener);
         }
+
+        // Enregistrement d'un observer pour écouter les modifications sur le ContentProvider
+        ProviderObserver providerObserver = ProviderObserver.getInstance();
+        providerObserver.observe(this, this, OptProvider.ListColis.LIST_COLIS);
+
     }
 
     @Override
@@ -278,6 +277,10 @@ public class MainActivity extends AttachToPermissionActivity
         if (mFirebaseAuth != null && mAuthStateListener != null) {
             mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
         }
+
+        // Enregistrement d'un observer pour écouter les modifications sur le ContentProvider
+        ProviderObserver providerObserver = ProviderObserver.getInstance();
+        providerObserver.unregister(this, OptProvider.ListColis.LIST_COLIS);
     }
 
     @Override

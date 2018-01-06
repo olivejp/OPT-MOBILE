@@ -7,7 +7,6 @@ import android.arch.lifecycle.MutableLiveData;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import nc.opt.mobile.optmobile.provider.OptProvider;
@@ -33,10 +32,7 @@ public class GestionColisActivityViewModel extends AndroidViewModel implements P
     public LiveData<List<ColisEntity>> getColisEntities() {
         if (this.mListColis == null) {
             this.mListColis = new MutableLiveData<>();
-            this.mListColis.setValue(new ArrayList<>());
-            ColisService
-                    .observableListColisFromProvider(getApplication())
-                    .subscribe(colisEntities -> this.mListColis.postValue(colisEntities));
+            this.mListColis.setValue(ColisService.listFromProvider(getApplication(), true));
         }
         return this.mListColis;
     }
@@ -59,13 +55,7 @@ public class GestionColisActivityViewModel extends AndroidViewModel implements P
 
     @Override
     public void onProviderChange(Uri uri) {
-        ColisService
-                .observableListColisFromProvider(getApplication())
-                .subscribe(colisEntities -> {
-                    if (this.mListColis != null) {
-                        this.mListColis.postValue(colisEntities);
-                    }
-                });
+        this.mListColis.postValue(ColisService.listFromProvider(getApplication(), true));
 
         if (mSelectedColis != null && mSelectedColis.getValue() != null) {
             mSelectedColis.postValue(ColisService.get(getApplication(), mSelectedColis.getValue().getIdColis()));

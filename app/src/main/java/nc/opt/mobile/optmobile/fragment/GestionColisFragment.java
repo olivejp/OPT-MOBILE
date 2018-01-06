@@ -48,6 +48,7 @@ public class GestionColisFragment extends Fragment implements RecyclerItemTouchH
     private GestionColisActivityViewModel viewModel;
     private NoticeDialogFragment.NoticeDialogListener mDeleteListener;
     private boolean mTwoPane;
+    private ColisAdapter colisAdapter;
 
     @BindView(R.id.recycler_parcel_list_management)
     RecyclerView mRecyclerView;
@@ -113,7 +114,9 @@ public class GestionColisFragment extends Fragment implements RecyclerItemTouchH
         // change title
         mActivity.setTitle(mActivity.getString(R.string.suivi_des_colis));
 
-        ColisAdapter colisAdapter = new ColisAdapter(mActivity, mOnClickListener);
+        colisAdapter = new ColisAdapter(mActivity, mOnClickListener);
+        colisAdapter.setColisList(null);
+        colisAdapter.notifyDataSetChanged();
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mActivity);
         mRecyclerView.setLayoutManager(linearLayoutManager);

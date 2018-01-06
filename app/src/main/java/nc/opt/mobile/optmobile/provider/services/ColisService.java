@@ -23,6 +23,7 @@ import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
 import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
+import nc.opt.mobile.optmobile.utils.DateConverter;
 
 import static nc.opt.mobile.optmobile.provider.services.EtapeService.createEtapeFromCheckpoint;
 import static nc.opt.mobile.optmobile.utils.DateConverter.getNowEntity;
@@ -81,11 +82,20 @@ public class ColisService {
      * @return the id of the new object inserted or -1 if object has not been inserted.
      */
     public static long insert(Context context, ColisEntity colis) {
+        if (colis.getLastUpdate() == null) {
+            colis.setLastUpdate(DateConverter.getNowEntity());
+        }
+        if (colis.getLastUpdateSuccessful() == null) {
+            colis.setLastUpdateSuccessful(DateConverter.getNowEntity());
+        }
         Uri uri = context.getContentResolver().insert(OptProvider.ListColis.LIST_COLIS, putToContentValues(colis));
         if (uri == null) {
+            Log.d(TAG, "insert du colis " + colis.getIdColis() + " échoué");
             return -1;
         } else {
-            return ContentUris.parseId(uri);
+            long idGenerated = ContentUris.parseId(uri);
+            Log.d(TAG, "insert du colis " + colis.getIdColis() + " réussi avec le numéro " + idGenerated);
+            return idGenerated;
         }
     }
 
@@ -219,6 +229,8 @@ public class ColisService {
         contentValues.put(ColisInterface.DESCRIPTION, colis.getDescription());
         contentValues.put(ColisInterface.DELETED, colis.getDeleted());
         contentValues.put(ColisInterface.SLUG, colis.getSlug());
+        contentValues.put(ColisInterface.LAST_UPDATE, colis.getLastUpdate());
+        contentValues.put(ColisInterface.LAST_UPDATE_SUCCESSFUL, colis.getLastUpdateSuccessful());
         return contentValues;
     }
 

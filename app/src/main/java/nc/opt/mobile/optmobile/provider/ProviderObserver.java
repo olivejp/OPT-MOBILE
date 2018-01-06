@@ -30,12 +30,11 @@ public class ProviderObserver extends ContentObserver {
     }
 
     /**
-     *
      * @param context
      * @param providerObserverListener
      * @param uris
      */
-    public void observe(Context context, ProviderObserverListener providerObserverListener, Uri ... uris) {
+    public void observe(Context context, ProviderObserverListener providerObserverListener, Uri... uris) {
         for (Uri uri : uris) {
             // Recherche si l'uri est présente dans le HashMap
             if (mapUriListeners.containsKey(uri)) {
@@ -48,6 +47,19 @@ public class ProviderObserver extends ContentObserver {
                 list.add(providerObserverListener);
                 mapUriListeners.put(uri, list);
                 context.getContentResolver().registerContentObserver(uri, false, this);
+            }
+        }
+    }
+
+    public void unregister(ProviderObserverListener providerObserverListener, Uri... uris) {
+        for (Uri uri : uris) {
+            if (mapUriListeners.containsKey(uri)) {
+                List<ProviderObserverListener> listeners = mapUriListeners.get(uri);
+                for (ProviderObserverListener listener :listeners) {
+                    if (listener == providerObserverListener) {
+                        listeners.remove(listener);
+                    }
+                }
             }
         }
     }
