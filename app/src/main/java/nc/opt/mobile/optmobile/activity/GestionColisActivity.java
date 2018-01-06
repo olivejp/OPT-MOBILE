@@ -113,7 +113,7 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
             if (mColisSelected != null) {
                 syncTask = new SyncTask(SyncTask.TypeTask.SOLO, this, mColisSelected.getIdColis());
             } else {
-                syncTask = new SyncTask(SyncTask.TypeTask.ALL, this, null);
+                syncTask = new SyncTask(SyncTask.TypeTask.ALL, this);
             }
             syncTask.execute();
         }
@@ -129,7 +129,7 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
     @Override
     public void onNetworkEnable() {
         invalidateOptionsMenu();
-        new SyncTask(SyncTask.TypeTask.ALL, this, null).execute();
+        new SyncTask(SyncTask.TypeTask.ALL, this).execute();
     }
 
     @Override

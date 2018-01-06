@@ -31,6 +31,12 @@ public class SyncTask extends AsyncTask<Void, Void, Void> {
         this.idColis = idColis;
     }
 
+    public SyncTask(TypeTask typeTask, Context context) {
+        this.context = context;
+        this.typeTask = typeTask;
+        this.idColis = null;
+    }
+
     @Override
     protected Void doInBackground(Void... voids) {
         if (this.typeTask == TypeTask.SOLO) {

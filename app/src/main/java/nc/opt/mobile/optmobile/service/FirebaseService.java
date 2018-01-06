@@ -38,7 +38,7 @@ public class FirebaseService {
 
     private static final String TAG = FirebaseService.class.getName();
 
-    public static DatabaseReference getUsersRef() {
+    private static DatabaseReference getUsersRef() {
         return FirebaseDatabase.getInstance().getReference(Constants.DATABASE_USERS_REFERENCE);
     }
 
@@ -98,16 +98,6 @@ public class FirebaseService {
     }
 
     /**
-     * @param valueEventListener
-     */
-    public static void getFromRemoteDatabase(@NotNull String userUid, @Nullable ValueEventListener valueEventListener) {
-        DatabaseReference userReference = getUsersRef().child(userUid);
-        if (valueEventListener != null) {
-            userReference.addValueEventListener(valueEventListener);
-        }
-    }
-
-    /**
      * Envoi de la liste des colis à Firebase pour qu'il enregistre nos colis suivis.
      *
      * @param list
@@ -121,12 +111,19 @@ public class FirebaseService {
      * @return
      */
     @Nullable
-    public static String getUidOfFirebaseUser(@NotNull Context context) {
+    private static String getUidOfFirebaseUser(@NotNull Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("PREFS", Context.MODE_PRIVATE);
         return sharedPreferences.getString(PREF_USER, null);
     }
 
-    public static void  firebaseDatabaseUserExist(Context context, final String userId, View view) {
+    /**
+     *
+     * @param context
+     * @param userId
+     * @param view
+     */
+    public static void firebaseDatabaseUserExist(Context context, final String userId, View view) {
+
         ValueEventListener getFromRemoteValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -155,13 +152,15 @@ public class FirebaseService {
             }
         };
 
+        // Get user reference
         getUsersRef().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null) {
                     if (dataSnapshot.hasChild(userId)) {
-                        FirebaseService.getFromRemoteDatabase(user.getUid(), getFromRemoteValueEventListener);
+                        DatabaseReference userReference = getUsersRef().child(user.getUid());
+                        userReference.addValueEventListener(getFromRemoteValueEventListener);
                     } else {
                         List<ColisEntity> listColis = ColisService.listFromProvider(context, true);
                         FirebaseService.createRemoteDatabase(context, listColis, view);
@@ -174,5 +173,7 @@ public class FirebaseService {
                 // Do Nothing
             }
         });
+
+
     }
 }
