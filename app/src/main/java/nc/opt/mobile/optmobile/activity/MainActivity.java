@@ -30,6 +30,10 @@ import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +46,8 @@ import nc.opt.mobile.optmobile.broadcast.NetworkReceiver;
 import nc.opt.mobile.optmobile.fragment.ActualiteFragment;
 import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.provider.ProviderObserver;
+import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
+import nc.opt.mobile.optmobile.provider.services.ColisService;
 import nc.opt.mobile.optmobile.service.FirebaseService;
 import nc.opt.mobile.optmobile.utils.CatchPhotoFromUrlTask;
 import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
@@ -81,6 +87,55 @@ public class MainActivity extends AttachToPermissionActivity
 
     @BindView(R.id.nav_view)
     NavigationView navigationView;
+
+    ValueEventListener valueEventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user != null) {
+                if (dataSnapshot.hasChild(user.getUid())) {
+                    DatabaseReference userReference = FirebaseService.getUsersRef().child(user.getUid());
+                    userReference.addValueEventListener(getFromRemoteValueEventListener);
+                } else {
+                    List<ColisEntity> listColis = ColisService.listFromProvider(MainActivity.this, true);
+                    FirebaseService.createRemoteDatabase(MainActivity.this, listColis, navigationView);
+                }
+            }
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            // Do Nothing
+        }
+    };
+
+    ValueEventListener getFromRemoteValueEventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                ColisEntity remoteColisEntity = postSnapshot.getValue(ColisEntity.class);
+                if (remoteColisEntity != null) {
+                    if (ColisService.exist(MainActivity.this, remoteColisEntity.getIdColis(), false)) {
+                        ColisEntity colisEntity = ColisService.get(MainActivity.this, remoteColisEntity.getIdColis());
+                        if (colisEntity != null && colisEntity.getDeleted() == 1) {
+                            // Colis exist in our local DB but has been deleted.
+                            // We update our remote database.
+                            FirebaseService.deleteRemoteColis(remoteColisEntity.getIdColis());
+                            ColisService.realDelete(MainActivity.this, remoteColisEntity.getIdColis());
+                        }
+                    } else {
+                        // Colis don't already exist in our local DB, we insert it.
+                        ColisService.save(MainActivity.this, remoteColisEntity);
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            //Do nothing
+        }
+    };
 
     private void signIn() {
         if (NetworkReceiver.checkConnection(this)) {
@@ -125,7 +180,7 @@ public class MainActivity extends AttachToPermissionActivity
 
                 new CatchPhotoFromUrlTask(MainActivity.this, this).execute(uris);
 
-                FirebaseService.firebaseDatabaseUserExist(this, mFirebaseUser.getUid(), navigationView);
+                FirebaseService.getUsersRef().addListenerForSingleValueEvent(valueEventListener);
 
                 // Save the UID of the user in the SharedPreference
                 SharedPreferences sharedPreferences = getSharedPreferences("PREFS", Context.MODE_PRIVATE);
@@ -186,11 +241,8 @@ public class MainActivity extends AttachToPermissionActivity
         setSupportActionBar(toolbar);
 
         ActionBar ab = getSupportActionBar();
-        if (ab != null)
+        if (ab != null) ab.setDisplayHomeAsUpEnabled(true);
 
-        {
-            ab.setDisplayHomeAsUpEnabled(true);
-        }
 
         // Si la permission Internet n'a pas été accordée on va la demander
         if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED)) {
@@ -278,6 +330,22 @@ public class MainActivity extends AttachToPermissionActivity
             mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
         }
 
+        FirebaseService.getUsersRef().removeEventListener(valueEventListener);
+
+        // Enregistrement d'un observer pour écouter les modifications sur le ContentProvider
+        ProviderObserver providerObserver = ProviderObserver.getInstance();
+        providerObserver.unregister(this, OptProvider.ListColis.LIST_COLIS);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mFirebaseAuth != null && mAuthStateListener != null) {
+            mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
+        }
+
+        FirebaseService.getUsersRef().removeEventListener(valueEventListener);
+
         // Enregistrement d'un observer pour écouter les modifications sur le ContentProvider
         ProviderObserver providerObserver = ProviderObserver.getInstance();
         providerObserver.unregister(this, OptProvider.ListColis.LIST_COLIS);
@@ -305,7 +373,7 @@ public class MainActivity extends AttachToPermissionActivity
                 new CatchPhotoFromUrlTask(MainActivity.this, this).execute(uris);
 
                 // Put/Get datas from FirebaseDatabase.
-                FirebaseService.firebaseDatabaseUserExist(this, mFirebaseUser.getUid(), navigationView);
+                FirebaseService.getUsersRef().addListenerForSingleValueEvent(valueEventListener);
             }
             if (resultCode == RESULT_CANCELED) {
                 // Sign in was canceled by the user, finish the activity

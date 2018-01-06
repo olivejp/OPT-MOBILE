@@ -30,11 +30,12 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
     public static final String ARG_NOTICE_BUNDLE_POSITION = "ARG_NOTICE_BUNDLE_POSITION";
     private ColisEntity mColisSelected;
     private GestionColisFragment gestionColisFragment;
+    private GestionColisActivityViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        GestionColisActivityViewModel viewModel = ViewModelProviders.of(this).get(GestionColisActivityViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(GestionColisActivityViewModel.class);
         viewModel.getSelectedColis().observe(this, colisEntity -> {
             mColisSelected = colisEntity;
             if (colisEntity != null) {
@@ -130,6 +131,18 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
     public void onNetworkEnable() {
         invalidateOptionsMenu();
         new SyncTask(SyncTask.TypeTask.ALL, this).execute();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        viewModel.releaseProviderObserver();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        viewModel.releaseProviderObserver();
     }
 
     @Override

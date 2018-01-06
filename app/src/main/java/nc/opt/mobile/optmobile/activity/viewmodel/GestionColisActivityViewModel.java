@@ -53,6 +53,10 @@ public class GestionColisActivityViewModel extends AndroidViewModel implements P
         return this.mSelectedColis;
     }
 
+    public void releaseProviderObserver(){
+        ProviderObserver.getInstance().unregister(this);
+    }
+
     @Override
     public void onProviderChange(Uri uri) {
         this.mListColis.postValue(ColisService.listFromProvider(getApplication(), true));
