@@ -116,6 +116,18 @@ public class OptDatabase {
             + ActualiteInterface.DISMISSABLE + " INTEGER,"
             + ActualiteInterface.DISMISSED + " INTEGER)";
 
+    private static final String CREATE_SHEDLOCK = "CREATE TABLE opt_shedlock ("
+            + ShedlockInterface.ID_SHEDLOCK + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
+            + ShedlockInterface.LOCKED + " TEXT,"
+            + ShedlockInterface.DATE + " INTEGER)";
+
+    private static void insertShedlock(SQLiteDatabase db) {
+        String insertInto = "INSERT INTO " + SHEDLOCK;
+        String columns = " (" + ShedlockInterface.ID_SHEDLOCK + "," + ShedlockInterface.LOCKED + "," + ShedlockInterface.DATE + ") ";
+        String values = "VALUES (1, 'false', 0)";
+        db.execSQL(insertInto.concat(columns).concat(values));
+    }
+
     @OnCreate
     public static void onCreate(Context context, SQLiteDatabase db) {
         String insertInto = "INSERT INTO " + ACTUALITE;
@@ -125,10 +137,7 @@ public class OptDatabase {
         String values = "VALUES ('" + welcome + "', '" + description + "', '" + DateConverter.getNowEntity() + "', '1', 0, 0)";
         db.execSQL(insertInto.concat(columns).concat(values));
 
-        insertInto = "INSERT INTO " + SHEDLOCK;
-        columns = " (" + ShedlockInterface.ID_SHEDLOCK + "," + ShedlockInterface.LOCKED + "," + ShedlockInterface.DATE + ") ";
-        values = "VALUES ('1', 'false', '0')";
-        db.execSQL(insertInto.concat(columns).concat(values));
+        insertShedlock(db);
     }
 
     @OnUpgrade
@@ -147,16 +156,19 @@ public class OptDatabase {
         db.execSQL("DROP TABLE " + ETAPE_ACHEMINEMENT);
         db.execSQL("DROP TABLE " + COLIS);
         db.execSQL("DROP TABLE " + ACTUALITE);
+        db.execSQL("DROP TABLE " + SHEDLOCK);
 
         // Création des nouvelles tables
         db.execSQL(CREATE_ETAPE_ACHEMINEMENT);
         db.execSQL(CREATE_COLIS);
         db.execSQL(CREATE_ACTUALITE);
+        db.execSQL(CREATE_SHEDLOCK);
 
         // Réinsertion des données
         insertDataFromList(db, COLIS, listColis);
         insertDataFromList(db, ETAPE_ACHEMINEMENT, listEtape);
         insertDataFromList(db, ACTUALITE, listActualite);
+        insertShedlock(db);
     }
 
     /**
@@ -183,6 +195,7 @@ public class OptDatabase {
 
     /**
      * Retreive datas from the DB for the version given and the table name.
+     *
      * @param db
      * @param version
      * @param tableName
@@ -195,7 +208,7 @@ public class OptDatabase {
         if (!columns.isEmpty()) {
             String[] columnsArray = columns.toArray(new String[0]);
             Cursor cursor = db.query(tableName, columnsArray, null, null, null, null, null);
-            while(cursor.moveToNext()) {
+            while (cursor.moveToNext()) {
                 list.add(uOrm.fromCursor(cursor, klassEntity));
             }
             cursor.close();

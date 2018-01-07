@@ -43,7 +43,7 @@
                 android:id="@+id/button_connexion"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
-                android:background="@color/fui_transparent"
+                android:background="?attr/selectableItemBackground"
                 android:text="Se connecter"
                 android:textColor="@android:color/white"
                 app:layout_constraintBottom_toBottomOf="parent"

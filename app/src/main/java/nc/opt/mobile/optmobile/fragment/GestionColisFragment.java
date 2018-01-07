@@ -139,7 +139,6 @@ public class GestionColisFragment extends Fragment implements RecyclerItemTouchH
                 mRecyclerView.setVisibility(View.VISIBLE);
             }
         });
-
         return rootView;
     }
 
@@ -163,5 +162,4 @@ public class GestionColisFragment extends Fragment implements RecyclerItemTouchH
                     mDeleteListener);
         }
     }
-
 }

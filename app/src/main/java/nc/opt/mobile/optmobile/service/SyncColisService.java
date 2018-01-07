@@ -11,6 +11,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
+import nc.opt.mobile.optmobile.provider.services.ShedlockService;
 import nc.opt.mobile.optmobile.utils.CoreSync;
 
 import static nc.opt.mobile.optmobile.provider.services.ColisService.listFromProvider;
@@ -107,9 +108,14 @@ public class SyncColisService extends IntentService {
      * @param sendNotification
      */
     private void handleActionSyncColis(Bundle bundle, boolean sendNotification) {
-        if (bundle.containsKey(ARG_ID_COLIS)) {
-            String idColis = bundle.getString(ARG_ID_COLIS);
-            if (idColis != null) CoreSync.getTracking(this, idColis, sendNotification);
+        if (ShedlockService.lock(this)) {
+            Log.d(TAG, "Lock est bien pris");
+            if (bundle.containsKey(ARG_ID_COLIS)) {
+                String idColis = bundle.getString(ARG_ID_COLIS);
+                if (idColis != null) CoreSync.getTracking(this, idColis, sendNotification);
+            }
+        } else {
+            Log.d(TAG, "Tentative de lock échouée");
         }
     }
 
@@ -117,36 +123,48 @@ public class SyncColisService extends IntentService {
      * @param sendNotification
      */
     private void handleActionSyncAll(boolean sendNotification) {
-        CoreSync.getAllTracking(this, sendNotification);
+        if (ShedlockService.lock(this)) {
+            Log.d(TAG, "Lock est bien pris");
+            CoreSync.getAllTracking(this, sendNotification);
+        } else {
+            Log.d(TAG, "Tentative de lock échouée");
+        }
     }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        if (intent != null) {
-            Bundle bundle = intent.getExtras();
-            if (bundle != null && bundle.containsKey(ARG_ACTION)) {
-                String action = bundle.getString(ARG_ACTION);
-                boolean sendNotification = (bundle.containsKey(ARG_NOTIFICATION)) && bundle.getBoolean(ARG_NOTIFICATION);
-                if (action != null) {
-                    switch (action) {
-                        case ARG_ACTION_SYNC_COLIS:
-                            handleActionSyncColis(bundle, sendNotification);
-                            break;
-                        case ARG_ACTION_SYNC_ALL:
-                            handleActionSyncAll(sendNotification);
-                            break;
-                        case ARG_ACTION_SYNC_ALL_FROM_SCHEDULER:
-                            handleActionSyncAll(true);
-                            break;
-                        default:
-                            break;
+
+        // ToDo Finir d'implémenter cette méthode pour libérer le Shedlock au bout d'un certain temps.
+//        if (ShedlockService.timeUntilLastLock(this)) {
+//        }
+
+        if (!ShedlockService.islocked(this).get()) {
+            if (intent != null) {
+                Bundle bundle = intent.getExtras();
+                if (bundle != null && bundle.containsKey(ARG_ACTION)) {
+                    String action = bundle.getString(ARG_ACTION);
+                    boolean sendNotification = (bundle.containsKey(ARG_NOTIFICATION)) && bundle.getBoolean(ARG_NOTIFICATION);
+                    if (action != null) {
+                        switch (action) {
+                            case ARG_ACTION_SYNC_COLIS:
+                                handleActionSyncColis(bundle, sendNotification);
+                                break;
+                            case ARG_ACTION_SYNC_ALL:
+                                handleActionSyncAll(sendNotification);
+                                break;
+                            case ARG_ACTION_SYNC_ALL_FROM_SCHEDULER:
+                                handleActionSyncAll(true);
+                                break;
+                            default:
+                                break;
+                        }
+                        launchSynchroDelete(this);
+                        updateFirebase(this, listFromProvider(this, true));
                     }
-                    launchSynchroDelete(this);
-                    updateFirebase(this, listFromProvider(this, true));
                 }
+                // On va rafraichir les données du RemoteConfig
+                refreshRemoteConfig();
             }
-            // On va rafraichir les données du RemoteConfig
-            refreshRemoteConfig();
         }
     }
 }

@@ -27,6 +27,7 @@ public class OptProvider {
     private static final String COLIS = "colis";
     private static final String ETAPE_ACHEMINEMENT = "etape_acheminement";
     private static final String ACTUALITE = "actualite";
+    private static final String SHEDLOCK = "shedlock";
 
     private OptProvider() {
     }
@@ -127,8 +128,8 @@ public class OptProvider {
         @ContentUri(
                 path = "shedlock",
                 type = "vnd.android.cursor.dir/list",
-                defaultSort = ActualiteInterface.ID_ACTUALITE + " ASC")
-        public static final Uri LIST_SHEDLOCK = Uri.parse("content://" + AUTHORITY + "/" + ACTUALITE);
+                defaultSort = ShedlockInterface.ID_SHEDLOCK + " ASC")
+        public static final Uri LIST_SHEDLOCK = Uri.parse("content://" + AUTHORITY + "/" + SHEDLOCK);
 
         @InexactContentUri(
                 path = "shedlock/#",
@@ -137,7 +138,7 @@ public class OptProvider {
                 whereColumn = ShedlockInterface.ID_SHEDLOCK,
                 pathSegment = 1)
         public static Uri withId(int id) {
-            return Uri.parse("content://" + AUTHORITY + "/" + ACTUALITE + "/" + id);
+            return Uri.parse("content://" + AUTHORITY + "/" + SHEDLOCK + "/" + id);
         }
     }
 }

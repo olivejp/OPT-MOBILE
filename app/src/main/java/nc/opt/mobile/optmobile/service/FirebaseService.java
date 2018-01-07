@@ -10,15 +10,20 @@ import android.view.View;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
 
+import nc.opt.mobile.optmobile.job.task.SyncFirebaseTask;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
+import nc.opt.mobile.optmobile.provider.services.ColisService;
 import nc.opt.mobile.optmobile.utils.Constants;
 
 import static nc.opt.mobile.optmobile.utils.Constants.PREF_USER;
@@ -34,7 +39,7 @@ public class FirebaseService {
 
     private static final String TAG = FirebaseService.class.getName();
 
-    public static DatabaseReference getUsersRef() {
+    private static DatabaseReference getUsersRef() {
         return FirebaseDatabase.getInstance().getReference(Constants.DATABASE_USERS_REFERENCE);
     }
 
@@ -110,5 +115,42 @@ public class FirebaseService {
     private static String getUidOfFirebaseUser(@NotNull Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("PREFS", Context.MODE_PRIVATE);
         return sharedPreferences.getString(PREF_USER, null);
+    }
+
+    public static void catchDbFromFirebase(Context context) {
+        ValueEventListener getFromRemoteValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                new SyncFirebaseTask(context, dataSnapshot).execute();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //Do nothing
+            }
+        };
+
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null) {
+                    if (dataSnapshot.hasChild(user.getUid())) {
+                        DatabaseReference userReference = FirebaseService.getUsersRef().child(user.getUid());
+                        userReference.addValueEventListener(getFromRemoteValueEventListener);
+                    } else {
+                        List<ColisEntity> listColis = ColisService.listFromProvider(context, true);
+                        FirebaseService.createRemoteDatabase(context, listColis, null);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Do Nothing
+            }
+        };
+
+        FirebaseService.getUsersRef().addListenerForSingleValueEvent(valueEventListener);
     }
 }

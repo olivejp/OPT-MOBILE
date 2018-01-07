@@ -1,6 +1,7 @@
 package nc.opt.mobile.optmobile.activity;
 
 import android.Manifest;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,10 +31,6 @@ import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,24 +39,19 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.activity.interfaces.AttachToPermissionActivity;
+import nc.opt.mobile.optmobile.activity.viewmodel.MainActivityViewModel;
 import nc.opt.mobile.optmobile.broadcast.NetworkReceiver;
 import nc.opt.mobile.optmobile.fragment.ActualiteFragment;
-import nc.opt.mobile.optmobile.provider.OptProvider;
-import nc.opt.mobile.optmobile.provider.ProviderObserver;
-import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
-import nc.opt.mobile.optmobile.provider.services.ColisService;
-import nc.opt.mobile.optmobile.service.FirebaseService;
 import nc.opt.mobile.optmobile.utils.CatchPhotoFromUrlTask;
 import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
 import nc.opt.mobile.optmobile.utils.Utilities;
 
 import static nc.opt.mobile.optmobile.provider.services.AgenceService.populateContentProviderFromAsset;
-import static nc.opt.mobile.optmobile.provider.services.ColisService.count;
 import static nc.opt.mobile.optmobile.utils.Constants.PREF_USER;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class MainActivity extends AttachToPermissionActivity
-        implements NavigationView.OnNavigationItemSelectedListener, NoticeDialogFragment.NoticeDialogListener, ProviderObserver.ProviderObserverListener, CatchPhotoFromUrlTask.PhotoFromUrlListener {
+        implements NavigationView.OnNavigationItemSelectedListener, NoticeDialogFragment.NoticeDialogListener, CatchPhotoFromUrlTask.PhotoFromUrlListener {
 
     public static final String DIALOG_TAG_EXIT = "DIALOG_TAG_EXIT";
 
@@ -79,7 +71,7 @@ public class MainActivity extends AttachToPermissionActivity
     private ImageView mImageViewProfile;
     private Button mButtonConnexion;
     private TextView mProfilName;
-
+    private MainActivityViewModel viewModel;
     private ActualiteFragment mActualiteFragment;
 
     @BindView(R.id.drawer_layout)
@@ -87,55 +79,6 @@ public class MainActivity extends AttachToPermissionActivity
 
     @BindView(R.id.nav_view)
     NavigationView navigationView;
-
-    ValueEventListener valueEventListener = new ValueEventListener() {
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user != null) {
-                if (dataSnapshot.hasChild(user.getUid())) {
-                    DatabaseReference userReference = FirebaseService.getUsersRef().child(user.getUid());
-                    userReference.addValueEventListener(getFromRemoteValueEventListener);
-                } else {
-                    List<ColisEntity> listColis = ColisService.listFromProvider(MainActivity.this, true);
-                    FirebaseService.createRemoteDatabase(MainActivity.this, listColis, navigationView);
-                }
-            }
-        }
-
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-            // Do Nothing
-        }
-    };
-
-    ValueEventListener getFromRemoteValueEventListener = new ValueEventListener() {
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
-            for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                ColisEntity remoteColisEntity = postSnapshot.getValue(ColisEntity.class);
-                if (remoteColisEntity != null) {
-                    if (ColisService.exist(MainActivity.this, remoteColisEntity.getIdColis(), false)) {
-                        ColisEntity colisEntity = ColisService.get(MainActivity.this, remoteColisEntity.getIdColis());
-                        if (colisEntity != null && colisEntity.getDeleted() == 1) {
-                            // Colis exist in our local DB but has been deleted.
-                            // We update our remote database.
-                            FirebaseService.deleteRemoteColis(remoteColisEntity.getIdColis());
-                            ColisService.realDelete(MainActivity.this, remoteColisEntity.getIdColis());
-                        }
-                    } else {
-                        // Colis don't already exist in our local DB, we insert it.
-                        ColisService.save(MainActivity.this, remoteColisEntity);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-            //Do nothing
-        }
-    };
 
     private void signIn() {
         if (NetworkReceiver.checkConnection(this)) {
@@ -180,7 +123,7 @@ public class MainActivity extends AttachToPermissionActivity
 
                 new CatchPhotoFromUrlTask(MainActivity.this, this).execute(uris);
 
-                FirebaseService.getUsersRef().addListenerForSingleValueEvent(valueEventListener);
+                viewModel.sendFirebaseSync();
 
                 // Save the UID of the user in the SharedPreference
                 SharedPreferences sharedPreferences = getSharedPreferences("PREFS", Context.MODE_PRIVATE);
@@ -191,16 +134,6 @@ public class MainActivity extends AttachToPermissionActivity
                 signOut();
             }
         };
-    }
-
-    private void updateBadge() {
-        // Récupération du textView présent dans le menu
-        Menu menu = navigationView.getMenu();
-        TextView suiviColisBadgeCounter = (TextView) menu.findItem(R.id.nav_suivi_colis).getActionView();
-        suiviColisBadgeCounter.setGravity(Gravity.CENTER_VERTICAL);
-        suiviColisBadgeCounter.setTypeface(null, Typeface.BOLD);
-        suiviColisBadgeCounter.setTextColor(getResources().getColor(R.color.colorPrimary));
-        suiviColisBadgeCounter.setText(String.valueOf(count(this, true)));
     }
 
     @Override
@@ -223,11 +156,24 @@ public class MainActivity extends AttachToPermissionActivity
         mButtonConnexion = headerLayout.findViewById(R.id.button_connexion);
         mProfilName = headerLayout.findViewById(R.id.text_profil_name);
 
+        viewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
+        viewModel.getColisCount().observe(this, countColis ->
+        {
+            // Récupération du textView présent dans le menu
+            Menu menu = navigationView.getMenu();
+            TextView suiviColisBadgeCounter = (TextView) menu.findItem(R.id.nav_suivi_colis).getActionView();
+            suiviColisBadgeCounter.setGravity(Gravity.CENTER_VERTICAL);
+            suiviColisBadgeCounter.setTypeface(null, Typeface.BOLD);
+            suiviColisBadgeCounter.setTextColor(getResources().getColor(R.color.colorPrimary));
+            suiviColisBadgeCounter.setText(String.valueOf(countColis));
+        });
+
         mFirebaseAuth = FirebaseAuth.getInstance();
 
         defineAuthListener();
 
-        mButtonConnexion.setOnClickListener(v -> {
+        mButtonConnexion.setOnClickListener(v ->
+        {
             if (mFirebaseUser != null) {
                 signOut();
             } else {
@@ -245,13 +191,17 @@ public class MainActivity extends AttachToPermissionActivity
 
 
         // Si la permission Internet n'a pas été accordée on va la demander
-        if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED)) {
+        if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED))
+
+        {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, RC_PERMISSION_INTERNET);
         }
 
         // Populate the contentProvider with assets, only the first time
         SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
-        if (!sharedPreferences.getBoolean(PREF_POPULATED, false)) {
+        if (!sharedPreferences.getBoolean(PREF_POPULATED, false))
+
+        {
             populateContentProviderFromAsset(this);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putBoolean(PREF_POPULATED, true);
@@ -264,8 +214,6 @@ public class MainActivity extends AttachToPermissionActivity
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
-
-        updateBadge();
 
         // Création du premier fragment
         getSupportFragmentManager().
@@ -292,9 +240,6 @@ public class MainActivity extends AttachToPermissionActivity
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.nav_actualite:
-                getSupportFragmentManager().beginTransaction().replace(R.id.frame_main, mActualiteFragment).commit();
-                break;
             case R.id.nav_geo_agence:
                 startActivity(new Intent(this, AgenceActivity.class));
                 break;
@@ -316,11 +261,6 @@ public class MainActivity extends AttachToPermissionActivity
         if (mFirebaseAuth != null) {
             mFirebaseAuth.addAuthStateListener(mAuthStateListener);
         }
-
-        // Enregistrement d'un observer pour écouter les modifications sur le ContentProvider
-        ProviderObserver providerObserver = ProviderObserver.getInstance();
-        providerObserver.observe(this, this, OptProvider.ListColis.LIST_COLIS);
-
     }
 
     @Override
@@ -329,12 +269,6 @@ public class MainActivity extends AttachToPermissionActivity
         if (mFirebaseAuth != null && mAuthStateListener != null) {
             mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
         }
-
-        FirebaseService.getUsersRef().removeEventListener(valueEventListener);
-
-        // Enregistrement d'un observer pour écouter les modifications sur le ContentProvider
-        ProviderObserver providerObserver = ProviderObserver.getInstance();
-        providerObserver.unregister(this, OptProvider.ListColis.LIST_COLIS);
     }
 
     @Override
@@ -343,12 +277,6 @@ public class MainActivity extends AttachToPermissionActivity
         if (mFirebaseAuth != null && mAuthStateListener != null) {
             mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
         }
-
-        FirebaseService.getUsersRef().removeEventListener(valueEventListener);
-
-        // Enregistrement d'un observer pour écouter les modifications sur le ContentProvider
-        ProviderObserver providerObserver = ProviderObserver.getInstance();
-        providerObserver.unregister(this, OptProvider.ListColis.LIST_COLIS);
     }
 
     @Override
@@ -372,8 +300,7 @@ public class MainActivity extends AttachToPermissionActivity
                 Uri[] uris = new Uri[]{mFirebaseUser.getPhotoUrl()};
                 new CatchPhotoFromUrlTask(MainActivity.this, this).execute(uris);
 
-                // Put/Get datas from FirebaseDatabase.
-                FirebaseService.getUsersRef().addListenerForSingleValueEvent(valueEventListener);
+                viewModel.sendFirebaseSync();
             }
             if (resultCode == RESULT_CANCELED) {
                 // Sign in was canceled by the user, finish the activity
@@ -404,11 +331,6 @@ public class MainActivity extends AttachToPermissionActivity
     @Override
     public void onDialogNegativeClick(NoticeDialogFragment dialog) {
         // Do nothing
-    }
-
-    @Override
-    public void onProviderChange(Uri uri) {
-        updateBadge();
     }
 
     @Override

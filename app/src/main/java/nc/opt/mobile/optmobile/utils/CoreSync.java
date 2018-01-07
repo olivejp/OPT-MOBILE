@@ -16,6 +16,7 @@ import nc.opt.mobile.optmobile.network.RetrofitClient;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
 import nc.opt.mobile.optmobile.provider.services.EtapeService;
+import nc.opt.mobile.optmobile.provider.services.ShedlockService;
 import nc.opt.mobile.optmobile.service.FirebaseService;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -40,7 +41,7 @@ public class CoreSync {
      * @param context
      */
     private static void callGetTracking(Observable<TrackingData> observable, ColisEntity resultColis, Context context) {
-        observable.retry(2).subscribe(trackingData -> {
+        observable.subscribe(trackingData -> {
             Log.d(TAG, "TrackingData récupéré : " + trackingData.toString());
             Observable.just(convertTrackingDataToEntity(resultColis, trackingData))
                     .subscribe(colisEntity -> {
@@ -66,7 +67,16 @@ public class CoreSync {
         Observable.zip(
                 Observable.interval(10, TimeUnit.SECONDS),
                 ColisService.observableListColisFromProvider(context).flatMapIterable(colisEntities -> colisEntities),
-                (aLong, colisEntity) -> colisEntity).subscribe(colisEntity -> CoreSync.getTracking(context, colisEntity.getIdColis(), sendNotification));
+                (aLong, colisEntity) -> colisEntity)
+                .subscribe(colisEntity -> CoreSync.getTracking(context, colisEntity.getIdColis(), sendNotification),
+                        consThrowable,
+                        () -> {
+                            if (ShedlockService.releaseLock(context)) {
+                                Log.d(TAG, "Lock bien libéré");
+                            } else {
+                                Log.d(TAG, "Le lock est resté locké");
+                            }
+                        });
     }
 
     /**
@@ -88,7 +98,6 @@ public class CoreSync {
 
         // Call OPT Service
         RetrofitClient.getTrackingOpt(trackingNumber)
-                .retry(2)
                 .subscribe(htmlString -> {
                             Log.d(TAG, "Réponse reçue lors de l'appel service OPT : " + htmlString);
                             if (transformHtmlToColisDto(context, trackingNumber, htmlString, sendNotification)) {
@@ -113,7 +122,6 @@ public class CoreSync {
                                             Log.d(TAG, "Post tracking fail, try to get it by get trackings/:slug/:trackingNumber for the tracking : " + trackingNumber);
                                             callGetTracking(RetrofitClient.getTracking(slug, trackingNumber), resultColis, context);
                                         })
-                                        .retry(2)
                                         .delay(10, SECONDS)
                                         .subscribe(trackingData -> {
                                             Log.d(TAG, "Post Tracking Successful, try to get the tracking by get trackings/:id");
@@ -197,7 +205,6 @@ public class CoreSync {
     public static void deleteTracking(Context context, ColisEntity colis) {
         if (colis.getSlug() != null && colis.getSlug().length() != 0 && colis.getIdColis() != null && colis.getIdColis().length() != 0) {
             RetrofitClient.deleteTrackingBySlugAndTrackingNumber(colis.getSlug(), colis.getIdColis())
-                    .retry(2)
                     .subscribe(trackingDelete -> {
                         Log.d(TAG, "Suppression effective du tracking " + trackingDelete.getId() + " sur l'API AfterShip");
                         FirebaseService.deleteRemoteColis(colis.getIdColis());

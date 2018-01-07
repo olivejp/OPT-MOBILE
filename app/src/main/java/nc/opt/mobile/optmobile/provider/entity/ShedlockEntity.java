@@ -10,7 +10,7 @@ import nc.opt.mobile.optmobile.provider.interfaces.ShedlockInterface;
 
 public class ShedlockEntity {
     @Column(ShedlockInterface.ID_SHEDLOCK)
-    private int idActualite;
+    private int idShedlock;
 
     @Column(ShedlockInterface.LOCKED)
     private String locked;
@@ -21,12 +21,12 @@ public class ShedlockEntity {
     public ShedlockEntity() {
     }
 
-    public int getIdActualite() {
-        return idActualite;
+    public int getIdShedlock() {
+        return idShedlock;
     }
 
-    public void setIdActualite(int idActualite) {
-        this.idActualite = idActualite;
+    public void setIdShedlock(int idShedlock) {
+        this.idShedlock = idShedlock;
     }
 
     public String getLocked() {

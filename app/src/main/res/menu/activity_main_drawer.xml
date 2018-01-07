@@ -7,11 +7,6 @@
         android:title="@string/suivi_des_colis"
         app:actionViewClass="android.widget.TextView" />
     <item
-        android:id="@+id/nav_actualite"
-        android:icon="@drawable/ic_announcement_grey_900_48dp"
-        android:title="@string/actualite"
-        app:actionViewClass="android.widget.TextView" />
-    <item
         android:id="@+id/nav_geo_agence"
         android:icon="@drawable/ic_room_grey_900_48dp"
         android:title="@string/agences_opt" />

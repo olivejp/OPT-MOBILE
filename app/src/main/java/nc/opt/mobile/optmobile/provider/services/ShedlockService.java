@@ -4,16 +4,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import io.reactivex.Observable;
 import nc.opt.mobile.optmobile.provider.OptProvider;
-import nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface;
 import nc.opt.mobile.optmobile.provider.interfaces.ShedlockInterface;
 import nc.opt.mobile.optmobile.utils.DateConverter;
-
-import static io.reactivex.Observable.just;
 
 /**
  * Created by 2761oli on 25/10/2017.
@@ -22,22 +17,6 @@ import static io.reactivex.Observable.just;
 public class ShedlockService {
 
     private ShedlockService() {
-    }
-
-    public static Observable waitUntilIsUnlocked(Context context) {
-        return Observable.zip(
-                Observable.interval(5, TimeUnit.SECONDS), observableIsLocked(context),
-                (occurence, locked) -> {
-                    if (occurence < 10) {
-                        return Observable.just(locked);
-                    } else {
-                        return Observable.error(new Exception());
-                    }
-                });
-    }
-
-    public static Observable<AtomicBoolean> observableIsLocked(Context context) {
-        return just(islocked(context));
     }
 
     public static synchronized boolean releaseLock(Context context) {
@@ -55,7 +34,7 @@ public class ShedlockService {
 
     public static synchronized boolean lock(Context context) {
         if (!islocked(context).get()) {
-            String where = ActualiteInterface.ID_ACTUALITE + " = ?";
+            String where = ShedlockInterface.ID_SHEDLOCK + " = ?";
             String[] args = new String[]{"1"};
             ContentValues contentValues = new ContentValues();
             contentValues.put(ShedlockInterface.DATE, DateConverter.getNowEntity());
@@ -68,10 +47,12 @@ public class ShedlockService {
 
     public static synchronized AtomicBoolean islocked(Context context) {
         AtomicBoolean atom = new AtomicBoolean(false);
-        Cursor cursor = context.getContentResolver().query(OptProvider.Shedlock.withId(1), null, null, null, null);
+        Cursor cursor = context.getContentResolver().query(OptProvider.Shedlock.LIST_SHEDLOCK, null, ShedlockInterface.ID_SHEDLOCK + "=?", new String[]{"1"}, null);
         if (cursor == null) return atom;
+        if (cursor.getCount() == 0) return atom;
         if (cursor.moveToFirst()) {
-            if (cursor.getString(cursor.getColumnIndex(ShedlockInterface.LOCKED)).equals("true")) {
+            int index = cursor.getColumnIndex(ShedlockInterface.LOCKED);
+            if (cursor.getString(index).equals("true")) {
                 cursor.close();
                 atom.set(true);
                 return atom;

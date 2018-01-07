@@ -38,6 +38,12 @@ public class SyncTask extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+
+    }
+
+    @Override
     protected Void doInBackground(Void... voids) {
         if (this.typeTask == TypeTask.SOLO) {
             if (this.idColis != null) {
@@ -48,7 +54,6 @@ public class SyncTask extends AsyncTask<Void, Void, Void> {
         } else if (this.typeTask == TypeTask.ALL) {
             SyncColisService.launchSynchroForAll(context);
         }
-
         return null;
     }
 }
