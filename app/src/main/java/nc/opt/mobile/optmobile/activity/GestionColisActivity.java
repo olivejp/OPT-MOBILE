@@ -58,10 +58,15 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
 
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_master, gestionColisFragment).commit();
 
+        setTitle(getString(R.string.suivi_des_colis));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
         // On écoute les changements réseau
         NetworkReceiver.getInstance().listen(this);
-
-        setTitle(getString(R.string.suivi_des_colis));
     }
 
     @OnClick(R.id.fab_add_parcel)
@@ -137,12 +142,14 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
     protected void onPause() {
         super.onPause();
         viewModel.releaseProviderObserver();
+        NetworkReceiver.getInstance().unregister(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         viewModel.releaseProviderObserver();
+        NetworkReceiver.getInstance().unregister(this);
     }
 
     @Override

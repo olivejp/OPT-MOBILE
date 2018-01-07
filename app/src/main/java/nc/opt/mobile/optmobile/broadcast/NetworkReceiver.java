@@ -47,6 +47,12 @@ public class NetworkReceiver extends BroadcastReceiver {
         notifyListener(context);
     }
 
+    public void unregister(NetworkChangeListener listener) {
+        if (mNetworkChangeListener.contains(listener)) {
+            mNetworkChangeListener.remove(listener);
+        }
+    }
+
     public static void notifyListener(Context context) {
         ConnectivityManager conn = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
