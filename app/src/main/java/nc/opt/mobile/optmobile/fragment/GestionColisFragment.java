@@ -2,6 +2,7 @@ package nc.opt.mobile.optmobile.fragment;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,7 +21,9 @@ import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
+import nc.opt.mobile.optmobile.activity.AddColisActivity;
 import nc.opt.mobile.optmobile.activity.GestionColisActivity;
 import nc.opt.mobile.optmobile.activity.viewmodel.GestionColisActivityViewModel;
 import nc.opt.mobile.optmobile.adapter.ColisAdapter;
@@ -43,7 +46,7 @@ public class GestionColisFragment extends Fragment implements RecyclerItemTouchH
     private AppCompatActivity mActivity;
     private static final String ARG_TWO_PANE = "ARG_TWO_PANE";
 
-    private static final String DIALOG_TAG_DELETE = "DIALOG_TAG_DELETE";
+    public static final String DIALOG_TAG_DELETE = "DIALOG_TAG_DELETE";
 
     private GestionColisActivityViewModel viewModel;
     private NoticeDialogFragment.NoticeDialogListener mDeleteListener;
@@ -81,6 +84,12 @@ public class GestionColisFragment extends Fragment implements RecyclerItemTouchH
 
     public void setTwoPane(boolean twopane) {
         this.mTwoPane = twopane;
+    }
+
+    @OnClick(R.id.fab_add_parcel)
+    public void onFloatingButtonClick(View view) {
+        Intent intent = new Intent(getActivity(), AddColisActivity.class);
+        startActivity(intent);
     }
 
     @Override

@@ -25,7 +25,7 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
 
     public static final String TAG_PARCEL_RESULT_SEARCH_FRAGMENT = "TAG_PARCEL_RESULT_SEARCH_FRAGMENT";
 
-    public static final String GESTION_FRAGMENT = "GESTION_FRAGMENT";
+    public static final String GESTION_FRAGMENT = "GESTION_FRAGMENT_TAG";
     public static final String ARG_NOTICE_BUNDLE_COLIS = "ARG_NOTICE_BUNDLE_COLIS";
     public static final String ARG_NOTICE_BUNDLE_POSITION = "ARG_NOTICE_BUNDLE_POSITION";
     private ColisEntity mColisSelected;
