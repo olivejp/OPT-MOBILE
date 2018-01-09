@@ -15,6 +15,7 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
+import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.domain.suivi.ColisDto;
 import nc.opt.mobile.optmobile.domain.suivi.EtapeDto;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.Checkpoint;
@@ -24,6 +25,7 @@ import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
 import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
 import nc.opt.mobile.optmobile.utils.DateConverter;
+import nc.opt.mobile.optmobile.utils.NotificationSender;
 
 import static nc.opt.mobile.optmobile.provider.services.EtapeService.createEtapeFromCheckpoint;
 import static nc.opt.mobile.optmobile.utils.DateConverter.getNowEntity;
@@ -42,6 +44,59 @@ public class ColisService {
     private static String[] argsDeletedColisArgs = new String[]{"1"};
 
     private ColisService() {
+    }
+
+    /**
+     * @param context
+     * @param onlyActive
+     * @return
+     */
+    public static List<ColisEntity> listFromProvider(Context context, boolean onlyActive) {
+        Log.d(TAG, "(listFromProvider) List de tous les colis présents dans l'application");
+        List<ColisEntity> colisList = new ArrayList<>();
+
+        // Query the content provider to get a cursor of ColisDto
+        Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, onlyActive ? selectionOnlyActiveColis : null, onlyActive ? argsDeletedColisArgs : null, null);
+
+        if (cursorListColis != null) {
+            while (cursorListColis.moveToNext()) {
+                ColisEntity colis = getFromCursor(cursorListColis);
+                List<EtapeEntity> listEtape = EtapeService.listFromProvider(context, colis.getIdColis());
+                colis.setEtapeAcheminementArrayList(listEtape);
+                colisList.add(colis);
+            }
+            cursorListColis.close();
+        }
+        return colisList;
+    }
+
+    /**
+     * @param context
+     * @return
+     */
+    public static List<ColisEntity> listDeletedFromProvider(Context context) {
+        Log.d(TAG, "(listDeletedFromProvider) List de tous les colis 'SUPPRIMES' présents dans l'application");
+        List<ColisEntity> colisList = new ArrayList<>();
+
+        // Query the content provider to get a cursor of ColisDto
+        Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, selectionOnlyDeletedColis, argsDeletedColisArgs, null);
+
+        if (cursorListColis != null) {
+            while (cursorListColis.moveToNext()) {
+                ColisEntity colis = getFromCursor(cursorListColis);
+                List<EtapeEntity> listEtape = EtapeService.listFromProvider(context, colis.getIdColis());
+                colis.setEtapeAcheminementArrayList(listEtape);
+                colisList.add(colis);
+            }
+            cursorListColis.close();
+        }
+        return colisList;
+    }
+
+    public static Observable<List<ColisEntity>> observableListColisFromProvider(Context context) {
+        return Observable.just(listFromProvider(context, true))
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io());
     }
 
     public static ColisEntity get(Context context, String id) {
@@ -125,59 +180,6 @@ public class ColisService {
      * @param onlyActive
      * @return
      */
-    public static List<ColisEntity> listFromProvider(Context context, boolean onlyActive) {
-        Log.d(TAG, "(listFromProvider) List de tous les colis présents dans l'application");
-        List<ColisEntity> colisList = new ArrayList<>();
-
-        // Query the content provider to get a cursor of ColisDto
-        Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, onlyActive ? selectionOnlyActiveColis : null, onlyActive ? argsDeletedColisArgs : null, null);
-
-        if (cursorListColis != null) {
-            while (cursorListColis.moveToNext()) {
-                ColisEntity colis = getFromCursor(cursorListColis);
-                List<EtapeEntity> listEtape = EtapeService.listFromProvider(context, colis.getIdColis());
-                colis.setEtapeAcheminementArrayList(listEtape);
-                colisList.add(colis);
-            }
-            cursorListColis.close();
-        }
-        return colisList;
-    }
-
-    /**
-     * @param context
-     * @return
-     */
-    public static List<ColisEntity> listDeletedFromProvider(Context context) {
-        Log.d(TAG, "(listDeletedFromProvider) List de tous les colis 'SUPPRIMES' présents dans l'application");
-        List<ColisEntity> colisList = new ArrayList<>();
-
-        // Query the content provider to get a cursor of ColisDto
-        Cursor cursorListColis = context.getContentResolver().query(OptProvider.ListColis.LIST_COLIS, null, selectionOnlyDeletedColis, argsDeletedColisArgs, null);
-
-        if (cursorListColis != null) {
-            while (cursorListColis.moveToNext()) {
-                ColisEntity colis = getFromCursor(cursorListColis);
-                List<EtapeEntity> listEtape = EtapeService.listFromProvider(context, colis.getIdColis());
-                colis.setEtapeAcheminementArrayList(listEtape);
-                colisList.add(colis);
-            }
-            cursorListColis.close();
-        }
-        return colisList;
-    }
-
-    public static Observable<List<ColisEntity>> observableListColisFromProvider(Context context) {
-        return Observable.just(listFromProvider(context, true))
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io());
-    }
-
-    /**
-     * @param context
-     * @param onlyActive
-     * @return
-     */
     public static int count(Context context, boolean onlyActive) {
         // Query the content provider to get a cursor of ColisDto
         int count = 0;
@@ -232,6 +234,28 @@ public class ColisService {
         contentValues.put(ColisInterface.LAST_UPDATE, colis.getLastUpdate());
         contentValues.put(ColisInterface.LAST_UPDATE_SUCCESSFUL, colis.getLastUpdateSuccessful());
         return contentValues;
+    }
+
+    /**
+     * Mets à jour la dernière date de mise à jour du colis.
+     *
+     * @param context
+     * @param colisDto
+     * @param sendNotification
+     */
+    public static void saveColisDto(Context context, ColisDto colisDto, boolean sendNotification) {
+        ColisService.updateLastUpdate(context, colisDto.getIdColis(), true);
+        ColisEntity colisEntity = ColisService.convertToEntity(colisDto);
+        if (EtapeService.shouldInsertNewEtape(context, colisEntity)) {
+            if (EtapeService.save(context, colisEntity)) {
+                if (sendNotification)
+                    NotificationSender.sendNotification(context, context.getString(R.string.app_name), colisDto.getIdColis() + " a été mis à jour.", R.drawable.ic_archive_white_48dp);
+            } else {
+                Log.e(TAG, "Echec de la sauvegarde du colis dans le content provider.");
+            }
+        } else {
+            Log.d(TAG, "Ce colis n'a pas de nouvelle étape à rajouter.");
+        }
     }
 
     /**

@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
-import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.domain.suivi.ColisDto;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.SendTrackingData;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.Tracking;
@@ -15,7 +14,6 @@ import nc.opt.mobile.optmobile.domain.suivi.aftership.TrackingData;
 import nc.opt.mobile.optmobile.network.RetrofitClient;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
-import nc.opt.mobile.optmobile.provider.services.EtapeService;
 import nc.opt.mobile.optmobile.provider.services.ShedlockService;
 import nc.opt.mobile.optmobile.service.FirebaseService;
 
@@ -134,28 +132,6 @@ public class CoreSync {
     }
 
     /**
-     * Mets à jour la dernière date de mise à jour du colis.
-     *
-     * @param context
-     * @param colisDto
-     * @param sendNotification
-     */
-    private static void saveColisDto(Context context, ColisDto colisDto, boolean sendNotification) {
-        ColisService.updateLastUpdate(context, colisDto.getIdColis(), true);
-        ColisEntity colisEntity = ColisService.convertToEntity(colisDto);
-        if (EtapeService.shouldInsertNewEtape(context, colisEntity)) {
-            if (EtapeService.save(context, colisEntity)) {
-                if (sendNotification)
-                    NotificationSender.sendNotification(context, context.getString(R.string.app_name), colisDto.getIdColis() + " a été mis à jour.", R.drawable.ic_archive_white_48dp);
-            } else {
-                Log.e(TAG, "Echec de la sauvegarde du colis dans le content provider.");
-            }
-        } else {
-            Log.d(TAG, "Ce colis n'a pas de nouvelle étape à rajouter.");
-        }
-    }
-
-    /**
      * @param context
      * @param idColis
      * @param htmlToTransform
@@ -169,7 +145,7 @@ public class CoreSync {
             switch (HtmlTransformer.getColisFromHtml(htmlToTransform, colisDto)) {
                 case HtmlTransformer.RESULT_SUCCESS:
                     Log.d(TAG, "HtmlTransformer return SUCCESS");
-                    saveColisDto(context, colisDto, sendNotification);
+                    ColisService.saveColisDto(context, colisDto, sendNotification);
                     return true;
                 case HtmlTransformer.RESULT_NO_ITEM_FOUND:
                     Log.d(TAG, "HtmlTransformer return NO ITEM FOUND");
