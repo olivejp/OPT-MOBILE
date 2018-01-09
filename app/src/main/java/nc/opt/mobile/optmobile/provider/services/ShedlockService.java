@@ -3,7 +3,9 @@ package nc.opt.mobile.optmobile.provider.services;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
+import java.text.ParseException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import nc.opt.mobile.optmobile.provider.OptProvider;
@@ -16,9 +18,15 @@ import nc.opt.mobile.optmobile.utils.DateConverter;
 
 public class ShedlockService {
 
+    private static final String TAG = ShedlockService.class.getName();
+
     private ShedlockService() {
     }
 
+    /**
+     * @param context
+     * @return
+     */
     public static synchronized boolean releaseLock(Context context) {
         if (islocked(context).get()) {
             String where = ShedlockInterface.ID_SHEDLOCK + " = ?";
@@ -32,6 +40,10 @@ public class ShedlockService {
         }
     }
 
+    /**
+     * @param context
+     * @return
+     */
     public static synchronized boolean lock(Context context) {
         if (!islocked(context).get()) {
             String where = ShedlockInterface.ID_SHEDLOCK + " = ?";
@@ -45,9 +57,13 @@ public class ShedlockService {
         }
     }
 
+    /**
+     * @param context
+     * @return
+     */
     public static synchronized AtomicBoolean islocked(Context context) {
         AtomicBoolean atom = new AtomicBoolean(false);
-        Cursor cursor = context.getContentResolver().query(OptProvider.Shedlock.LIST_SHEDLOCK, null, ShedlockInterface.ID_SHEDLOCK + "=?", new String[]{"1"}, null);
+        Cursor cursor = context.getContentResolver().query(OptProvider.Shedlock.withId(1), null, null, null, null);
         if (cursor == null) return atom;
         if (cursor.getCount() == 0) return atom;
         if (cursor.moveToFirst()) {
@@ -62,8 +78,25 @@ public class ShedlockService {
         return atom;
     }
 
-    public static int timeUntilLastLock(Context context) {
-        // ToDo Implementer la méthode pour calculer depuis quand le lock est pris.
-        return 1;
+    /**
+     * @param context
+     * @return time in milliseconds since
+     */
+    public static long timeUntilLastLock(Context context) {
+        long duration = 0L;
+        Cursor cursor = context.getContentResolver().query(OptProvider.Shedlock.withId(1), null, null, null, null);
+        if (cursor == null) return 0;
+        if (cursor.getCount() == 0) return 0;
+        try {
+            if (cursor.moveToFirst()) {
+
+                int lastShedlock = cursor.getInt(cursor.getColumnIndex(ShedlockInterface.DATE));
+                duration = DateConverter.howLongSince(String.valueOf(lastShedlock), DateConverter.DatePattern.PATTERN_ENTITY);
+            }
+            cursor.close();
+        } catch (ParseException e) {
+            Log.e(TAG, "Erreur de parsing pour la date récupéré du Shedlock");
+        }
+        return duration;
     }
 }

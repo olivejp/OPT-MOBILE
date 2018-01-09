@@ -133,10 +133,10 @@ public class SyncColisService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-
-        // ToDo Finir d'implémenter cette méthode pour libérer le Shedlock au bout d'un certain temps.
-//        if (ShedlockService.timeUntilLastLock(this)) {
-//        }
+        // Release Shedlock after 1000 * 60 * 60 Milliseconds (one hour)
+        if (ShedlockService.timeUntilLastLock(this) >= (1000 * 60 * 60)) {
+            ShedlockService.releaseLock(getApplication());
+        }
 
         if (!ShedlockService.islocked(this).get()) {
             if (intent != null) {

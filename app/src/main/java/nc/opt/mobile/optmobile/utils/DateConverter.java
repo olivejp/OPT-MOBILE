@@ -1,5 +1,6 @@
 package nc.opt.mobile.optmobile.utils;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.text.ParseException;
@@ -15,17 +16,67 @@ import java.util.Locale;
 public class DateConverter {
     private static final String TAG = DateConverter.class.getName();
 
-    private static final String PATTERN_DTO = "dd/MM/yyyy HH:mm:ss";
-    private static final String PATTERN_ENTITY = "yyyyMMddHHmmss";
-    private static final String PATTERN_UI = "dd MMM yyyy à HH:mm";
-    private static final String PATTERN_AFTER_HIP = "yyyy-MM-dd'T'HH:mm:ss";
+    public enum DatePattern {
+        PATTERN_DTO("dd/MM/yyyy HH:mm:ss"),
+        PATTERN_ENTITY("yyyyMMddHHmmss"),
+        PATTERN_UI("dd MMM yyyy à HH:mm"),
+        PATTERN_AFTER_HIP("yyyy-MM-dd'T'HH:mm:ss");
 
-    private static final SimpleDateFormat simpleDtoDateFormat = new SimpleDateFormat(PATTERN_DTO, Locale.FRANCE);
-    private static final SimpleDateFormat simpleUiDateFormat = new SimpleDateFormat(PATTERN_UI, Locale.FRANCE);
-    private static final SimpleDateFormat simpleEntityDateFormat = new SimpleDateFormat(PATTERN_ENTITY, Locale.FRANCE);
-    private static final SimpleDateFormat simpleAfterShipDateFormat = new SimpleDateFormat(PATTERN_AFTER_HIP, Locale.FRANCE);
+        private final String value;
+
+        private DatePattern(String value) {
+            this.value = value;
+        }
+
+        public String getDatePattern() {
+            return this.value;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
+    }
+
+    public static final SimpleDateFormat simpleDtoDateFormat = new SimpleDateFormat(DatePattern.PATTERN_DTO.getDatePattern(), Locale.FRANCE);
+    public static final SimpleDateFormat simpleUiDateFormat = new SimpleDateFormat(DatePattern.PATTERN_UI.getDatePattern(), Locale.FRANCE);
+    public static final SimpleDateFormat simpleEntityDateFormat = new SimpleDateFormat(DatePattern.PATTERN_ENTITY.getDatePattern(), Locale.FRANCE);
+    public static final SimpleDateFormat simpleAfterShipDateFormat = new SimpleDateFormat(DatePattern.PATTERN_AFTER_HIP.getDatePattern(), Locale.FRANCE);
 
     private DateConverter() {
+    }
+
+    /**
+     * @param stringDate
+     * @param patternOrigin
+     * @return
+     */
+    public static long howLongSince(@NonNull String stringDate, @NonNull DatePattern patternOrigin) throws ParseException {
+
+        Date dateConverted = null;
+        long duration = 0L;
+
+        switch (patternOrigin) {
+            case PATTERN_AFTER_HIP:
+                dateConverted = simpleAfterShipDateFormat.parse(stringDate);
+                break;
+            case PATTERN_DTO:
+                dateConverted = simpleDtoDateFormat.parse(stringDate);
+                break;
+            case PATTERN_UI:
+                dateConverted = simpleUiDateFormat.parse(stringDate);
+                break;
+            case PATTERN_ENTITY:
+                dateConverted = simpleEntityDateFormat.parse(stringDate);
+                break;
+        }
+
+        if (dateConverted != null) {
+            Date now = Calendar.getInstance().getTime();
+            duration = now.getTime() - dateConverted.getTime();
+        }
+
+        return duration;
     }
 
     /**
@@ -45,6 +96,10 @@ public class DateConverter {
         return null;
     }
 
+    /**
+     * @param dateEntity
+     * @return
+     */
     public static String howLongFromNow(Long dateEntity) {
         if (dateEntity != null) {
             return howLongFromNow(DateConverter.convertDateEntityToDto(dateEntity));
@@ -52,6 +107,10 @@ public class DateConverter {
         return null;
     }
 
+    /**
+     * @param dateDto
+     * @return
+     */
     private static String howLongFromNow(String dateDto) {
         if (dateDto == null) {
             return null;
