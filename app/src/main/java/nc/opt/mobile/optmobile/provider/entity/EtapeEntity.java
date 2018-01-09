@@ -12,6 +12,27 @@ import nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface;
  */
 
 public class EtapeEntity implements Parcelable {
+
+    public enum EtapeOrigine {
+        OPT("OPT"),
+        AFTER_SHIP("AFTERSHIP");
+
+        private final String value;
+
+        private EtapeOrigine(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return this.value;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
+    }
+
     @Column(EtapeAcheminementInterface.ID_ETAPE_ACHEMINEMENT)
     protected String idEtapeAcheminement;
 
@@ -36,11 +57,13 @@ public class EtapeEntity implements Parcelable {
     @Column(EtapeAcheminementInterface.STATUS)
     protected String status;
 
+    @Column(EtapeAcheminementInterface.ORIGINE)
+    protected EtapeOrigine origine;
+
     public EtapeEntity() {
     }
 
-    @SuppressWarnings("squid:S00107")
-    public EtapeEntity(String idEtapeAcheminement, String idColis, Long date, String pays, String localisation, String description, String commentaire, String status) {
+    public EtapeEntity(String idEtapeAcheminement, String idColis, Long date, String pays, String localisation, String description, String commentaire, String status, EtapeOrigine origine) {
         this.idEtapeAcheminement = idEtapeAcheminement;
         this.idColis = idColis;
         this.date = date;
@@ -49,6 +72,7 @@ public class EtapeEntity implements Parcelable {
         this.description = description;
         this.commentaire = commentaire;
         this.status = status;
+        this.origine = origine;
     }
 
     @Override
@@ -56,20 +80,21 @@ public class EtapeEntity implements Parcelable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        EtapeEntity etapeEntity = (EtapeEntity) o;
+        EtapeEntity that = (EtapeEntity) o;
 
-        if (idEtapeAcheminement != null ? !idEtapeAcheminement.equals(etapeEntity.idEtapeAcheminement) : etapeEntity.idEtapeAcheminement != null)
+        if (idEtapeAcheminement != null ? !idEtapeAcheminement.equals(that.idEtapeAcheminement) : that.idEtapeAcheminement != null)
             return false;
-        if (idColis != null ? !idColis.equals(etapeEntity.idColis) : etapeEntity.idColis != null)
+        if (idColis != null ? !idColis.equals(that.idColis) : that.idColis != null) return false;
+        if (date != null ? !date.equals(that.date) : that.date != null) return false;
+        if (pays != null ? !pays.equals(that.pays) : that.pays != null) return false;
+        if (localisation != null ? !localisation.equals(that.localisation) : that.localisation != null)
             return false;
-        if (date != null ? !date.equals(etapeEntity.date) : etapeEntity.date != null) return false;
-        if (pays != null ? !pays.equals(etapeEntity.pays) : etapeEntity.pays != null) return false;
-        if (localisation != null ? !localisation.equals(etapeEntity.localisation) : etapeEntity.localisation != null)
+        if (description != null ? !description.equals(that.description) : that.description != null)
             return false;
-        if (description != null ? !description.equals(etapeEntity.description) : etapeEntity.description != null)
+        if (commentaire != null ? !commentaire.equals(that.commentaire) : that.commentaire != null)
             return false;
-        return commentaire != null ? commentaire.equals(etapeEntity.commentaire) : etapeEntity.commentaire == null;
-
+        if (status != null ? !status.equals(that.status) : that.status != null) return false;
+        return origine == that.origine;
     }
 
     @Override
@@ -82,6 +107,7 @@ public class EtapeEntity implements Parcelable {
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (commentaire != null ? commentaire.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (origine != null ? origine.hashCode() : 0);
         return result;
     }
 
@@ -149,6 +175,15 @@ public class EtapeEntity implements Parcelable {
         this.status = status;
     }
 
+    public EtapeOrigine getOrigine() {
+        return origine;
+    }
+
+    public void setOrigine(EtapeOrigine origine) {
+        this.origine = origine;
+    }
+
+
     @Override
     public int describeContents() {
         return 0;
@@ -164,6 +199,7 @@ public class EtapeEntity implements Parcelable {
         dest.writeString(this.description);
         dest.writeString(this.commentaire);
         dest.writeString(this.status);
+        dest.writeInt(this.origine == null ? -1 : this.origine.ordinal());
     }
 
     protected EtapeEntity(Parcel in) {
@@ -175,6 +211,8 @@ public class EtapeEntity implements Parcelable {
         this.description = in.readString();
         this.commentaire = in.readString();
         this.status = in.readString();
+        int tmpOrigine = in.readInt();
+        this.origine = tmpOrigine == -1 ? null : EtapeOrigine.values()[tmpOrigine];
     }
 
     public static final Creator<EtapeEntity> CREATOR = new Creator<EtapeEntity>() {

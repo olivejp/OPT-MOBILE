@@ -104,6 +104,7 @@ public class OptDatabase {
             + EtapeAcheminementInterface.LOCALISATION + " TEXT,"
             + EtapeAcheminementInterface.DESCRIPTION + " TEXT,"
             + EtapeAcheminementInterface.STATUS + " TEXT,"
+            + EtapeAcheminementInterface.ORIGINE + " TEXT,"
             + EtapeAcheminementInterface.COMMENTAIRE + " TEXT)";
 
     private static final String CREATE_ACTUALITE = "CREATE TABLE " + ACTUALITE + " ("

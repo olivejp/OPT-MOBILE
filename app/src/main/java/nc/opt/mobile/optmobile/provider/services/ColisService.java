@@ -301,7 +301,6 @@ public class ColisService {
         return entity;
     }
 
-
     /**
      * Fill the ColisEntity with the TrackingData informations.
      *

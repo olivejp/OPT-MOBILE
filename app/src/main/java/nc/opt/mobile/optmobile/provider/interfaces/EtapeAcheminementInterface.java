@@ -40,4 +40,7 @@ public interface EtapeAcheminementInterface {
 
     @DataType(TEXT)
     String STATUS = "status";
+
+    @DataType(TEXT)
+    String ORIGINE = "origine";
 }
