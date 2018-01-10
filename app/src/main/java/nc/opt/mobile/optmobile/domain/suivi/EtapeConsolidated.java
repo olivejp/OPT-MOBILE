@@ -1,6 +1,6 @@
 package nc.opt.mobile.optmobile.domain.suivi;
 
-import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
+import nc.opt.mobile.optmobile.database.entity.EtapeEntity;
 
 /**
  * Created by 2761oli on 04/12/2017.

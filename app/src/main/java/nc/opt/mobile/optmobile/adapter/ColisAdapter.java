@@ -19,9 +19,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.gfx.GlideRequester;
-import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
-import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
-import nc.opt.mobile.optmobile.provider.services.EtapeService;
+import nc.opt.mobile.optmobile.database.entity.ColisEntity;
+import nc.opt.mobile.optmobile.database.entity.EtapeEntity;
+import nc.opt.mobile.optmobile.database.services.EtapeService;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
 import static nc.opt.mobile.optmobile.utils.Constants.AFTERSHIP_COURIER_EXTENSION;

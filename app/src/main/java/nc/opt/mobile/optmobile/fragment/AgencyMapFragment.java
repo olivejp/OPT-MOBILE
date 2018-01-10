@@ -60,7 +60,7 @@ import nc.opt.mobile.optmobile.domain.localisation.Agence;
 
 import static nc.opt.mobile.optmobile.activity.MainActivity.RC_PERMISSION_CALL_PHONE;
 import static nc.opt.mobile.optmobile.activity.MainActivity.RC_PERMISSION_LOCATION;
-import static nc.opt.mobile.optmobile.provider.services.AgenceService.listFromProvider;
+import static nc.opt.mobile.optmobile.database.services.AgenceService.listFromProvider;
 
 public class AgencyMapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, ListenerPermissionResult {
 

@@ -9,12 +9,12 @@ import android.util.Log;
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
-import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
-import nc.opt.mobile.optmobile.provider.services.ColisService;
-import nc.opt.mobile.optmobile.provider.services.ShedlockService;
+import nc.opt.mobile.optmobile.database.entity.ColisEntity;
+import nc.opt.mobile.optmobile.database.services.ColisService;
+import nc.opt.mobile.optmobile.database.services.ShedlockService;
 import nc.opt.mobile.optmobile.utils.CoreSync;
 
-import static nc.opt.mobile.optmobile.provider.services.ColisService.listFromProvider;
+import static nc.opt.mobile.optmobile.database.services.ColisService.listFromProvider;
 import static nc.opt.mobile.optmobile.service.FirebaseService.updateFirebase;
 
 public class SyncColisService extends IntentService {

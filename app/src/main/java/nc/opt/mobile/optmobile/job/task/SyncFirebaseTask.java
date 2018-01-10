@@ -5,8 +5,8 @@ import android.os.AsyncTask;
 
 import com.google.firebase.database.DataSnapshot;
 
-import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
-import nc.opt.mobile.optmobile.provider.services.ColisService;
+import nc.opt.mobile.optmobile.database.entity.ColisEntity;
+import nc.opt.mobile.optmobile.database.services.ColisService;
 import nc.opt.mobile.optmobile.service.FirebaseService;
 
 /**

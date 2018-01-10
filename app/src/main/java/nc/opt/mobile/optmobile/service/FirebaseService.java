@@ -22,8 +22,8 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 import nc.opt.mobile.optmobile.job.task.SyncFirebaseTask;
-import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
-import nc.opt.mobile.optmobile.provider.services.ColisService;
+import nc.opt.mobile.optmobile.database.entity.ColisEntity;
+import nc.opt.mobile.optmobile.database.services.ColisService;
 import nc.opt.mobile.optmobile.utils.Constants;
 
 import static nc.opt.mobile.optmobile.utils.Constants.PREF_USER;

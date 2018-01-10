@@ -25,7 +25,7 @@ import nc.opt.mobile.optmobile.activity.GestionColisActivity;
 import nc.opt.mobile.optmobile.activity.viewmodel.GestionColisActivityViewModel;
 import nc.opt.mobile.optmobile.adapter.ColisAdapter;
 import nc.opt.mobile.optmobile.gfx.RecyclerItemTouchHelper;
-import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
+import nc.opt.mobile.optmobile.database.entity.ColisEntity;
 import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
 import nc.opt.mobile.optmobile.utils.Utilities;
 

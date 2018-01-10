@@ -1,4 +1,4 @@
-package nc.opt.mobile.optmobile.provider.services;
+package nc.opt.mobile.optmobile.database.services;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -15,7 +15,6 @@ import java.util.List;
 import nc.opt.mobile.optmobile.domain.localisation.Agence;
 import nc.opt.mobile.optmobile.domain.localisation.Feature;
 import nc.opt.mobile.optmobile.domain.localisation.FeatureCollection;
-import nc.opt.mobile.optmobile.provider.OptProvider;
 import nc.opt.mobile.optmobile.utils.Utilities;
 
 /**

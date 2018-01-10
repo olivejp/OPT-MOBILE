@@ -15,8 +15,8 @@ import nc.opt.mobile.optmobile.activity.viewmodel.GestionColisActivityViewModel;
 import nc.opt.mobile.optmobile.broadcast.NetworkReceiver;
 import nc.opt.mobile.optmobile.fragment.GestionColisFragment;
 import nc.opt.mobile.optmobile.job.task.SyncTask;
-import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
-import nc.opt.mobile.optmobile.provider.services.ColisService;
+import nc.opt.mobile.optmobile.database.entity.ColisEntity;
+import nc.opt.mobile.optmobile.database.services.ColisService;
 import nc.opt.mobile.optmobile.utils.CoreSync;
 import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
 

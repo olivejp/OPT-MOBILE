@@ -12,13 +12,13 @@ import nc.opt.mobile.optmobile.domain.suivi.aftership.SendTrackingData;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.Tracking;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.TrackingData;
 import nc.opt.mobile.optmobile.network.RetrofitClient;
-import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
-import nc.opt.mobile.optmobile.provider.services.ColisService;
-import nc.opt.mobile.optmobile.provider.services.ShedlockService;
+import nc.opt.mobile.optmobile.database.entity.ColisEntity;
+import nc.opt.mobile.optmobile.database.services.ColisService;
+import nc.opt.mobile.optmobile.database.services.ShedlockService;
 import nc.opt.mobile.optmobile.service.FirebaseService;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static nc.opt.mobile.optmobile.provider.services.ColisService.convertTrackingDataToEntity;
+import static nc.opt.mobile.optmobile.database.services.ColisService.convertTrackingDataToEntity;
 
 /**
  * Created by orlanth23 on 18/12/2017.

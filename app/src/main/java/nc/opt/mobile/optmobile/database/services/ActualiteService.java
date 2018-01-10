@@ -1,4 +1,4 @@
-package nc.opt.mobile.optmobile.provider.services;
+package nc.opt.mobile.optmobile.database.services;
 
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -12,19 +12,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nc.opt.mobile.optmobile.domain.suivi.ActualiteDto;
-import nc.opt.mobile.optmobile.provider.OptProvider;
-import nc.opt.mobile.optmobile.provider.entity.ActualiteEntity;
-import nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface;
+import nc.opt.mobile.optmobile.database.interfaces.ActualiteInterface;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
-import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.CONTENU;
-import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.DATE;
-import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.DISMISSABLE;
-import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.DISMISSED;
-import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.ID_ACTUALITE;
-import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.ID_FIREBASE;
-import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.TITRE;
-import static nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface.TYPE;
+import static nc.opt.mobile.optmobile.database.interfaces.ActualiteInterface.CONTENU;
+import static nc.opt.mobile.optmobile.database.interfaces.ActualiteInterface.DATE;
+import static nc.opt.mobile.optmobile.database.interfaces.ActualiteInterface.DISMISSABLE;
+import static nc.opt.mobile.optmobile.database.interfaces.ActualiteInterface.DISMISSED;
+import static nc.opt.mobile.optmobile.database.interfaces.ActualiteInterface.ID_ACTUALITE;
+import static nc.opt.mobile.optmobile.database.interfaces.ActualiteInterface.ID_FIREBASE;
+import static nc.opt.mobile.optmobile.database.interfaces.ActualiteInterface.TITRE;
+import static nc.opt.mobile.optmobile.database.interfaces.ActualiteInterface.TYPE;
 import static nc.opt.mobile.optmobile.utils.DateConverter.convertDateDtoToEntity;
 
 /**

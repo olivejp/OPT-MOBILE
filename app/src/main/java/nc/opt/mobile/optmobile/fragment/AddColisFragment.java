@@ -18,10 +18,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import nc.opt.mobile.optmobile.R;
+import nc.opt.mobile.optmobile.database.dao.ColisDao;
 import nc.opt.mobile.optmobile.job.task.SyncTask;
-import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
-import nc.opt.mobile.optmobile.provider.services.ActualiteService;
-import nc.opt.mobile.optmobile.provider.services.ColisService;
+import nc.opt.mobile.optmobile.database.entity.ColisEntity;
+import nc.opt.mobile.optmobile.database.services.ActualiteService;
+import nc.opt.mobile.optmobile.database.services.ColisService;
 import nc.opt.mobile.optmobile.service.FirebaseService;
 import nc.opt.mobile.optmobile.utils.Utilities;
 
@@ -76,6 +77,7 @@ public class AddColisFragment extends Fragment {
             // Try to send to the remote DB
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user != null && getContext() != null) {
+                ColisDao
                 FirebaseService.createRemoteDatabase(getContext(), ColisService.listFromProvider(getActivity(), true), null);
             }
         }

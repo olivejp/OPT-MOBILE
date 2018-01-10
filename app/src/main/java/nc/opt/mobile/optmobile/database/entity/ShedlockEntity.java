@@ -1,21 +1,17 @@
-package nc.opt.mobile.optmobile.provider.entity;
+package nc.opt.mobile.optmobile.database.entity;
 
-import org.chalup.microorm.annotations.Column;
-
-import nc.opt.mobile.optmobile.provider.interfaces.ShedlockInterface;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 
 /**
  * Created by 2761oli on 25/10/2017.
  */
 
+@Entity(tableName = "shedlock")
 public class ShedlockEntity {
-    @Column(ShedlockInterface.ID_SHEDLOCK)
+    @PrimaryKey
     private int idShedlock;
-
-    @Column(ShedlockInterface.LOCKED)
     private String locked;
-
-    @Column(ShedlockInterface.DATE)
     private Long date;
 
     public ShedlockEntity() {

@@ -1,4 +1,4 @@
-package nc.opt.mobile.optmobile.provider.interfaces;
+package nc.opt.mobile.optmobile.database.interfaces;
 
 import net.simonvt.schematic.annotation.AutoIncrement;
 import net.simonvt.schematic.annotation.DataType;

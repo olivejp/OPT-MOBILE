@@ -1,4 +1,4 @@
-package nc.opt.mobile.optmobile.provider.services;
+package nc.opt.mobile.optmobile.database.services;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -8,8 +8,7 @@ import android.util.Log;
 import java.text.ParseException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import nc.opt.mobile.optmobile.provider.OptProvider;
-import nc.opt.mobile.optmobile.provider.interfaces.ShedlockInterface;
+import nc.opt.mobile.optmobile.database.interfaces.ShedlockInterface;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
 /**

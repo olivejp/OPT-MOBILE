@@ -13,8 +13,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import nc.opt.mobile.optmobile.provider.OptProvider;
-
 import static junit.framework.Assert.assertTrue;
 
 /**

@@ -1,4 +1,4 @@
-package nc.opt.mobile.optmobile.provider;
+package nc.opt.mobile.optmobile.database;
 
 import android.content.Context;
 import android.database.ContentObserver;

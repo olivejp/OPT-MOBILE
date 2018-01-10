@@ -7,9 +7,8 @@ import android.arch.lifecycle.MutableLiveData;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
-import nc.opt.mobile.optmobile.provider.OptProvider;
-import nc.opt.mobile.optmobile.provider.ProviderObserver;
-import nc.opt.mobile.optmobile.provider.services.ColisService;
+import nc.opt.mobile.optmobile.database.ProviderObserver;
+import nc.opt.mobile.optmobile.database.services.ColisService;
 import nc.opt.mobile.optmobile.service.FirebaseService;
 
 /**

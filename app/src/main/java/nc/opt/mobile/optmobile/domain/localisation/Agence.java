@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import org.chalup.microorm.annotations.Column;
 import org.parceler.ParcelConstructor;
 
-import nc.opt.mobile.optmobile.provider.interfaces.AgenceInterface;
+import nc.opt.mobile.optmobile.database.interfaces.AgenceInterface;
 
 /**
  * Created by orlanth23 on 08/08/2017.

@@ -46,7 +46,7 @@ import nc.opt.mobile.optmobile.utils.CatchPhotoFromUrlTask;
 import nc.opt.mobile.optmobile.utils.NoticeDialogFragment;
 import nc.opt.mobile.optmobile.utils.Utilities;
 
-import static nc.opt.mobile.optmobile.provider.services.AgenceService.populateContentProviderFromAsset;
+import static nc.opt.mobile.optmobile.database.services.AgenceService.populateContentProviderFromAsset;
 import static nc.opt.mobile.optmobile.utils.Constants.PREF_USER;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")

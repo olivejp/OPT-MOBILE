@@ -13,11 +13,10 @@ import org.junit.runner.RunWith;
 import java.util.List;
 
 import nc.opt.mobile.optmobile.ProviderTestUtilities;
-import nc.opt.mobile.optmobile.provider.OptProvider;
-import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
-import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
-import nc.opt.mobile.optmobile.provider.services.ColisService;
-import nc.opt.mobile.optmobile.provider.services.EtapeService;
+import nc.opt.mobile.optmobile.database.entity.ColisEntity;
+import nc.opt.mobile.optmobile.database.entity.EtapeEntity;
+import nc.opt.mobile.optmobile.database.services.ColisService;
+import nc.opt.mobile.optmobile.database.services.EtapeService;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
 /**

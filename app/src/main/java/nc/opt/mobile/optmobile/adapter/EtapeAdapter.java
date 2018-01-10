@@ -14,8 +14,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nc.opt.mobile.optmobile.R;
-import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
-import nc.opt.mobile.optmobile.provider.services.EtapeService;
+import nc.opt.mobile.optmobile.database.entity.EtapeEntity;
+import nc.opt.mobile.optmobile.database.services.EtapeService;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
 /**

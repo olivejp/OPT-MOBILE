@@ -1,4 +1,4 @@
-package nc.opt.mobile.optmobile.provider.services;
+package nc.opt.mobile.optmobile.database.services;
 
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -20,14 +20,13 @@ import nc.opt.mobile.optmobile.domain.suivi.ColisDto;
 import nc.opt.mobile.optmobile.domain.suivi.EtapeDto;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.Checkpoint;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.TrackingData;
-import nc.opt.mobile.optmobile.provider.OptProvider;
-import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
-import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
-import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
+import nc.opt.mobile.optmobile.database.entity.ColisEntity;
+import nc.opt.mobile.optmobile.database.entity.EtapeEntity;
+import nc.opt.mobile.optmobile.database.interfaces.ColisInterface;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 import nc.opt.mobile.optmobile.utils.NotificationSender;
 
-import static nc.opt.mobile.optmobile.provider.services.EtapeService.createEtapeFromCheckpoint;
+import static nc.opt.mobile.optmobile.database.services.EtapeService.createEtapeFromCheckpoint;
 import static nc.opt.mobile.optmobile.utils.DateConverter.getNowEntity;
 
 /**
@@ -100,7 +99,7 @@ public class ColisService {
     }
 
     public static ColisEntity get(Context context, String id) {
-        Cursor cursor = context.getContentResolver().query(nc.opt.mobile.optmobile.provider.OptProvider.ListColis.withId(id), null, null, null, null);
+        Cursor cursor = context.getContentResolver().query(nc.opt.mobile.optmobile.database.OptProvider.ListColis.withId(id), null, null, null, null);
         if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
             ColisEntity colisEntity = getFromCursor(cursor);
 
@@ -121,7 +120,7 @@ public class ColisService {
      * @return
      */
     public static boolean exist(Context context, String id, boolean onlyActive) {
-        Cursor cursor = context.getContentResolver().query(nc.opt.mobile.optmobile.provider.OptProvider.ListColis.withId(id), null, onlyActive ? selectionOnlyActiveColis : null, onlyActive ? argsDeletedColisArgs : null, null);
+        Cursor cursor = context.getContentResolver().query(nc.opt.mobile.optmobile.database.OptProvider.ListColis.withId(id), null, onlyActive ? selectionOnlyActiveColis : null, onlyActive ? argsDeletedColisArgs : null, null);
         if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
             cursor.close();
             return true;

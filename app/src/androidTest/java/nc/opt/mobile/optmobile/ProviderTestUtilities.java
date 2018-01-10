@@ -15,9 +15,9 @@ import android.view.Display;
 import java.util.Map;
 import java.util.Set;
 
-import nc.opt.mobile.optmobile.provider.interfaces.ActualiteInterface;
-import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
-import nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface;
+import nc.opt.mobile.optmobile.database.interfaces.ActualiteInterface;
+import nc.opt.mobile.optmobile.database.interfaces.ColisInterface;
+import nc.opt.mobile.optmobile.database.interfaces.EtapeAcheminementInterface;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;

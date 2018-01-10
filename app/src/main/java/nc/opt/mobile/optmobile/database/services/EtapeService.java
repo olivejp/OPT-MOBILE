@@ -1,4 +1,4 @@
-package nc.opt.mobile.optmobile.provider.services;
+package nc.opt.mobile.optmobile.database.services;
 
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -6,29 +6,27 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
-import org.chalup.microorm.MicroOrm;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import nc.opt.mobile.optmobile.R;
+import nc.opt.mobile.optmobile.database.entity.ColisEntity;
+import nc.opt.mobile.optmobile.database.entity.EtapeEntity;
+import nc.opt.mobile.optmobile.database.interfaces.ColisInterface;
+import nc.opt.mobile.optmobile.database.interfaces.EtapeAcheminementInterface;
 import nc.opt.mobile.optmobile.domain.suivi.EtapeDto;
 import nc.opt.mobile.optmobile.domain.suivi.aftership.Checkpoint;
-import nc.opt.mobile.optmobile.provider.OptProvider;
-import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
-import nc.opt.mobile.optmobile.provider.entity.EtapeEntity;
-import nc.opt.mobile.optmobile.provider.interfaces.ColisInterface;
-import nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface;
 import nc.opt.mobile.optmobile.utils.DateConverter;
 
-import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.COMMENTAIRE;
-import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.DATE;
-import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.DESCRIPTION;
-import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.ID_COLIS;
-import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.LOCALISATION;
-import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.PAYS;
-import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.STATUS;
+import static nc.opt.mobile.optmobile.database.interfaces.EtapeAcheminementInterface.COMMENTAIRE;
+import static nc.opt.mobile.optmobile.database.interfaces.EtapeAcheminementInterface.DATE;
+import static nc.opt.mobile.optmobile.database.interfaces.EtapeAcheminementInterface.DESCRIPTION;
+import static nc.opt.mobile.optmobile.database.interfaces.EtapeAcheminementInterface.ID_COLIS;
+import static nc.opt.mobile.optmobile.database.interfaces.EtapeAcheminementInterface.LOCALISATION;
+import static nc.opt.mobile.optmobile.database.interfaces.EtapeAcheminementInterface.PAYS;
+import static nc.opt.mobile.optmobile.database.interfaces.EtapeAcheminementInterface.STATUS;
 
 /**
  * Created by 2761oli on 23/10/2017.
@@ -38,8 +36,6 @@ public class EtapeService {
 
     private EtapeService() {
     }
-
-    private static final MicroOrm uOrm = new MicroOrm();
 
     private static final String AND = "=? AND ";
 
@@ -198,28 +194,25 @@ public class EtapeService {
     }
 
     public static int getStatusDrawable(@NotNull String status) {
-        if (status != null) {
-            switch (status) {
-                case "InfoReceived":
-                    return R.drawable.ic_status_info_receive;
-                case "AttemptFail":
-                    return R.drawable.ic_status_attemptfail;
-                case "Delivered":
-                    return R.drawable.ic_status_delivered;
-                case "Exception":
-                    return R.drawable.ic_status_exception;
-                case "Expired":
-                    return R.drawable.ic_status_expired;
-                case "InTransit":
-                    return R.drawable.ic_status_in_transit;
-                case "OutForDelivery":
-                    return R.drawable.ic_status_out_for_delivery;
-                case "Pending":
-                    return R.drawable.ic_status_pending;
-                default:
-                    return R.drawable.ic_status_pending;
-            }
+        switch (status) {
+            case "InfoReceived":
+                return R.drawable.ic_status_info_receive;
+            case "AttemptFail":
+                return R.drawable.ic_status_attemptfail;
+            case "Delivered":
+                return R.drawable.ic_status_delivered;
+            case "Exception":
+                return R.drawable.ic_status_exception;
+            case "Expired":
+                return R.drawable.ic_status_expired;
+            case "InTransit":
+                return R.drawable.ic_status_in_transit;
+            case "OutForDelivery":
+                return R.drawable.ic_status_out_for_delivery;
+            case "Pending":
+                return R.drawable.ic_status_pending;
+            default:
+                return R.drawable.ic_status_pending;
         }
-        return R.drawable.ic_status_pending;
-    }
+                                                                                                                                                                                                                                                                                                                                                                                                                                }
 }

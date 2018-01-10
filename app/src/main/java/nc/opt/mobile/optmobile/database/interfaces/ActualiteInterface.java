@@ -1,9 +1,11 @@
-package nc.opt.mobile.optmobile.provider.interfaces;
+package nc.opt.mobile.optmobile.database.interfaces;
 
 import net.simonvt.schematic.annotation.AutoIncrement;
+import net.simonvt.schematic.annotation.ConflictResolutionType;
 import net.simonvt.schematic.annotation.DataType;
 import net.simonvt.schematic.annotation.NotNull;
 import net.simonvt.schematic.annotation.PrimaryKey;
+import net.simonvt.schematic.annotation.Unique;
 
 import static net.simonvt.schematic.annotation.DataType.Type.INTEGER;
 import static net.simonvt.schematic.annotation.DataType.Type.TEXT;
@@ -12,35 +14,33 @@ import static net.simonvt.schematic.annotation.DataType.Type.TEXT;
  * Created by 2761oli on 27/10/2017.
  */
 
-public interface EtapeAcheminementInterface {
+public interface ActualiteInterface {
 
     @DataType(INTEGER)
     @AutoIncrement
     @PrimaryKey
     @NotNull
-    String ID_ETAPE_ACHEMINEMENT = "id_etape_acheminement";
+    String ID_ACTUALITE = "id_actualite";
 
+    @Unique(onConflict = ConflictResolutionType.ABORT)
     @DataType(TEXT)
-    String ID_COLIS = "id_colis";
+    String ID_FIREBASE = "id_firebase";
 
     @DataType(TEXT)
     String DATE = "date";
 
     @DataType(TEXT)
-    String PAYS = "pays";
+    String TYPE = "type";
 
     @DataType(TEXT)
-    String LOCALISATION = "localisation";
+    String TITRE = "titre";
 
     @DataType(TEXT)
-    String DESCRIPTION = "description";
+    String CONTENU = "contenu";
 
-    @DataType(TEXT)
-    String COMMENTAIRE = "commentaire";
+    @DataType(INTEGER)
+    String DISMISSABLE = "dismissable";
 
-    @DataType(TEXT)
-    String STATUS = "status";
-
-    @DataType(TEXT)
-    String ORIGINE = "origine";
+    @DataType(INTEGER)
+    String DISMISSED = "dismissed";
 }
