@@ -6,4 +6,12 @@
         android:icon="@drawable/ic_refresh_white_48dp"
         android:title="@string/refresh"
         app:showAsAction="always" />
+    <group android:checkableBehavior="all">
+        <item
+            android:id="@+id/menu_fournisseur_opt"
+            android:title="OPT" />
+        <item
+            android:id="@+id/menu_fournisseur_aftership"
+            android:title="After Ship" />
+    </group>
 </menu>

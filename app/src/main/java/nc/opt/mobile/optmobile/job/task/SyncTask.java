@@ -38,12 +38,6 @@ public class SyncTask extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-
-    }
-
-    @Override
     protected Void doInBackground(Void... voids) {
         if (this.typeTask == TypeTask.SOLO) {
             if (this.idColis != null) {

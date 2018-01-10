@@ -20,9 +20,6 @@ import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.activity.viewmodel.GestionColisActivityViewModel;
 import nc.opt.mobile.optmobile.adapter.EtapeAdapter;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class HistoriqueColisFragment extends Fragment {
 
     private AppCompatActivity mAppCompatActivity;
@@ -61,11 +58,11 @@ public class HistoriqueColisFragment extends Fragment {
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mEtapeAdapter);
 
-        viewModel.getSelectedColis().observe(this, colisEntity -> {
-            mEtapeAdapter.setEtapes(colisEntity != null ? colisEntity.getEtapeAcheminementArrayList() : null);
+        viewModel.getSelectedEtapes().observe(this, etapeEntities -> {
+            mEtapeAdapter.setEtapes(etapeEntities);
             mEtapeAdapter.notifyDataSetChanged();
 
-            if (colisEntity == null || colisEntity.getEtapeAcheminementArrayList() == null || colisEntity.getEtapeAcheminementArrayList().isEmpty()) {
+            if (etapeEntities == null || etapeEntities.isEmpty()) {
                 textObjectNotFound.setVisibility(View.VISIBLE);
                 mRecyclerView.setVisibility(View.GONE);
             } else {

@@ -57,7 +57,6 @@ public class EtapeEntity implements Parcelable {
     @Column(EtapeAcheminementInterface.STATUS)
     protected String status;
 
-    @Column(EtapeAcheminementInterface.ORIGINE)
     protected EtapeOrigine origine;
 
     public EtapeEntity() {

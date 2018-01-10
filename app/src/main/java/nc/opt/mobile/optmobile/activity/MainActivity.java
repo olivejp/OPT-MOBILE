@@ -285,7 +285,6 @@ public class MainActivity extends AttachToPermissionActivity
         if (mActualiteFragment != null) {
             getSupportFragmentManager().putFragment(outState, SAVED_ACTUALITE_FRAGMENT, mActualiteFragment);
         }
-
     }
 
     @Override

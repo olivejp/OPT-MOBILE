@@ -29,7 +29,6 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
     public static final String ARG_NOTICE_BUNDLE_COLIS = "ARG_NOTICE_BUNDLE_COLIS";
     public static final String ARG_NOTICE_BUNDLE_POSITION = "ARG_NOTICE_BUNDLE_POSITION";
     private ColisEntity mColisSelected;
-    private GestionColisFragment gestionColisFragment;
     private GestionColisActivityViewModel viewModel;
 
     @Override
@@ -49,14 +48,7 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
 
         boolean mTwoPane = findViewById(R.id.frame_detail) != null;
 
-        if (savedInstanceState != null) {
-            gestionColisFragment = (GestionColisFragment) getSupportFragmentManager().getFragment(savedInstanceState, GESTION_FRAGMENT);
-            gestionColisFragment.setTwoPane(mTwoPane);
-        } else {
-            gestionColisFragment = GestionColisFragment.newInstance(mTwoPane);
-        }
-
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame_master, gestionColisFragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_master, GestionColisFragment.newInstance(mTwoPane), GESTION_FRAGMENT).commit();
 
         setTitle(getString(R.string.suivi_des_colis));
     }
@@ -107,29 +99,40 @@ public class GestionColisActivity extends AppCompatActivity implements NetworkRe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int i = item.getItemId();
-        if (i == android.R.id.home) {
-            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-                getSupportFragmentManager().popBackStack();
-                return true;
-            } else {
+        switch (i) {
+            case android.R.id.home:
+                if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                    getSupportFragmentManager().popBackStack();
+                    return true;
+                } else {
+                    return super.onOptionsItemSelected(item);
+                }
+            case R.id.nav_refresh:
+                if (NetworkReceiver.checkConnection(this)) {
+                    SyncTask syncTask;
+                    if (mColisSelected != null) {
+                        syncTask = new SyncTask(SyncTask.TypeTask.SOLO, this, mColisSelected.getIdColis());
+                    } else {
+                        syncTask = new SyncTask(SyncTask.TypeTask.ALL, this);
+                    }
+                    syncTask.execute();
+                    return true;
+                }
+                break;
+            case R.id.menu_fournisseur_opt:
+            case R.id.menu_fournisseur_aftership:
+                item.setChecked(!item.isChecked());
+                if (i == R.id.menu_fournisseur_opt) {
+                    viewModel.changeEtapeType(item.isChecked(), viewModel.getTypeAfterShip());
+                }
+                if (i == R.id.menu_fournisseur_aftership) {
+                    viewModel.changeEtapeType(viewModel.getTypeOpt(), item.isChecked());
+                }
+                break;
+            default:
                 return super.onOptionsItemSelected(item);
-            }
-        } else if (i == R.id.nav_refresh && NetworkReceiver.checkConnection(this)) {
-            SyncTask syncTask;
-            if (mColisSelected != null) {
-                syncTask = new SyncTask(SyncTask.TypeTask.SOLO, this, mColisSelected.getIdColis());
-            } else {
-                syncTask = new SyncTask(SyncTask.TypeTask.ALL, this);
-            }
-            syncTask.execute();
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        getSupportFragmentManager().putFragment(outState, GESTION_FRAGMENT, gestionColisFragment);
     }
 
     @Override

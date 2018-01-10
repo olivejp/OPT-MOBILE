@@ -27,6 +27,7 @@ import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInter
 import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.DESCRIPTION;
 import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.ID_COLIS;
 import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.LOCALISATION;
+import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.ORIGINE;
 import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.PAYS;
 import static nc.opt.mobile.optmobile.provider.interfaces.EtapeAcheminementInterface.STATUS;
 
@@ -103,8 +104,8 @@ public class EtapeService {
      */
     public static boolean save(@NotNull Context context, @NotNull ColisEntity colis) {
         boolean creation = false;
-        if (colis.getEtapeAcheminementArrayList() != null && !colis.getEtapeAcheminementArrayList().isEmpty()) {
-            for (EtapeEntity etape : colis.getEtapeAcheminementArrayList()) {
+        if (colis.getEtapes() != null && !colis.getEtapes().isEmpty()) {
+            for (EtapeEntity etape : colis.getEtapes()) {
                 if (!exist(context, colis.getIdColis(), etape)) {
                     creation = true;
                     insert(context, etape, colis);
@@ -122,7 +123,7 @@ public class EtapeService {
      * @return
      */
     public static boolean shouldInsertNewEtape(@NotNull Context context, @NotNull ColisEntity colis) {
-        for (EtapeEntity etape : colis.getEtapeAcheminementArrayList()) {
+        for (EtapeEntity etape : colis.getEtapes()) {
             if (!exist(context, colis.getIdColis(), etape)) {
                 return true;
             }
@@ -139,11 +140,21 @@ public class EtapeService {
         contentValues.put(DATE, etapeEntity.getDate());
         contentValues.put(STATUS, etapeEntity.getStatus());
         contentValues.put(ID_COLIS, idColis);
+        contentValues.put(ORIGINE, etapeEntity.getOrigine().getValue());
         return contentValues;
     }
 
     private static EtapeEntity getFromCursor(@NotNull Cursor cursor) {
-        return uOrm.fromCursor(cursor, EtapeEntity.class);
+        EtapeEntity entity = uOrm.fromCursor(cursor, EtapeEntity.class);
+        String origine = cursor.getString(cursor.getColumnIndex(EtapeAcheminementInterface.ORIGINE));
+        if (origine.equals(EtapeEntity.EtapeOrigine.OPT.getValue())) {
+            entity.setOrigine(EtapeEntity.EtapeOrigine.OPT);
+        }
+        if (origine.equals(EtapeEntity.EtapeOrigine.AFTER_SHIP.getValue())) {
+            entity.setOrigine(EtapeEntity.EtapeOrigine.AFTER_SHIP);
+        }
+
+        return entity;
     }
 
     private static boolean exist(@NotNull Context context, @NotNull String idColis, @NotNull EtapeEntity etape) {
@@ -171,6 +182,7 @@ public class EtapeService {
         entity.setLocalisation(dto.getLocalisation());
         entity.setStatus(dto.getStatus());
         entity.setPays(dto.getPays());
+        entity.setOrigine(EtapeEntity.EtapeOrigine.OPT);
         return entity;
     }
 
@@ -194,6 +206,7 @@ public class EtapeService {
         etape.setStatus((checkpoint.getTag() != null) ? checkpoint.getTag() : "");
         etape.setDescription((checkpoint.getMessage() != null) ? checkpoint.getMessage() : "");
         etape.setPays((checkpoint.getCountryName() != null) ? checkpoint.getCountryName().toString() : "");
+        etape.setOrigine(EtapeEntity.EtapeOrigine.AFTER_SHIP);
         return etape;
     }
 

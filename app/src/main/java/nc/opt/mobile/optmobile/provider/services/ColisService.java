@@ -62,7 +62,7 @@ public class ColisService {
             while (cursorListColis.moveToNext()) {
                 ColisEntity colis = getFromCursor(cursorListColis);
                 List<EtapeEntity> listEtape = EtapeService.listFromProvider(context, colis.getIdColis());
-                colis.setEtapeAcheminementArrayList(listEtape);
+                colis.setEtapes(listEtape);
                 colisList.add(colis);
             }
             cursorListColis.close();
@@ -85,7 +85,7 @@ public class ColisService {
             while (cursorListColis.moveToNext()) {
                 ColisEntity colis = getFromCursor(cursorListColis);
                 List<EtapeEntity> listEtape = EtapeService.listFromProvider(context, colis.getIdColis());
-                colis.setEtapeAcheminementArrayList(listEtape);
+                colis.setEtapes(listEtape);
                 colisList.add(colis);
             }
             cursorListColis.close();
@@ -106,7 +106,7 @@ public class ColisService {
 
             // Récupération des étapes associées.
             List<EtapeEntity> list = EtapeService.listFromProvider(context, id);
-            colisEntity.setEtapeAcheminementArrayList(list);
+            colisEntity.setEtapes(list);
             return colisEntity;
         }
         return null;
@@ -296,7 +296,7 @@ public class ColisService {
             for (EtapeDto etapeDto : dto.getEtapeDtoArrayList()) {
                 listEtapeEntity.add(EtapeService.convertToEntity(etapeDto));
             }
-            entity.setEtapeAcheminementArrayList(listEtapeEntity);
+            entity.setEtapes(listEtapeEntity);
         }
         return entity;
     }
@@ -313,7 +313,7 @@ public class ColisService {
         colis.setDeleted(0);
         for (Checkpoint c : trackingData.getCheckpoints()) {
             EtapeEntity etapeEntity = createEtapeFromCheckpoint(colis.getIdColis(), c);
-            colis.getEtapeAcheminementArrayList().add(etapeEntity);
+            colis.getEtapes().add(etapeEntity);
         }
         return colis;
     }

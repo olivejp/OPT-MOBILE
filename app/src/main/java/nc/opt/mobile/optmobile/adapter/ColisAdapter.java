@@ -67,9 +67,9 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderSt
             holder.mStepLastUpdate.setText(DateConverter.howLongFromNow(holder.mColis.getLastUpdate()));
         }
 
-        if (!holder.mColis.getEtapeAcheminementArrayList().isEmpty()) {
+        if (!holder.mColis.getEtapes(null).isEmpty()) {
             // On prend la dernière étape
-            EtapeEntity etape = holder.mColis.getEtapeAcheminementArrayList().get(holder.mColis.getEtapeAcheminementArrayList().size() - 1);
+            EtapeEntity etape = holder.mColis.getEtapes(null).get(holder.mColis.getEtapes(null).size() - 1);
             holder.mStepLastDate.setText(DateConverter.convertDateEntityToUi(etape.getDate()));
             holder.mStepLastLocalisation.setText(etape.getLocalisation());
             holder.mStepLastDescription.setText(etape.getDescription());

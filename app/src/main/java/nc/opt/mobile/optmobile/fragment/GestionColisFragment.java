@@ -126,8 +126,8 @@ public class GestionColisFragment extends Fragment implements RecyclerItemTouchH
         // Add Swipe to the recycler view
         ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(mRecyclerView);
-
-        viewModel.getColisEntities().observe(this, colisEntities -> {
+        viewModel.getColisEntities().observe(this, colisEntities ->
+        {
             colisAdapter.setColisList(colisEntities);
             colisAdapter.notifyDataSetChanged();
 

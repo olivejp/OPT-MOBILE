@@ -28,16 +28,12 @@ public class ShedlockService {
      * @return
      */
     public static synchronized boolean releaseLock(Context context) {
-        if (islocked(context).get()) {
-            String where = ShedlockInterface.ID_SHEDLOCK + " = ?";
-            String[] args = new String[]{"1"};
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(ShedlockInterface.DATE, 0);
-            contentValues.put(ShedlockInterface.LOCKED, "false");
-            return context.getContentResolver().update(OptProvider.Shedlock.LIST_SHEDLOCK, contentValues, where, args) != 0;
-        } else {
-            return false;
-        }
+        String where = ShedlockInterface.ID_SHEDLOCK + " = ?";
+        String[] args = new String[]{"1"};
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(ShedlockInterface.DATE, 0);
+        contentValues.put(ShedlockInterface.LOCKED, "false");
+        return context.getContentResolver().update(OptProvider.Shedlock.LIST_SHEDLOCK, contentValues, where, args) != 0;
     }
 
     /**
@@ -45,16 +41,12 @@ public class ShedlockService {
      * @return
      */
     public static synchronized boolean lock(Context context) {
-        if (!islocked(context).get()) {
-            String where = ShedlockInterface.ID_SHEDLOCK + " = ?";
-            String[] args = new String[]{"1"};
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(ShedlockInterface.DATE, DateConverter.getNowEntity());
-            contentValues.put(ShedlockInterface.LOCKED, "true");
-            return context.getContentResolver().update(OptProvider.Shedlock.LIST_SHEDLOCK, contentValues, where, args) != 0;
-        } else {
-            return false;
-        }
+        String where = ShedlockInterface.ID_SHEDLOCK + " = ?";
+        String[] args = new String[]{"1"};
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(ShedlockInterface.DATE, DateConverter.getNowEntity());
+        contentValues.put(ShedlockInterface.LOCKED, "true");
+        return context.getContentResolver().update(OptProvider.Shedlock.LIST_SHEDLOCK, contentValues, where, args) != 0;
     }
 
     /**
@@ -89,8 +81,7 @@ public class ShedlockService {
         if (cursor.getCount() == 0) return 0;
         try {
             if (cursor.moveToFirst()) {
-
-                int lastShedlock = cursor.getInt(cursor.getColumnIndex(ShedlockInterface.DATE));
+                long lastShedlock = cursor.getLong(cursor.getColumnIndex(ShedlockInterface.DATE));
                 duration = DateConverter.howLongSince(String.valueOf(lastShedlock), DateConverter.DatePattern.PATTERN_ENTITY);
             }
             cursor.close();

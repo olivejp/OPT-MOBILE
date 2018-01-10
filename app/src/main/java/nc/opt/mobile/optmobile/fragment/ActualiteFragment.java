@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -146,13 +145,9 @@ public class ActualiteFragment extends Fragment implements ProviderObserver.Prov
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        attachDatabaseListener();
-
-        ProviderObserver providerObserver = ProviderObserver.getInstance();
-        providerObserver.observe(mActivity, this, OptProvider.ListActualite.LIST_ACTUALITE);
+    public void onPause() {
+        super.onPause();
+        ProviderObserver.getInstance().unregister(this);
     }
 
     @Override
@@ -176,6 +171,11 @@ public class ActualiteFragment extends Fragment implements ProviderObserver.Prov
         // change visibility depending on the list content
         textExplicatifActualite.setVisibility(list.isEmpty() ? View.VISIBLE : View.GONE);
         mRecyclerView.setVisibility(list.isEmpty() ? View.GONE : View.VISIBLE);
+
+        ProviderObserver providerObserver = ProviderObserver.getInstance();
+        providerObserver.observe(mActivity, this, OptProvider.ListActualite.LIST_ACTUALITE);
+
+        attachDatabaseListener();
 
         return rootView;
     }

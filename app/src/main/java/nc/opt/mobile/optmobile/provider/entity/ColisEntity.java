@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import org.chalup.microorm.annotations.Column;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,7 @@ public class ColisEntity implements Parcelable {
     @Column(value = ColisInterface.SLUG)
     private String slug;
 
-    private List<EtapeEntity> etapeAcheminementArrayList;
+    private List<EtapeEntity> etapes;
 
     public ColisEntity() {
     }
@@ -53,7 +54,7 @@ public class ColisEntity implements Parcelable {
             return false;
         if (lastUpdateSuccessful != null ? !lastUpdateSuccessful.equals(that.lastUpdateSuccessful) : that.lastUpdateSuccessful != null)
             return false;
-        return etapeAcheminementArrayList != null ? etapeAcheminementArrayList.equals(that.etapeAcheminementArrayList) : that.etapeAcheminementArrayList == null;
+        return etapes != null ? etapes.equals(that.etapes) : that.etapes == null;
     }
 
     @Override
@@ -64,7 +65,7 @@ public class ColisEntity implements Parcelable {
         result = 31 * result + (lastUpdateSuccessful != null ? lastUpdateSuccessful.hashCode() : 0);
         result = 31 * result + (deleted != null ? deleted.hashCode() : 0);
         result = 31 * result + (slug != null ? slug.hashCode() : 0);
-        result = 31 * result + (etapeAcheminementArrayList != null ? etapeAcheminementArrayList.hashCode() : 0);
+        result = 31 * result + (etapes != null ? etapes.hashCode() : 0);
         return result;
     }
 
@@ -107,18 +108,32 @@ public class ColisEntity implements Parcelable {
     /**
      * 0 = Active
      * 1 = Deleted
+     *
      * @param deleted
      */
     public void setDeleted(int deleted) {
         this.deleted = deleted;
     }
 
-    public List<EtapeEntity> getEtapeAcheminementArrayList() {
-        return etapeAcheminementArrayList;
+    public List<EtapeEntity> getEtapes(@Nullable EtapeEntity.EtapeOrigine origine) {
+
+        if (origine == null) return etapes;
+
+        List<EtapeEntity> listFiltree = new ArrayList<>();
+        for (EtapeEntity etape : etapes) {
+            if (etape.getOrigine() == origine) {
+                listFiltree.add(etape);
+            }
+        }
+        return listFiltree;
     }
 
-    public void setEtapeAcheminementArrayList(List<EtapeEntity> etapeAcheminementArrayList) {
-        this.etapeAcheminementArrayList = etapeAcheminementArrayList;
+    public List<EtapeEntity> getEtapes() {
+        return etapes;
+    }
+
+    public void setEtapes(List<EtapeEntity> etapeAcheminementArrayList) {
+        this.etapes = etapeAcheminementArrayList;
     }
 
     public String getSlug() {
@@ -143,7 +158,7 @@ public class ColisEntity implements Parcelable {
         dest.writeValue(this.lastUpdateSuccessful);
         dest.writeValue(this.deleted);
         dest.writeString(this.slug);
-        dest.writeList(this.etapeAcheminementArrayList);
+        dest.writeList(this.etapes);
     }
 
     protected ColisEntity(Parcel in) {
@@ -153,8 +168,8 @@ public class ColisEntity implements Parcelable {
         this.lastUpdateSuccessful = (Long) in.readValue(Long.class.getClassLoader());
         this.deleted = (Integer) in.readValue(Integer.class.getClassLoader());
         this.slug = in.readString();
-        this.etapeAcheminementArrayList = new ArrayList<>();
-        in.readList(this.etapeAcheminementArrayList, EtapeEntity.class.getClassLoader());
+        this.etapes = new ArrayList<>();
+        in.readList(this.etapes, EtapeEntity.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<ColisEntity> CREATOR = new Parcelable.Creator<ColisEntity>() {

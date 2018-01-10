@@ -14,7 +14,6 @@ import nc.opt.mobile.optmobile.domain.suivi.aftership.TrackingData;
 import nc.opt.mobile.optmobile.network.RetrofitClient;
 import nc.opt.mobile.optmobile.provider.entity.ColisEntity;
 import nc.opt.mobile.optmobile.provider.services.ColisService;
-import nc.opt.mobile.optmobile.provider.services.ShedlockService;
 import nc.opt.mobile.optmobile.service.FirebaseService;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -67,14 +66,7 @@ public class CoreSync {
                 ColisService.observableListColisFromProvider(context).flatMapIterable(colisEntities -> colisEntities),
                 (aLong, colisEntity) -> colisEntity)
                 .subscribe(colisEntity -> CoreSync.getTracking(context, colisEntity.getIdColis(), sendNotification),
-                        consThrowable,
-                        () -> {
-                            if (ShedlockService.releaseLock(context)) {
-                                Log.d(TAG, "Lock bien libéré");
-                            } else {
-                                Log.d(TAG, "Le lock est resté locké");
-                            }
-                        });
+                        consThrowable);
     }
 
     /**
