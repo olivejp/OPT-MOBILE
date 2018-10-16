@@ -23,26 +23,3 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
--dontwarn com.google.common.**
--dontwarn retrofit2.**
--dontwarn okhttp3.**
--dontwarn net.simonvt.schematic.**
--dontwarn com.squareup.javapoet.**
--dontwarn com.caverock.androidsvg.**
-
--keep class retrofit2.** { *; }
--keepattributes Signature
--keepattributes Exceptions
--keepclasseswithmembers class * {
-    @retrofit2.http.* <methods>;
-}
--keep class nc.opt.mobile.optmobile.** { *; }
--keep class org.jsoup.**
-# -keep class android.support.v7.app.AlertDialog
-# -keep class android.content.DialogInterface.** {*;}
-# -keep class android.app.DialogFragment
-
--keepclassmembers class nc.opt.mobile.optmobile.domain.** {*;}
-
--keep public class * extends com.bumptech.glide.module.AppGlideModule
--keep class com.bumptech.glide.GeneratedAppGlideModuleImpl
