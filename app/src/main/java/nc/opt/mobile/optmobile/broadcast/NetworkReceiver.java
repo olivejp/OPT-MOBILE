@@ -12,19 +12,25 @@ import java.util.List;
 
 /**
  * Created by orlanth23 on 09/10/2017.
- *
  */
 public class NetworkReceiver extends BroadcastReceiver {
 
     public static final IntentFilter CONNECTIVITY_CHANGE_INTENT_FILTER = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
-
     private static NetworkReceiver mInstance;
     private static List<NetworkChangeListener> mNetworkChangeListener = new ArrayList<>();
 
+    /**
+     * Constructor
+     */
     private NetworkReceiver() {
         super();
     }
 
+    /**
+     * NetworkReceiver is a singleton, so getInstance return THE instance.
+     *
+     * @return
+     */
     public static synchronized NetworkReceiver getInstance() {
         if (mInstance == null) {
             mInstance = new NetworkReceiver();
@@ -32,28 +38,42 @@ public class NetworkReceiver extends BroadcastReceiver {
         return mInstance;
     }
 
-    public void listen(NetworkChangeListener networkChangeListener) {
-        if (mNetworkChangeListener.contains(networkChangeListener)) {
-            mNetworkChangeListener.indexOf(networkChangeListener);
-        } else {
-            if (mNetworkChangeListener.add(networkChangeListener)) {
-                mNetworkChangeListener.indexOf(networkChangeListener);
-            }
-        }
-    }
-
     @Override
     public void onReceive(Context context, Intent intent) {
         notifyListener(context);
     }
 
+    /**
+     * Add a new NetworkChangeListener to the List<NetworkChangeListener>
+     * Don't forget to unregister to avoid memory leak
+     *
+     * @param networkChangeListener
+     */
+    public void register(NetworkChangeListener networkChangeListener) {
+        if (!mNetworkChangeListener.contains(networkChangeListener)) {
+            mNetworkChangeListener.add(networkChangeListener);
+        }
+    }
+
+
+    /**
+     * Delete the NetworkChangeListener from the inner list.
+     * This is mandatory to avoid memory leak
+     *
+     * @param listener
+     */
     public void unregister(NetworkChangeListener listener) {
         if (mNetworkChangeListener.contains(listener)) {
             mNetworkChangeListener.remove(listener);
         }
     }
 
-    public static void notifyListener(Context context) {
+    /**
+     * Inner method which notify all the NetworkChangeListener in the inner list
+     *
+     * @param context
+     */
+    private static void notifyListener(Context context) {
         ConnectivityManager conn = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = conn != null ? conn.getActiveNetworkInfo() : null;
@@ -71,6 +91,12 @@ public class NetworkReceiver extends BroadcastReceiver {
         }
     }
 
+    /**
+     * Static method to know if we get a connection.
+     *
+     * @param context
+     * @return true if connection findBy, false otherwise.
+     */
     public static boolean checkConnection(Context context) {
         ConnectivityManager conn = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -85,6 +111,9 @@ public class NetworkReceiver extends BroadcastReceiver {
         return false;
     }
 
+    /**
+     * Interface Listener need to implement before register to the NetworkReceiver
+     */
     public interface NetworkChangeListener {
         void onNetworkEnable();
 

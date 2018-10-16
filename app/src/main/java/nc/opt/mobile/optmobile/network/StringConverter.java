@@ -1,6 +1,7 @@
 package nc.opt.mobile.optmobile.network;
 
-import org.jetbrains.annotations.Nullable;
+
+import android.support.annotation.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;

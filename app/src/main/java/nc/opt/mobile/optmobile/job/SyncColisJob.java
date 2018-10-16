@@ -7,31 +7,29 @@ import com.evernote.android.job.JobRequest;
 
 import java.util.concurrent.TimeUnit;
 
-import nc.opt.mobile.optmobile.service.SyncColisService;
-
-import static nc.opt.mobile.optmobile.utils.Constants.INTERVAL_SYNC_JOB_MINS;
-import static nc.opt.mobile.optmobile.utils.Constants.PERIODIC_SYNC_JOB_MINS;
+import static nc.opt.mobile.optmobile.Constants.INTERVAL_SYNC_JOB_MINS;
+import static nc.opt.mobile.optmobile.Constants.PERIODIC_SYNC_JOB_MINS;
 
 /**
  * Created by 2761oli on 10/10/2017.
  */
-
 public class SyncColisJob extends Job {
-    public static final String TAG = "sync_colis_job";
+
+    static final String SYNC_COLIS_JOB = "SYNC_COLIS_JOB";
 
     @Override
     @NonNull
-    protected Result onRunJob(Params params) {
+    protected Result onRunJob(@NonNull Params params) {
         // A job run on the background thread, so no need to call SyncTask here
         SyncColisService.launchSynchroFromScheduler(getContext());
         return Result.SUCCESS;
     }
 
     /**
-     * Schedule a periodic job which will be launch every 30 minutes.
+     * Schedule a periodic job which will be launched every 30 minutes.
      */
     public static void scheduleJob() {
-        new JobRequest.Builder(SyncColisJob.TAG)
+        new JobRequest.Builder(SyncColisJob.SYNC_COLIS_JOB)
                 .setRequiresDeviceIdle(false)
                 .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
                 .setRequirementsEnforced(true)
@@ -45,7 +43,7 @@ public class SyncColisJob extends Job {
      * Launch immediately the sync job
      */
     public static void launchImmediateJob() {
-        new JobRequest.Builder(SyncColisJob.TAG)
+        new JobRequest.Builder(SyncColisJob.SYNC_COLIS_JOB)
                 .startNow();
     }
 }
