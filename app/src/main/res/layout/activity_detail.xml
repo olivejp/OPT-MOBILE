@@ -4,14 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <View
-        android:id="@+id/step_line"
-        android:layout_width="2dp"
-        android:layout_height="match_parent"
-        android:layout_marginStart="40dp"
-        android:layout_marginLeft="40dp"
-        android:background="@color/colorAccent" />
-
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

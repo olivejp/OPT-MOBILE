@@ -34,9 +34,6 @@ public class DetailActivity extends AppCompatActivity implements InputDialogFrag
     @BindView(R.id.text_object_not_found)
     TextView textObjectNotFound;
 
-    @BindView(R.id.step_line)
-    View stepView;
-
     private InputDialogFragment dialogErreur;
     private DetailActivityViewModel viewModel;
     private EtapeAdapter etapeAdapter;
@@ -132,7 +129,6 @@ public class DetailActivity extends AppCompatActivity implements InputDialogFrag
         boolean isEtapeListEmpty = stepEntities == null || stepEntities.isEmpty();
         textObjectNotFound.setVisibility(isEtapeListEmpty ? View.VISIBLE : View.GONE);
         mRecyclerView.setVisibility(isEtapeListEmpty ? View.GONE : View.VISIBLE);
-        stepView.setVisibility(isEtapeListEmpty ? View.GONE : View.VISIBLE);
     }
 
     @Override

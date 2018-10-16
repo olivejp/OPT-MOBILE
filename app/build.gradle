@@ -87,6 +87,11 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.10.3'
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
     implementation 'com.google.android.gms:play-services-vision:16.2.0'
+    
+    // Pour utiliser Stetho lancer l'application en debug sur un mobile connecté
+    // Puis aller sur chrome et taper l'url chrome://inspect/
+    // Vous devez aller dans local storage et vous trouverez la DB
+    implementation 'com.facebook.stetho:stetho:1.5.0'
 
     testImplementation 'junit:junit:4.12'
     testImplementation "android.arch.core:core-testing:1.1.1"

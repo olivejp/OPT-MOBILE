@@ -3,6 +3,7 @@ package nc.opt.mobile.optmobile;
 import android.app.Application;
 
 import com.evernote.android.job.JobManager;
+import com.facebook.stetho.Stetho;
 import com.squareup.leakcanary.LeakCanary;
 
 import nc.opt.mobile.optmobile.broadcast.NetworkReceiver;
@@ -24,6 +25,10 @@ public class App extends Application {
             return;
         }
         LeakCanary.install(this);
+
+        if (BuildConfig.DEBUG) {
+            Stetho.initializeWithDefaults(this);
+        }
 
         // On attache le receiver à notre application
         registerReceiver(NetworkReceiver.getInstance(), NetworkReceiver.CONNECTIVITY_CHANGE_INTENT_FILTER);

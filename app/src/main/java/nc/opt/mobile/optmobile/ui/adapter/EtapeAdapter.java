@@ -1,5 +1,6 @@
 package nc.opt.mobile.optmobile.ui.adapter;
 
+import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -69,8 +70,9 @@ public class EtapeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
         view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.adapter_etape, parent, false);
@@ -78,7 +80,7 @@ public class EtapeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
         ViewHolderEtape viewHeader = (ViewHolderEtape) holder;
         viewHeader.etape = mEtapes.get(position);
         viewHeader.mStepDate.setText(DateConverter.convertDateEntityToUi(viewHeader.etape.getDate()));
@@ -92,6 +94,18 @@ public class EtapeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         // Change status image.
         viewHeader.mStepStatus.setImageResource(Utilities.getStatusDrawable(viewHeader.etape.getStatus()));
+
+        // Change visibility of the lines
+        if (position == 0) {
+            viewHeader.lineBefore.setVisibility(View.GONE);
+        } else {
+            viewHeader.lineBefore.setVisibility(View.VISIBLE);
+        }
+        if (position == mEtapes.size() - 1) {
+            viewHeader.lineAfter.setVisibility(View.GONE);
+        } else {
+            viewHeader.lineAfter.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -115,6 +129,12 @@ public class EtapeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         @BindView(R.id.img_step_status)
         ImageView mStepStatus;
+
+        @BindView(R.id.step_line_after)
+        View lineAfter;
+
+        @BindView(R.id.step_line_before)
+        View lineBefore;
 
         StepEntity etape;
 
