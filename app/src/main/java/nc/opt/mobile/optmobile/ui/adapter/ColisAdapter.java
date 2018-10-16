@@ -79,7 +79,8 @@ public class ColisAdapter extends RecyclerView.Adapter<ColisAdapter.ViewHolderCo
                 ColisWithSteps oldColis = colisEntities.get(oldItemPosition);
                 return Objects.equals(newColis.colisEntity.getIdColis(), oldColis.colisEntity.getIdColis())
                         && Objects.equals(newColis.colisEntity.getDescription(), oldColis.colisEntity.getDescription())
-                        && Objects.equals(newColis.colisEntity.getSlug(), oldColis.colisEntity.getSlug());
+                        && Objects.equals(newColis.stepEntityList.size(), oldColis.stepEntityList.size())
+                        && Objects.equals(newColis.colisEntity.getLastUpdate(), oldColis.colisEntity.getLastUpdate());
             }
         });
         colisEntities = colisEntities1;

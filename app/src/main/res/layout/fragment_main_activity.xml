@@ -17,7 +17,7 @@
             android:scrollbarSize="5dp"
             android:scrollbarThumbVertical="@android:color/darker_gray"
             android:scrollbars="vertical"
-            app:layoutManager="LinearLayoutManager" />
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <TextView
@@ -28,7 +28,7 @@
         android:gravity="center_horizontal|center_vertical"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
-        android:text="Commencez à suivre vos colis.\n\nAppuyez sur le bouton + pour ajouter un nouveau colis au suivi.\n\nDès que la situation de vos colis évoluera une notification vous sera envoyée. (ce service nécessite une connexion internet)"
+        android:text="@string/empty_colis_list"
         android:textSize="15sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"

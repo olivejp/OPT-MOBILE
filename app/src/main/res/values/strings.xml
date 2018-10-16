@@ -13,4 +13,6 @@
     <string name="update_description">Modifier description</string>
     <string name="reinitialize">Réinitialiser</string>
     <string name="description">Description</string>
+    <string name="empty_colis_list">Commencez à suivre vos colis.  Appuyez sur le bouton + pour ajouter un nouveau colis au suivi.  Dès que la situation de vos colis évoluera une notification vous sera envoyée. (ce service nécessite une connexion internet)</string>
+    <string name="empty_step_colis">Aucune étape pour ce colis</string>
 </resources>

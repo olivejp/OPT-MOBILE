@@ -35,4 +35,8 @@ public interface ColisDao extends AbstractDao<ColisEntity>{
     @Transaction
     @Query("SELECT * FROM colis WHERE DELETED <> '1' AND DELIVERED <> '1'")
     Maybe<List<ColisEntity>> listMaybeColisActifsAndNotDelivered();
+
+    @Transaction
+    @Query("DELETE FROM colis WHERE idColis = :idColis")
+    int deleteByIdColis(String idColis);
 }

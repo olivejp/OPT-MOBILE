@@ -1,20 +1,13 @@
-package nc.opt.mobile.optmobile.ui.fragment;
+package nc.opt.mobile.optmobile.ui.activity;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.List;
@@ -26,14 +19,14 @@ import io.reactivex.schedulers.Schedulers;
 import nc.opt.mobile.optmobile.R;
 import nc.opt.mobile.optmobile.database.local.entity.StepEntity;
 import nc.opt.mobile.optmobile.ui.InputDialogFragment;
-import nc.opt.mobile.optmobile.ui.activity.viewmodel.MainActivityViewModel;
+import nc.opt.mobile.optmobile.ui.activity.viewmodel.DetailActivityViewModel;
 import nc.opt.mobile.optmobile.ui.adapter.EtapeAdapter;
 
+public class DetailActivity extends AppCompatActivity implements InputDialogFragment.InputDialogFragmentListener {
 
-public class HistoriqueColisFragment extends Fragment implements InputDialogFragment.InputDialogFragmentListener {
-
-    private static final String TAG = HistoriqueColisFragment.class.getCanonicalName();
+    private static final String TAG = DetailActivity.class.getCanonicalName();
     private static final String FRAGMENT_TAG = "UPDATE_FRAGMENT";
+    public static final String ID_COLIS_EXTRA = "ID_COLIS_EXTRA";
 
     @BindView(R.id.recycler_etape_list)
     RecyclerView mRecyclerView;
@@ -45,78 +38,72 @@ public class HistoriqueColisFragment extends Fragment implements InputDialogFrag
     View stepView;
 
     private InputDialogFragment dialogErreur;
-    private MainActivityViewModel viewModel;
-    private AppCompatActivity appCompatActivity;
+    private DetailActivityViewModel viewModel;
     private EtapeAdapter etapeAdapter;
-
-
-    public HistoriqueColisFragment() {
-    }
+    private String idColis;
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        appCompatActivity = (AppCompatActivity) context;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = ViewModelProviders.of(appCompatActivity).get(MainActivityViewModel.class);
-        etapeAdapter = new EtapeAdapter();
 
-        viewModel.getListStepFromOpt(viewModel.getSelectedIdColis()).observe(this, this::initViews);
-
-        setHasOptionsMenu(true);
-    }
-
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_historique_colis, container, false);
-        ButterKnife.bind(this, rootView);
-
-        mRecyclerView.setAdapter(etapeAdapter);
-
-        // Change title
-        appCompatActivity.setTitle(viewModel.getSelectedIdColis());
-
-        // Manage the back button in the navigation bar
-        if (!viewModel.isTwoPane() && appCompatActivity.getSupportActionBar() != null) {
-            appCompatActivity.getSupportActionBar().setHomeButtonEnabled(true);
-            appCompatActivity.getSupportActionBar().setDisplayShowHomeEnabled(true);
-            appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Bundle bundle = (getIntent().getExtras() != null) ? getIntent().getExtras() : savedInstanceState;
+        if (bundle != null && bundle.containsKey(ID_COLIS_EXTRA)) {
+            idColis = bundle.getString(ID_COLIS_EXTRA);
         }
 
-        viewModel.getListStepFromOpt(viewModel.getSelectedIdColis()).observe(this, this::initViews);
+        if (idColis == null || idColis.isEmpty()) {
+            Log.e(TAG, "Impossible de continuer sans Id Colis");
+            finish();
+        }
+
+        // Create view and bind widgets
+        setContentView(R.layout.activity_detail);
+        ButterKnife.bind(this);
+
+        etapeAdapter = new EtapeAdapter();
+        mRecyclerView.setAdapter(etapeAdapter);
+
+        viewModel = ViewModelProviders.of(this).get(DetailActivityViewModel.class);
+        viewModel.getListStepFromOpt(idColis).observe(this, this::initViews);
+
+        // Change title
+        setTitle(idColis);
 
         // If we had a tag, we want to retrieve this fragment back with its listener
-        if (getFragmentManager() != null) {
-            dialogErreur = (InputDialogFragment) getFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+        if (getSupportFragmentManager() != null) {
+            dialogErreur = (InputDialogFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
             if (dialogErreur != null) {
                 dialogErreur.setmListenerContext(this);
             }
         }
-
-        return rootView;
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.main_activity_menu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(ID_COLIS_EXTRA, idColis);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_activity_menu, menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (android.R.id.home == item.getItemId()) {
+            onBackPressed();
+            return true;
+        }
         if (R.id.menu_reinit == item.getItemId()) {
-            viewModel.deleteAllSteps();
+            viewModel.deleteAllSteps(idColis);
             viewModel.refresh();
             return true;
         }
         if (R.id.menu_update == item.getItemId()) {
-            if (getFragmentManager() != null) {
-                viewModel.findColisById(viewModel.getSelectedIdColis())
+            if (getSupportFragmentManager() != null) {
+                viewModel.findColisById(idColis)
                         .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                         .doOnSuccess(colisEntity -> {
                             dialogErreur = new InputDialogFragment();
@@ -124,7 +111,7 @@ public class HistoriqueColisFragment extends Fragment implements InputDialogFrag
                             bundle.putString(InputDialogFragment.P_TEXT, colisEntity.getDescription());
                             dialogErreur.setmListenerContext(this);
                             dialogErreur.setArguments(bundle);
-                            dialogErreur.show(getFragmentManager(), FRAGMENT_TAG);
+                            dialogErreur.show(getSupportFragmentManager(), FRAGMENT_TAG);
                         })
                         .doOnError(throwable -> Log.e(TAG, throwable.getMessage()))
                         .subscribe();
@@ -132,6 +119,12 @@ public class HistoriqueColisFragment extends Fragment implements InputDialogFrag
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
     }
 
     private void initViews(List<StepEntity> stepEntities) {
@@ -144,7 +137,7 @@ public class HistoriqueColisFragment extends Fragment implements InputDialogFrag
 
     @Override
     public void onInputDialogFinishClick(InputDialogFragment fragment, String description) {
-        viewModel.updateDescription(description);
+        viewModel.updateDescription(idColis, description);
         fragment.dismiss();
     }
 }

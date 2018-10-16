@@ -13,28 +13,31 @@ import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import nc.opt.mobile.optmobile.broadcast.NetworkReceiver;
+import nc.opt.mobile.optmobile.database.local.StepOrigine;
 import nc.opt.mobile.optmobile.database.local.entity.ColisEntity;
 import nc.opt.mobile.optmobile.database.local.entity.ColisWithSteps;
+import nc.opt.mobile.optmobile.database.local.entity.StepEntity;
 import nc.opt.mobile.optmobile.database.local.repository.ColisRepository;
 import nc.opt.mobile.optmobile.database.local.repository.ColisWithStepsRepository;
+import nc.opt.mobile.optmobile.database.local.repository.StepRepository;
 import nc.opt.mobile.optmobile.job.SyncTask;
 
 /**
- * Created by orlanth23 on 11/01/2018.
+ * Created by orlanth23 on 16/10/2018.
  */
 
-public class MainActivityViewModel extends AndroidViewModel {
+public class DetailActivityViewModel extends AndroidViewModel {
 
-    private ColisWithStepsRepository colisWithStepsRepository;
     private ColisRepository colisRepository;
+    private StepRepository stepRepository;
     private MutableLiveData<ColisWithSteps> colisWithStepsSelected = new MutableLiveData<>();
     private MutableLiveData<List<ColisWithSteps>> colisWithStepsList = new MutableLiveData<>();
-    private MutableLiveData<Integer> shouldNotify = new MutableLiveData<>();
 
-    public MainActivityViewModel(@NonNull Application application) {
+    public DetailActivityViewModel(@NonNull Application application) {
         super(application);
-        colisWithStepsRepository = ColisWithStepsRepository.getInstance(application);
+        ColisWithStepsRepository colisWithStepsRepository = ColisWithStepsRepository.getInstance(application);
         colisRepository = ColisRepository.getInstance(application);
+        stepRepository = StepRepository.getInstance(application);
 
         colisWithStepsRepository.getActiveFlowableColisWithSteps()
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
@@ -42,38 +45,20 @@ public class MainActivityViewModel extends AndroidViewModel {
                 .subscribe();
     }
 
-    public LiveData<List<ColisWithSteps>> getLiveColisWithSteps() {
-        return colisWithStepsRepository.getLiveActiveColisWithSteps();
+    public Maybe<ColisEntity> findColisById(String idColis) {
+        return colisRepository.findById(idColis);
+    }
+
+    public LiveData<List<StepEntity>> getListStepFromOpt(String idColis) {
+        return stepRepository.liveListStepsOrderedByIdColisAndOrigine(idColis, StepOrigine.OPT);
     }
 
     private void launchSyncTask(SyncTask.TypeSyncTask type, @Nullable String idColis) {
         new SyncTask(getApplication(), type, idColis).execute();
     }
 
-    /**
-     * Tag the colis to deleted = 1 if it had a link to Firebase or AfterShip
-     * Delete it from the DB otherwise
-     *
-     * @param colisEntity
-     */
-    public Maybe<Integer> delete(ColisEntity colisEntity) {
-        return ColisRepository.getInstance(getApplication()).delete(colisEntity.getIdColis());
-    }
-
-    public void markAsDelivered(ColisEntity colisEntity) {
-        colisRepository.markAsDelivered(colisEntity);
-    }
-
-    public LiveData<Integer> isListColisActiveEmpty() {
-        return colisWithStepsRepository.getLiveCountActiveColisWithSteps();
-    }
-
-    public void notifyItemChanged(int position) {
-        shouldNotify.postValue(position);
-    }
-
-    public LiveData<Integer> isDataSetChanged() {
-        return this.shouldNotify;
+    public void deleteAllSteps(String idColis) {
+        stepRepository.deleteByIdColis(idColis);
     }
 
     public void refresh() {
@@ -84,5 +69,13 @@ public class MainActivityViewModel extends AndroidViewModel {
                 launchSyncTask(SyncTask.TypeSyncTask.ALL, null);
             }
         }
+    }
+
+    public void updateDescription(String idColis, String description) {
+        colisRepository.findById(idColis)
+                .subscribeOn(Schedulers.io()).observeOn(Schedulers.io())
+                .map(colisEntity -> colisEntity.buildDescription(description))
+                .doOnSuccess(colisRepository::update)
+                .subscribe();
     }
 }

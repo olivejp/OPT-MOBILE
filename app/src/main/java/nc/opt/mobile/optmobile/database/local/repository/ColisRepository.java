@@ -1,6 +1,7 @@
 package nc.opt.mobile.optmobile.database.local.repository;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.List;
 
@@ -18,6 +19,8 @@ import nc.opt.mobile.optmobile.database.local.repository.task.TypeTask;
  */
 
 public class ColisRepository {
+
+    private static final String TAG = ColisRepository.class.getCanonicalName();
 
     private static ColisRepository INSTANCE;
 
@@ -60,36 +63,16 @@ public class ColisRepository {
     }
 
     /**
-     * If the colis has a link with Firebase, we pass the tag deleted to '1'
-     * If the colis has a AfterShip Id, we pass the tag deleted to '1'
-     * Otherwise we just delete the colis from the DB.
-     * We have to wait a connection to delete the record in AfterShip or in Firebase.
-     *
-     * @param colis to delete or to mark as deleted. They will be deleted in the SyncColisService.
-     */
-    public boolean markAsDeleted(ColisEntity colis) {
-        if ((colis.getFbLinked() == null || colis.getFbLinked() == 0) && (colis.getAfterShipId() == null || colis.getAfterShipId().isEmpty())) {
-            new ColisRepositoryTask(colisDao, TypeTask.DELETE).execute(colis);
-            return true;
-        } else {
-            colis.setDeleted(1);
-            update(colis);
-            return false;
-        }
-    }
-
-    /**
      * Delete the colis with the idColis from the database
      *
-     * @param idColis
+     * @param idColis of the parcel to delete
+     * @return Maybe<Integer>, which return the number of deleted parcel
      */
-    public void delete(String idColis) {
-        findById(idColis)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe(colisEntity ->
-                        new ColisRepositoryTask(colisDao, TypeTask.DELETE).execute(colisEntity)
-                );
+    public Maybe<Integer> delete(String idColis) {
+        return findById(idColis)
+                .subscribeOn(Schedulers.io()).observeOn(Schedulers.io())
+                .map(colisEntity -> colisDao.deleteByIdColis(colisEntity.getIdColis()))
+                .doOnError(e -> Log.e(TAG, e.getMessage()));
     }
 
     public Maybe<List<ColisEntity>> getAllColis(boolean active) {
@@ -105,7 +88,7 @@ public class ColisRepository {
     }
 
 
-    public Maybe<Integer> count(String idColis) {
+    private Maybe<Integer> count(String idColis) {
         return this.colisDao.count(idColis);
     }
 
@@ -118,15 +101,16 @@ public class ColisRepository {
     public void save(ColisEntity... colisEntities) {
         for (ColisEntity colisEntity : colisEntities) {
             count(colisEntity.getIdColis())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.io())
-                    .subscribe(count -> {
-                        if (count > 0) {
-                            update(colisEntity);
-                        } else {
-                            insert(colisEntity);
-                        }
-                    });
+                    .subscribeOn(Schedulers.io()).observeOn(Schedulers.io())
+                    .doOnSuccess(count -> {
+                                if (count > 0) {
+                                    update(colisEntity);
+                                } else {
+                                    insert(colisEntity);
+                                }
+                            }
+                    )
+                    .subscribe();
         }
     }
 

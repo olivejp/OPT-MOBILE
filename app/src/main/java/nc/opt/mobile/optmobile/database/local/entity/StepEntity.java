@@ -15,10 +15,7 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
 /**
  * Created by 2761oli on 11/10/2017.
  */
-@Entity(tableName = "etape", indices = {
-        @Index("idColis"),
-        @Index("origine")
-},
+@Entity(tableName = "etape", indices = {@Index("idColis"), @Index("origine")},
         foreignKeys = @ForeignKey(entity = ColisEntity.class, parentColumns = "idColis", childColumns = "idColis", onDelete = CASCADE))
 public class StepEntity {
 
