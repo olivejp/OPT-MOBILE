@@ -3,16 +3,15 @@ package nc.opt.mobile.optmobile;
 import android.app.Application;
 
 import com.evernote.android.job.JobManager;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
+import com.facebook.stetho.Stetho;
+import com.squareup.leakcanary.LeakCanary;
 
 import nc.opt.mobile.optmobile.broadcast.NetworkReceiver;
 import nc.opt.mobile.optmobile.job.SyncColisJob;
 import nc.opt.mobile.optmobile.job.SyncColisJobCreator;
-import nc.opt.mobile.optmobile.utils.RequestQueueSingleton;
 
 /**
- * Created by 2761oli on 10/10/2017.
+ * Created by orlanth23 on 14/01/2018.
  */
 
 public class App extends Application {
@@ -20,11 +19,19 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
 
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this);
+
+        if (BuildConfig.DEBUG) {
+            Stetho.initializeWithDefaults(this);
+        }
+
         // On attache le receiver à notre application
         registerReceiver(NetworkReceiver.getInstance(), NetworkReceiver.CONNECTIVITY_CHANGE_INTENT_FILTER);
-
-        // Première instanciation du singleton
-        RequestQueueSingleton.getInstance(getApplicationContext());
 
         JobManager.create(this).addJobCreator(new SyncColisJobCreator());
 
@@ -33,12 +40,5 @@ public class App extends Application {
 
         // Lancement d'une synchro dès le début du programme
         SyncColisJob.launchImmediateJob();
-
-        FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
-        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
-                .setDeveloperModeEnabled(BuildConfig.DEBUG)
-                .build();
-        mFirebaseRemoteConfig.setConfigSettings(configSettings);
-        mFirebaseRemoteConfig.setDefaults(R.xml.remote_config_default);
     }
 }

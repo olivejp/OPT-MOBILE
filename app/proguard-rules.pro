@@ -28,6 +28,7 @@
 -dontwarn okhttp3.**
 -dontwarn net.simonvt.schematic.**
 -dontwarn com.squareup.javapoet.**
+-dontwarn com.caverock.androidsvg.**
 
 -keep class retrofit2.** { *; }
 -keepattributes Signature
@@ -42,3 +43,6 @@
 # -keep class android.app.DialogFragment
 
 -keepclassmembers class nc.opt.mobile.optmobile.domain.** {*;}
+
+-keep public class * extends com.bumptech.glide.module.AppGlideModule
+-keep class com.bumptech.glide.GeneratedAppGlideModuleImpl

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_aftership"
+        android:icon="@drawable/ic_aftership"
+        android:title="Aftership" />
+
+    <item
+        android:id="@+id/navigation_opt"
+        android:icon="@drawable/ic_opt"
+        android:title="OPT-NC" />
+
+</menu>

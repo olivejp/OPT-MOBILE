@@ -9,3 +9,15 @@ RB407746844SG
 RJ982930591GB
 RJ982930605GB
 RJ982930614GB
+
+Pour l'utilisation de l'api AfterShip.
+1-Détermination du courier.
+Avec le numéro de tracking faire un POST courier/detect
+Body :
+{
+    "tracking" : {
+        "tracking_number" : "EZ036524985US"
+    }
+}
+
+2-Ajout du colis dans les trackings

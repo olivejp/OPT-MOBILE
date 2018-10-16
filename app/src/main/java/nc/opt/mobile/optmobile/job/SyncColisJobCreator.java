@@ -14,7 +14,7 @@ public class SyncColisJobCreator implements JobCreator {
     @Override
     @Nullable
     public Job create(@NonNull String tag) {
-        if (tag.equals(SyncColisJob.TAG)) {
+        if (tag.equals(SyncColisJob.SYNC_COLIS_JOB)) {
             return new SyncColisJob();
         } else {
             return null;

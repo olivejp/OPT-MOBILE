@@ -1,141 +1,199 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/constraint_detail_colis_layout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:baselineAligned="false"
-    android:orientation="horizontal">
+    android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:id="@+id/linear_image"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraint_delivered_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorAccent2"
+        android:clickable="true"
+        android:focusable="true">
 
         <ImageView
-            android:id="@+id/step_image_colis"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:contentDescription="Colis image"
+            android:id="@+id/img_delivered"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="20dp"
+            android:contentDescription="Delivered Button"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_archive_grey_900_48dp" />
-    </LinearLayout>
+            app:srcCompat="@drawable/ic_check_circle_grey_900_48dp" />
 
-    <TextView
-        android:id="@+id/step_id_colis"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
-        app:layout_constraintBaseline_toBaselineOf="@+id/parcel_description"
-        app:layout_constraintLeft_toRightOf="@+id/linear_image"
-        tools:text="RC12345678912" />
-
-    <TextView
-        android:id="@+id/parcel_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintLeft_toRightOf="@+id/step_id_colis"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Colis de maman" />
-
-
-    <TextView
-        android:id="@+id/step_last_pays"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="12dp"
-        android:layout_marginStart="12dp"
-        android:textSize="12sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/step_last_date"
-        app:layout_constraintLeft_toRightOf="@+id/step_last_date"
-        tools:text="PAYS-BAS" />
-
-    <TextView
-        android:id="@+id/step_last_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/step_last_description"
-        app:layout_constraintLeft_toRightOf="@+id/linear_image"
-        app:layout_constraintTop_toBottomOf="@+id/step_id_colis"
-        tools:text="09 déc. 2016 à 09:05" />
-
-
-    <TextView
-        android:id="@+id/step_last_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/step_last_update"
-        app:layout_constraintLeft_toRightOf="@+id/linear_image"
-        app:layout_constraintTop_toBottomOf="@+id/step_last_date"
-        tools:text="Envoyé mais pas encore reçu" />
-
-    <TextView
-        android:id="@+id/step_last_update_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Mis à jour il y a "
-        android:textSize="12sp"
-        android:textStyle="italic"
-        app:layout_constraintBaseline_toBaselineOf="@+id/step_last_update"
-        app:layout_constraintRight_toLeftOf="@+id/step_last_update" />
-
-    <TextView
-        android:id="@+id/step_last_update"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:textSize="12sp"
-        android:textStyle="italic"
-        app:layout_constraintBottom_toTopOf="@+id/relative_delete_layout"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/step_last_description"
-        tools:text="30 mins" />
-
-    <RelativeLayout
-        android:id="@+id/relative_delete_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/step_last_update">
-
-        <Button
-            android:id="@+id/fab_delete_colis"
-            style="@style/Base.TextAppearance.AppCompat.Button"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="26dp"
-            android:layout_marginStart="26dp"
-            android:background="?attr/selectableItemBackground"
+            android:text="DELIVRER"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/img_delivered"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraint_delete_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorAccent"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SUPPRIMER"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/img_delete"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/img_delete"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="20dp"
             android:contentDescription="Delete Button"
-            android:text="Supprimer"
-            android:textColor="@android:color/holo_red_light"
-            android:visibility="gone" />
-    </RelativeLayout>
-</android.support.constraint.ConstraintLayout>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_delete_grey_900_24dp" />
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraint_detail_colis_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/adapter_colis_background"
+        android:baselineAligned="false"
+        android:clickable="true"
+        android:focusable="true"
+        android:minHeight="60dp"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:id="@+id/linear_image"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/step_status"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:contentDescription="Colis image" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/step_id_colis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
+            android:textSize="14sp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/step_last_description"
+            app:layout_constraintLeft_toRightOf="@+id/linear_image"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="RC12345678912" />
+
+        <TextView
+            android:id="@+id/parcel_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="15dp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/step_id_colis"
+            app:layout_constraintLeft_toRightOf="@+id/step_id_colis"
+            app:layout_constraintRight_toLeftOf="@+id/step_slug"
+            tools:text="Colis de maman" />
+
+        <ImageView
+            android:id="@+id/step_slug"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="end"
+            android:layout_marginEnd="5dp"
+            android:contentDescription="Status last step"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/parcel_description" />
+
+        <TextView
+            android:id="@+id/step_last_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toTopOf="@+id/step_last_date"
+            app:layout_constraintLeft_toRightOf="@+id/linear_image"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginBottom="5dp"
+            app:layout_goneMarginBottom="8dp"
+            tools:text="Envoyé mais pas encore reçu" />
+
+        <TextView
+            android:id="@+id/step_last_localisation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="12dp"
+            android:textSize="12sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/step_last_date"
+            app:layout_constraintLeft_toRightOf="@+id/step_last_date"
+            app:layout_constraintRight_toRightOf="parent"
+            tools:text="STOCKHOLM" />
+
+        <TextView
+            android:id="@+id/step_last_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginStart="8dp"
+            android:textStyle="bold"
+            android:gravity="start"
+            android:layout_marginBottom="5dp"
+            android:textColor="@color/colorAccent"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toTopOf="@+id/step_last_update"
+            app:layout_constraintLeft_toRightOf="@+id/linear_image"
+            tools:text="09 déc. 2016 à 09:05" />
+
+        <TextView
+            android:id="@+id/step_last_update_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Mis à jour il y a "
+            android:textSize="12sp"
+            android:textStyle="italic"
+            app:layout_constraintBaseline_toBaselineOf="@+id/step_last_update"
+            app:layout_constraintRight_toLeftOf="@+id/step_last_update" />
+
+        <TextView
+            android:id="@+id/step_last_update"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:textSize="12sp"
+            android:textStyle="italic"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            tools:text="30 mins" />
+
+
+    </android.support.constraint.ConstraintLayout>
+
+</FrameLayout>

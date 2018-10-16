@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/nav_refresh"
-        android:icon="@drawable/ic_refresh_white_48dp"
-        android:title="@string/refresh"
+        android:id="@+id/nav_connect"
+        android:icon="@drawable/ic_person_white_48dp"
+        android:title="Se connecter"
         app:showAsAction="always" />
 </menu>

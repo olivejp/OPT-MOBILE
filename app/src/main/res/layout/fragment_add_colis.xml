@@ -1,98 +1,117 @@
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginTop="?attr/actionBarSize"
-    android:fitsSystemWindows="true"
-    tools:mContext="nc.opt.mobile.optmobile.fragment.AddColisFragment">
+    android:layout_height="match_parent">
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/layout_search"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/text_suivi_colis_explicatif"
-            style="@style/Base.TextAppearance.AppCompat.Body1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/suivi_colis_explicatif"
-            android:textAlignment="center"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <ImageView
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginRight="0dp"
-            android:layout_marginTop="46dp"
-            android:contentDescription="@string/content_description_image_recherche"
-            app:layout_constraintRight_toLeftOf="@+id/edit_id_parcel"
-            app:layout_constraintTop_toBottomOf="@+id/text_suivi_colis_explicatif"
-            app:srcCompat="@drawable/ic_search_grey_900_48dp" />
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/layout_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
+                tools:mContext="nc.opt.mobile.optmobile.fragment.AddColisFragment">
 
-        <ImageView
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginRight="0dp"
-            android:contentDescription="@string/content_description_image_description"
-            android:layout_marginTop="46dp"
-            app:layout_constraintRight_toLeftOf="@+id/edit_description_parcel"
-            app:layout_constraintTop_toBottomOf="@+id/edit_id_parcel"
-            app:srcCompat="@drawable/ic_note_add_grey_900_48dp" />
+                <TextView
+                    android:id="@+id/text_suivi_colis_explicatif"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:text="Veuillez saisir les 13 lettres/chiffres de votre colis. Ou scanner son code barre avec votre appareil photo"
+                    android:textAlignment="center"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        <EditText
-            android:id="@+id/edit_id_parcel"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="46dp"
-            android:gravity="center"
-            android:hint="@string/num_suivi"
-            android:inputType="textCapCharacters"
-            android:maxLength="13"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_suivi_colis_explicatif"
-            tools:text="EZ036524985US" />
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/input_id_parcel"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="46dp"
+                    android:textColorHint="@color/colorAccent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/text_suivi_colis_explicatif">
 
-        <EditText
-            android:id="@+id/edit_description_parcel"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="46dp"
-            android:gravity="center"
-            android:hint="@string/description"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edit_id_parcel"
-            tools:text="Cadeau de maman" />
+                    <EditText
+                        android:id="@+id/edit_id_parcel"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:hint="Numéro de suivi"
+                        android:inputType="textCapCharacters"
+                        android:maxLength="13"
+                        tools:text="EZ036524985US" />
+                </android.support.design.widget.TextInputLayout>
+
+                <ImageView
+                    android:id="@+id/img_scan"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/input_id_parcel"
+                    app:layout_constraintRight_toLeftOf="@+id/input_id_parcel"
+                    app:srcCompat="@drawable/ic_photo_camera_grey_900_48dp" />
+
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/input_description"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="10dp"
+                    android:textColorHint="@color/colorAccent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/input_id_parcel">
+
+                    <EditText
+                        android:id="@+id/edit_description_parcel"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:hint="Description"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/input_id_parcel"
+                        tools:text="Cadeau de maman" />
+                </android.support.design.widget.TextInputLayout>
+
+
+            </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/coordinator_add_colis"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab_search_parcel"
+            android:id="@+id/fab_add_colis"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
+            android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
             android:windowSoftInputMode="adjustResize"
-            app:backgroundTint="@color/colorPrimaryDark"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:srcCompat="@drawable/ic_search_white_48dp" />
-    </android.support.constraint.ConstraintLayout>
-</android.support.design.widget.CoordinatorLayout>
+            app:backgroundTint="@color/colorAccent"
+            app:srcCompat="@drawable/ic_add_white_48dp" />
+    </android.support.design.widget.CoordinatorLayout>
+</FrameLayout>
