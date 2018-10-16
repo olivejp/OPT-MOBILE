@@ -1,34 +1,16 @@
 package nc.opt.mobile.optmobile;
 
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
+import org.junit.Test;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by orlanth23 on 05/11/2017.
  */
 
 public class TestUtilities {
-    public static Matcher<View> childAtPosition(
-            final Matcher<View> parentMatcher, final int position) {
-
-        return new TypeSafeMatcher<View>() {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("Child at position " + position + " in parent ");
-                parentMatcher.describeTo(description);
-            }
-
-            @Override
-            public boolean matchesSafely(View view) {
-                ViewParent parent = view.getParent();
-                return parent instanceof ViewGroup && parentMatcher.matches(parent)
-                        && view.equals(((ViewGroup) parent).getChildAt(position));
-            }
-        };
+    @Test
+    public void addition_isCorrect(){
+        assertTrue(true);
     }
 }

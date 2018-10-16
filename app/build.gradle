@@ -6,9 +6,6 @@ ext {
 
 android {
     compileSdkVersion 28
-    dataBinding {
-        enabled = false
-    }
     signingConfigs {
         config {
             keyAlias "${keyalias}"
