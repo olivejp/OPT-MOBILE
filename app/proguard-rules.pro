@@ -25,6 +25,8 @@
 #-renamesourcefileattribute SourceFile
 -dontwarn com.google.common.**
 -dontwarn com.google.android.gms.**
+-dontwarn android.databinding.**
+-dontwarn org.codehaus.**
 -dontwarn retrofit2.**
 -dontwarn okhttp3.**
 -dontwarn net.simonvt.schematic.**
